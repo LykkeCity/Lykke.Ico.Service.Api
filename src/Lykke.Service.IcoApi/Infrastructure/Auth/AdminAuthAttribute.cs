@@ -4,9 +4,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Lykke.Service.IcoApi.Infrastructure.Auth
 {
-    public class UserAuthAttribute : ActionFilterAttribute
+    public class AdminAuthAttribute : ActionFilterAttribute
     {
-        private readonly string HeaderName = "authToken";
+        private readonly string HeaderName = "adminAuthToken";
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {

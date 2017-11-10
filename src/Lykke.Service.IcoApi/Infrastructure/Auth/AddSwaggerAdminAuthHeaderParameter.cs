@@ -5,14 +5,14 @@ using Swashbuckle.SwaggerGen.Generator;
 
 namespace Lykke.Service.IcoApi.Infrastructure.Auth
 {
-    public class AddSwaggerAuthorizationHeaderParameter : IOperationFilter
+    public class AddSwaggerAdminAuthHeaderParameter : IOperationFilter
     {
         void IOperationFilter.Apply(Operation operation, OperationFilterContext context)
         {
             var filterPipeline = context.ApiDescription.ActionDescriptor.FilterDescriptors;
-            var isAuthorized = filterPipeline.Select(f => f.Filter).Any(f => f is UserAuthAttribute);
-            var authorizationRequired = context.ApiDescription.GetControllerAttributes().Any(a => a is UserAuthAttribute);
-            if (!authorizationRequired) authorizationRequired = context.ApiDescription.GetActionAttributes().Any(a => a is UserAuthAttribute);
+            var isAuthorized = filterPipeline.Select(f => f.Filter).Any(f => f is AdminAuthAttribute);
+            var authorizationRequired = context.ApiDescription.GetControllerAttributes().Any(a => a is AdminAuthAttribute);
+            if (!authorizationRequired) authorizationRequired = context.ApiDescription.GetActionAttributes().Any(a => a is AdminAuthAttribute);
 
             if (isAuthorized && authorizationRequired)
             {
@@ -21,9 +21,9 @@ namespace Lykke.Service.IcoApi.Infrastructure.Auth
 
                 operation.Parameters.Add(new NonBodyParameter
                 {
-                    Name = "authToken",
+                    Name = "adminAuthToken",
                     In = "header",
-                    Description = "Auth Token",
+                    Description = "Admin Auth Token",
                     Required = true,
                     Type = "string"
                 });
