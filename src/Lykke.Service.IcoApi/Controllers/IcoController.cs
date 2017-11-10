@@ -6,6 +6,8 @@ using Lykke.Service.IcoApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.SwaggerGen.Annotations;
 using Lykke.Service.IcoApi.Infrastructure.Auth;
+using System.Threading.Tasks;
+using Lykke.Service.IcoApi.Core.Domain.Ico;
 
 namespace Lykke.Service.IcoApi.Controllers
 {
@@ -13,77 +15,86 @@ namespace Lykke.Service.IcoApi.Controllers
     [Produces("application/json")]
     public class IcoController : Controller
     {
+        private readonly IInvestorService _investorService;
+
+        public IcoController(IInvestorService investorService)
+        {
+            _investorService = investorService;
+        }
+
         /// <summary>
-        /// Register user by senting confirmation email to provided address
+        /// Register investor by sending confirmation email to provided address
         /// </summary>
         [HttpPost]
-        [Route("user/register")]
+        [Route("investor/register")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
-        public IActionResult RegisterUser([FromBody] RegisterUserRequest model)
+        public async Task<IActionResult> RegisterInvestor([FromBody] RegisterInvestorRequest model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
+            await _investorService.RegisterAsync(model.Email);
 
             return Ok();
         }
 
         /// <summary>
-        /// Confirms user email and returns auth token on success
+        /// Confirms investor email and returns auth token
         /// </summary>
         /// <param name="model"></param>
         /// <returns>The auth token</returns>
         [HttpGet]
-        [Route("user/confirm")]
-        [ProducesResponseType(typeof(ConfirmUserResponse), (int)HttpStatusCode.OK)]
+        [Route("investor/confirm")]
+        [ProducesResponseType(typeof(ConfirmInvestorResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
-        public IActionResult ConfirmUser([FromQuery] ConfirmUserRequest model)
+        public IActionResult ConfirmInvestor([FromQuery] ConfirmInvestorRequest model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            return Ok(new ConfirmUserResponse
+            return Ok(new ConfirmInvestorResponse
             {
                 AuthToken = "TEMP"
             });
         }
 
         /// <summary>
-        /// Get user wallet addresses
+        /// Get Investor info
         /// </summary>
         /// <remarks>
-        /// If rndAddress is empty, then it needs to ask user to fill in it first to create CashIn addresses
+        /// If rndAddress is empty, then it needs to ask user to fill in it first to create pay-in addresses
         /// </remarks>
         [HttpGet]
-        [UserAuth]
-        [Route("user/wallet")]
-        [ProducesResponseType(typeof(UserWalletResponse), (int)HttpStatusCode.OK)]
+        [InvestorAuth]
+        [Route("investor")]
+        [ProducesResponseType(typeof(InvestorResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
-        public IActionResult GetUserWallet()
+        public IActionResult GetInvestorInfo()
         {
-            return Ok(new UserWalletResponse());
+            return Ok(new InvestorResponse());
         }
 
         /// <summary>
-        /// Save user wallet addresses, creates CashIn addresses and send summary email on success
+        /// Save investor info, creates pay-in addresses, sends summary email
         /// </summary>
         [HttpPost]
-        [UserAuth]
-        [Route("user/wallet")]
-        [ProducesResponseType(typeof(UserWalletResponse), (int)HttpStatusCode.OK)]
+        [InvestorAuth]
+        [Route("investor")]
+        [ProducesResponseType(typeof(InvestorResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
-        public IActionResult SaveUserWallet([FromBody] UserWalletRequest model)
+        public IActionResult SaveInvestorInfo([FromBody] InvestorRequest model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            return Ok(new UserWalletResponse());
+            return Ok(new InvestorResponse());
         }
     }
 }

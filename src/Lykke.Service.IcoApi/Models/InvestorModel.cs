@@ -3,7 +3,31 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Lykke.Service.IcoApi.Models
 {
-    public class UserWalletRequest
+    public class RegisterInvestorRequest
+    {
+        [Required]
+        [JsonProperty("email")]
+        public string Email { get; set; }
+    }
+
+    public class ConfirmInvestorRequest
+    {
+        [Required]
+        [JsonProperty("email")]
+        public string Email { get; set; }
+
+        [Required]
+        [JsonProperty("verificationCode")]
+        public string VerificationCode { get; set; }
+    }
+
+    public class ConfirmInvestorResponse
+    {
+        [JsonProperty("authToken")]
+        public string AuthToken { get; set; }
+    }
+
+    public class InvestorRequest
     {
         [Required]
         [JsonProperty("rndAddress")]
@@ -16,7 +40,7 @@ namespace Lykke.Service.IcoApi.Models
         public string BtcRefundAddress { get; set; }
     }
 
-    public class UserWalletResponse
+    public class InvestorResponse
     {
         [JsonProperty("rndAddress")]
         public string RndAddress { get; set; }
