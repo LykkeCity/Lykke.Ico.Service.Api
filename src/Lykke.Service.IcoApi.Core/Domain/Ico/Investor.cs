@@ -2,15 +2,15 @@
 
 namespace Lykke.Service.IcoApi.Core.Domain.Ico
 {
-    public class Investor : IInvestor
+    public class Investor
     {
         public string Email { get; set; }
 
         public string VldAddress { get; set; }
 
-        public string PayInEthAddress { get; set; }
+        public string PayInEthPublicKey { get; set; }
 
-        public string PayInBtcAddress { get; set; }
+        public string PayInBtcPublicKey { get; set; }
 
         public string RefundEthAddress { get; set; }
 
@@ -22,10 +22,14 @@ namespace Lykke.Service.IcoApi.Core.Domain.Ico
 
         public Guid ConfirmationToken { get; set; }
 
-        public DateTime ConfirmationTokenDateTime { get; set; }
-
-        public Guid? AuthToken { get; set; }
-
-        public DateTime? AuthTokenDateTime { get; set; }
+        public static Investor Create(string email, string ipAddress)
+        {
+            return new Investor
+            {
+                Email = email,
+                ConfirmationToken = Guid.NewGuid(),
+                IpAddress = ipAddress
+            };
+        }
     }
 }

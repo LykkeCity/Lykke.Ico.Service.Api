@@ -10,8 +10,8 @@ namespace Lykke.Service.IcoApi.Core.Services
 
         Task DeleteAsync(string email);
 
-        Task<IInvestor> GetAsync(string email);
+        Task<Investor> GetAsync(string email);
 
-        Task<IEnumerable<IInvestor>> GetAllAsync();
+        Task<IEnumerable<Investor>> GetAllAsync();
     }
 }

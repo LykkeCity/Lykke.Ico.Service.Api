@@ -6,14 +6,14 @@ namespace Lykke.Service.IcoApi.Core.Repositories
 {
     public  interface IInvestorRepository
     {
-        Task AddAsync(IInvestor investor);
+        Task AddAsync(Investor investor);
 
-        Task<IEnumerable<IInvestor>> GetAllAsync();
+        Task<IEnumerable<Investor>> GetAllAsync();
 
-        Task<IInvestor> GetAsync(string email);
+        Task<Investor> GetAsync(string email);
 
         Task RemoveAsync(string email);
 
-        Task UpdateAsync(IInvestor investor);
+        Task UpdateAsync(Investor investor);
     }
 }

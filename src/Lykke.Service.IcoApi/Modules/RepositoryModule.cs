@@ -1,16 +1,16 @@
 ﻿using Autofac;
 using AzureStorage;
+using AzureStorage.Queue;
 using AzureStorage.Tables;
 using Common.Log;
+using Lykke.Ico.Core.Contracts.Emails;
+using Lykke.Ico.Core.Services;
 using Lykke.Service.IcoApi.AzureRepositories;
 using Lykke.Service.IcoApi.AzureRepositories.Entities;
 using Lykke.Service.IcoApi.Core.Repositories;
 using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
 using Lykke.SettingsReader;
 using Microsoft.WindowsAzure.Storage.Table;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Lykke.Service.IcoApi.Modules
 {
@@ -28,16 +28,20 @@ namespace Lykke.Service.IcoApi.Modules
         protected override void Load(ContainerBuilder builder)
         {
             string IcoDataConnectionString(IcoApiSettings x) => x.Db.IcoDataConnString;
+            var connectionStringManager = _settings.ConnectionString(IcoDataConnectionString);
 
-            var investorTable = CreateTable<InvestorEntity>(IcoDataConnectionString, "Investors");
+            var investorTable = CreateTable<InvestorEntity>(connectionStringManager, "Investors");
 
             builder.RegisterInstance<IInvestorRepository>(new InvestorRepository(investorTable));
+
+            builder.RegisterInstance<IEmailsQueuePublisher<InvestorConfirmation>>(
+                new EmailsQueuePublisher<InvestorConfirmation>(connectionStringManager));
         }
 
-        private INoSQLTableStorage<T> CreateTable<T>(Func<IcoApiSettings, string> connectionString, string name)
+        private INoSQLTableStorage<T> CreateTable<T>(IReloadingManager<string> connectionStringManager, string name)
             where T : TableEntity, new()
         {
-            return AzureTableStorage<T>.Create(_settings.ConnectionString(connectionString), name, _log);
+            return AzureTableStorage<T>.Create(connectionStringManager, name, _log);
         }
     }
 }

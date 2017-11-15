@@ -9,9 +9,9 @@ namespace Lykke.Service.IcoApi.AzureRepositories.Entities
 
         public string VldAddress { get; set; }
 
-        public string PayInEthAddress { get; set; }
+        public string PayInEthPublicKey { get; set; }
 
-        public string PayInBtcAddress { get; set; }
+        public string PayInBtcPublicKey { get; set; }
 
         public string RefundEthAddress { get; set; }
 
@@ -22,11 +22,5 @@ namespace Lykke.Service.IcoApi.AzureRepositories.Entities
         public string IpAddress { get; set; }
 
         public Guid ConfirmationToken { get; set; }
-
-        public DateTime ConfirmationTokenDateTime { get; set; }
-
-        public Guid? AuthToken { get; set; }
-
-        public DateTime? AuthTokenDateTime { get; set; }
     }
 }
