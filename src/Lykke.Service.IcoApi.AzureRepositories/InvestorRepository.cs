@@ -21,7 +21,7 @@ namespace Lykke.Service.IcoApi.AzureRepositories
             _investorTable = investorTable;
         }
 
-        public async Task AddAsync(IInvestor investor)
+        public async Task AddAsync(Investor investor)
         {
             var entity = Mapper.Map<InvestorEntity>(investor);
 
@@ -31,14 +31,14 @@ namespace Lykke.Service.IcoApi.AzureRepositories
             await _investorTable.InsertAsync(entity);
         }
 
-        public async Task<IEnumerable<IInvestor>> GetAllAsync()
+        public async Task<IEnumerable<Investor>> GetAllAsync()
         {
             var entities = await _investorTable.GetDataAsync(GetPartitionKey());
 
             return entities.Select(Mapper.Map<Investor>);
         }
 
-        public async Task<IInvestor> GetAsync(string email)
+        public async Task<Investor> GetAsync(string email)
         {
             var entity = await _investorTable.GetDataAsync(GetPartitionKey(), GetRowKey(email));
 
@@ -50,7 +50,7 @@ namespace Lykke.Service.IcoApi.AzureRepositories
             await _investorTable.DeleteIfExistAsync(GetPartitionKey(), GetRowKey(email));
         }
 
-        public async Task UpdateAsync(IInvestor investor)
+        public async Task UpdateAsync(Investor investor)
         {
             await _investorTable.MergeAsync(GetPartitionKey(), GetRowKey(investor.Email), x =>
             {

@@ -25,7 +25,7 @@ namespace Lykke.Service.IcoApi.Controllers
 
         [AdminAuth]
         [HttpGet("investors")]
-        [ProducesResponseType(typeof(IEnumerable<IInvestor>), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(IEnumerable<Investor>), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetInvestors()
         {

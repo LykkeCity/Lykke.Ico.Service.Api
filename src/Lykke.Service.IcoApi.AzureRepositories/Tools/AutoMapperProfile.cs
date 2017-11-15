@@ -20,7 +20,7 @@ namespace Lykke.Service.IcoApi.AzureRepositories.Tools
                 }
             });
 
-            CreateMap<IInvestor, InvestorEntity>();
+            CreateMap<Investor, InvestorEntity>();
             CreateMap<InvestorEntity, Investor>();
         }
     }
