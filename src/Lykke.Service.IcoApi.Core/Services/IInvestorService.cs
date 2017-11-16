@@ -1,5 +1,4 @@
-﻿using Lykke.Service.IcoApi.Core.Domain.Ico;
-using System.Collections.Generic;
+﻿using Lykke.Ico.Core.Contracts.Repositories;
 using System.Threading.Tasks;
 
 namespace Lykke.Service.IcoApi.Core.Services
@@ -10,8 +9,6 @@ namespace Lykke.Service.IcoApi.Core.Services
 
         Task DeleteAsync(string email);
 
-        Task<Investor> GetAsync(string email);
-
-        Task<IEnumerable<Investor>> GetAllAsync();
+        Task<IInvestor> GetAsync(string email);
     }
 }
