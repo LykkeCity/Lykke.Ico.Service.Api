@@ -8,7 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Domain\Ico\**" />
+    <Compile Remove="Repositories\**" />
+    <EmbeddedResource Remove="Domain\Ico\**" />
+    <EmbeddedResource Remove="Repositories\**" />
+    <None Remove="Domain\Ico\**" />
+    <None Remove="Repositories\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Lykke.Common" Version="3.0.2" />
+    <PackageReference Include="Lykke.Ico.Core" Version="1.0.9" />
   </ItemGroup>
 
 </Project>

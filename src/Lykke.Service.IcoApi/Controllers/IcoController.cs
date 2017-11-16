@@ -1,13 +1,9 @@
-﻿using System;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Models;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.SwaggerGen.Annotations;
 using Lykke.Service.IcoApi.Infrastructure.Auth;
 using System.Threading.Tasks;
-using Lykke.Service.IcoApi.Core.Domain.Ico;
 
 namespace Lykke.Service.IcoApi.Controllers
 {

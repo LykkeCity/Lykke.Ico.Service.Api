@@ -17,7 +17,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Lykke.Service.IcoApi.Infrastructure.Auth;
-using AutoMapper;
 
 namespace Lykke.Service.IcoApi
 {
@@ -64,7 +63,6 @@ namespace Lykke.Service.IcoApi
                     .As<ILog>()
                     .SingleInstance();
 
-                builder.RegisterModule(new RepositoryModule(appSettings.Nested(x => x.IcoApiService), Log));
                 builder.RegisterModule(new ServiceModule(appSettings.Nested(x => x.IcoApiService), Log));
                 builder.Populate(services);
                 ApplicationContainer = builder.Build();
@@ -80,8 +78,6 @@ namespace Lykke.Service.IcoApi
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime appLifetime)
         {
-            ConfigureAutoMapper();
-
             try
             {
                 if (env.IsDevelopment())
@@ -103,24 +99,6 @@ namespace Lykke.Service.IcoApi
             catch (Exception ex)
             {
                 Log?.WriteFatalErrorAsync(nameof(Startup), nameof(ConfigureServices), "", ex).Wait();
-                throw;
-            }
-        }
-
-        private void ConfigureAutoMapper()
-        {
-            try
-            {
-                Mapper.Initialize(cfg =>
-                {
-                    cfg.AddProfiles(typeof(AzureRepositories.Tools.AutoMapperProfile));
-                });
-
-                Mapper.AssertConfigurationIsValid();
-            }
-            catch (Exception e)
-            {
-                Log?.WriteFatalErrorAsync(nameof(Startup), nameof(ConfigureAutoMapper), "", e).Wait();
                 throw;
             }
         }

@@ -1,52 +1,59 @@
 ﻿using Lykke.Service.IcoApi.Core.Services;
-using System;
-using Lykke.Service.IcoApi.Core.Domain.Ico;
 using System.Threading.Tasks;
-using Lykke.Service.IcoApi.Core.Repositories;
 using System.Collections.Generic;
+using Lykke.Ico.Core.Repositories.Investor;
+using Lykke.Ico.Core.Contracts.Queues;
 using Lykke.Ico.Core.Services;
-using Lykke.Ico.Core.Contracts.Emails;
+using Common.Log;
+using Lykke.Ico.Core.Contracts.Repositories;
+using Common;
 
 namespace Lykke.Service.IcoApi.Services
 {
     public class InvestorService : IInvestorService
     {
         private readonly IInvestorRepository _investorRepository;
-        private readonly IEmailsQueuePublisher<InvestorConfirmation> _emailsQueuePublisher;
+        private readonly IQueuePublisher<InvestorConfirmationMessage> _queuePublisher;
+        private readonly ILog _log;
 
-        public InvestorService(IInvestorRepository investorRepository, IEmailsQueuePublisher<InvestorConfirmation> emailsQueuePublisher)
+        public InvestorService(IInvestorRepository investorRepository, IQueuePublisher<InvestorConfirmationMessage> queuePublisher, 
+            ILog log)
         {
             _investorRepository = investorRepository;
-            _emailsQueuePublisher = emailsQueuePublisher;
+            _queuePublisher = queuePublisher;
+            _log = log;
         }
 
         public async Task RegisterAsync(string email)
         {
+            await _log.WriteInfoAsync(nameof(InvestorService), nameof(RegisterAsync), 
+                $"Register investor: {email}");
+
             var investor = await _investorRepository.GetAsync(email);
             if (investor == null)
             {
-                investor = Investor.Create(email, "");
+                var newInvestor = await _investorRepository.AddAsync(email, "");
+                await _log.WriteInfoAsync(nameof(InvestorService), nameof(RegisterAsync), 
+                    $"New investor: {newInvestor.ToJson()}");
 
-                await _investorRepository.AddAsync(investor);
-
-                await _emailsQueuePublisher.SendAsync(new InvestorConfirmation
-                {
-                    EmailTo = email,
-                    ConfirmationToken = investor.ConfirmationToken.ToString(),
-                    Attempts = 0
-                });
+                var message = InvestorConfirmationMessage.Create(email, newInvestor.ConfirmationToken);
+                await _log.WriteInfoAsync(nameof(InvestorService), nameof(RegisterAsync), 
+                    $"Send InvestorConfirmationMessage: {message.ToJson()}");
+                await _queuePublisher.SendAsync(message);
 
                 return;
             }
 
-            if (string.IsNullOrEmpty(investor.VldAddress))
+            await _log.WriteInfoAsync(nameof(InvestorService), nameof(RegisterAsync), 
+                $"Exisitng investor: {investor.ToJson()}");
+
+            if (string.IsNullOrEmpty(investor.TokenAddress))
             {
-                await _emailsQueuePublisher.SendAsync(new InvestorConfirmation
-                {
-                    EmailTo = email,
-                    ConfirmationToken = investor.ConfirmationToken.ToString(),
-                    Attempts = 0
-                });
+                var message = InvestorConfirmationMessage.Create(email, investor.ConfirmationToken);
+
+                await _log.WriteInfoAsync(nameof(InvestorService), nameof(RegisterAsync), 
+                    $"TokenAddress is empty. Send InvestorConfirmationMessage: {message.ToJson()}");
+                await _queuePublisher.SendAsync(message);
 
                 return;
             }
@@ -54,7 +61,7 @@ namespace Lykke.Service.IcoApi.Services
             //TODO: send investor summary email
         }
 
-        public async Task<Investor> GetAsync(string email)
+        public async Task<IInvestor> GetAsync(string email)
         {
             return await _investorRepository.GetAsync(email);
         }
@@ -62,11 +69,6 @@ namespace Lykke.Service.IcoApi.Services
         public async Task DeleteAsync(string email)
         {
             await _investorRepository.RemoveAsync(email);
-        }
-
-        public async Task<IEnumerable<Investor>> GetAllAsync()
-        {
-            return await _investorRepository.GetAllAsync();
         }
     }
 }

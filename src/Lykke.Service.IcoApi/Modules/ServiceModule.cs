@@ -1,11 +1,12 @@
 ﻿using Autofac;
-using Autofac.Extensions.DependencyInjection;
 using Common.Log;
+using Lykke.Ico.Core.Contracts.Queues;
+using Lykke.Ico.Core.Repositories.Investor;
+using Lykke.Ico.Core.Services;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
 using Lykke.Service.IcoApi.Services;
 using Lykke.SettingsReader;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Lykke.Service.IcoApi.Modules
 {
@@ -22,6 +23,8 @@ namespace Lykke.Service.IcoApi.Modules
 
         protected override void Load(ContainerBuilder builder)
         {
+            var connectionStringManager = _settings.ConnectionString(x => x.Db.IcoDataConnString);
+
             builder.RegisterType<HealthService>()
                 .As<IHealthService>()
                 .SingleInstance();
@@ -34,6 +37,16 @@ namespace Lykke.Service.IcoApi.Modules
 
             builder.RegisterType<InvestorService>()
                 .As<IInvestorService>()
+                .SingleInstance();
+
+            builder.RegisterType<InvestorRepository>()
+                .As<IInvestorRepository>()
+                .WithParameter(TypedParameter.From(connectionStringManager))
+                .SingleInstance();
+
+            builder.RegisterType<QueuePublisher<InvestorConfirmationMessage>>()
+                .As<IQueuePublisher<InvestorConfirmationMessage>>()
+                .WithParameter(TypedParameter.From(connectionStringManager))
                 .SingleInstance();
         }
     }

@@ -52,7 +52,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\Lykke.Service.IcoApi.AzureRepositories\Lykke.Service.IcoApi.AzureRepositories.csproj" />
     <ProjectReference Include="..\Lykke.Service.IcoApi.Core\Lykke.Service.IcoApi.Core.csproj" />
     <ProjectReference Include="..\Lykke.Service.IcoApi.Services\Lykke.Service.IcoApi.Services.csproj" />
   </ItemGroup>

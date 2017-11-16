@@ -7,6 +7,9 @@ using AzureStorage;
 using Lykke.Service.IcoApi.AzureRepositories.Entities;
 using AutoMapper;
 using System.Linq;
+using Common.Log;
+using Lykke.SettingsReader;
+using AzureStorage.Tables;
 
 namespace Lykke.Service.IcoApi.AzureRepositories
 {
@@ -16,9 +19,9 @@ namespace Lykke.Service.IcoApi.AzureRepositories
         private static string GetPartitionKey() => "Investor";
         private static string GetRowKey(string email) => email;
 
-        public InvestorRepository(INoSQLTableStorage<InvestorEntity> investorTable)
+        public InvestorRepository(IReloadingManager<string> connectionStringManager, ILog log)
         {
-            _investorTable = investorTable;
+            _investorTable = AzureTableStorage<InvestorEntity>.Create(connectionStringManager, "Investors", log);
         }
 
         public async Task AddAsync(Investor investor)
