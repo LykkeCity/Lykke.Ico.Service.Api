@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Lykke.Ico.Core.Contracts.Repositories;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace Lykke.Service.IcoApi.Models
@@ -30,31 +31,47 @@ namespace Lykke.Service.IcoApi.Models
     public class InvestorRequest
     {
         [Required]
-        [JsonProperty("rndAddress")]
-        public string RndAddress { get; set; }
+        [JsonProperty("tokenAddress")]
+        public string TokenAddress { get; set; }
 
-        [JsonProperty("ethRefundAddress")]
-        public string EthRefundAddress { get; set; }
+        [JsonProperty("refundEthAddress")]
+        public string RefundEthAddress { get; set; }
 
-        [JsonProperty("btcRefundAddress")]
-        public string BtcRefundAddress { get; set; }
+        [JsonProperty("refundBtcAddress")]
+        public string RefundBtcAddress { get; set; }
     }
 
     public class InvestorResponse
     {
-        [JsonProperty("rndAddress")]
-        public string RndAddress { get; set; }
+        [JsonProperty("email")]
+        string Email { get; set; }
 
-        [JsonProperty("ethRefundAddress")]
-        public string EthRefundAddress { get; set; }
+        [JsonProperty("tokenAddress")]
+        string TokenAddress { get; set; }
 
-        [JsonProperty("btcRefundAddress")]
-        public string BtcRefundAddress { get; set; }
+        [JsonProperty("refundEthAddress")]
+        string RefundEthAddress { get; set; }
 
-        [JsonProperty("ethCashinAddress")]
-        public string EthCashinAddress { get; set; }
+        [JsonProperty("refundBtcAddress")]
+        string RefundBtcAddress { get; set; }
 
-        [JsonProperty("btcCashinAddress")]
-        public string BtcCashinAddress { get; set; }
+        [JsonProperty("payInEthAddress")]
+        string PayInEthAddress { get; set; }
+
+        [JsonProperty("payInBtcAddress")]
+        string PayInBtcAddress { get; set; }
+
+        public static InvestorResponse Create(IInvestor investor)
+        {
+            return new InvestorResponse
+            {
+                Email = investor.Email,
+                TokenAddress = investor.TokenAddress,
+                RefundEthAddress = investor.RefundEthAddress,
+                RefundBtcAddress = investor.RefundBtcAddress,
+                PayInEthAddress = investor.PayInEthAddress,
+                PayInBtcAddress = investor.PayInBtcAddress
+            };
+        }
     }
 }
