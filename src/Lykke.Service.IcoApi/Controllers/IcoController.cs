@@ -9,6 +9,10 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using Common.Log;
+using Common;
+using System.ComponentModel.DataAnnotations;
+using Lykke.Ico.Core.Helpers;
 
 namespace Lykke.Service.IcoApi.Controllers
 {
@@ -16,11 +20,15 @@ namespace Lykke.Service.IcoApi.Controllers
     [Produces("application/json")]
     public class IcoController : Controller
     {
+        private readonly ILog _log;
         private readonly IInvestorService _investorService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public IcoController(IInvestorService investorService, IHttpContextAccessor httpContextAccessor)
+        private readonly string _btcNetwork = "RegTest";
+
+        public IcoController(ILog log, IInvestorService investorService, IHttpContextAccessor httpContextAccessor)
         {
+            _log = log;
             _investorService = investorService;
             _httpContextAccessor = httpContextAccessor;
         }
@@ -39,9 +47,12 @@ namespace Lykke.Service.IcoApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            var ipAddress = GetRequestIP();
+            await _log.WriteInfoAsync(
+                nameof(IcoController), 
+                nameof(RegisterInvestor), 
+                $"Register investor with email={model.Email} from ip={GetRequestIP()}");
 
-            await _investorService.RegisterAsync(model.Email, ipAddress);
+            await _investorService.RegisterAsync(model.Email);
 
             return Ok();
         }
@@ -57,9 +68,12 @@ namespace Lykke.Service.IcoApi.Controllers
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> ConfirmInvestor(Guid token)
         {
-            var ipAddress = GetRequestIP();
+            await _log.WriteInfoAsync(
+                nameof(IcoController), 
+                nameof(ConfirmInvestor), 
+                $"Confirm investor with token={token} from ip={GetRequestIP()}");
 
-            var success = await _investorService.ConfirmAsync(token, ipAddress);
+            var success = await _investorService.ConfirmAsync(token);
             if (!success)
             {
                 return NotFound();
@@ -84,13 +98,14 @@ namespace Lykke.Service.IcoApi.Controllers
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetInvestor()
         {
-            var email = User.FindFirst(ClaimTypes.Email).Value;
+            var email = GetAuthUserEmail();
+
+            await _log.WriteInfoAsync(
+                nameof(IcoController), 
+                nameof(GetInvestor), 
+                $"Get investor with email={email} from ip={GetRequestIP()}");
 
             var investor = await _investorService.GetAsync(email);
-            if (investor == null)
-            {
-                throw new Exception($"Failed to find investor with email={email}");
-            }
 
             return Ok(InvestorResponse.Create(investor));
         }
@@ -101,7 +116,7 @@ namespace Lykke.Service.IcoApi.Controllers
         [HttpPost]
         [InvestorAuth]
         [Route("investor")]
-        [ProducesResponseType(typeof(InvestorResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> SaveInvestor([FromBody] InvestorRequest model)
         {
@@ -109,16 +124,50 @@ namespace Lykke.Service.IcoApi.Controllers
             {
                 return BadRequest(ModelState);
             }
+            if (!EthHelper.ValidateAddress(model.TokenAddress))
+            {
+                return BadRequest($"The address={model.TokenAddress} is invalid IRC20 address");
+            }
+            if (!string.IsNullOrEmpty(model.RefundEthAddress) && !EthHelper.ValidateAddress(model.RefundEthAddress))
+            {
+                return BadRequest($"The address={model.RefundEthAddress} is invalid ETH address");
+            }
+            if (!string.IsNullOrEmpty(model.RefundBtcAddress) && !BtcHelper.ValidateAddress(model.RefundBtcAddress, _btcNetwork))
+            {
+                return BadRequest($"The address={model.RefundBtcAddress} is invalid BTC address");
+            }
 
             var email = User.FindFirst(ClaimTypes.Email).Value;
 
-            await _investorService.UpdateAddressesAsync(
-                email, 
-                model.TokenAddress,
-                model.RefundEthAddress,
-                model.RefundBtcAddress);
+            var investor = await _investorService.GetAsync(email);
+            if (!string.IsNullOrEmpty(investor.TokenAddress))
+            {
+                return BadRequest(@"The token address is already defined");
+            }
 
-            return Ok(new InvestorResponse());
+            await _investorService.UpdateAsync(email, model.TokenAddress, model.RefundEthAddress, model.RefundBtcAddress);
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Get QR image of provided address
+        /// </summary>
+        /// <remarks>
+        /// Image is in png format
+        /// </remarks>
+        [HttpGet]
+        [Route("qr/{address}.png")]
+        [ProducesResponseType(typeof(FileContentResult), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
+        public IActionResult GetInvestorQrEthPayInAddress([Required] string address)
+        {
+            return File(QRCodeHelper.GenerateQRPng(address), "image/png");
+        }
+
+        private string GetAuthUserEmail()
+        {
+            return User.FindFirst(ClaimTypes.Email).Value;
         }
 
         private string GetRequestIP()

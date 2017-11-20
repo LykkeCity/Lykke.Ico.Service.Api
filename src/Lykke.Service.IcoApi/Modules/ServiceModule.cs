@@ -1,13 +1,11 @@
 ﻿using Autofac;
 using Common.Log;
-using Lykke.Ico.Core.Contracts.Queues;
+using Lykke.Ico.Core.Queues;
+using Lykke.Ico.Core.Queues.Emails;
 using Lykke.Ico.Core.Repositories.Investor;
-using Lykke.Ico.Core.Repositories.InvestorConfirmation;
-using Lykke.Ico.Core.Repositories.InvestorToken;
-using Lykke.Ico.Core.Services;
+using Lykke.Ico.Core.Repositories.InvestorAttribute;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
-using Lykke.Service.IcoApi.Infrastructure.Auth;
 using Lykke.Service.IcoApi.Services;
 using Lykke.SettingsReader;
 
@@ -47,8 +45,8 @@ namespace Lykke.Service.IcoApi.Modules
                 .WithParameter(TypedParameter.From(connectionStringManager))
                 .SingleInstance();
 
-            builder.RegisterType<InvestorConfirmationRepository>()
-                .As<IInvestorConfirmationRepository>()
+            builder.RegisterType<InvestorAttributeRepository>()
+                .As<IInvestorAttributeRepository>()
                 .WithParameter(TypedParameter.From(connectionStringManager))
                 .SingleInstance();
 

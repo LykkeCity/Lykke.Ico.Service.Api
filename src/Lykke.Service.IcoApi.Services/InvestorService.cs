@@ -1,13 +1,14 @@
-﻿using Lykke.Service.IcoApi.Core.Services;
-using System.Threading.Tasks;
-using Lykke.Ico.Core.Repositories.Investor;
-using Lykke.Ico.Core.Contracts.Queues;
-using Lykke.Ico.Core.Services;
+﻿using Common;
 using Common.Log;
-using Lykke.Ico.Core.Contracts.Repositories;
-using Common;
-using Lykke.Ico.Core.Repositories.InvestorToken;
 using System;
+using System.Threading.Tasks;
+using Lykke.Service.IcoApi.Core.Services;
+using Lykke.Ico.Core.Repositories.Investor;
+using Lykke.Ico.Core.Repositories.InvestorAttribute;
+using Lykke.Ico.Core.Helpers;
+using Lykke.Ico.Core.Queues.Emails;
+using Lykke.Ico.Core.Queues;
+using System.Linq;
 
 namespace Lykke.Service.IcoApi.Services
 {
@@ -15,20 +16,20 @@ namespace Lykke.Service.IcoApi.Services
     {
         private readonly ILog _log;
         private readonly IInvestorRepository _investorRepository;
-        private readonly IInvestorConfirmationRepository _investorConfirmationRepository;
+        private readonly IInvestorAttributeRepository _investorAttributeRepository;
         private readonly IQueuePublisher<InvestorConfirmationMessage> _investorConfirmationQueuePublisher;
         private readonly IQueuePublisher<InvestorSummaryMessage> _investorSummaryQueuePublisher;
-
+        private readonly string _btcNetwork = "RegTest";
 
         public InvestorService(ILog log,
             IInvestorRepository investorRepository,
-            IInvestorConfirmationRepository investorConfirmationRepository,
+            IInvestorAttributeRepository investorAttributeRepository,
             IQueuePublisher<InvestorConfirmationMessage> investorConfirmationQueuePublisher,
             IQueuePublisher<InvestorSummaryMessage> investorSummaryQueuePublisher)
         {
             _log = log;
             _investorRepository = investorRepository;
-            _investorConfirmationRepository = investorConfirmationRepository;
+            _investorAttributeRepository = investorAttributeRepository;
             _investorConfirmationQueuePublisher = investorConfirmationQueuePublisher;
             _investorSummaryQueuePublisher = investorSummaryQueuePublisher;
         }
@@ -38,56 +39,63 @@ namespace Lykke.Service.IcoApi.Services
             return await _investorRepository.GetAsync(email);
         }
 
-        public async Task<IInvestorConfirmation> GetConfirmation(Guid confirmationToken)
+        public async Task RegisterAsync(string email)
         {
-            return await _investorConfirmationRepository.GetAsync(confirmationToken);
-        }
-
-        public async Task RegisterAsync(string email, string ipAddress)
-        {
-            await _log.WriteInfoAsync(nameof(InvestorService), nameof(RegisterAsync), $"Register investor with email={email} from ip={ipAddress}");
-
             var investor = await _investorRepository.GetAsync(email);
             if (investor == null)
             {
-                await SendConfirmationEmail(email, ipAddress);
+                await SendConfirmationEmail(email);
                 return;
             }
 
-            await _log.WriteInfoAsync(nameof(InvestorService), nameof(RegisterAsync), $"Exisitng investor: {investor.ToJson()}");
-
             if (string.IsNullOrEmpty(investor.TokenAddress))
             {
-                await ResendConfirmationEmail(email, ipAddress);
+                await ResendConfirmationEmail(investor);
                 return;
             }
 
             await SendSummaryEmail(investor);
         }
 
-        public async Task<bool> ConfirmAsync(Guid confirmationToken, string ipAddress)
+        public async Task<bool> ConfirmAsync(Guid confirmationToken)
         {
-            await _log.WriteInfoAsync(nameof(InvestorService), nameof(RegisterAsync), $"Confirm investor with token={confirmationToken} from ip={ipAddress}");
-
-            var confimation = await _investorConfirmationRepository.GetAsync(confirmationToken);
-            if (confimation == null)
+            var email = await _investorAttributeRepository.GetInvestorEmailAsync(InvestorAttributeType.ConfirmationToken, confirmationToken.ToString());
+            if (string.IsNullOrEmpty(email))
             {
                 await _log.WriteInfoAsync(nameof(InvestorService), nameof(ConfirmAsync), $"Token {confirmationToken} is not found");
                 return false;
             }
 
-            await _investorRepository.AddAsync(confimation.Email, ipAddress);
+            var investor = await _investorRepository.GetAsync(email);
+            if (investor == null)
+            {
+                await _investorRepository.AddAsync(email, confirmationToken);
+            }
+
             return true;
         }
 
-        public async Task UpdateAddressesAsync(string email, string tokenAddress, string refundEthAddress, string refundBtcAddress)
+        public async Task<IInvestor> UpdateAsync(string email, string tokenAddress, string refundEthAddress, string refundBtcAddress)
         {
-            await _investorRepository.UpdateAddressesAsync(email, tokenAddress, refundEthAddress, refundBtcAddress);
-        }
+            var investor = await _investorRepository.GetAsync(email);
 
-        public async Task UpdatePayInAddressesAsync(string email, string payInEthPublicKey, string payInBtcPublicKey)
-        {
-            await _investorRepository.UpdatePayInAddressesAsync(email, payInEthPublicKey, payInBtcPublicKey);
+            var payInEthPublicKey = EthHelper.GeneratePublicKeys(1).First();
+            var payInEthAddress = EthHelper.GetAddressByPublicKey(payInEthPublicKey);
+            var payInBtcPublicKey = BtcHelper.GeneratePublicKeys(1).First();
+            var payInBtcAddress = BtcHelper.GetAddressByPublicKey(payInBtcPublicKey, _btcNetwork);
+
+            investor.TokenAddress = tokenAddress;
+            investor.RefundEthAddress = refundEthAddress;
+            investor.RefundBtcAddress = refundBtcAddress;
+            investor.PayInEthPublicKey = payInEthPublicKey;
+            investor.PayInEthAddress = payInEthAddress;
+            investor.PayInBtcPublicKey = payInBtcPublicKey;
+            investor.PayInBtcAddress = payInBtcAddress;
+
+            await _investorRepository.UpdateAsync(investor);
+            await SendSummaryEmail(investor);
+
+            return investor;
         }
 
         public async Task DeleteAsync(string email)
@@ -95,37 +103,35 @@ namespace Lykke.Service.IcoApi.Services
             await _investorRepository.RemoveAsync(email);
         }
 
-        private async Task SendConfirmationEmail(string email, string ipAddress)
+        private async Task SendConfirmationEmail(string email)
         {
-            var confirmationToken = await _investorConfirmationRepository.AddAsync(email, ipAddress);
-            await _log.WriteInfoAsync(nameof(InvestorService), nameof(RegisterAsync), $"New confirmationToken: {confirmationToken.ToJson()}");
+            var token = Guid.NewGuid();
+            await _log.WriteInfoAsync(nameof(InvestorService), nameof(SendConfirmationEmail), $"New confirmationToken: {token.ToString()}");
+            await _investorAttributeRepository.SaveAsync(InvestorAttributeType.ConfirmationToken, email, token.ToString());
 
-            var message = InvestorConfirmationMessage.Create(email, confirmationToken.ConfirmationToken);
-
-            await _log.WriteInfoAsync(nameof(InvestorService), nameof(RegisterAsync), $"Send InvestorConfirmationMessage: {message.ToJson()}");
+            var message = InvestorConfirmationMessage.Create(email, token);
+            await _log.WriteInfoAsync(nameof(InvestorService), nameof(SendConfirmationEmail), $"Send InvestorConfirmationMessage: {message.ToJson()}");
             await _investorConfirmationQueuePublisher.SendAsync(message);
         }
 
-        private async Task ResendConfirmationEmail(string email, string ipAddress)
+        private async Task ResendConfirmationEmail(IInvestor investor)
         {
-            var confirmationToken = await _investorConfirmationRepository.GetAsync(email);
-            if (confirmationToken == null)
+            if (!investor.ConfirmationToken.HasValue)
             {
-                confirmationToken = await _investorConfirmationRepository.AddAsync(email, ipAddress);
+                throw new Exception($"Investor with email={investor.Email} does not have ConfirmationToken");
             }
 
-            var message = InvestorConfirmationMessage.Create(email, confirmationToken.ConfirmationToken);
-
-            await _log.WriteInfoAsync(nameof(InvestorService), nameof(RegisterAsync), $"TokenAddress is empty. Send InvestorConfirmationMessage: {message.ToJson()}");
+            var message = InvestorConfirmationMessage.Create(investor.Email, investor.ConfirmationToken.Value);
+            await _log.WriteInfoAsync(nameof(InvestorService), nameof(ResendConfirmationEmail), $"Resend InvestorConfirmationMessage: {message.ToJson()}");
             await _investorConfirmationQueuePublisher.SendAsync(message);
         }
 
         private async Task SendSummaryEmail(IInvestor investor)
         {
             var message = InvestorSummaryMessage.Create(investor.Email, investor.TokenAddress, investor.RefundBtcAddress,
-                investor.RefundEthAddress, investor.PayInBtcPublicKey, investor.PayInEthPublicKey);
+                investor.RefundEthAddress, investor.PayInBtcAddress, investor.PayInEthAddress);
 
-            await _log.WriteInfoAsync(nameof(InvestorService), nameof(RegisterAsync), $"Send InvestorSummaryMessage: {message.ToJson()}");
+            await _log.WriteInfoAsync(nameof(InvestorService), nameof(SendSummaryEmail), $"Send InvestorSummaryMessage: {message.ToJson()}");
             await _investorSummaryQueuePublisher.SendAsync(message);
         }
     }

@@ -1,4 +1,4 @@
-﻿using Lykke.Ico.Core.Contracts.Repositories;
+﻿using Lykke.Ico.Core.Repositories.Investor;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
@@ -7,6 +7,7 @@ namespace Lykke.Service.IcoApi.Models
     public class RegisterInvestorRequest
     {
         [Required]
+        [EmailAddress]
         [JsonProperty("email")]
         public string Email { get; set; }
     }

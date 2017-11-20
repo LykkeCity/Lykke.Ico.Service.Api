@@ -1,7 +1,9 @@
-﻿using Lykke.Service.IcoApi.Core.Services;
+﻿using Lykke.Ico.Core.Helpers;
+using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Infrastructure.Auth;
 using Lykke.Service.IcoApi.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -51,6 +53,18 @@ namespace Lykke.Service.IcoApi.Controllers
             await _investorService.DeleteAsync(email);
 
             return NoContent();
+        }
+
+        [AdminAuth]
+        [HttpGet("address/random/eth")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
+        public IActionResult GetRandomIRC20Address()
+        {
+            var key = EthHelper.GeneratePublicKeys(1).First();
+            var address = EthHelper.GetAddressByPublicKey(key);
+
+            return Ok(address);
         }
     }
 }
