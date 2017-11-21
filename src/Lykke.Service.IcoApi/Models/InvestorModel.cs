@@ -1,6 +1,7 @@
 ﻿using Lykke.Ico.Core.Repositories.Investor;
 using Lykke.Service.IcoApi.Core.Domain;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System.ComponentModel.DataAnnotations;
 
 namespace Lykke.Service.IcoApi.Models
@@ -16,6 +17,7 @@ namespace Lykke.Service.IcoApi.Models
     public class RegisterInvestorResponse
     {
         [JsonProperty("result")]
+        [JsonConverter(typeof(StringEnumConverter))]
         public RegisterResult Result { get; set; }
     }
 

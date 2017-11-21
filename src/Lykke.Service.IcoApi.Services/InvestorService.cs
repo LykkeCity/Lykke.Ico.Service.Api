@@ -5,10 +5,8 @@ using System.Threading.Tasks;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Ico.Core.Repositories.Investor;
 using Lykke.Ico.Core.Repositories.InvestorAttribute;
-using Lykke.Ico.Core.Helpers;
 using Lykke.Ico.Core.Queues.Emails;
 using Lykke.Ico.Core.Queues;
-using System.Linq;
 using Lykke.Ico.Core.Repositories.AddressPool;
 using Lykke.Service.IcoApi.Core.Domain;
 
@@ -54,14 +52,20 @@ namespace Lykke.Service.IcoApi.Services
             var investor = await _investorRepository.GetAsync(email);
             if (investor == null)
             {
-                await SendConfirmationEmail(email);
+                var token = Guid.NewGuid();
+
+                await _log.WriteInfoAsync(nameof(InvestorService), nameof(RegisterAsync), $"Create investor for email={email} and token={token}");
+                await _investorRepository.AddAsync(email, token);
+                await _investorAttributeRepository.SaveAsync(InvestorAttributeType.ConfirmationToken, email, token.ToString());
+
+                await SendConfirmationEmail(email, token);
 
                 return RegisterResult.ConfirmationEmailSent;
             }
 
             if (string.IsNullOrEmpty(investor.TokenAddress))
             {
-                await ResendConfirmationEmail(investor);
+                await SendConfirmationEmail(investor.Email, investor.ConfirmationToken.Value);
 
                 return RegisterResult.ConfirmationEmailSent;
             }
@@ -145,26 +149,11 @@ namespace Lykke.Service.IcoApi.Services
             // Remove transations
         }
 
-        private async Task SendConfirmationEmail(string email)
+        private async Task SendConfirmationEmail(string email, Guid token)
         {
-            var token = Guid.NewGuid();
-            await _log.WriteInfoAsync(nameof(InvestorService), nameof(SendConfirmationEmail), $"New confirmationToken: {token.ToString()}");
-            await _investorAttributeRepository.SaveAsync(InvestorAttributeType.ConfirmationToken, email, token.ToString());
-
             var message = InvestorConfirmationMessage.Create(email, token);
+
             await _log.WriteInfoAsync(nameof(InvestorService), nameof(SendConfirmationEmail), $"Send InvestorConfirmationMessage: {message.ToJson()}");
-            await _investorConfirmationQueuePublisher.SendAsync(message);
-        }
-
-        private async Task ResendConfirmationEmail(IInvestor investor)
-        {
-            if (!investor.ConfirmationToken.HasValue)
-            {
-                throw new Exception($"Investor with email={investor.Email} does not have ConfirmationToken");
-            }
-
-            var message = InvestorConfirmationMessage.Create(investor.Email, investor.ConfirmationToken.Value);
-            await _log.WriteInfoAsync(nameof(InvestorService), nameof(ResendConfirmationEmail), $"Resend InvestorConfirmationMessage: {message.ToJson()}");
             await _investorConfirmationQueuePublisher.SendAsync(message);
         }
 

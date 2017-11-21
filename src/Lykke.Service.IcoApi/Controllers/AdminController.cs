@@ -1,4 +1,5 @@
 ﻿using Lykke.Ico.Core.Repositories.AddressPool;
+using Lykke.Ico.Core.Repositories.InvestorAttribute;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Infrastructure.Auth;
 using Lykke.Service.IcoApi.Models;
@@ -33,6 +34,22 @@ namespace Lykke.Service.IcoApi.Controllers
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetInvestor(string email)
+        {
+            var investor = await _investorService.GetAsync(email);
+            if (investor == null)
+            {
+                return NotFound(ErrorResponse.Create("Investor not found"));
+            }
+
+            return Ok(investor);
+        }
+
+        [AdminAuth]
+        [HttpGet("investors/{email}/token")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> GetInvestorConfirmationToken(string email)
         {
             var investor = await _investorService.GetAsync(email);
             if (investor == null)
