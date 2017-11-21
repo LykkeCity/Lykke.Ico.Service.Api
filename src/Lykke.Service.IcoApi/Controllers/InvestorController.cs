@@ -11,25 +11,27 @@ using System.Linq;
 using System.Security.Claims;
 using Common.Log;
 using Common;
-using System.ComponentModel.DataAnnotations;
-using Lykke.Ico.Core.Helpers;
+using Lykke.Service.IcoApi.Core.Domain;
 
 namespace Lykke.Service.IcoApi.Controllers
 {
-    [Route("api/ico")]
+    [Route("api/investor")]
     [Produces("application/json")]
-    public class IcoController : Controller
+    public class InvestorController : Controller
     {
         private readonly ILog _log;
         private readonly IInvestorService _investorService;
+        private readonly IBtcService _btcService;
+        private readonly IEthService _ethService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        private readonly string _btcNetwork = "RegTest";
-
-        public IcoController(ILog log, IInvestorService investorService, IHttpContextAccessor httpContextAccessor)
+        public InvestorController(ILog log, IInvestorService investorService, IBtcService btcService,
+            IEthService ethService, IHttpContextAccessor httpContextAccessor)
         {
             _log = log;
             _investorService = investorService;
+            _btcService = btcService;
+            _ethService = ethService;
             _httpContextAccessor = httpContextAccessor;
         }
 
@@ -37,8 +39,8 @@ namespace Lykke.Service.IcoApi.Controllers
         /// Register investor by sending confirmation email to provided address
         /// </summary>
         [HttpPost]
-        [Route("investor/register")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [Route("register")]
+        [ProducesResponseType(typeof(RegisterInvestorResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> RegisterInvestor([FromBody] RegisterInvestorRequest model)
         {
@@ -48,13 +50,13 @@ namespace Lykke.Service.IcoApi.Controllers
             }
 
             await _log.WriteInfoAsync(
-                nameof(IcoController), 
+                nameof(InvestorController), 
                 nameof(RegisterInvestor), 
                 $"Register investor with email={model.Email} from ip={GetRequestIP()}");
 
-            await _investorService.RegisterAsync(model.Email);
+            var result = await _investorService.RegisterAsync(model.Email);
 
-            return Ok();
+            return Ok(new RegisterInvestorResponse { Result = result } );
         }
 
         /// <summary>
@@ -63,13 +65,13 @@ namespace Lykke.Service.IcoApi.Controllers
         /// <param name="token"></param>
         /// <returns>The auth token</returns>
         [HttpGet]
-        [Route("investor/confirmation/{token}")]
+        [Route("confirmation/{token}")]
         [ProducesResponseType(typeof(ConfirmInvestorResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> ConfirmInvestor(Guid token)
         {
             await _log.WriteInfoAsync(
-                nameof(IcoController), 
+                nameof(InvestorController), 
                 nameof(ConfirmInvestor), 
                 $"Confirm investor with token={token} from ip={GetRequestIP()}");
 
@@ -93,16 +95,15 @@ namespace Lykke.Service.IcoApi.Controllers
         /// </remarks>
         [HttpGet]
         [InvestorAuth]
-        [Route("investor")]
         [ProducesResponseType(typeof(InvestorResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> GetInvestor()
+        public async Task<IActionResult> Get()
         {
             var email = GetAuthUserEmail();
 
             await _log.WriteInfoAsync(
-                nameof(IcoController), 
-                nameof(GetInvestor), 
+                nameof(InvestorController), 
+                nameof(Get), 
                 $"Get investor with email={email} from ip={GetRequestIP()}");
 
             var investor = await _investorService.GetAsync(email);
@@ -115,29 +116,28 @@ namespace Lykke.Service.IcoApi.Controllers
         /// </summary>
         [HttpPost]
         [InvestorAuth]
-        [Route("investor")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> SaveInvestor([FromBody] InvestorRequest model)
+        public async Task<IActionResult> Post([FromBody] InvestorRequest model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            if (!EthHelper.ValidateAddress(model.TokenAddress))
+            if (!_ethService.ValidateAddress(model.TokenAddress))
             {
                 return BadRequest($"The address={model.TokenAddress} is invalid IRC20 address");
             }
-            if (!string.IsNullOrEmpty(model.RefundEthAddress) && !EthHelper.ValidateAddress(model.RefundEthAddress))
+            if (!string.IsNullOrEmpty(model.RefundEthAddress) && !_ethService.ValidateAddress(model.RefundEthAddress))
             {
                 return BadRequest($"The address={model.RefundEthAddress} is invalid ETH address");
             }
-            if (!string.IsNullOrEmpty(model.RefundBtcAddress) && !BtcHelper.ValidateAddress(model.RefundBtcAddress, _btcNetwork))
+            if (!string.IsNullOrEmpty(model.RefundBtcAddress) && !_btcService.ValidateAddress(model.RefundBtcAddress))
             {
                 return BadRequest($"The address={model.RefundBtcAddress} is invalid BTC address");
             }
 
-            var email = User.FindFirst(ClaimTypes.Email).Value;
+            var email = GetAuthUserEmail();
 
             var investor = await _investorService.GetAsync(email);
             if (!string.IsNullOrEmpty(investor.TokenAddress))
@@ -145,24 +145,10 @@ namespace Lykke.Service.IcoApi.Controllers
                 return BadRequest(@"The token address is already defined");
             }
 
+            await _log.WriteInfoAsync( nameof(InvestorController), nameof(Post), $"Save investor: {model.ToJson()}");
             await _investorService.UpdateAsync(email, model.TokenAddress, model.RefundEthAddress, model.RefundBtcAddress);
 
             return Ok();
-        }
-
-        /// <summary>
-        /// Get QR image of provided address
-        /// </summary>
-        /// <remarks>
-        /// Image is in png format
-        /// </remarks>
-        [HttpGet]
-        [Route("qr/{address}.png")]
-        [ProducesResponseType(typeof(FileContentResult), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
-        public IActionResult GetInvestorQrEthPayInAddress([Required] string address)
-        {
-            return File(QRCodeHelper.GenerateQRPng(address), "image/png");
         }
 
         private string GetAuthUserEmail()

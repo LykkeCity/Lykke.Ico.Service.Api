@@ -1,7 +1,8 @@
-namespace Lykke.Service.IcoApi.Core.Settings.ServiceSettings
+﻿namespace Lykke.Service.IcoApi.Core.Settings.ServiceSettings
 {
     public class IcoApiSettings
     {
         public DbSettings Db { get; set; }
+        public string BtcNetwork { get; set; }
     }
 }

@@ -9,27 +9,37 @@ using Lykke.Ico.Core.Helpers;
 using Lykke.Ico.Core.Queues.Emails;
 using Lykke.Ico.Core.Queues;
 using System.Linq;
+using Lykke.Ico.Core.Repositories.AddressPool;
+using Lykke.Service.IcoApi.Core.Domain;
 
 namespace Lykke.Service.IcoApi.Services
 {
     public class InvestorService : IInvestorService
     {
         private readonly ILog _log;
+        private readonly IBtcService _btcService;
+        private readonly IEthService _ethService;
         private readonly IInvestorRepository _investorRepository;
         private readonly IInvestorAttributeRepository _investorAttributeRepository;
+        private readonly IAddressPoolRepository _addressPoolRepository;
         private readonly IQueuePublisher<InvestorConfirmationMessage> _investorConfirmationQueuePublisher;
         private readonly IQueuePublisher<InvestorSummaryMessage> _investorSummaryQueuePublisher;
-        private readonly string _btcNetwork = "RegTest";
 
         public InvestorService(ILog log,
+            IBtcService btcService,
+            IEthService ethService,
             IInvestorRepository investorRepository,
             IInvestorAttributeRepository investorAttributeRepository,
+            IAddressPoolRepository addressPoolRepository,
             IQueuePublisher<InvestorConfirmationMessage> investorConfirmationQueuePublisher,
             IQueuePublisher<InvestorSummaryMessage> investorSummaryQueuePublisher)
         {
             _log = log;
+            _btcService = btcService;
+            _ethService = ethService;
             _investorRepository = investorRepository;
             _investorAttributeRepository = investorAttributeRepository;
+            _addressPoolRepository = addressPoolRepository;
             _investorConfirmationQueuePublisher = investorConfirmationQueuePublisher;
             _investorSummaryQueuePublisher = investorSummaryQueuePublisher;
         }
@@ -39,22 +49,26 @@ namespace Lykke.Service.IcoApi.Services
             return await _investorRepository.GetAsync(email);
         }
 
-        public async Task RegisterAsync(string email)
+        public async Task<RegisterResult> RegisterAsync(string email)
         {
             var investor = await _investorRepository.GetAsync(email);
             if (investor == null)
             {
                 await SendConfirmationEmail(email);
-                return;
+
+                return RegisterResult.ConfirmationEmailSent;
             }
 
             if (string.IsNullOrEmpty(investor.TokenAddress))
             {
                 await ResendConfirmationEmail(investor);
-                return;
+
+                return RegisterResult.ConfirmationEmailSent;
             }
 
             await SendSummaryEmail(investor);
+
+            return RegisterResult.SummaryEmailSent;
         }
 
         public async Task<bool> ConfirmAsync(Guid confirmationToken)
@@ -75,14 +89,17 @@ namespace Lykke.Service.IcoApi.Services
             return true;
         }
 
-        public async Task<IInvestor> UpdateAsync(string email, string tokenAddress, string refundEthAddress, string refundBtcAddress)
+        public async Task UpdateAsync(string email, string tokenAddress, string refundEthAddress, string refundBtcAddress)
         {
             var investor = await _investorRepository.GetAsync(email);
 
-            var payInEthPublicKey = EthHelper.GeneratePublicKeys(1).First();
-            var payInEthAddress = EthHelper.GetAddressByPublicKey(payInEthPublicKey);
-            var payInBtcPublicKey = BtcHelper.GeneratePublicKeys(1).First();
-            var payInBtcAddress = BtcHelper.GetAddressByPublicKey(payInBtcPublicKey, _btcNetwork);
+            var poolItem = await _addressPoolRepository.GetNextFreeAsync(email);
+            await _log.WriteInfoAsync(nameof(InvestorService), nameof(UpdateAsync), $"Address pool item: {poolItem.ToJson()}");
+
+            var payInEthPublicKey = poolItem.EthPublicKey;
+            var payInEthAddress = _ethService.GetAddressByPublicKey(payInEthPublicKey);
+            var payInBtcPublicKey = poolItem.BtcPublicKey;
+            var payInBtcAddress = _btcService.GetAddressByPublicKey(payInBtcPublicKey);
 
             investor.TokenAddress = tokenAddress;
             investor.RefundEthAddress = refundEthAddress;
@@ -92,15 +109,40 @@ namespace Lykke.Service.IcoApi.Services
             investor.PayInBtcPublicKey = payInBtcPublicKey;
             investor.PayInBtcAddress = payInBtcAddress;
 
-            await _investorRepository.UpdateAsync(investor);
-            await SendSummaryEmail(investor);
+            await _log.WriteInfoAsync(nameof(InvestorService), nameof(UpdateAsync), $"Invertor to save: {investor.ToJson()}");
 
-            return investor;
+            await _investorRepository.UpdateAsync(investor);
+            await _investorAttributeRepository.SaveAsync(InvestorAttributeType.BtcPublicKey, email, payInEthPublicKey);
+            await _investorAttributeRepository.SaveAsync(InvestorAttributeType.EthPublicKey, email, payInEthPublicKey);
+
+            await SendSummaryEmail(investor);
         }
 
         public async Task DeleteAsync(string email)
         {
-            await _investorRepository.RemoveAsync(email);
+            var inverstor = await _investorRepository.GetAsync(email);
+            if (inverstor != null)
+            {
+                if (inverstor.ConfirmationToken.HasValue)
+                {
+                    await _investorAttributeRepository.RemoveAsync(InvestorAttributeType.ConfirmationToken, inverstor.ConfirmationToken.ToString());
+                }
+                if (string.IsNullOrEmpty(inverstor.PayInBtcPublicKey))
+                {
+                    await _investorAttributeRepository.RemoveAsync(InvestorAttributeType.BtcPublicKey, inverstor.PayInBtcPublicKey);
+                }
+                if (string.IsNullOrEmpty(inverstor.PayInEthPublicKey))
+                {
+                    await _investorAttributeRepository.RemoveAsync(InvestorAttributeType.EthPublicKey, inverstor.PayInEthPublicKey);
+                }
+
+                await _investorRepository.RemoveAsync(email);
+            }
+
+            await _addressPoolRepository.RemoveAsync(email);
+
+            // TODO
+            // Remove transations
         }
 
         private async Task SendConfirmationEmail(string email)

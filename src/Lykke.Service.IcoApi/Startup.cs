@@ -53,6 +53,8 @@ namespace Lykke.Service.IcoApi
                     options.DefaultLykkeConfiguration("v1", "Ico API");
 					options.OperationFilter<AddSwaggerInvestorAuthHeaderParameter>();
                     options.OperationFilter<AddSwaggerAdminAuthHeaderParameter>();
+                    options.DescribeAllEnumsAsStrings();
+                    options.DescribeStringEnumsInCamelCase();
                 });
 
                 var builder = new ContainerBuilder();

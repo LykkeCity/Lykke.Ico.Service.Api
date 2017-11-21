@@ -1,11 +1,10 @@
-﻿using Lykke.Ico.Core.Helpers;
+﻿using Lykke.Ico.Core.Repositories.AddressPool;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Infrastructure.Auth;
 using Lykke.Service.IcoApi.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
+using System.ComponentModel.DataAnnotations;
 using System.Net;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Lykke.Service.IcoApi.Controllers
@@ -15,10 +14,17 @@ namespace Lykke.Service.IcoApi.Controllers
     public class AdminController : Controller
     {
         private readonly IInvestorService _investorService;
+        private readonly IBtcService _btcService;
+        private readonly IEthService _ethService;
+        private readonly IAddressPoolRepository _addressPoolRepository;
 
-        public AdminController(IInvestorService investorService)
+        public AdminController(IInvestorService investorService, IBtcService btcService, IEthService ethService,
+            IAddressPoolRepository addressPoolRepository)
         {
             _investorService = investorService;
+            _btcService = btcService;
+            _ethService = ethService;
+            _addressPoolRepository = addressPoolRepository;
         }
 
         [AdminAuth]
@@ -56,15 +62,44 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         [AdminAuth]
-        [HttpGet("address/random/eth")]
+        [HttpGet("addresses/random/eth")]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
-        public IActionResult GetRandomIRC20Address()
+        public IActionResult GetRandomEthAddress()
         {
-            var key = EthHelper.GeneratePublicKeys(1).First();
-            var address = EthHelper.GetAddressByPublicKey(key);
+            var key = _ethService.GeneratePublicKey();
+            var address = _ethService.GetAddressByPublicKey(key);
 
             return Ok(address);
+        }
+
+        [AdminAuth]
+        [HttpGet("addresses/random/btc")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
+        public IActionResult GetRandomBtcAddress()
+        {
+            var key = _btcService.GeneratePublicKey();
+            var address = _btcService.GetAddressByPublicKey(key);
+
+            return Ok(address);
+        }
+
+        [AdminAuth]
+        [HttpPost("addresses/pool/add/{count}")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> AddRandomAddressesToPool([Required] int count)
+        {
+            for (var i = 0; i < count; i++)
+            {
+                var btcKey = _btcService.GeneratePublicKey();
+                var ethKey = _ethService.GeneratePublicKey();
+
+                await _addressPoolRepository.AddAsync(ethKey, btcKey);
+            }
+
+            return Ok();
         }
     }
 }

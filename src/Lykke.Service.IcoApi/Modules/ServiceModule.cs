@@ -2,6 +2,7 @@
 using Common.Log;
 using Lykke.Ico.Core.Queues;
 using Lykke.Ico.Core.Queues.Emails;
+using Lykke.Ico.Core.Repositories.AddressPool;
 using Lykke.Ico.Core.Repositories.Investor;
 using Lykke.Ico.Core.Repositories.InvestorAttribute;
 using Lykke.Service.IcoApi.Core.Services;
@@ -40,6 +41,15 @@ namespace Lykke.Service.IcoApi.Modules
                 .As<IInvestorService>()
                 .SingleInstance();
 
+            builder.RegisterType<BtcService>()
+                .As<IBtcService>()
+                .WithParameter(TypedParameter.From(_settings.CurrentValue.BtcNetwork))
+                .SingleInstance();
+
+            builder.RegisterType<EthService>()
+                .As<IEthService>()
+                .SingleInstance();
+
             builder.RegisterType<InvestorRepository>()
                 .As<IInvestorRepository>()
                 .WithParameter(TypedParameter.From(connectionStringManager))
@@ -47,6 +57,11 @@ namespace Lykke.Service.IcoApi.Modules
 
             builder.RegisterType<InvestorAttributeRepository>()
                 .As<IInvestorAttributeRepository>()
+                .WithParameter(TypedParameter.From(connectionStringManager))
+                .SingleInstance();
+
+            builder.RegisterType<AddressPoolRepository>()
+                .As<IAddressPoolRepository>()
                 .WithParameter(TypedParameter.From(connectionStringManager))
                 .SingleInstance();
 
