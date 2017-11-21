@@ -131,11 +131,11 @@ namespace Lykke.Service.IcoApi.Services
                 {
                     await _investorAttributeRepository.RemoveAsync(InvestorAttributeType.ConfirmationToken, inverstor.ConfirmationToken.ToString());
                 }
-                if (string.IsNullOrEmpty(inverstor.PayInBtcPublicKey))
+                if (!string.IsNullOrEmpty(inverstor.PayInBtcPublicKey))
                 {
                     await _investorAttributeRepository.RemoveAsync(InvestorAttributeType.BtcPublicKey, inverstor.PayInBtcPublicKey);
                 }
-                if (string.IsNullOrEmpty(inverstor.PayInEthPublicKey))
+                if (!string.IsNullOrEmpty(inverstor.PayInEthPublicKey))
                 {
                     await _investorAttributeRepository.RemoveAsync(InvestorAttributeType.EthPublicKey, inverstor.PayInEthPublicKey);
                 }

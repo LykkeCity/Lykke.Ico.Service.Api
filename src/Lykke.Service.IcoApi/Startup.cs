@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Lykke.Service.IcoApi.Infrastructure.Auth;
+using Newtonsoft.Json.Converters;
 
 namespace Lykke.Service.IcoApi
 {
@@ -41,9 +42,14 @@ namespace Lykke.Service.IcoApi
         {
             try
             {
-                services.AddMvc()
+                services
+                    .AddMvc()
                     .AddJsonOptions(options =>
                     {
+                        options.SerializerSettings.Converters.Add(new StringEnumConverter
+                        {
+                            CamelCaseText = true
+                        });
                         options.SerializerSettings.ContractResolver =
                             new Newtonsoft.Json.Serialization.DefaultContractResolver();
                     });
@@ -56,6 +62,8 @@ namespace Lykke.Service.IcoApi
                     options.DescribeAllEnumsAsStrings();
                     options.DescribeStringEnumsInCamelCase();
                 });
+
+                services.AddCors();
 
                 var builder = new ContainerBuilder();
                 var appSettings = Configuration.LoadSettings<AppSettings>();
@@ -88,6 +96,11 @@ namespace Lykke.Service.IcoApi
                 }
 
                 app.UseLykkeMiddleware("IcoApi", ex => new {Message = "Technical problem"});
+
+                app.UseCors(builder => builder
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
 
                 app.UseMvc();
                 app.UseSwagger();

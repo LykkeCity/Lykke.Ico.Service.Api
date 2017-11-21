@@ -45,34 +45,12 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         [AdminAuth]
-        [HttpGet("investors/{email}/token")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> GetInvestorConfirmationToken(string email)
-        {
-            var investor = await _investorService.GetAsync(email);
-            if (investor == null)
-            {
-                return NotFound(ErrorResponse.Create("Investor not found"));
-            }
-
-            return Ok(investor);
-        }
-
-        [AdminAuth]
         [HttpDelete("investors/{email}")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> DeleteInvestor(string email)
         {
-            var investor = await _investorService.GetAsync(email);
-            if (investor == null)
-            {
-                return NotFound(ErrorResponse.Create("Investor not found"));
-            }
-
             await _investorService.DeleteAsync(email);
 
             return NoContent();
@@ -87,7 +65,7 @@ namespace Lykke.Service.IcoApi.Controllers
             var key = _ethService.GeneratePublicKey();
             var address = _ethService.GetAddressByPublicKey(key);
 
-            return Ok(address);
+            return Ok(new AddressResponse { Address = address } );
         }
 
         [AdminAuth]
@@ -99,7 +77,7 @@ namespace Lykke.Service.IcoApi.Controllers
             var key = _btcService.GeneratePublicKey();
             var address = _btcService.GetAddressByPublicKey(key);
 
-            return Ok(address);
+            return Ok(new AddressResponse { Address = address });
         }
 
         [AdminAuth]

@@ -17,7 +17,6 @@ namespace Lykke.Service.IcoApi.Models
     public class RegisterInvestorResponse
     {
         [JsonProperty("result")]
-        [JsonConverter(typeof(StringEnumConverter))]
         public RegisterResult Result { get; set; }
     }
 
