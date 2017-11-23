@@ -105,7 +105,7 @@ namespace Lykke.Service.IcoApi.Services
         {
             var investor = await _investorRepository.GetAsync(email);
 
-            var poolItem = await _addressPoolRepository.GetNextFreeAsync(email);
+            var poolItem = _addressPoolRepository.GetNextFree(email);
             await _log.WriteInfoAsync(nameof(InvestorService), nameof(UpdateAsync), $"Address pool item: {poolItem.ToJson()}");
 
             var payInEthPublicKey = poolItem.EthPublicKey;
@@ -151,7 +151,6 @@ namespace Lykke.Service.IcoApi.Services
                 await _investorRepository.RemoveAsync(email);
             }
 
-            await _addressPoolRepository.RemoveAsync(email);
             await _emailHistoryRepository.RemoveAsync(email);
             await _investorHistoryRepository.RemoveAsync(email);
 
