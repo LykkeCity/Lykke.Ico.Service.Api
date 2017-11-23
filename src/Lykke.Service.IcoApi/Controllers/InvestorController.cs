@@ -11,7 +11,6 @@ using System.Linq;
 using System.Security.Claims;
 using Common.Log;
 using Common;
-using Lykke.Service.IcoApi.Core.Domain;
 
 namespace Lykke.Service.IcoApi.Controllers
 {

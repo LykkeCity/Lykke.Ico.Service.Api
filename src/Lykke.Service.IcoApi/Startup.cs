@@ -18,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Lykke.Service.IcoApi.Infrastructure.Auth;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 
 namespace Lykke.Service.IcoApi
 {
@@ -46,12 +47,8 @@ namespace Lykke.Service.IcoApi
                     .AddMvc()
                     .AddJsonOptions(options =>
                     {
-                        options.SerializerSettings.Converters.Add(new StringEnumConverter
-                        {
-                            CamelCaseText = true
-                        });
-                        options.SerializerSettings.ContractResolver =
-                            new Newtonsoft.Json.Serialization.DefaultContractResolver();
+                        options.SerializerSettings.Converters.Add(new StringEnumConverter { CamelCaseText = true });
+                        options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     });
 
                 services.AddSwaggerGen(options =>

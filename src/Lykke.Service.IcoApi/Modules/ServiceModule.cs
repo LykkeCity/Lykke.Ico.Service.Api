@@ -3,8 +3,10 @@ using Common.Log;
 using Lykke.Ico.Core.Queues;
 using Lykke.Ico.Core.Queues.Emails;
 using Lykke.Ico.Core.Repositories.AddressPool;
+using Lykke.Ico.Core.Repositories.EmailHistory;
 using Lykke.Ico.Core.Repositories.Investor;
 using Lykke.Ico.Core.Repositories.InvestorAttribute;
+using Lykke.Ico.Core.Repositories.InvestorHistory;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
 using Lykke.Service.IcoApi.Services;
@@ -36,7 +38,7 @@ namespace Lykke.Service.IcoApi.Modules
 
             builder.RegisterType<ShutdownManager>()
                 .As<IShutdownManager>();
-
+                
             builder.RegisterType<InvestorService>()
                 .As<IInvestorService>()
                 .SingleInstance();
@@ -64,6 +66,17 @@ namespace Lykke.Service.IcoApi.Modules
                 .As<IAddressPoolRepository>()
                 .WithParameter(TypedParameter.From(connectionStringManager))
                 .SingleInstance();
+
+            builder.RegisterType<EmailHistoryRepository>()
+                .As<IEmailHistoryRepository>()
+                .WithParameter(TypedParameter.From(connectionStringManager))
+                .SingleInstance();
+
+            builder.RegisterType<InvestorHistoryRepository>()
+                .As<IInvestorHistoryRepository>()
+                .WithParameter(TypedParameter.From(connectionStringManager))
+                .SingleInstance();
+
 
             builder.RegisterType<QueuePublisher<InvestorConfirmationMessage>>()
                 .As<IQueuePublisher<InvestorConfirmationMessage>>()

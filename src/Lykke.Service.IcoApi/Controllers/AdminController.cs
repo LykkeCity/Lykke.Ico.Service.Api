@@ -1,5 +1,6 @@
 ﻿using Lykke.Ico.Core.Repositories.AddressPool;
-using Lykke.Ico.Core.Repositories.InvestorAttribute;
+using Lykke.Ico.Core.Repositories.EmailHistory;
+using Lykke.Ico.Core.Repositories.InvestorHistory;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Infrastructure.Auth;
 using Lykke.Service.IcoApi.Models;
@@ -18,19 +19,24 @@ namespace Lykke.Service.IcoApi.Controllers
         private readonly IBtcService _btcService;
         private readonly IEthService _ethService;
         private readonly IAddressPoolRepository _addressPoolRepository;
+        private readonly IEmailHistoryRepository _emailHistoryRepository;
+        private readonly IInvestorHistoryRepository _investorHistoryRepository;
 
         public AdminController(IInvestorService investorService, IBtcService btcService, IEthService ethService,
-            IAddressPoolRepository addressPoolRepository)
+            IAddressPoolRepository addressPoolRepository, IEmailHistoryRepository emailHistoryRepository,
+            IInvestorHistoryRepository investorHistoryRepository)
         {
             _investorService = investorService;
             _btcService = btcService;
             _ethService = ethService;
             _addressPoolRepository = addressPoolRepository;
+            _emailHistoryRepository = emailHistoryRepository;
+            _investorHistoryRepository = investorHistoryRepository;
         }
 
         [AdminAuth]
         [HttpGet("investors/{email}")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetInvestor(string email)
@@ -41,7 +47,7 @@ namespace Lykke.Service.IcoApi.Controllers
                 return NotFound(ErrorResponse.Create("Investor not found"));
             }
 
-            return Ok(investor);
+            return Ok(FullInvestorResponse.Create(investor));
         }
 
         [AdminAuth]
@@ -54,6 +60,30 @@ namespace Lykke.Service.IcoApi.Controllers
             await _investorService.DeleteAsync(email);
 
             return NoContent();
+        }
+
+        [AdminAuth]
+        [HttpGet("investors/{email}/changeHistory")]
+        [ProducesResponseType(typeof(InvestorHistoryResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> GetInvestorHistory(string email)
+        {
+            var items = await _investorHistoryRepository.GetAsync(email);
+
+            return Ok(InvestorHistoryResponse.Create(items));
+        }
+
+        [AdminAuth]
+        [HttpGet("investors/{email}/sentEmails")]
+        [ProducesResponseType(typeof(InvestorEmailsResponse), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> GetInvestorEmailsHistory(string email)
+        {
+            var items = await _emailHistoryRepository.GetAsync(email);
+
+            return Ok(InvestorEmailsResponse.Create(items));
         }
 
         [AdminAuth]

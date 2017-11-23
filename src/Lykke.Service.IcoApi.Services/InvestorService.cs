@@ -9,6 +9,8 @@ using Lykke.Ico.Core.Queues.Emails;
 using Lykke.Ico.Core.Queues;
 using Lykke.Ico.Core.Repositories.AddressPool;
 using Lykke.Service.IcoApi.Core.Domain;
+using Lykke.Ico.Core.Repositories.EmailHistory;
+using Lykke.Ico.Core.Repositories.InvestorHistory;
 
 namespace Lykke.Service.IcoApi.Services
 {
@@ -20,6 +22,8 @@ namespace Lykke.Service.IcoApi.Services
         private readonly IInvestorRepository _investorRepository;
         private readonly IInvestorAttributeRepository _investorAttributeRepository;
         private readonly IAddressPoolRepository _addressPoolRepository;
+        private readonly IEmailHistoryRepository _emailHistoryRepository;
+        private readonly IInvestorHistoryRepository _investorHistoryRepository;
         private readonly IQueuePublisher<InvestorConfirmationMessage> _investorConfirmationQueuePublisher;
         private readonly IQueuePublisher<InvestorSummaryMessage> _investorSummaryQueuePublisher;
 
@@ -29,6 +33,8 @@ namespace Lykke.Service.IcoApi.Services
             IInvestorRepository investorRepository,
             IInvestorAttributeRepository investorAttributeRepository,
             IAddressPoolRepository addressPoolRepository,
+            IEmailHistoryRepository emailHistoryRepository,
+            IInvestorHistoryRepository investorHistoryRepository,
             IQueuePublisher<InvestorConfirmationMessage> investorConfirmationQueuePublisher,
             IQueuePublisher<InvestorSummaryMessage> investorSummaryQueuePublisher)
         {
@@ -38,6 +44,8 @@ namespace Lykke.Service.IcoApi.Services
             _investorRepository = investorRepository;
             _investorAttributeRepository = investorAttributeRepository;
             _addressPoolRepository = addressPoolRepository;
+            _emailHistoryRepository = emailHistoryRepository;
+            _investorHistoryRepository = investorHistoryRepository;
             _investorConfirmationQueuePublisher = investorConfirmationQueuePublisher;
             _investorSummaryQueuePublisher = investorSummaryQueuePublisher;
         }
@@ -116,8 +124,8 @@ namespace Lykke.Service.IcoApi.Services
             await _log.WriteInfoAsync(nameof(InvestorService), nameof(UpdateAsync), $"Invertor to save: {investor.ToJson()}");
 
             await _investorRepository.UpdateAsync(investor);
-            await _investorAttributeRepository.SaveAsync(InvestorAttributeType.BtcPublicKey, email, payInEthPublicKey);
-            await _investorAttributeRepository.SaveAsync(InvestorAttributeType.EthPublicKey, email, payInEthPublicKey);
+            await _investorAttributeRepository.SaveAsync(InvestorAttributeType.PayInBtcAddress, email, payInBtcAddress);
+            await _investorAttributeRepository.SaveAsync(InvestorAttributeType.PayInEthAddress, email, payInEthAddress);
 
             await SendSummaryEmail(investor);
         }
@@ -131,19 +139,21 @@ namespace Lykke.Service.IcoApi.Services
                 {
                     await _investorAttributeRepository.RemoveAsync(InvestorAttributeType.ConfirmationToken, inverstor.ConfirmationToken.ToString());
                 }
-                if (!string.IsNullOrEmpty(inverstor.PayInBtcPublicKey))
+                if (!string.IsNullOrEmpty(inverstor.PayInBtcAddress))
                 {
-                    await _investorAttributeRepository.RemoveAsync(InvestorAttributeType.BtcPublicKey, inverstor.PayInBtcPublicKey);
+                    await _investorAttributeRepository.RemoveAsync(InvestorAttributeType.PayInBtcAddress, inverstor.PayInBtcPublicKey);
                 }
-                if (!string.IsNullOrEmpty(inverstor.PayInEthPublicKey))
+                if (!string.IsNullOrEmpty(inverstor.PayInEthAddress))
                 {
-                    await _investorAttributeRepository.RemoveAsync(InvestorAttributeType.EthPublicKey, inverstor.PayInEthPublicKey);
+                    await _investorAttributeRepository.RemoveAsync(InvestorAttributeType.PayInEthAddress, inverstor.PayInEthPublicKey);
                 }
 
                 await _investorRepository.RemoveAsync(email);
             }
 
             await _addressPoolRepository.RemoveAsync(email);
+            await _emailHistoryRepository.RemoveAsync(email);
+            await _investorHistoryRepository.RemoveAsync(email);
 
             // TODO
             // Remove transations
