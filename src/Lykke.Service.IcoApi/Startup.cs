@@ -19,6 +19,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Lykke.Service.IcoApi.Infrastructure.Auth;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using Lykke.Service.IcoApi.Infrastructure;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace Lykke.Service.IcoApi
 {
@@ -51,13 +53,20 @@ namespace Lykke.Service.IcoApi
                         options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     });
 
+                services.Configure<FormOptions>(x =>
+                {
+                    x.ValueLengthLimit = int.MaxValue;
+                    x.MultipartBodyLengthLimit = int.MaxValue; // In case of multipart
+                });
+
                 services.AddSwaggerGen(options =>
                 {
                     options.DefaultLykkeConfiguration("v1", "Ico API");
-					options.OperationFilter<AddSwaggerInvestorAuthHeaderParameter>();
-                    options.OperationFilter<AddSwaggerAdminAuthHeaderParameter>();
                     options.DescribeAllEnumsAsStrings();
                     options.DescribeStringEnumsInCamelCase();
+                    options.OperationFilter<AddSwaggerInvestorAuthHeaderParameter>();
+                    options.OperationFilter<AddSwaggerAdminAuthHeaderParameter>();
+                    options.OperationFilter<FormFileOperationFilter>();
                 });
 
                 services.AddCors();

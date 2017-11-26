@@ -10,19 +10,24 @@ namespace Lykke.Service.IcoApi.Infrastructure.Auth
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            if (!context.HttpContext.Request.Headers.ContainsKey(HeaderName))
+            var key = "";
+
+            if (context.HttpContext.Request.Headers.ContainsKey(HeaderName))
+            {
+                var headers = context.HttpContext.Request.Headers[HeaderName];
+                key = headers[0];
+            }
+
+            if (string.IsNullOrEmpty(key) &&
+                context.HttpContext.Request.Form.ContainsKey(HeaderName))
+            {
+                var forms = context.HttpContext.Request.Form[HeaderName];
+                key = forms[0];
+            }
+
+            if (!"TEMP".Equals(key))
             {
                 context.Result = new UnauthorizedResult();
-            }
-            else
-            {
-                var apiKeyFromRequest = context.HttpContext.Request.Headers[HeaderName];
-
-                //TODO - add validation of token
-                if (!"TEMP".Equals(apiKeyFromRequest[0]))
-                {
-                    context.Result = new UnauthorizedResult();
-                }
             }
 
             base.OnActionExecuting(context);

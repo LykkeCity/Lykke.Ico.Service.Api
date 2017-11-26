@@ -1,12 +1,19 @@
-﻿using Lykke.Ico.Core.Repositories.AddressPool;
+﻿using Common.Log;
+using CsvHelper;
+using Lykke.Ico.Core.Repositories.AddressPool;
 using Lykke.Ico.Core.Repositories.EmailHistory;
 using Lykke.Ico.Core.Repositories.InvestorHistory;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Infrastructure.Auth;
 using Lykke.Service.IcoApi.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
+using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Lykke.Service.IcoApi.Controllers
@@ -15,6 +22,7 @@ namespace Lykke.Service.IcoApi.Controllers
     [Produces("application/json")]
     public class AdminController : Controller
     {
+        private readonly ILog _log;
         private readonly IInvestorService _investorService;
         private readonly IBtcService _btcService;
         private readonly IEthService _ethService;
@@ -22,10 +30,11 @@ namespace Lykke.Service.IcoApi.Controllers
         private readonly IEmailHistoryRepository _emailHistoryRepository;
         private readonly IInvestorHistoryRepository _investorHistoryRepository;
 
-        public AdminController(IInvestorService investorService, IBtcService btcService, IEthService ethService,
+        public AdminController(ILog log, IInvestorService investorService, IBtcService btcService, IEthService ethService,
             IAddressPoolRepository addressPoolRepository, IEmailHistoryRepository emailHistoryRepository,
             IInvestorHistoryRepository investorHistoryRepository)
         {
+            _log = log;
             _investorService = investorService;
             _btcService = btcService;
             _ethService = ethService;
@@ -110,21 +119,66 @@ namespace Lykke.Service.IcoApi.Controllers
             return Ok(new AddressResponse { Address = address });
         }
 
+        /// <remarks>
+        /// Imports the scv file with keys
+        /// </remarks>
         [AdminAuth]
-        [HttpPost("addresses/pool/add/{count}")]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+        [HttpPost("addresses/pool/import")]
+        [DisableRequestSizeLimit]
+        [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> AddRandomAddressesToPool([Required] int count)
+        public async Task<IActionResult> ImportKeys([FromForm] IFormFile file)
         {
-            for (var i = 0; i < count; i++)
+            using (var reader = new StreamReader(file.OpenReadStream()))
             {
-                var btcKey = _btcService.GeneratePublicKey();
-                var ethKey = _ethService.GeneratePublicKey();
+                await _log.WriteInfoAsync(nameof(AdminController), nameof(ImportKeys), $"Start of public keys import");
 
-                await _addressPoolRepository.AddAsync(ethKey, btcKey);
+                var list = new List<IAddressPoolItem>();
+                var csv = new CsvReader(reader);
+                var counter = 0;
+
+                csv.Configuration.Delimiter = ";";
+                csv.Configuration.Encoding = Encoding.ASCII;
+                csv.Configuration.HasHeaderRecord = true;
+
+                csv.Read();
+                csv.ReadHeader();
+
+                while (csv.Read())
+                {
+                    var record = csv.GetRecord<PublicKeysModel>();
+                    counter++;
+
+                    if (counter % 500 == 0)
+                    {
+                        await _addressPoolRepository.AddBatchAsync(list);
+
+                        list = new List<IAddressPoolItem>();
+                    }
+
+                    list.Add(new AddressPoolItem
+                    {
+                        Id = counter,
+                        BtcPublicKey = record.btcPublic,
+                        EthPublicKey = record.ethPublic
+                    });
+
+                    if (counter % 10000 == 0)
+                    {
+                        await _log.WriteInfoAsync(nameof(AdminController), nameof(ImportKeys), $"{counter} imported keys");
+                    }
+                }
+
+                if (list.Count > 0)
+                {
+                    await _addressPoolRepository.AddBatchAsync(list);
+                }
+
+                await _log.WriteInfoAsync(nameof(AdminController), nameof(ImportKeys), $"{counter} imported keys");
+                await _log.WriteInfoAsync(nameof(AdminController), nameof(ImportKeys), $"End of public keys import");
+
+                return Ok(counter);
             }
-
-            return Ok();
         }
     }
 }

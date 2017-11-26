@@ -1,6 +1,7 @@
 ﻿using Lykke.Ico.Core.Repositories.EmailHistory;
 using Lykke.Ico.Core.Repositories.Investor;
 using Lykke.Ico.Core.Repositories.InvestorHistory;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -109,5 +110,11 @@ namespace Lykke.Service.IcoApi.Models
                 Body = item.Body
             };
         }
+    }
+
+    public class PublicKeysModel
+    {
+        public string btcPublic { get; set; }
+        public string ethPublic { get; set; }
     }
 }

@@ -11,6 +11,7 @@ using Lykke.Ico.Core.Repositories.AddressPool;
 using Lykke.Service.IcoApi.Core.Domain;
 using Lykke.Ico.Core.Repositories.EmailHistory;
 using Lykke.Ico.Core.Repositories.InvestorHistory;
+using Lykke.Ico.Core.Repositories.AddressPoolHistory;
 
 namespace Lykke.Service.IcoApi.Services
 {
@@ -24,6 +25,7 @@ namespace Lykke.Service.IcoApi.Services
         private readonly IAddressPoolRepository _addressPoolRepository;
         private readonly IEmailHistoryRepository _emailHistoryRepository;
         private readonly IInvestorHistoryRepository _investorHistoryRepository;
+        private readonly IAddressPoolHistoryRepository _addressPoolHistoryRepository;
         private readonly IQueuePublisher<InvestorConfirmationMessage> _investorConfirmationQueuePublisher;
         private readonly IQueuePublisher<InvestorSummaryMessage> _investorSummaryQueuePublisher;
 
@@ -35,6 +37,7 @@ namespace Lykke.Service.IcoApi.Services
             IAddressPoolRepository addressPoolRepository,
             IEmailHistoryRepository emailHistoryRepository,
             IInvestorHistoryRepository investorHistoryRepository,
+            IAddressPoolHistoryRepository addressPoolHistoryRepository,
             IQueuePublisher<InvestorConfirmationMessage> investorConfirmationQueuePublisher,
             IQueuePublisher<InvestorSummaryMessage> investorSummaryQueuePublisher)
         {
@@ -46,6 +49,7 @@ namespace Lykke.Service.IcoApi.Services
             _addressPoolRepository = addressPoolRepository;
             _emailHistoryRepository = emailHistoryRepository;
             _investorHistoryRepository = investorHistoryRepository;
+            _addressPoolHistoryRepository = addressPoolHistoryRepository;
             _investorConfirmationQueuePublisher = investorConfirmationQueuePublisher;
             _investorSummaryQueuePublisher = investorSummaryQueuePublisher;
         }
@@ -153,6 +157,7 @@ namespace Lykke.Service.IcoApi.Services
 
             await _emailHistoryRepository.RemoveAsync(email);
             await _investorHistoryRepository.RemoveAsync(email);
+            await _addressPoolHistoryRepository.RemoveAsync(email);
 
             // TODO
             // Remove transations
