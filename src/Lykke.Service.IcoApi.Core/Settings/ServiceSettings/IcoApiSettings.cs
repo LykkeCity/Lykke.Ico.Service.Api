@@ -4,5 +4,6 @@
     {
         public DbSettings Db { get; set; }
         public string BtcNetwork { get; set; }
+        public string EthNetwork { get; set; }
     }
 }

@@ -110,11 +110,5 @@ namespace Lykke.Service.IcoApi.Models
                 Body = item.Body
             };
         }
-    }
-
-    public class PublicKeysModel
-    {
-        public string btcPublic { get; set; }
-        public string ethPublic { get; set; }
-    }
+    }    
 }

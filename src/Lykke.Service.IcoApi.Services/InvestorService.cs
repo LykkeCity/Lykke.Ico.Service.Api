@@ -9,9 +9,7 @@ using Lykke.Ico.Core.Queues.Emails;
 using Lykke.Ico.Core.Queues;
 using Lykke.Ico.Core.Repositories.AddressPool;
 using Lykke.Service.IcoApi.Core.Domain;
-using Lykke.Ico.Core.Repositories.EmailHistory;
-using Lykke.Ico.Core.Repositories.InvestorHistory;
-using Lykke.Ico.Core.Repositories.AddressPoolHistory;
+using Lykke.Ico.Core.Repositories.CampaignInfo;
 
 namespace Lykke.Service.IcoApi.Services
 {
@@ -23,9 +21,7 @@ namespace Lykke.Service.IcoApi.Services
         private readonly IInvestorRepository _investorRepository;
         private readonly IInvestorAttributeRepository _investorAttributeRepository;
         private readonly IAddressPoolRepository _addressPoolRepository;
-        private readonly IEmailHistoryRepository _emailHistoryRepository;
-        private readonly IInvestorHistoryRepository _investorHistoryRepository;
-        private readonly IAddressPoolHistoryRepository _addressPoolHistoryRepository;
+        private readonly ICampaignInfoRepository _campaignInfoRepository;
         private readonly IQueuePublisher<InvestorConfirmationMessage> _investorConfirmationQueuePublisher;
         private readonly IQueuePublisher<InvestorSummaryMessage> _investorSummaryQueuePublisher;
 
@@ -35,9 +31,7 @@ namespace Lykke.Service.IcoApi.Services
             IInvestorRepository investorRepository,
             IInvestorAttributeRepository investorAttributeRepository,
             IAddressPoolRepository addressPoolRepository,
-            IEmailHistoryRepository emailHistoryRepository,
-            IInvestorHistoryRepository investorHistoryRepository,
-            IAddressPoolHistoryRepository addressPoolHistoryRepository,
+            ICampaignInfoRepository campaignInfoRepository,
             IQueuePublisher<InvestorConfirmationMessage> investorConfirmationQueuePublisher,
             IQueuePublisher<InvestorSummaryMessage> investorSummaryQueuePublisher)
         {
@@ -47,9 +41,7 @@ namespace Lykke.Service.IcoApi.Services
             _investorRepository = investorRepository;
             _investorAttributeRepository = investorAttributeRepository;
             _addressPoolRepository = addressPoolRepository;
-            _emailHistoryRepository = emailHistoryRepository;
-            _investorHistoryRepository = investorHistoryRepository;
-            _addressPoolHistoryRepository = addressPoolHistoryRepository;
+            _campaignInfoRepository = campaignInfoRepository;
             _investorConfirmationQueuePublisher = investorConfirmationQueuePublisher;
             _investorSummaryQueuePublisher = investorSummaryQueuePublisher;
         }
@@ -67,8 +59,10 @@ namespace Lykke.Service.IcoApi.Services
                 var token = Guid.NewGuid();
 
                 await _log.WriteInfoAsync(nameof(InvestorService), nameof(RegisterAsync), $"Create investor for email={email} and token={token}");
+
                 await _investorRepository.AddAsync(email, token);
                 await _investorAttributeRepository.SaveAsync(InvestorAttributeType.ConfirmationToken, email, token.ToString());
+                await _campaignInfoRepository.IncrementValue(CampaignInfoType.InvestorsRegistered, 1);
 
                 await SendConfirmationEmail(email, token);
 
@@ -102,65 +96,34 @@ namespace Lykke.Service.IcoApi.Services
                 await _investorRepository.AddAsync(email, confirmationToken);
             }
 
+            await _campaignInfoRepository.IncrementValue(CampaignInfoType.InvestorsConfirmed, 1);
+
             return true;
         }
 
         public async Task UpdateAsync(string email, string tokenAddress, string refundEthAddress, string refundBtcAddress)
         {
             var investor = await _investorRepository.GetAsync(email);
+            var poolItem = await _addressPoolRepository.GetNextFree(email);
 
-            var poolItem = _addressPoolRepository.GetNextFree(email);
             await _log.WriteInfoAsync(nameof(InvestorService), nameof(UpdateAsync), $"Address pool item: {poolItem.ToJson()}");
-
-            var payInEthPublicKey = poolItem.EthPublicKey;
-            var payInEthAddress = _ethService.GetAddressByPublicKey(payInEthPublicKey);
-            var payInBtcPublicKey = poolItem.BtcPublicKey;
-            var payInBtcAddress = _btcService.GetAddressByPublicKey(payInBtcPublicKey);
+            await _campaignInfoRepository.IncrementValue(CampaignInfoType.AddressPoolCurrentSize, -1);
 
             investor.TokenAddress = tokenAddress;
             investor.RefundEthAddress = refundEthAddress;
             investor.RefundBtcAddress = refundBtcAddress;
-            investor.PayInEthPublicKey = payInEthPublicKey;
-            investor.PayInEthAddress = payInEthAddress;
-            investor.PayInBtcPublicKey = payInBtcPublicKey;
-            investor.PayInBtcAddress = payInBtcAddress;
+            investor.PayInEthPublicKey = poolItem.EthPublicKey;
+            investor.PayInEthAddress = _ethService.GetAddressByPublicKey(poolItem.EthPublicKey);
+            investor.PayInBtcPublicKey = poolItem.BtcPublicKey;
+            investor.PayInBtcAddress = _btcService.GetAddressByPublicKey(poolItem.BtcPublicKey);
 
             await _log.WriteInfoAsync(nameof(InvestorService), nameof(UpdateAsync), $"Invertor to save: {investor.ToJson()}");
-
             await _investorRepository.UpdateAsync(investor);
-            await _investorAttributeRepository.SaveAsync(InvestorAttributeType.PayInBtcAddress, email, payInBtcAddress);
-            await _investorAttributeRepository.SaveAsync(InvestorAttributeType.PayInEthAddress, email, payInEthAddress);
-
+            await _investorAttributeRepository.SaveAsync(InvestorAttributeType.PayInBtcAddress, email, investor.PayInBtcAddress);
+            await _investorAttributeRepository.SaveAsync(InvestorAttributeType.PayInEthAddress, email, investor.PayInEthAddress);
             await SendSummaryEmail(investor);
-        }
 
-        public async Task DeleteAsync(string email)
-        {
-            var inverstor = await _investorRepository.GetAsync(email);
-            if (inverstor != null)
-            {
-                if (inverstor.ConfirmationToken.HasValue)
-                {
-                    await _investorAttributeRepository.RemoveAsync(InvestorAttributeType.ConfirmationToken, inverstor.ConfirmationToken.ToString());
-                }
-                if (!string.IsNullOrEmpty(inverstor.PayInBtcAddress))
-                {
-                    await _investorAttributeRepository.RemoveAsync(InvestorAttributeType.PayInBtcAddress, inverstor.PayInBtcPublicKey);
-                }
-                if (!string.IsNullOrEmpty(inverstor.PayInEthAddress))
-                {
-                    await _investorAttributeRepository.RemoveAsync(InvestorAttributeType.PayInEthAddress, inverstor.PayInEthPublicKey);
-                }
-
-                await _investorRepository.RemoveAsync(email);
-            }
-
-            await _emailHistoryRepository.RemoveAsync(email);
-            await _investorHistoryRepository.RemoveAsync(email);
-            await _addressPoolHistoryRepository.RemoveAsync(email);
-
-            // TODO
-            // Remove transations
+            await _campaignInfoRepository.IncrementValue(CampaignInfoType.InvestorsFilledIn, 1);
         }
 
         private async Task SendConfirmationEmail(string email, Guid token)

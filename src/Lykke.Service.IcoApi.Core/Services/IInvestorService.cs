@@ -14,7 +14,5 @@ namespace Lykke.Service.IcoApi.Core.Services
         Task<bool> ConfirmAsync(Guid confirmationToken);
 
         Task UpdateAsync(string email, string tokenAddress, string refundEthAddress, string refundBtcAddress);
-
-        Task DeleteAsync(string email);
     }
 }

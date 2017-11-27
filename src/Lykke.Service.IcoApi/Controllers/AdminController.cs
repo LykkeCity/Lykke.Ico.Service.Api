@@ -1,19 +1,12 @@
 ﻿using Common.Log;
-using CsvHelper;
-using Lykke.Ico.Core.Repositories.AddressPool;
-using Lykke.Ico.Core.Repositories.EmailHistory;
-using Lykke.Ico.Core.Repositories.InvestorHistory;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Infrastructure.Auth;
 using Lykke.Service.IcoApi.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Lykke.Service.IcoApi.Controllers
@@ -24,31 +17,42 @@ namespace Lykke.Service.IcoApi.Controllers
     {
         private readonly ILog _log;
         private readonly IInvestorService _investorService;
+        private readonly IAdminService _adminService;
         private readonly IBtcService _btcService;
         private readonly IEthService _ethService;
-        private readonly IAddressPoolRepository _addressPoolRepository;
-        private readonly IEmailHistoryRepository _emailHistoryRepository;
-        private readonly IInvestorHistoryRepository _investorHistoryRepository;
 
-        public AdminController(ILog log, IInvestorService investorService, IBtcService btcService, IEthService ethService,
-            IAddressPoolRepository addressPoolRepository, IEmailHistoryRepository emailHistoryRepository,
-            IInvestorHistoryRepository investorHistoryRepository)
+        public AdminController(ILog log, IInvestorService investorService, IAdminService adminService, 
+            IBtcService btcService, IEthService ethService)
         {
             _log = log;
             _investorService = investorService;
+            _adminService = adminService;
             _btcService = btcService;
             _ethService = ethService;
-            _addressPoolRepository = addressPoolRepository;
-            _emailHistoryRepository = emailHistoryRepository;
-            _investorHistoryRepository = investorHistoryRepository;
         }
 
+        /// <summary>
+        /// Returns campain info
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("campaign")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> GetCampainInfo()
+        {
+            return Ok(await _adminService.GetCampainInfo());
+        }
+
+        /// <summary>
+        /// Returns investor info
+        /// </summary>
         [AdminAuth]
         [HttpGet("investors/{email}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> GetInvestor(string email)
+        public async Task<IActionResult> GetInvestor([Required] string email)
         {
             var investor = await _investorService.GetAsync(email);
             if (investor == null)
@@ -59,42 +63,65 @@ namespace Lykke.Service.IcoApi.Controllers
             return Ok(FullInvestorResponse.Create(investor));
         }
 
+        /// <summary>
+        /// Removes investor from db. History is not deleted
+        /// </summary>
         [AdminAuth]
         [HttpDelete("investors/{email}")]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> DeleteInvestor(string email)
+        public async Task<IActionResult> DeleteInvestor([Required] string email)
         {
-            await _investorService.DeleteAsync(email);
+            await _adminService.DeleteInvestorAsync(email);
 
             return NoContent();
         }
 
+        /// <summary>
+        /// Returns the history of investor changes
+        /// </summary>
         [AdminAuth]
-        [HttpGet("investors/{email}/changeHistory")]
+        [HttpGet("investors/{email}/history")]
         [ProducesResponseType(typeof(InvestorHistoryResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> GetInvestorHistory(string email)
+        public async Task<IActionResult> GetInvestorHistory([Required] string email)
         {
-            var items = await _investorHistoryRepository.GetAsync(email);
-
-            return Ok(InvestorHistoryResponse.Create(items));
+            return Ok(InvestorHistoryResponse.Create(await _adminService.GetInvestorHistory(email)));
         }
 
+        /// <summary>
+        /// Removes investor history data
+        /// </summary>
         [AdminAuth]
-        [HttpGet("investors/{email}/sentEmails")]
+        [HttpDelete("investors/{email}/history")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> DeleteInvestorHistory([Required] string email)
+        {
+            await _adminService.DeleteInvestorHistoryAsync(email);
+
+            return NoContent();
+        }
+
+        /// <summary>
+        /// Returns the list of emails sent to user
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("investors/{email}/emails")]
         [ProducesResponseType(typeof(InvestorEmailsResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> GetInvestorEmailsHistory(string email)
+        public async Task<IActionResult> GetInvestorEmails([Required] string email)
         {
-            var items = await _emailHistoryRepository.GetAsync(email);
+            return Ok(InvestorEmailsResponse.Create(await _adminService.GetInvestorEmails(email)));
+        }              
 
-            return Ok(InvestorEmailsResponse.Create(items));
-        }
-
+        /// <summary>
+        /// Generates and returns random etherium address
+        /// </summary>
         [AdminAuth]
         [HttpGet("addresses/random/eth")]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
@@ -107,6 +134,9 @@ namespace Lykke.Service.IcoApi.Controllers
             return Ok(new AddressResponse { Address = address } );
         }
 
+        /// <summary>
+        /// Generates and returns random bitcoin address
+        /// </summary>
         [AdminAuth]
         [HttpGet("addresses/random/btc")]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
@@ -131,53 +161,7 @@ namespace Lykke.Service.IcoApi.Controllers
         {
             using (var reader = new StreamReader(file.OpenReadStream()))
             {
-                await _log.WriteInfoAsync(nameof(AdminController), nameof(ImportKeys), $"Start of public keys import");
-
-                var list = new List<IAddressPoolItem>();
-                var csv = new CsvReader(reader);
-                var counter = 0;
-
-                csv.Configuration.Delimiter = ";";
-                csv.Configuration.Encoding = Encoding.ASCII;
-                csv.Configuration.HasHeaderRecord = true;
-
-                csv.Read();
-                csv.ReadHeader();
-
-                while (csv.Read())
-                {
-                    var record = csv.GetRecord<PublicKeysModel>();
-                    counter++;
-
-                    if (counter % 500 == 0)
-                    {
-                        await _addressPoolRepository.AddBatchAsync(list);
-
-                        list = new List<IAddressPoolItem>();
-                    }
-
-                    list.Add(new AddressPoolItem
-                    {
-                        Id = counter,
-                        BtcPublicKey = record.btcPublic,
-                        EthPublicKey = record.ethPublic
-                    });
-
-                    if (counter % 10000 == 0)
-                    {
-                        await _log.WriteInfoAsync(nameof(AdminController), nameof(ImportKeys), $"{counter} imported keys");
-                    }
-                }
-
-                if (list.Count > 0)
-                {
-                    await _addressPoolRepository.AddBatchAsync(list);
-                }
-
-                await _log.WriteInfoAsync(nameof(AdminController), nameof(ImportKeys), $"{counter} imported keys");
-                await _log.WriteInfoAsync(nameof(AdminController), nameof(ImportKeys), $"End of public keys import");
-
-                return Ok(counter);
+                return Ok(await _adminService.ImportPublicKeys(reader));
             }
         }
     }

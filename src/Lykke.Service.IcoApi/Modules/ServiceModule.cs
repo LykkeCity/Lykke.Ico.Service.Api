@@ -4,6 +4,7 @@ using Lykke.Ico.Core.Queues;
 using Lykke.Ico.Core.Queues.Emails;
 using Lykke.Ico.Core.Repositories.AddressPool;
 using Lykke.Ico.Core.Repositories.AddressPoolHistory;
+using Lykke.Ico.Core.Repositories.CampaignInfo;
 using Lykke.Ico.Core.Repositories.EmailHistory;
 using Lykke.Ico.Core.Repositories.Investor;
 using Lykke.Ico.Core.Repositories.InvestorAttribute;
@@ -40,19 +41,6 @@ namespace Lykke.Service.IcoApi.Modules
             builder.RegisterType<ShutdownManager>()
                 .As<IShutdownManager>();
                 
-            builder.RegisterType<InvestorService>()
-                .As<IInvestorService>()
-                .SingleInstance();
-
-            builder.RegisterType<BtcService>()
-                .As<IBtcService>()
-                .WithParameter(TypedParameter.From(_settings.CurrentValue.BtcNetwork))
-                .SingleInstance();
-
-            builder.RegisterType<EthService>()
-                .As<IEthService>()
-                .SingleInstance();
-
             builder.RegisterType<InvestorRepository>()
                 .As<IInvestorRepository>()
                 .WithParameter(TypedParameter.From(connectionStringManager))
@@ -83,6 +71,29 @@ namespace Lykke.Service.IcoApi.Modules
                 .WithParameter(TypedParameter.From(connectionStringManager))
                 .SingleInstance();
 
+            builder.RegisterType<CampaignInfoRepository>()
+                .As<ICampaignInfoRepository>()
+                .WithParameter(TypedParameter.From(connectionStringManager))
+                .SingleInstance();
+
+            builder.RegisterType<InvestorService>()
+                .As<IInvestorService>()
+                .SingleInstance();
+
+            builder.RegisterType<AdminService>()
+                .As<IAdminService>()
+                .WithParameter("btcNetwork", _settings.CurrentValue.BtcNetwork)
+                .WithParameter("ethNetwork", _settings.CurrentValue.EthNetwork)
+                .SingleInstance();
+
+            builder.RegisterType<BtcService>()
+                .As<IBtcService>()
+                .WithParameter(TypedParameter.From(_settings.CurrentValue.BtcNetwork))
+                .SingleInstance();
+
+            builder.RegisterType<EthService>()
+                .As<IEthService>()
+                .SingleInstance();
 
             builder.RegisterType<QueuePublisher<InvestorConfirmationMessage>>()
                 .As<IQueuePublisher<InvestorConfirmationMessage>>()
