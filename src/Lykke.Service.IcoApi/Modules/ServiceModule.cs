@@ -12,6 +12,7 @@ using Lykke.Ico.Core.Repositories.InvestorHistory;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
 using Lykke.Service.IcoApi.Services;
+using Lykke.Service.IcoExRate.Client;
 using Lykke.SettingsReader;
 
 namespace Lykke.Service.IcoApi.Modules
@@ -40,7 +41,9 @@ namespace Lykke.Service.IcoApi.Modules
 
             builder.RegisterType<ShutdownManager>()
                 .As<IShutdownManager>();
-                
+
+            builder.RegisterIcoExRateClient(_settings.CurrentValue.IcoExRateServiceUrl, _log);
+
             builder.RegisterType<InvestorRepository>()
                 .As<IInvestorRepository>()
                 .WithParameter(TypedParameter.From(connectionStringManager))

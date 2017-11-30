@@ -144,7 +144,11 @@ namespace Lykke.Service.IcoApi.Controllers
                 return BadRequest(@"The token address is already defined");
             }
 
-            await _log.WriteInfoAsync( nameof(InvestorController), nameof(Post), $"Save investor: {model.ToJson()}");
+            await _log.WriteInfoAsync(
+                nameof(InvestorController), 
+                nameof(Post), 
+                $"Save investor with email={email} from ip={GetRequestIP()}: {model.ToJson()}");
+
             await _investorService.UpdateAsync(email, model.TokenAddress, model.RefundEthAddress, model.RefundBtcAddress);
 
             return Ok();

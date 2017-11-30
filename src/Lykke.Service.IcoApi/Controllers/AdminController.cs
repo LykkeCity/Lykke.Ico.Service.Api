@@ -2,8 +2,11 @@
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Infrastructure.Auth;
 using Lykke.Service.IcoApi.Models;
+using Lykke.Service.IcoExRate.Client;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Net;
@@ -20,15 +23,17 @@ namespace Lykke.Service.IcoApi.Controllers
         private readonly IAdminService _adminService;
         private readonly IBtcService _btcService;
         private readonly IEthService _ethService;
+        private readonly IIcoExRateClient _icoExRateClient;
 
         public AdminController(ILog log, IInvestorService investorService, IAdminService adminService, 
-            IBtcService btcService, IEthService ethService)
+            IBtcService btcService, IEthService ethService, IIcoExRateClient icoExRateClient)
         {
             _log = log;
             _investorService = investorService;
             _adminService = adminService;
             _btcService = btcService;
             _ethService = ethService;
+            _icoExRateClient = icoExRateClient;
         }
 
         /// <summary>
@@ -163,6 +168,20 @@ namespace Lykke.Service.IcoApi.Controllers
             {
                 return Ok(await _adminService.ImportPublicKeys(reader));
             }
+        }
+
+        [AdminAuth]
+        [HttpGet("rates/latest")]
+        public async Task<IList<IcoExRate.Client.AutorestClient.Models.AverageRateResponse>> GetLatestRates()
+        {
+            return await _icoExRateClient.GetAverageRates(DateTime.UtcNow);
+        }
+
+        [AdminAuth]
+        [HttpGet("rates/{dateTimeUtc}")]
+        public async Task<IList<IcoExRate.Client.AutorestClient.Models.AverageRateResponse>> GetLatestRates([Required] DateTime dateTimeUtc)
+        {
+            return await _icoExRateClient.GetAverageRates(dateTimeUtc.ToUniversalTime());
         }
     }
 }
