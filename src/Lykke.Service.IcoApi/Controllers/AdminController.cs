@@ -126,57 +126,10 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
-        /// Returns etherium address by public key
+        /// Imports the scv file with public keys
         /// </summary>
         [AdminAuth]
-        [HttpGet("addresses/eth/{key}")]
-        public AddressResponse GetEthAddressByKey([Required] string key)
-        {
-            return new AddressResponse { Address = _ethService.GetAddressByPublicKey(key) };
-        }
-
-        /// <summary>
-        /// Returns bitcoin address by public key
-        /// </summary>
-        [AdminAuth]
-        [HttpGet("addresses/btc/{key}")]
-        public AddressResponse GetBtcAddressByKey([Required] string key)
-        {
-            return new AddressResponse { Address = _btcService.GetAddressByPublicKey(key) };
-        }
-
-
-        /// <summary>
-        /// Generates and returns random etherium address
-        /// </summary>
-        [AdminAuth]
-        [HttpGet("addresses/eth/random")]
-        public AddressResponse GetRandomEthAddress()
-        {
-            var key = _ethService.GeneratePublicKey();
-            var address = _ethService.GetAddressByPublicKey(key);
-
-            return new AddressResponse { Address = address };
-        }
-
-        /// <summary>
-        /// Generates and returns random bitcoin address
-        /// </summary>
-        [AdminAuth]
-        [HttpGet("addresses/btc/random")]
-        public AddressResponse GetRandomBtcAddress()
-        {
-            var key = _btcService.GeneratePublicKey();
-            var address = _btcService.GetAddressByPublicKey(key);
-
-            return new AddressResponse { Address = address };
-        }
-
-        /// <remarks>
-        /// Imports the scv file with keys
-        /// </remarks>
-        [AdminAuth]
-        [HttpPost("addresses/pool/import")]
+        [HttpPost("pool/import")]
         [DisableRequestSizeLimit]
         [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
@@ -188,6 +141,9 @@ namespace Lykke.Service.IcoApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Returns latest exchange rates
+        /// </summary>
         [AdminAuth]
         [HttpGet("rates/latest")]
         public async Task<IList<IcoExRate.Client.AutorestClient.Models.AverageRateResponse>> GetLatestRates()
@@ -195,6 +151,9 @@ namespace Lykke.Service.IcoApi.Controllers
             return await _icoExRateClient.GetAverageRates(DateTime.UtcNow);
         }
 
+        /// <summary>
+        /// Returns exchange rate for provided pair and time
+        /// </summary>
         [AdminAuth]
         [HttpGet("rates/{assetPair}/{dateTimeUtc}")]
         public async Task<IcoExRate.Client.AutorestClient.Models.AverageRateResponse> GetRatesByPairAndDateTime(
@@ -204,6 +163,52 @@ namespace Lykke.Service.IcoApi.Controllers
             var pair = Enum.Parse<IcoExRate.Client.AutorestClient.Models.Pair>(Enum.GetName(typeof(AssetPair), assetPair), true);
 
             return await _icoExRateClient.GetAverageRate(pair, dateTimeUtc.ToUniversalTime());
+        }
+
+        /// <summary>
+        /// Returns etherium address by public key
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("eth/address/{key}")]
+        public AddressResponse GetEthAddressByKey([Required] string key)
+        {
+            return new AddressResponse { Address = _ethService.GetAddressByPublicKey(key) };
+        }
+
+        /// <summary>
+        /// Generates and returns random etherium address
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("eth/address/random")]
+        public AddressResponse GetRandomEthAddress()
+        {
+            var key = _ethService.GeneratePublicKey();
+            var address = _ethService.GetAddressByPublicKey(key);
+
+            return new AddressResponse { Address = address };
+        }
+
+        /// <summary>
+        /// Returns bitcoin address by public key
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("btc/address/{key}")]
+        public AddressResponse GetBtcAddressByKey([Required] string key)
+        {
+            return new AddressResponse { Address = _btcService.GetAddressByPublicKey(key) };
+        }
+
+        /// <summary>
+        /// Generates and returns random bitcoin address
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("btc/address/random")]
+        public AddressResponse GetRandomBtcAddress()
+        {
+            var key = _btcService.GeneratePublicKey();
+            var address = _btcService.GetAddressByPublicKey(key);
+
+            return new AddressResponse { Address = address };
         }
 
         /// <summary>
