@@ -110,5 +110,11 @@ namespace Lykke.Service.IcoApi.Models
                 Body = item.Body
             };
         }
-    }    
+    }
+
+    public enum AssetPair
+    {
+        BtcUsd,
+        EthUsd
+    }
 }

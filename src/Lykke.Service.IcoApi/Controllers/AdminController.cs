@@ -178,10 +178,14 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         [AdminAuth]
-        [HttpGet("rates/{dateTimeUtc}")]
-        public async Task<IList<IcoExRate.Client.AutorestClient.Models.AverageRateResponse>> GetLatestRates([Required] DateTime dateTimeUtc)
+        [HttpGet("rates/{assetPair}/{dateTimeUtc}")]
+        public async Task<IcoExRate.Client.AutorestClient.Models.AverageRateResponse> GetRatesByPairAndDateTime(
+            [Required] AssetPair assetPair,
+            [Required] DateTime dateTimeUtc)
         {
-            return await _icoExRateClient.GetAverageRates(dateTimeUtc.ToUniversalTime());
+            var pair = Enum.Parse<IcoExRate.Client.AutorestClient.Models.Pair>(Enum.GetName(typeof(AssetPair), assetPair), true);
+
+            return await _icoExRateClient.GetAverageRate(pair, dateTimeUtc.ToUniversalTime());
         }
     }
 }
