@@ -12,6 +12,9 @@ using System.Collections.Generic;
 using System.IO;
 using CsvHelper;
 using System.Text;
+using NBitcoin;
+using System.Linq;
+using QBitNinja.Client;
 
 namespace Lykke.Service.IcoApi.Services
 {

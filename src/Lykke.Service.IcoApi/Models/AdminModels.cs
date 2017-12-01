@@ -4,6 +4,7 @@ using Lykke.Ico.Core.Repositories.InvestorHistory;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace Lykke.Service.IcoApi.Models
@@ -116,5 +117,14 @@ namespace Lykke.Service.IcoApi.Models
     {
         BtcUsd,
         EthUsd
+    }
+
+    public class SendBtcRequest
+    {
+        [Required]
+        public string BtcAddress { get; set; }
+
+        [Required]
+        public decimal Amount { get; set; }
     }
 }

@@ -91,7 +91,8 @@ namespace Lykke.Service.IcoApi.Modules
 
             builder.RegisterType<BtcService>()
                 .As<IBtcService>()
-                .WithParameter(TypedParameter.From(_settings.CurrentValue.BtcNetwork))
+                .WithParameter("btcNetwork", _settings.CurrentValue.BtcNetwork)
+                .WithParameter("testSecretKey", _settings.CurrentValue.BtcTestSecretKey)
                 .SingleInstance();
 
             builder.RegisterType<EthService>()

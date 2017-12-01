@@ -5,6 +5,7 @@ using Lykke.Service.IcoApi.Models;
 using Lykke.Service.IcoExRate.Client;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -122,36 +123,53 @@ namespace Lykke.Service.IcoApi.Controllers
         public async Task<IActionResult> GetInvestorEmails([Required] string email)
         {
             return Ok(InvestorEmailsResponse.Create(await _adminService.GetInvestorEmails(email)));
-        }              
+        }
+
+        /// <summary>
+        /// Returns etherium address by public key
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("addresses/eth/{key}")]
+        public AddressResponse GetEthAddressByKey([Required] string key)
+        {
+            return new AddressResponse { Address = _ethService.GetAddressByPublicKey(key) };
+        }
+
+        /// <summary>
+        /// Returns bitcoin address by public key
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("addresses/btc/{key}")]
+        public AddressResponse GetBtcAddressByKey([Required] string key)
+        {
+            return new AddressResponse { Address = _btcService.GetAddressByPublicKey(key) };
+        }
+
 
         /// <summary>
         /// Generates and returns random etherium address
         /// </summary>
         [AdminAuth]
-        [HttpGet("addresses/random/eth")]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
-        public IActionResult GetRandomEthAddress()
+        [HttpGet("addresses/eth/random")]
+        public AddressResponse GetRandomEthAddress()
         {
             var key = _ethService.GeneratePublicKey();
             var address = _ethService.GetAddressByPublicKey(key);
 
-            return Ok(new AddressResponse { Address = address } );
+            return new AddressResponse { Address = address };
         }
 
         /// <summary>
         /// Generates and returns random bitcoin address
         /// </summary>
         [AdminAuth]
-        [HttpGet("addresses/random/btc")]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
-        public IActionResult GetRandomBtcAddress()
+        [HttpGet("addresses/btc/random")]
+        public AddressResponse GetRandomBtcAddress()
         {
             var key = _btcService.GeneratePublicKey();
             var address = _btcService.GetAddressByPublicKey(key);
 
-            return Ok(new AddressResponse { Address = address });
+            return new AddressResponse { Address = address };
         }
 
         /// <remarks>
@@ -186,6 +204,28 @@ namespace Lykke.Service.IcoApi.Controllers
             var pair = Enum.Parse<IcoExRate.Client.AutorestClient.Models.Pair>(Enum.GetName(typeof(AssetPair), assetPair), true);
 
             return await _icoExRateClient.GetAverageRate(pair, dateTimeUtc.ToUniversalTime());
+        }
+
+        /// <summary>
+        /// Returns bitcoin address balance
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("btc/{address}/balance")]
+        public decimal GetBtcBalance([Required] string address)
+        {
+            return _btcService.GetBalance(address);
+        }
+
+        /// <summary>
+        /// Returns bitcoin address by public key
+        /// </summary>
+        [AdminAuth]
+        [HttpPost("btc/{address}/send/{amount}")]
+        public IActionResult SendBtc([Required] string address, [Required] decimal amount)
+        {
+            var result = _btcService.SendBtcToAddress(address, amount);
+
+            return Ok(JsonConvert.DeserializeObject(result));
         }
     }
 }
