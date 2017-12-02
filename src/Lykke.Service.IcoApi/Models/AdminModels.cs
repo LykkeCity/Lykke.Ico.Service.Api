@@ -1,4 +1,6 @@
-﻿using Lykke.Ico.Core.Repositories.EmailHistory;
+﻿using Lykke.Ico.Core;
+using Lykke.Ico.Core.Repositories.CryptoInvestment;
+using Lykke.Ico.Core.Repositories.EmailHistory;
 using Lykke.Ico.Core.Repositories.Investor;
 using Lykke.Ico.Core.Repositories.InvestorHistory;
 using Microsoft.AspNetCore.Http;
@@ -109,6 +111,62 @@ namespace Lykke.Service.IcoApi.Models
                 Type = item.Type,
                 Subject = item.Subject,
                 Body = item.Body
+            };
+        }
+    }
+
+    public class InvestorTransactionsResponse
+    {
+        public InvestorTransactionModel[] Transactions { get; set; }
+
+        public static InvestorTransactionsResponse Create(IEnumerable<ICryptoInvestment> transactions)
+        {
+            return new InvestorTransactionsResponse
+            {
+                Transactions = transactions.Select(f => InvestorTransactionModel.Create(f)).ToArray()
+            };
+        }
+    }
+
+    public class InvestorTransactionModel
+    {
+        public string Email { get; set; }
+
+        public string InternalId { get; set; }
+
+        public DateTime WhenUtc { get; set; }
+
+        public CurrencyType Currency { get; set; }
+
+        public string Transaction { get; set; }
+
+        public decimal Amount { get; set; }
+
+        public decimal AmountUsd { get; set; }
+
+        public decimal AmountVld { get; set; }
+
+        public decimal ExchangeRate { get; set; }
+
+        public decimal ExchangeRateVldUsd { get; set; }
+
+        public string ExchangeRateContext { get; set; }
+
+        public static InvestorTransactionModel Create(ICryptoInvestment item)
+        {
+            return new InvestorTransactionModel
+            {
+                Email = item.InvestorEmail,
+                InternalId = item.TransactionId,
+                WhenUtc = item.BlockTimestamp,
+                Currency = item.CurrencyType,
+                Transaction = item.CurrencyType == CurrencyType.Bitcoin ? item.TransactionId.Substring(0, item.TransactionId.IndexOf("-")) : item.TransactionId,
+                Amount = item.Amount,
+                AmountUsd = item.AmountUsd,
+                AmountVld = item.AmountVld,
+                ExchangeRateVldUsd = item.Price,
+                ExchangeRate = item.ExchangeRate,
+                ExchangeRateContext = item.Context
             };
         }
     }

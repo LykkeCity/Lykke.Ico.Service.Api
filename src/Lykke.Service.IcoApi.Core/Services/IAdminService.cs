@@ -1,4 +1,5 @@
-﻿using Lykke.Ico.Core.Repositories.EmailHistory;
+﻿using Lykke.Ico.Core.Repositories.CryptoInvestment;
+using Lykke.Ico.Core.Repositories.EmailHistory;
 using Lykke.Ico.Core.Repositories.InvestorHistory;
 using System.Collections.Generic;
 using System.IO;
@@ -14,5 +15,6 @@ namespace Lykke.Service.IcoApi.Core.Services
         Task DeleteInvestorAsync(string email);
         Task DeleteInvestorHistoryAsync(string email);
         Task<int> ImportPublicKeys(StreamReader reader);
+        Task<IEnumerable<ICryptoInvestment>> GetInvestorTransactions(string email);
     }
 }

@@ -42,12 +42,9 @@ namespace Lykke.Service.IcoApi.Controllers
         /// </summary>
         [AdminAuth]
         [HttpGet("campaign")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> GetCampainInfo()
+        public async Task<Dictionary<string, string>> GetCampainInfo()
         {
-            return Ok(await _adminService.GetCampainInfo());
+            return await _adminService.GetCampainInfo();
         }
 
         /// <summary>
@@ -57,7 +54,6 @@ namespace Lykke.Service.IcoApi.Controllers
         [HttpGet("investors/{email}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> GetInvestor([Required] string email)
         {
             var investor = await _investorService.GetAsync(email);
@@ -74,14 +70,9 @@ namespace Lykke.Service.IcoApi.Controllers
         /// </summary>
         [AdminAuth]
         [HttpDelete("investors/{email}")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> DeleteInvestor([Required] string email)
+        public async Task DeleteInvestor([Required] string email)
         {
             await _adminService.DeleteInvestorAsync(email);
-
-            return NoContent();
         }
 
         /// <summary>
@@ -89,12 +80,9 @@ namespace Lykke.Service.IcoApi.Controllers
         /// </summary>
         [AdminAuth]
         [HttpGet("investors/{email}/history")]
-        [ProducesResponseType(typeof(InvestorHistoryResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> GetInvestorHistory([Required] string email)
+        public async Task<InvestorHistoryResponse> GetInvestorHistory([Required] string email)
         {
-            return Ok(InvestorHistoryResponse.Create(await _adminService.GetInvestorHistory(email)));
+            return InvestorHistoryResponse.Create(await _adminService.GetInvestorHistory(email));
         }
 
         /// <summary>
@@ -102,14 +90,9 @@ namespace Lykke.Service.IcoApi.Controllers
         /// </summary>
         [AdminAuth]
         [HttpDelete("investors/{email}/history")]
-        [ProducesResponseType((int)HttpStatusCode.NoContent)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> DeleteInvestorHistory([Required] string email)
+        public async Task DeleteInvestorHistory([Required] string email)
         {
             await _adminService.DeleteInvestorHistoryAsync(email);
-
-            return NoContent();
         }
 
         /// <summary>
@@ -117,12 +100,19 @@ namespace Lykke.Service.IcoApi.Controllers
         /// </summary>
         [AdminAuth]
         [HttpGet("investors/{email}/emails")]
-        [ProducesResponseType(typeof(InvestorEmailsResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> GetInvestorEmails([Required] string email)
+        public async Task<InvestorEmailsResponse> GetInvestorEmails([Required] string email)
         {
-            return Ok(InvestorEmailsResponse.Create(await _adminService.GetInvestorEmails(email)));
+            return InvestorEmailsResponse.Create(await _adminService.GetInvestorEmails(email));
+        }
+
+        /// <summary>
+        /// Returns the list of investor transactions
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("investors/{email}/transactions")]
+        public async Task<InvestorTransactionsResponse> GetInvestorTransactions([Required] string email)
+        {
+            return InvestorTransactionsResponse.Create(await _adminService.GetInvestorTransactions(email));
         }
 
         /// <summary>
@@ -131,13 +121,11 @@ namespace Lykke.Service.IcoApi.Controllers
         [AdminAuth]
         [HttpPost("pool/import")]
         [DisableRequestSizeLimit]
-        [ProducesResponseType(typeof(int), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> ImportKeys([FromForm] IFormFile file)
+        public async Task ImportKeys([FromForm] IFormFile file)
         {
             using (var reader = new StreamReader(file.OpenReadStream()))
             {
-                return Ok(await _adminService.ImportPublicKeys(reader));
+                await _adminService.ImportPublicKeys(reader);
             }
         }
 

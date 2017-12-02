@@ -5,6 +5,7 @@ using Lykke.Ico.Core.Queues.Emails;
 using Lykke.Ico.Core.Repositories.AddressPool;
 using Lykke.Ico.Core.Repositories.AddressPoolHistory;
 using Lykke.Ico.Core.Repositories.CampaignInfo;
+using Lykke.Ico.Core.Repositories.CryptoInvestment;
 using Lykke.Ico.Core.Repositories.EmailHistory;
 using Lykke.Ico.Core.Repositories.Investor;
 using Lykke.Ico.Core.Repositories.InvestorAttribute;
@@ -76,6 +77,11 @@ namespace Lykke.Service.IcoApi.Modules
 
             builder.RegisterType<CampaignInfoRepository>()
                 .As<ICampaignInfoRepository>()
+                .WithParameter(TypedParameter.From(connectionStringManager))
+                .SingleInstance();
+
+            builder.RegisterType<CryptoInvestmentRepository>()
+                .As<ICryptoInvestmentRepository>()
                 .WithParameter(TypedParameter.From(connectionStringManager))
                 .SingleInstance();
 

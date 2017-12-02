@@ -21,6 +21,8 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Lykke.Service.IcoApi.Infrastructure;
 using Microsoft.AspNetCore.Http.Features;
+using Lykke.AzureStorage.Tables.Entity.Metamodel;
+using Lykke.AzureStorage.Tables.Entity.Metamodel.Providers;
 
 namespace Lykke.Service.IcoApi
 {
@@ -71,8 +73,11 @@ namespace Lykke.Service.IcoApi
 
                 services.AddCors();
 
+                EntityMetamodel.Configure(new AnnotationsBasedMetamodelProvider());
+
                 var builder = new ContainerBuilder();
                 var appSettings = Configuration.LoadSettings<AppSettings>();
+
                 Log = CreateLogWithSlack(services, appSettings);
 
                 builder.RegisterInstance(Log)

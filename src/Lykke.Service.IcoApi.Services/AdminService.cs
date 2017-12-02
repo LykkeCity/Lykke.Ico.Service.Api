@@ -15,6 +15,7 @@ using System.Text;
 using NBitcoin;
 using System.Linq;
 using QBitNinja.Client;
+using Lykke.Ico.Core.Repositories.CryptoInvestment;
 
 namespace Lykke.Service.IcoApi.Services
 {
@@ -30,6 +31,7 @@ namespace Lykke.Service.IcoApi.Services
         private readonly IAddressPoolHistoryRepository _addressPoolHistoryRepository;
         private readonly ICampaignInfoRepository _campaignInfoRepository;
         private readonly IAddressPoolRepository _addressPoolRepository;
+        private readonly ICryptoInvestmentRepository _cryptoInvestmentRepository;        
 
         public AdminService(string btcNetwork,
             string ethNetwork,
@@ -40,18 +42,20 @@ namespace Lykke.Service.IcoApi.Services
             IInvestorHistoryRepository investorHistoryRepository,
             IAddressPoolHistoryRepository addressPoolHistoryRepository,
             ICampaignInfoRepository campaignInfoRepository,
-            IAddressPoolRepository addressPoolRepository)
+            IAddressPoolRepository addressPoolRepository,
+            ICryptoInvestmentRepository cryptoInvestmentRepository)
         {
             _btcNetwork = btcNetwork;
             _ethNetwork = ethNetwork;
             _log = log;
             _investorRepository = investorRepository;
             _investorAttributeRepository = investorAttributeRepository;
-            _emailHistoryRepository = emailHistoryRepository;
             _investorHistoryRepository = investorHistoryRepository;
+            _emailHistoryRepository = emailHistoryRepository;
             _addressPoolHistoryRepository = addressPoolHistoryRepository;
             _campaignInfoRepository = campaignInfoRepository;
             _addressPoolRepository = addressPoolRepository;
+            _cryptoInvestmentRepository = cryptoInvestmentRepository;
         }
 
         public async Task<Dictionary<string, string>> GetCampainInfo()
@@ -101,6 +105,11 @@ namespace Lykke.Service.IcoApi.Services
         public async Task<IEnumerable<IEmailHistoryItem>> GetInvestorEmails(string email)
         {
             return await _emailHistoryRepository.GetAsync(email);
+        }
+
+        public async Task<IEnumerable<ICryptoInvestment>> GetInvestorTransactions(string email)
+        {
+            return await _cryptoInvestmentRepository.GetByEmailAsync(email);
         }
 
         public async Task<int> ImportPublicKeys(StreamReader reader)
