@@ -55,7 +55,7 @@ namespace Lykke.Service.IcoApi.Services
             return unspentCoins.Sum(x => x.Amount.ToDecimal(MoneyUnit.BTC));
         }
 
-        public string SendBtcToAddress(string address, decimal amount)
+        public string SendToAddress(string address, decimal amount)
         {
             var destinationAddress = BitcoinAddress.Create(address);
             var testWallet = new BitcoinSecret(_testSecretKey);
@@ -87,7 +87,7 @@ namespace Lykke.Service.IcoApi.Services
                 throw new Exception($"Failed to broadcast. ErrorCode : {broadcastResponse.Error.ErrorCode}, Reason: {broadcastResponse.Error.Reason}");
             }
 
-            return tx.ToString();
+            return tx.GetHash().ToString();
         }
     }
 }

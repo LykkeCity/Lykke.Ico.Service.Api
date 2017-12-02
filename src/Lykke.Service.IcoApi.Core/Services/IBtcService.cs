@@ -6,6 +6,6 @@
         string GetAddressByPublicKey(string key);
         string GeneratePublicKey();
         decimal GetBalance(string address);
-        string SendBtcToAddress(string address, decimal amount);
+        string SendToAddress(string address, decimal amount);
     }
 }

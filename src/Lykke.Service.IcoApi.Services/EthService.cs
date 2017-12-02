@@ -2,11 +2,26 @@
 using Nethereum.Hex.HexConvertors.Extensions;
 using Nethereum.Signer;
 using Nethereum.Util;
+using Nethereum.Web3;
+using System.Threading.Tasks;
 
 namespace Lykke.Service.IcoApi.Services
 {
     public class EthService : IEthService
     {
+        private readonly string _ethNetworkUrl;
+        private readonly string _testSecretKey;
+
+        public EthService(string ethNetwork, string testSecretKey)
+        {
+            _testSecretKey = testSecretKey;
+
+            if (ethNetwork.ToLower() == "ropsten")
+            {
+                _ethNetworkUrl = "https://ropsten.infura.io";
+            }
+        }
+
         public string GeneratePublicKey()
         {
             return EthECKey.GenerateKey().GetPubKey().ToHex(true);
@@ -32,6 +47,28 @@ namespace Lykke.Service.IcoApi.Services
             {
                 return false;
             }
+        }
+
+        public async Task<decimal> GetBalance(string address)
+        {
+            var web3 = new Web3(_ethNetworkUrl);
+
+            var wei = await web3.Eth.GetBalance.SendRequestAsync(address);
+            var ethers = Web3.Convert.FromWei(wei);
+
+            return ethers;
+        }
+
+        public async Task<string> SendToAddress(string address, decimal amount)
+        {
+            var web3 = new Web3(_ethNetworkUrl);
+            var senderAddress = Web3.GetAddressFromPrivateKey(_testSecretKey);
+            var txCount = await web3.Eth.Transactions.GetTransactionCount.SendRequestAsync(senderAddress);
+            var wei = Web3.Convert.ToWei(amount);
+            var encoded = Web3.OfflineTransactionSigner.SignTransaction(_testSecretKey, address, wei, txCount.Value);
+            var txId = await web3.Eth.Transactions.SendRawTransaction.SendRequestAsync("0x" + encoded);
+
+            return txId;
         }
     }
 }

@@ -166,7 +166,7 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
-        /// Returns etherium address by public key
+        /// Returns ethereum address by public key
         /// </summary>
         [AdminAuth]
         [HttpGet("eth/address/{key}")]
@@ -176,7 +176,7 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
-        /// Generates and returns random etherium address
+        /// Generates and returns random ethereum address
         /// </summary>
         [AdminAuth]
         [HttpGet("eth/address/random")]
@@ -186,6 +186,26 @@ namespace Lykke.Service.IcoApi.Controllers
             var address = _ethService.GetAddressByPublicKey(key);
 
             return new AddressResponse { Address = address };
+        }
+
+        /// <summary>
+        /// Returns ether address balance
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("eth/{address}/balance")]
+        public async Task<decimal> GetEthBalance([Required] string address)
+        {
+            return await _ethService.GetBalance(address);
+        }
+
+        /// <summary>
+        /// Sends ethers to address
+        /// </summary>
+        [AdminAuth]
+        [HttpPost("eth/{address}/send/{amount}")]
+        public async Task<string> SendEth([Required] string address, [Required] decimal amount)
+        {
+            return await _ethService.SendToAddress(address, amount);
         }
 
         /// <summary>
@@ -212,7 +232,7 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
-        /// Returns bitcoin address balance
+        /// Returns address balance
         /// </summary>
         [AdminAuth]
         [HttpGet("btc/{address}/balance")]
@@ -222,15 +242,13 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
-        /// Returns bitcoin address by public key
+        /// Sends bitcoins to address
         /// </summary>
         [AdminAuth]
         [HttpPost("btc/{address}/send/{amount}")]
-        public IActionResult SendBtc([Required] string address, [Required] decimal amount)
+        public string SendBtc([Required] string address, [Required] decimal amount)
         {
-            var result = _btcService.SendBtcToAddress(address, amount);
-
-            return Ok(JsonConvert.DeserializeObject(result));
+            return _btcService.SendToAddress(address, amount);
         }
     }
 }

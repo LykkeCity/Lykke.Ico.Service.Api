@@ -97,6 +97,8 @@ namespace Lykke.Service.IcoApi.Modules
 
             builder.RegisterType<EthService>()
                 .As<IEthService>()
+                .WithParameter("ethNetwork", _settings.CurrentValue.EthNetwork)
+                .WithParameter("testSecretKey", _settings.CurrentValue.EthTestSecretKey)
                 .SingleInstance();
 
             builder.RegisterType<QueuePublisher<InvestorConfirmationMessage>>()

@@ -13,6 +13,7 @@
     <PackageReference Include="Lykke.Common" Version="3.0.2" />
     <PackageReference Include="NBitcoin" Version="4.0.0.44" />
     <PackageReference Include="Nethereum.Signer" Version="2.1.0" />
+    <PackageReference Include="Nethereum.Web3" Version="2.1.0" />
     <PackageReference Include="QBitNinja.Client" Version="1.0.3.44" />
   </ItemGroup>
 
