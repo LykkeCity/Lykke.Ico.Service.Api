@@ -4,7 +4,6 @@ using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Ico.Core.Repositories.Investor;
 using Lykke.Ico.Core.Repositories.InvestorAttribute;
 using Lykke.Ico.Core.Repositories.AddressPool;
-using Lykke.Ico.Core.Repositories.EmailHistory;
 using Lykke.Ico.Core.Repositories.InvestorHistory;
 using Lykke.Ico.Core.Repositories.AddressPoolHistory;
 using Lykke.Ico.Core.Repositories.CampaignInfo;
@@ -15,7 +14,8 @@ using System.Text;
 using NBitcoin;
 using System.Linq;
 using QBitNinja.Client;
-using Lykke.Ico.Core.Repositories.CryptoInvestment;
+using Lykke.Ico.Core.Repositories.InvestorEmail;
+using Lykke.Ico.Core.Repositories.InvestorTransaction;
 
 namespace Lykke.Service.IcoApi.Services
 {
@@ -25,25 +25,25 @@ namespace Lykke.Service.IcoApi.Services
         private readonly string _ethNetwork;
         private readonly ILog _log;
         private readonly IInvestorRepository _investorRepository;
+        private readonly IInvestorTransactionRepository _investorTransactionRepository;
         private readonly IInvestorAttributeRepository _investorAttributeRepository;
-        private readonly IEmailHistoryRepository _emailHistoryRepository;
+        private readonly IInvestorEmailRepository _investorEmailRepositoryy;
         private readonly IInvestorHistoryRepository _investorHistoryRepository;
         private readonly IAddressPoolHistoryRepository _addressPoolHistoryRepository;
         private readonly ICampaignInfoRepository _campaignInfoRepository;
         private readonly IAddressPoolRepository _addressPoolRepository;
-        private readonly ICryptoInvestmentRepository _cryptoInvestmentRepository;        
 
         public AdminService(string btcNetwork,
             string ethNetwork,
             ILog log,
             IInvestorRepository investorRepository,
+            IInvestorTransactionRepository cryptoInvestmentRepository,
             IInvestorAttributeRepository investorAttributeRepository,
-            IEmailHistoryRepository emailHistoryRepository,
+            IInvestorEmailRepository emailHistoryRepository,
             IInvestorHistoryRepository investorHistoryRepository,
             IAddressPoolHistoryRepository addressPoolHistoryRepository,
             ICampaignInfoRepository campaignInfoRepository,
-            IAddressPoolRepository addressPoolRepository,
-            ICryptoInvestmentRepository cryptoInvestmentRepository)
+            IAddressPoolRepository addressPoolRepository)
         {
             _btcNetwork = btcNetwork;
             _ethNetwork = ethNetwork;
@@ -51,11 +51,11 @@ namespace Lykke.Service.IcoApi.Services
             _investorRepository = investorRepository;
             _investorAttributeRepository = investorAttributeRepository;
             _investorHistoryRepository = investorHistoryRepository;
-            _emailHistoryRepository = emailHistoryRepository;
+            _investorEmailRepositoryy = emailHistoryRepository;
             _addressPoolHistoryRepository = addressPoolHistoryRepository;
             _campaignInfoRepository = campaignInfoRepository;
             _addressPoolRepository = addressPoolRepository;
-            _cryptoInvestmentRepository = cryptoInvestmentRepository;
+            _investorTransactionRepository = cryptoInvestmentRepository;
         }
 
         public async Task<Dictionary<string, string>> GetCampainInfo()
@@ -97,19 +97,19 @@ namespace Lykke.Service.IcoApi.Services
 
         public async Task DeleteInvestorHistoryAsync(string email)
         {
-            await _emailHistoryRepository.RemoveAsync(email);
+            await _investorEmailRepositoryy.RemoveAsync(email);
             await _investorHistoryRepository.RemoveAsync(email);
             await _addressPoolHistoryRepository.RemoveAsync(email);
         }
 
-        public async Task<IEnumerable<IEmailHistoryItem>> GetInvestorEmails(string email)
+        public async Task<IEnumerable<IInvestorEmail>> GetInvestorEmails(string email)
         {
-            return await _emailHistoryRepository.GetAsync(email);
+            return await _investorEmailRepositoryy.GetAsync(email);
         }
 
-        public async Task<IEnumerable<ICryptoInvestment>> GetInvestorTransactions(string email)
+        public async Task<IEnumerable<IInvestorTransaction>> GetInvestorTransactions(string email)
         {
-            return await _cryptoInvestmentRepository.GetByEmailAsync(email);
+            return await _investorTransactionRepository.GetByEmailAsync(email);
         }
 
         public async Task<int> ImportPublicKeys(StreamReader reader)

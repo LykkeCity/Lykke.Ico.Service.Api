@@ -90,12 +90,7 @@ namespace Lykke.Service.IcoApi.Services
                 return false;
             }
 
-            var investor = await _investorRepository.GetAsync(email);
-            if (investor == null)
-            {
-                await _investorRepository.AddAsync(email, confirmationToken);
-            }
-
+            await _investorRepository.ConfirmAsync(email);
             await _campaignInfoRepository.IncrementValue(CampaignInfoType.InvestorsConfirmed, 1);
 
             return true;
@@ -103,27 +98,28 @@ namespace Lykke.Service.IcoApi.Services
 
         public async Task UpdateAsync(string email, string tokenAddress, string refundEthAddress, string refundBtcAddress)
         {
-            var investor = await _investorRepository.GetAsync(email);
             var poolItem = await _addressPoolRepository.GetNextFree(email);
 
             await _log.WriteInfoAsync(nameof(InvestorService), nameof(UpdateAsync), $"Address pool item: {poolItem.ToJson()}");
             await _campaignInfoRepository.IncrementValue(CampaignInfoType.AddressPoolCurrentSize, -1);
 
-            investor.TokenAddress = tokenAddress;
-            investor.RefundEthAddress = refundEthAddress;
-            investor.RefundBtcAddress = refundBtcAddress;
-            investor.PayInEthPublicKey = poolItem.EthPublicKey;
-            investor.PayInEthAddress = _ethService.GetAddressByPublicKey(poolItem.EthPublicKey);
-            investor.PayInBtcPublicKey = poolItem.BtcPublicKey;
-            investor.PayInBtcAddress = _btcService.GetAddressByPublicKey(poolItem.BtcPublicKey);
+            var payInEthPublicKey = poolItem.EthPublicKey;
+            var payInEthAddress = _ethService.GetAddressByPublicKey(poolItem.EthPublicKey);
+            var payInBtcPublicKey = poolItem.BtcPublicKey;
+            var payInBtcAddress = _btcService.GetAddressByPublicKey(poolItem.BtcPublicKey);
 
-            await _log.WriteInfoAsync(nameof(InvestorService), nameof(UpdateAsync), $"Invertor to save: {investor.ToJson()}");
-            await _investorRepository.UpdateAsync(investor);
-            await _investorAttributeRepository.SaveAsync(InvestorAttributeType.PayInBtcAddress, email, investor.PayInBtcAddress);
-            await _investorAttributeRepository.SaveAsync(InvestorAttributeType.PayInEthAddress, email, investor.PayInEthAddress);
-            await SendSummaryEmail(investor);
+            await _log.WriteInfoAsync(nameof(InvestorService), nameof(UpdateAsync), 
+                $"Invertor to save: tokenAddress={tokenAddress}, refundEthAddress={refundEthAddress}, refundBtcAddress={refundBtcAddress}" +
+                $"payInEthPublicKey={payInEthPublicKey}, payInEthAddress={payInEthAddress}, payInBtcPublicKey={payInBtcPublicKey}, payInBtcAddress={payInBtcAddress}");
+            await _investorRepository.SaveAddressesAsync(email, tokenAddress, refundEthAddress, refundBtcAddress,
+                payInEthPublicKey, payInEthAddress, payInBtcPublicKey, payInBtcAddress);
 
+            await _investorAttributeRepository.SaveAsync(InvestorAttributeType.PayInBtcAddress, email, payInBtcAddress);
+            await _investorAttributeRepository.SaveAsync(InvestorAttributeType.PayInEthAddress, email, payInEthAddress);
             await _campaignInfoRepository.IncrementValue(CampaignInfoType.InvestorsFilledIn, 1);
+
+            var investor = await _investorRepository.GetAsync(email);
+            await SendSummaryEmail(investor);
         }
 
         private async Task SendConfirmationEmail(string email, Guid token)

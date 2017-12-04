@@ -5,11 +5,11 @@ using Lykke.Ico.Core.Queues.Emails;
 using Lykke.Ico.Core.Repositories.AddressPool;
 using Lykke.Ico.Core.Repositories.AddressPoolHistory;
 using Lykke.Ico.Core.Repositories.CampaignInfo;
-using Lykke.Ico.Core.Repositories.CryptoInvestment;
-using Lykke.Ico.Core.Repositories.EmailHistory;
 using Lykke.Ico.Core.Repositories.Investor;
 using Lykke.Ico.Core.Repositories.InvestorAttribute;
+using Lykke.Ico.Core.Repositories.InvestorEmail;
 using Lykke.Ico.Core.Repositories.InvestorHistory;
+using Lykke.Ico.Core.Repositories.InvestorTransaction;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
 using Lykke.Service.IcoApi.Services;
@@ -60,8 +60,8 @@ namespace Lykke.Service.IcoApi.Modules
                 .WithParameter(TypedParameter.From(connectionStringManager))
                 .SingleInstance();
 
-            builder.RegisterType<EmailHistoryRepository>()
-                .As<IEmailHistoryRepository>()
+            builder.RegisterType<InvestorEmailRepository>()
+                .As<IInvestorEmailRepository>()
                 .WithParameter(TypedParameter.From(connectionStringManager))
                 .SingleInstance();
 
@@ -80,8 +80,8 @@ namespace Lykke.Service.IcoApi.Modules
                 .WithParameter(TypedParameter.From(connectionStringManager))
                 .SingleInstance();
 
-            builder.RegisterType<CryptoInvestmentRepository>()
-                .As<ICryptoInvestmentRepository>()
+            builder.RegisterType<InvestorTransactionRepository>()
+                .As<IInvestorTransactionRepository>()
                 .WithParameter(TypedParameter.From(connectionStringManager))
                 .SingleInstance();
 
