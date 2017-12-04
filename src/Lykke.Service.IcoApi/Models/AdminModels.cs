@@ -3,7 +3,6 @@ using Lykke.Ico.Core.Repositories.Investor;
 using Lykke.Ico.Core.Repositories.InvestorEmail;
 using Lykke.Ico.Core.Repositories.InvestorHistory;
 using Lykke.Ico.Core.Repositories.InvestorTransaction;
-using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -64,7 +63,9 @@ namespace Lykke.Service.IcoApi.Models
                 RefundEthAddress = investor.RefundEthAddress,
                 RefundBtcAddress = investor.RefundBtcAddress,
                 PayInEthAddress = investor.PayInEthAddress,
+                PayInEthPublicKey = investor.PayInEthPublicKey,
                 PayInBtcAddress = investor.PayInBtcAddress,
+                PayInBtcPublicKey = investor.PayInBtcPublicKey,
                 UpdatedUtc = investor.UpdatedUtc,
                 ConfirmationToken = investor.ConfirmationToken,
                 ConfirmationTokenCreatedUtc = investor.ConfirmationTokenCreatedUtc,
@@ -211,10 +212,10 @@ namespace Lykke.Service.IcoApi.Models
         EthUsd
     }
 
-    public class SendBtcRequest
+    public class SendMoneyRequest
     {
         [Required]
-        public string BtcAddress { get; set; }
+        public string Address { get; set; }
 
         [Required]
         public decimal Amount { get; set; }

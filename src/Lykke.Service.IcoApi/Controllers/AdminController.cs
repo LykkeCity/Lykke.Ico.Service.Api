@@ -190,10 +190,16 @@ namespace Lykke.Service.IcoApi.Controllers
         /// Sends ethers to address
         /// </summary>
         [AdminAuth]
-        [HttpPost("eth/{address}/send/{amount}")]
-        public async Task<string> SendEth([Required] string address, [Required] decimal amount)
+        [HttpPost("eth/send")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> SendEth([FromBody] SendMoneyRequest request)
         {
-            return await _ethService.SendToAddress(address, amount);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return Ok(await _ethService.SendToAddress(request.Address, request.Amount));
         }
 
         /// <summary>
@@ -233,10 +239,16 @@ namespace Lykke.Service.IcoApi.Controllers
         /// Sends bitcoins to address
         /// </summary>
         [AdminAuth]
-        [HttpPost("btc/{address}/send/{amount}")]
-        public string SendBtc([Required] string address, [Required] decimal amount)
+        [HttpPost("btc/send")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+        public IActionResult SendBtc([FromBody] SendMoneyRequest request)
         {
-            return _btcService.SendToAddress(address, amount);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return Ok(_btcService.SendToAddress(request.Address, request.Amount));
         }
     }
 }
