@@ -53,7 +53,6 @@ namespace Lykke.Service.IcoApi.Controllers
         [AdminAuth]
         [HttpGet("investors/{email}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetInvestor([Required] string email)
         {
             var investor = await _investorService.GetAsync(email);
@@ -70,9 +69,12 @@ namespace Lykke.Service.IcoApi.Controllers
         /// </summary>
         [AdminAuth]
         [HttpDelete("investors/{email}")]
-        public async Task DeleteInvestor([Required] string email)
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        public async Task<IActionResult> DeleteInvestor([Required] string email)
         {
             await _adminService.DeleteInvestorAsync(email);
+
+            return NoContent();
         }
 
         /// <summary>
@@ -83,16 +85,6 @@ namespace Lykke.Service.IcoApi.Controllers
         public async Task<InvestorHistoryResponse> GetInvestorHistory([Required] string email)
         {
             return InvestorHistoryResponse.Create(await _adminService.GetInvestorHistory(email));
-        }
-
-        /// <summary>
-        /// Removes investor history data
-        /// </summary>
-        [AdminAuth]
-        [HttpDelete("investors/{email}/history")]
-        public async Task DeleteInvestorHistory([Required] string email)
-        {
-            await _adminService.DeleteInvestorHistoryAsync(email);
         }
 
         /// <summary>

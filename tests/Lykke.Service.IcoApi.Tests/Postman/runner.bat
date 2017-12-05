@@ -1,0 +1,1 @@
+newman run ico.postman_collection.json
