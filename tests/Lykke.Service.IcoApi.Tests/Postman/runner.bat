@@ -1,1 +1,1 @@
-newman run ico.postman_collection.json
+newman run ico.postman_collection.json -e dev.postman_environment.json

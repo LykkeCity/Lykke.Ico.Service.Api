@@ -1,78 +1,13 @@
 {
 	"info": {
-		"name": "Procivic ICO",
+		"name": "Valid ICO",
 		"_postman_id": "8a8f4c21-499a-142c-5cdf-2ffd842fc8d7",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "/api/isAlive",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"type": "text/javascript",
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test(\"Alive\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    ",
-							"    pm.expect(jsonData.name).to.eql(\"Lykke.Service.IcoApi\");",
-							"});"
-						]
-					}
-				},
-				{
-					"listen": "prerequest",
-					"script": {
-						"type": "text/javascript",
-						"exec": [
-							"pm.environment.set(\"domain\", \"https://vld-ico-dev.lykkex.net\");",
-							"//pm.environment.set(\"domain\", \"http://localhost:5000\");",
-							"",
-							"pm.environment.set(\"email\", \"fastkeywordsbiz@yandex.ru\");",
-							"//pm.environment.set(\"email\", \"andrey.krivoshapov@lykke.com\");",
-							"//pm.environment.set(\"email\", \"andrey.krivoshapov-\" + Math.floor(Math.random() * 1000000) + \"@pricivis-test-\" + Math.floor(Math.random() * 1000) + \".ch\");",
-							"",
-							"pm.environment.set(\"admin_auth_token\", \"TEMP\");",
-							"pm.environment.set(\"eth_investment_amount\", 0.01);",
-							"pm.environment.set(\"btc_investment_amount\", 0.01);"
-						]
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
-				},
-				"url": {
-					"raw": "{{domain}}/api/isAlive",
-					"host": [
-						"{{domain}}"
-					],
-					"path": [
-						"api",
-						"isAlive"
-					]
-				},
-				"description": "activate params"
-			},
-			"response": []
-		},
-		{
-			"name": "/api/admin/investors/{email}",
+			"name": "/api/admin/investors/{email} - delete investor",
 			"event": [
 				{
 					"listen": "test",
@@ -114,12 +49,12 @@
 						"{{email}}"
 					]
 				},
-				"description": "delete investor"
+				"description": ""
 			},
 			"response": []
 		},
 		{
-			"name": "/api/admin/campaign",
+			"name": "/api/admin/campaign - remember campaign data",
 			"event": [
 				{
 					"listen": "test",
@@ -130,7 +65,7 @@
 							"    pm.response.to.have.status(200);",
 							"});",
 							"",
-							"pm.test(\"Confirmation email sent\", function() {",
+							"pm.test(\"Campaign data\", function() {",
 							"    var jsonData = pm.response.json();",
 							"",
 							"    pm.environment.set(\"addressPoolCurrentSize\", (typeof jsonData.addressPoolCurrentSize === 'undefined') ? 0 : jsonData.addressPoolCurrentSize);",
@@ -174,12 +109,12 @@
 						"campaign"
 					]
 				},
-				"description": "get confirmation token"
+				"description": ""
 			},
 			"response": []
 		},
 		{
-			"name": "/api/admin/rates/latest",
+			"name": "/api/admin/rates/latest - recheck rates availability",
 			"event": [
 				{
 					"listen": "test",
@@ -190,7 +125,7 @@
 							"    pm.response.to.have.status(200);",
 							"});",
 							"",
-							"pm.test(\"Confirmation email sent\", function() {",
+							"pm.test(\"Rates exists\", function() {",
 							"    var jsonData = pm.response.json();",
 							"    ",
 							"    pm.expect(jsonData.averageRate !== null).to.be.true;",
@@ -227,12 +162,12 @@
 						"latest"
 					]
 				},
-				"description": "recheck rates availability"
+				"description": ""
 			},
 			"response": []
 		},
 		{
-			"name": "/api/admin/investors/{email}/history",
+			"name": "/api/admin/investors/{email}/history - remember investor changes",
 			"event": [
 				{
 					"listen": "test",
@@ -243,7 +178,7 @@
 							"    pm.response.to.have.status(200);",
 							"});",
 							"",
-							"pm.test(\"Investor profile changes number\", function () {",
+							"pm.test(\"Save Investor profile changes number\", function () {",
 							"    var jsonData = pm.response.json();",
 							"",
 							"    pm.environment.set(\"investor-history-size\", (typeof jsonData.items === 'undefined') ? 0 : jsonData.items.count());",
@@ -281,12 +216,12 @@
 						"history"
 					]
 				},
-				"description": "remember investor changes history"
+				"description": ""
 			},
 			"response": []
 		},
 		{
-			"name": "/api/admin/investors/{email}/emails",
+			"name": "/api/admin/investors/{email}/emails - remember emails number",
 			"event": [
 				{
 					"listen": "test",
@@ -335,12 +270,12 @@
 						"emails"
 					]
 				},
-				"description": "remember number of emails sent"
+				"description": ""
 			},
 			"response": []
 		},
 		{
-			"name": "/api/admin/investors/{email}/transactions",
+			"name": "/api/admin/investors/{email}/transactions - remember transactions number",
 			"event": [
 				{
 					"listen": "test",
@@ -389,12 +324,12 @@
 						"transactions"
 					]
 				},
-				"description": "remember number of emails sent"
+				"description": ""
 			},
 			"response": []
 		},
 		{
-			"name": "/api/investor/register",
+			"name": "/api/investor/register - register investor",
 			"event": [
 				{
 					"listen": "test",
@@ -405,7 +340,7 @@
 							"    pm.response.to.have.status(200);",
 							"});",
 							"",
-							"pm.test(\"Confirmation email sent\", function () {",
+							"pm.test(\"Register investor\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    ",
 							"    pm.expect(jsonData.result).to.eql(\"confirmationEmailSent\");",
@@ -437,12 +372,12 @@
 						"register"
 					]
 				},
-				"description": "register user"
+				"description": ""
 			},
 			"response": []
 		},
 		{
-			"name": "/api/admin/investors/{email}",
+			"name": "/api/admin/investors/{email} - get confirmation token",
 			"event": [
 				{
 					"listen": "test",
@@ -454,7 +389,7 @@
 							"});",
 							"",
 							"",
-							"pm.test(\"Confirmation email sent\", function () {",
+							"pm.test(\"Recheck and remember confirmation token\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    ",
 							"    pm.expect(jsonData.email).to.eql(pm.environment.get(\"email\"));",
@@ -493,12 +428,12 @@
 						"{{email}}"
 					]
 				},
-				"description": "get confirmation token"
+				"description": ""
 			},
 			"response": []
 		},
 		{
-			"name": "/api/investor/confirmation/{token}",
+			"name": "/api/investor/confirmation/{token} - confirm user",
 			"event": [
 				{
 					"listen": "test",
@@ -509,7 +444,7 @@
 							"    pm.response.to.have.status(200);",
 							"});",
 							"",
-							"pm.test(\"Alive\", function () {",
+							"pm.test(\"Confirm user and recieve auth token\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    ",
 							"    pm.expect(jsonData.authToken).to.eql(pm.environment.get(\"confirmation_token\"));",
@@ -542,12 +477,12 @@
 						"{{confirmation_token}}"
 					]
 				},
-				"description": "confirm user"
+				"description": ""
 			},
 			"response": []
 		},
 		{
-			"name": "/api/admin/investors/{email}",
+			"name": "/api/admin/investors/{email} - recheck confirmation",
 			"event": [
 				{
 					"listen": "test",
@@ -559,7 +494,7 @@
 							"});",
 							"",
 							"",
-							"pm.test(\"Confirmation email sent\", function () {",
+							"pm.test(\"Recheck confirmed datetime value\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    ",
 							"    pm.expect(jsonData.confirmedUtc !== null).to.be.true;",
@@ -596,12 +531,12 @@
 						"{{email}}"
 					]
 				},
-				"description": "recheck confirmation"
+				"description": ""
 			},
 			"response": []
 		},
 		{
-			"name": "/api/admin/eth/address/random",
+			"name": "/api/admin/eth/address/random - get token address",
 			"event": [
 				{
 					"listen": "test",
@@ -612,7 +547,7 @@
 							"    pm.response.to.have.status(200);",
 							"});",
 							"",
-							"pm.test(\"Token Address\", function () {",
+							"pm.test(\"Get token Address\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    pm.environment.set(\"token_address\", jsonData.address);",
 							"});"
@@ -649,12 +584,12 @@
 						"random"
 					]
 				},
-				"description": "get token address"
+				"description": ""
 			},
 			"response": []
 		},
 		{
-			"name": "/api/admin/eth/address/random",
+			"name": "/api/admin/eth/address/random - get eth refund address",
 			"event": [
 				{
 					"listen": "test",
@@ -665,7 +600,7 @@
 							"    pm.response.to.have.status(200);",
 							"});",
 							"",
-							"pm.test(\"Token Refund Address\", function () {",
+							"pm.test(\"Get eth refund Address\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    pm.environment.set(\"refund_eth_address\", jsonData.address);",
 							"});"
@@ -702,12 +637,12 @@
 						"random"
 					]
 				},
-				"description": "get refund address"
+				"description": ""
 			},
 			"response": []
 		},
 		{
-			"name": "/api/admin/btc/address/random",
+			"name": "/api/admin/btc/address/random - get btc refund address",
 			"event": [
 				{
 					"listen": "test",
@@ -718,7 +653,7 @@
 							"    pm.response.to.have.status(200);",
 							"});",
 							"",
-							"pm.test(\"Token Eth Address\", function () {",
+							"pm.test(\"Get btc refund address\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    pm.environment.set(\"refund_btc_address\", jsonData.address);    ",
 							"});"
@@ -755,12 +690,12 @@
 						"random"
 					]
 				},
-				"description": "get refund address"
+				"description": ""
 			},
 			"response": []
 		},
 		{
-			"name": "/api/investor",
+			"name": "/api/investor - update investor addresses",
 			"event": [
 				{
 					"listen": "test",
@@ -800,12 +735,12 @@
 						"investor"
 					]
 				},
-				"description": "update investor addresses"
+				"description": ""
 			},
 			"response": []
 		},
 		{
-			"name": "/api/investor",
+			"name": "/api/investor - recheck investor addresses changes",
 			"event": [
 				{
 					"listen": "test",
@@ -816,14 +751,28 @@
 							"    pm.response.to.have.status(200);",
 							"});",
 							"",
-							"pm.test(\"Chech for investor profile changes\", function () {",
+							"pm.test(\"token address is valid\", function () {",
 							"    var jsonData = pm.response.json();",
-							"    ",
-							"    pm.expect(jsonData.email).to.eql(pm.environment.get(\"email\"));",
 							"    pm.expect(jsonData.tokenAddress).to.eql(pm.environment.get(\"token_address\"));",
+							"});",
+							"",
+							"pm.test(\"refund eth address is valid\", function () {",
+							"    var jsonData = pm.response.json();",
 							"    pm.expect(jsonData.refundEthAddress).to.eql(pm.environment.get(\"refund_eth_address\"));",
+							"});",
+							"",
+							"pm.test(\"refund btc address is valid\", function () {",
+							"    var jsonData = pm.response.json();",
 							"    pm.expect(jsonData.refundBtcAddress).to.eql(pm.environment.get(\"refund_btc_address\"));",
+							"});",
+							"",
+							"pm.test(\"pay-in eth address is not empty\", function () {",
+							"    var jsonData = pm.response.json();",
 							"    pm.expect(jsonData.payInEthAddress !== null).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"pay-in btc address is not empty\", function () {",
+							"    var jsonData = pm.response.json();",
 							"    pm.expect(jsonData.payInBtcAddress !== null).to.be.true;",
 							"});"
 						]
@@ -856,12 +805,12 @@
 						"investor"
 					]
 				},
-				"description": "recheck investor changes"
+				"description": ""
 			},
 			"response": []
 		},
 		{
-			"name": "/api/admin/investors/{email}/history",
+			"name": "/api/admin/investors/{email}/history - recheck investor changes",
 			"event": [
 				{
 					"listen": "test",
@@ -872,9 +821,8 @@
 							"    pm.response.to.have.status(200);",
 							"});",
 							"",
-							"pm.test(\"Investor profile must be changes 3 times\", function () {",
+							"pm.test(\"Investor profile was changed 3 times\", function () {",
 							"    var jsonData = pm.response.json();",
-							"",
 							"    pm.expect(Number(jsonData.items.count())).to.eql(Number(pm.environment.get(\"investor-history-size\")) + 3);",
 							"});"
 						]
@@ -915,7 +863,7 @@
 			"response": []
 		},
 		{
-			"name": "/api/admin/campaign",
+			"name": "/api/admin/campaign - recheck campaign changes",
 			"event": [
 				{
 					"listen": "test",
@@ -926,12 +874,23 @@
 							"    pm.response.to.have.status(200);",
 							"});",
 							"",
-							"pm.test(\"Recheck campaign changes\", function() {",
+							"pm.test(\"addressPoolCurrentSize is descreased to 1\", function() {",
 							"    var jsonData = pm.response.json();",
-							"",
 							"    pm.expect(Number(jsonData.addressPoolCurrentSize)).to.eql(Number(pm.environment.get(\"addressPoolCurrentSize\")) - 1);",
+							"});",
+							"",
+							"pm.test(\"investorsRegistered is increased to 1\", function() {",
+							"    var jsonData = pm.response.json();",
 							"    pm.expect(Number(jsonData.investorsRegistered)).to.eql(Number(pm.environment.get(\"investorsRegistered\")) + 1);",
+							"});",
+							"",
+							"pm.test(\"investorsConfirmed is increased to 1\", function() {",
+							"    var jsonData = pm.response.json();",
 							"    pm.expect(Number(jsonData.investorsConfirmed)).to.eql(Number(pm.environment.get(\"investorsConfirmed\")) + 1);",
+							"});",
+							"",
+							"pm.test(\"investorsFilledIn is increased to 1\", function() {",
+							"    var jsonData = pm.response.json();",
 							"    pm.expect(Number(jsonData.investorsFilledIn)).to.eql(Number(pm.environment.get(\"investorsFilledIn\")) + 1);",
 							"});"
 						]
@@ -965,12 +924,12 @@
 						"campaign"
 					]
 				},
-				"description": "recheck campaign changes"
+				"description": ""
 			},
 			"response": []
 		},
 		{
-			"name": "/api/admin/investors/{email}",
+			"name": "/api/admin/investors/{email} - get pay-in addresses and amounts",
 			"event": [
 				{
 					"listen": "test",
@@ -982,7 +941,7 @@
 							"});",
 							"",
 							"",
-							"pm.test(\"Confirmation email sent\", function () {",
+							"pm.test(\"Get data\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    ",
 							"    pm.environment.set(\"payInEthAddress\", jsonData.payInEthAddress);",
@@ -1025,12 +984,12 @@
 						"{{email}}"
 					]
 				},
-				"description": "get pay-in addresses"
+				"description": ""
 			},
 			"response": []
 		},
 		{
-			"name": "/api/admin/eth/send",
+			"name": "/api/admin/eth/send - send bitcoins",
 			"event": [
 				{
 					"listen": "test",
@@ -1072,12 +1031,12 @@
 						"send"
 					]
 				},
-				"description": "update investor addresses"
+				"description": ""
 			},
 			"response": []
 		},
 		{
-			"name": "/api/admin/btc/send",
+			"name": "/api/admin/btc/send - send ethers",
 			"event": [
 				{
 					"listen": "test",
@@ -1119,12 +1078,12 @@
 						"send"
 					]
 				},
-				"description": "update investor addresses"
+				"description": ""
 			},
 			"response": []
 		},
 		{
-			"name": "/api/admin/investors/{email}/emails",
+			"name": "/api/admin/investors/{email}/emails - wait 10 mins and recheck emails",
 			"event": [
 				{
 					"listen": "test",
@@ -1182,12 +1141,12 @@
 						"emails"
 					]
 				},
-				"description": "wait for 600 secs and recheck emails sent"
+				"description": ""
 			},
 			"response": []
 		},
 		{
-			"name": "/api/admin/investors/{email}/transactions",
+			"name": "/api/admin/investors/{email}/transactions - recheck transactions",
 			"event": [
 				{
 					"listen": "test",
@@ -1236,12 +1195,12 @@
 						"transactions"
 					]
 				},
-				"description": "recheck transactions"
+				"description": ""
 			},
 			"response": []
 		},
 		{
-			"name": "/api/admin/campaign",
+			"name": "/api/admin/campaign - recheck campaign amounts",
 			"event": [
 				{
 					"listen": "test",
@@ -1252,13 +1211,28 @@
 							"    pm.response.to.have.status(200);",
 							"});",
 							"",
-							"pm.test(\"Recheck campaign amounts\", function() {",
+							"pm.test(\"amountInvestedBtc was increased\", function() {",
 							"    var jsonData = pm.response.json();",
-							"",
 							"    pm.expect(Number(jsonData.amountInvestedBtc) > Number(pm.environment.get(\"amountInvestedBtc\"))).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"amountInvestedEth was increased\", function() {",
+							"    var jsonData = pm.response.json();",
 							"    pm.expect(Number(jsonData.amountInvestedEth) > Number(pm.environment.get(\"amountInvestedEth\"))).to.be.true;",
+							"});",
+							"",
+							"//pm.test(\"amountInvestedFiat was increased\", function() {",
+							"    //var jsonData = pm.response.json();",
 							"    //pm.expect(Number(jsonData.amountInvestedFiat) === Number(pm.environment.get(\"amountInvestedFiat\"))).to.be.true;",
+							"//});",
+							"",
+							"pm.test(\"amountInvestedToken was increased\", function() {",
+							"    var jsonData = pm.response.json();",
 							"    pm.expect(Number(jsonData.amountInvestedToken) > Number(pm.environment.get(\"amountInvestedToken\"))).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"amountInvestedUsd was increased\", function() {",
+							"    var jsonData = pm.response.json();",
 							"    pm.expect(Number(jsonData.amountInvestedUsd) > Number(pm.environment.get(\"amountInvestedUsd\"))).to.be.true;",
 							"});"
 						]
@@ -1292,12 +1266,12 @@
 						"campaign"
 					]
 				},
-				"description": "recheck amounts"
+				"description": ""
 			},
 			"response": []
 		},
 		{
-			"name": "/api/admin/investors/{email}",
+			"name": "/api/admin/investors/{email} - recheck investor amounts",
 			"event": [
 				{
 					"listen": "test",
@@ -1308,13 +1282,28 @@
 							"    pm.response.to.have.status(200);",
 							"});",
 							"",
-							"pm.test(\"Confirmation email sent\", function () {",
+							"pm.test(\"amountBtc was increased\", function () {",
 							"    var jsonData = pm.response.json();",
-							"    ",
 							"    pm.expect(Number(jsonData.amountBtc) > Number(pm.environment.get(\"amountBtc\"))).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"amountEth was increased\", function () {",
+							"    var jsonData = pm.response.json();",
 							"    pm.expect(Number(jsonData.amountEth) > Number(pm.environment.get(\"amountEth\"))).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"amountFiat was not changed\", function () {",
+							"    var jsonData = pm.response.json();",
 							"    pm.expect(Number(jsonData.amountFiat) === Number(pm.environment.get(\"amountFiat\"))).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"amountUsd was increased\", function () {",
+							"    var jsonData = pm.response.json();",
 							"    pm.expect(Number(jsonData.amountUsd) > Number(pm.environment.get(\"amountUsd\"))).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"amountToken was increased\", function () {",
+							"    var jsonData = pm.response.json();",
 							"    pm.expect(Number(jsonData.amountToken) > Number(pm.environment.get(\"amountToken\"))).to.be.true;",
 							"});"
 						]
@@ -1349,7 +1338,7 @@
 						"{{email}}"
 					]
 				},
-				"description": "recheck investor amounts changes"
+				"description": ""
 			},
 			"response": []
 		}
