@@ -38,13 +38,40 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
-        /// Returns campain info
+        /// Returns campaign info
         /// </summary>
         [AdminAuth]
-        [HttpGet("campaign")]
-        public async Task<Dictionary<string, string>> GetCampainInfo()
+        [HttpGet("campaign/info")]
+        public async Task<Dictionary<string, string>> GetCampaignInfo()
         {
-            return await _adminService.GetCampainInfo();
+            return await _adminService.GetCampaignInfo();
+        }
+
+        /// <summary>
+        /// Returns campaign settings
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("campaign/settings")]
+        public async Task<CampaignSettingsModel> GetCampaignSettings()
+        {
+            var settings = await _adminService.GetCampaignSettings();
+
+            return CampaignSettingsModel.Create(settings);
+        }
+
+        /// <summary>
+        /// Save campaign settings
+        /// </summary>
+        [AdminAuth]
+        [HttpPost("campaign/settings")]
+        public async Task<IActionResult> SaveCampaignSettings([FromBody] CampaignSettingsModel settings)
+        {
+            settings.StartDateTimeUtc = settings.StartDateTimeUtc.ToUniversalTime();
+            settings.EndDateTimeUtc = settings.EndDateTimeUtc.ToUniversalTime();
+
+            await _adminService.SaveCampaignSettings(settings);
+
+            return Ok();
         }
 
         /// <summary>

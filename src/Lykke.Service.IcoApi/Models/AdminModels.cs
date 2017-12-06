@@ -1,4 +1,5 @@
 ﻿using Lykke.Ico.Core;
+using Lykke.Ico.Core.Repositories.CampaignSettings;
 using Lykke.Ico.Core.Repositories.Investor;
 using Lykke.Ico.Core.Repositories.InvestorEmail;
 using Lykke.Ico.Core.Repositories.InvestorHistory;
@@ -219,5 +220,44 @@ namespace Lykke.Service.IcoApi.Models
 
         [Required]
         public decimal Amount { get; set; }
+    }
+
+    public class CampaignSettingsModel : ICampaignSettings
+    {
+        [Required]
+        public DateTime StartDateTimeUtc { get; set; }
+
+        [Required]
+        public DateTime EndDateTimeUtc { get; set; }
+
+        [Required]
+        public int TotalTokensAmount { get; set; }
+
+        [Required]
+        public decimal TokenBasePriceUsd { get; set; }
+
+        [Required]
+        public int TokenDecimals { get; set; }
+
+        [Required]
+        public decimal MinInvestAmountUsd { get; set; }
+
+        public static CampaignSettingsModel Create(ICampaignSettings settings)
+        {
+            if (settings == null)
+            {
+                return null;
+            }
+
+            return new CampaignSettingsModel
+            {
+                StartDateTimeUtc = settings.StartDateTimeUtc,
+                EndDateTimeUtc = settings.EndDateTimeUtc,
+                TotalTokensAmount = settings.TotalTokensAmount,
+                TokenBasePriceUsd = settings.TokenBasePriceUsd,
+                TokenDecimals = settings.TokenDecimals,
+                MinInvestAmountUsd = settings.MinInvestAmountUsd
+            };
+        }
     }
 }

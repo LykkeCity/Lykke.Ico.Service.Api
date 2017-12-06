@@ -11,11 +11,9 @@ using System.Collections.Generic;
 using System.IO;
 using CsvHelper;
 using System.Text;
-using NBitcoin;
-using System.Linq;
-using QBitNinja.Client;
 using Lykke.Ico.Core.Repositories.InvestorEmail;
 using Lykke.Ico.Core.Repositories.InvestorTransaction;
+using Lykke.Ico.Core.Repositories.CampaignSettings;
 
 namespace Lykke.Service.IcoApi.Services
 {
@@ -32,6 +30,7 @@ namespace Lykke.Service.IcoApi.Services
         private readonly IAddressPoolHistoryRepository _addressPoolHistoryRepository;
         private readonly ICampaignInfoRepository _campaignInfoRepository;
         private readonly IAddressPoolRepository _addressPoolRepository;
+        private readonly ICampaignSettingsRepository _campaignSettingsRepository;
 
         public AdminService(string btcNetwork,
             string ethNetwork,
@@ -43,7 +42,8 @@ namespace Lykke.Service.IcoApi.Services
             IInvestorHistoryRepository investorHistoryRepository,
             IAddressPoolHistoryRepository addressPoolHistoryRepository,
             ICampaignInfoRepository campaignInfoRepository,
-            IAddressPoolRepository addressPoolRepository)
+            IAddressPoolRepository addressPoolRepository,
+            ICampaignSettingsRepository campaignSettingsRepository)
         {
             _btcNetwork = btcNetwork;
             _ethNetwork = ethNetwork;
@@ -56,9 +56,10 @@ namespace Lykke.Service.IcoApi.Services
             _campaignInfoRepository = campaignInfoRepository;
             _addressPoolRepository = addressPoolRepository;
             _investorTransactionRepository = cryptoInvestmentRepository;
+            _campaignSettingsRepository = campaignSettingsRepository;
         }
 
-        public async Task<Dictionary<string, string>> GetCampainInfo()
+        public async Task<Dictionary<string, string>> GetCampaignInfo()
         {
             var dictionary = await _campaignInfoRepository.GetAllAsync();
 
@@ -66,6 +67,16 @@ namespace Lykke.Service.IcoApi.Services
             dictionary.Add("EthNetwork", _ethNetwork);
 
             return dictionary;
+        }
+
+        public async Task<ICampaignSettings> GetCampaignSettings()
+        {
+            return await _campaignSettingsRepository.GetAsync();
+        }
+
+        public async Task SaveCampaignSettings(ICampaignSettings settings)
+        {
+            await _campaignSettingsRepository.SaveAsync(settings);
         }
 
         public async Task DeleteInvestorAsync(string email)

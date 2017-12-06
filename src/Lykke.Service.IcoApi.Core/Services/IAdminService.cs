@@ -1,4 +1,5 @@
-﻿using Lykke.Ico.Core.Repositories.InvestorEmail;
+﻿using Lykke.Ico.Core.Repositories.CampaignSettings;
+using Lykke.Ico.Core.Repositories.InvestorEmail;
 using Lykke.Ico.Core.Repositories.InvestorHistory;
 using Lykke.Ico.Core.Repositories.InvestorTransaction;
 using System.Collections.Generic;
@@ -9,7 +10,9 @@ namespace Lykke.Service.IcoApi.Core.Services
 {
     public interface IAdminService
     {
-        Task<Dictionary<string, string>> GetCampainInfo();
+        Task<Dictionary<string, string>> GetCampaignInfo();
+        Task<ICampaignSettings> GetCampaignSettings();
+        Task SaveCampaignSettings(ICampaignSettings settings);
         Task<IEnumerable<IInvestorHistoryItem>> GetInvestorHistory(string email);
         Task<IEnumerable<IInvestorEmail>> GetInvestorEmails(string email);
         Task DeleteInvestorAsync(string email);
