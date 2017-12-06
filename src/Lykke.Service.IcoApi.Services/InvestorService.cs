@@ -148,8 +148,8 @@ namespace Lykke.Service.IcoApi.Services
                 RefundEthAddress = investor.RefundEthAddress,
                 PayInBtcAddress = investor.PayInBtcAddress,
                 PayInEthAddress = investor.PayInEthAddress,
-                LinkBtcAddress = $"{_icoApiSettings.BtcTrackerUrl}/address",
-                LinkEthAddress = $"{_icoApiSettings.EthTrackerUrl}/address"
+                LinkBtcAddress = $"{_icoApiSettings.BtcTrackerUrl}address",
+                LinkEthAddress = $"{_icoApiSettings.EthTrackerUrl}address"
             };
 
             await _log.WriteInfoAsync(nameof(InvestorService), nameof(SendSummaryEmail), $"Send InvestorSummaryMessage: {message.ToJson()}");
