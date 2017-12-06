@@ -3,10 +3,15 @@
     public class IcoApiSettings
     {
         public DbSettings Db { get; set; }
+        public string BtcUrl { get; set; }
         public string BtcNetwork { get; set; }
+        public string BtcTrackerUrl { get; set; }
         public string BtcTestSecretKey { get; set; }
+        public string EthUrl { get; set; }
         public string EthNetwork { get; set; }
+        public string EthTrackerUrl { get; set; }
         public string EthTestSecretKey { get; set; }
-        public string IcoExRateServiceUrl { get; set; }        
+        public string IcoExRateServiceUrl { get; set; }
+        public string IcoSiteUrl { get; set; }
     }
 }

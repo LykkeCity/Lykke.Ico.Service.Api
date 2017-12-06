@@ -87,6 +87,7 @@ namespace Lykke.Service.IcoApi.Modules
 
             builder.RegisterType<InvestorService>()
                 .As<IInvestorService>()
+                .WithParameter(TypedParameter.From(_settings.CurrentValue))
                 .SingleInstance();
 
             builder.RegisterType<AdminService>()
@@ -103,7 +104,7 @@ namespace Lykke.Service.IcoApi.Modules
 
             builder.RegisterType<EthService>()
                 .As<IEthService>()
-                .WithParameter("ethNetwork", _settings.CurrentValue.EthNetwork)
+                .WithParameter("ethNetworkUrl", _settings.CurrentValue.EthUrl)
                 .WithParameter("testSecretKey", _settings.CurrentValue.EthTestSecretKey)
                 .SingleInstance();
 

@@ -12,14 +12,10 @@ namespace Lykke.Service.IcoApi.Services
         private readonly string _ethNetworkUrl;
         private readonly string _testSecretKey;
 
-        public EthService(string ethNetwork, string testSecretKey)
+        public EthService(string ethNetworkUrl, string testSecretKey)
         {
             _testSecretKey = testSecretKey;
-
-            if (ethNetwork.ToLower() == "ropsten")
-            {
-                _ethNetworkUrl = "https://ropsten.infura.io";
-            }
+            _ethNetworkUrl = ethNetworkUrl;
         }
 
         public string GeneratePublicKey()

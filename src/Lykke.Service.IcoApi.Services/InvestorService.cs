@@ -10,6 +10,7 @@ using Lykke.Ico.Core.Queues;
 using Lykke.Ico.Core.Repositories.AddressPool;
 using Lykke.Service.IcoApi.Core.Domain;
 using Lykke.Ico.Core.Repositories.CampaignInfo;
+using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
 
 namespace Lykke.Service.IcoApi.Services
 {
@@ -24,6 +25,7 @@ namespace Lykke.Service.IcoApi.Services
         private readonly ICampaignInfoRepository _campaignInfoRepository;
         private readonly IQueuePublisher<InvestorConfirmationMessage> _investorConfirmationQueuePublisher;
         private readonly IQueuePublisher<InvestorSummaryMessage> _investorSummaryQueuePublisher;
+        private readonly IcoApiSettings _icoApiSettings;
 
         public InvestorService(ILog log,
             IBtcService btcService,
@@ -33,7 +35,8 @@ namespace Lykke.Service.IcoApi.Services
             IAddressPoolRepository addressPoolRepository,
             ICampaignInfoRepository campaignInfoRepository,
             IQueuePublisher<InvestorConfirmationMessage> investorConfirmationQueuePublisher,
-            IQueuePublisher<InvestorSummaryMessage> investorSummaryQueuePublisher)
+            IQueuePublisher<InvestorSummaryMessage> investorSummaryQueuePublisher,
+            IcoApiSettings icoApiSettings)
         {
             _log = log;
             _btcService = btcService;
@@ -44,6 +47,7 @@ namespace Lykke.Service.IcoApi.Services
             _campaignInfoRepository = campaignInfoRepository;
             _investorConfirmationQueuePublisher = investorConfirmationQueuePublisher;
             _investorSummaryQueuePublisher = investorSummaryQueuePublisher;
+            _icoApiSettings = icoApiSettings;
         }
 
         public async Task<IInvestor> GetAsync(string email)
@@ -124,7 +128,11 @@ namespace Lykke.Service.IcoApi.Services
 
         private async Task SendConfirmationEmail(string email, Guid token)
         {
-            var message = InvestorConfirmationMessage.Create(email, token);
+            var message = new InvestorConfirmationMessage
+            {
+                EmailTo = email,
+                ConfirmationLink = $"{_icoApiSettings.IcoSiteUrl}participate/verify/{token}" 
+            };
 
             await _log.WriteInfoAsync(nameof(InvestorService), nameof(SendConfirmationEmail), $"Send InvestorConfirmationMessage: {message.ToJson()}");
             await _investorConfirmationQueuePublisher.SendAsync(message);
@@ -132,8 +140,17 @@ namespace Lykke.Service.IcoApi.Services
 
         private async Task SendSummaryEmail(IInvestor investor)
         {
-            var message = InvestorSummaryMessage.Create(investor.Email, investor.TokenAddress, investor.RefundBtcAddress,
-                investor.RefundEthAddress, investor.PayInBtcAddress, investor.PayInEthAddress);
+            var message = new InvestorSummaryMessage
+            {
+                EmailTo = investor.Email,
+                TokenAddress = investor.TokenAddress,
+                RefundBtcAddress = investor.RefundBtcAddress,
+                RefundEthAddress = investor.RefundEthAddress,
+                PayInBtcAddress = investor.PayInBtcAddress,
+                PayInEthAddress = investor.PayInEthAddress,
+                LinkBtcAddress = $"{_icoApiSettings.BtcTrackerUrl}/address",
+                LinkEthAddress = $"{_icoApiSettings.EthTrackerUrl}/address"
+            };
 
             await _log.WriteInfoAsync(nameof(InvestorService), nameof(SendSummaryEmail), $"Send InvestorSummaryMessage: {message.ToJson()}");
             await _investorSummaryQueuePublisher.SendAsync(message);
