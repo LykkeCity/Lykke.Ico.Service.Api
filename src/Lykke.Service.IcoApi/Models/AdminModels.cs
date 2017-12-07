@@ -168,19 +168,21 @@ namespace Lykke.Service.IcoApi.Models
     {
         public string Email { get; set; }
 
+        public string UniqueId { get; set; }
+
         public string TransactionId { get; set; }
 
         public DateTime CreatedUtc { get; set; }
 
         public CurrencyType Currency { get; set; }
 
-        public string Transaction { get; set; }
-
         public decimal Amount { get; set; }
 
         public decimal AmountUsd { get; set; }
 
         public decimal AmountToken { get; set; }
+
+        public decimal Fee { get; set; }
 
         public decimal TokenPrice { get; set; }
 
@@ -193,13 +195,14 @@ namespace Lykke.Service.IcoApi.Models
             return new InvestorTransactionModel
             {
                 Email = item.Email,
-                TransactionId = item.TransactionId,
+                UniqueId = item.UniqueId,
                 CreatedUtc = item.CreatedUtc,
                 Currency = item.Currency,
-                Transaction = item.Transaction,
+                TransactionId = item.TransactionId,
                 Amount = item.Amount,
                 AmountUsd = item.AmountUsd,
                 AmountToken = item.AmountToken,
+                Fee = item.Fee,
                 TokenPrice = item.TokenPrice,
                 ExchangeRate = item.ExchangeRate,
                 ExchangeRateContext = item.ExchangeRateContext
