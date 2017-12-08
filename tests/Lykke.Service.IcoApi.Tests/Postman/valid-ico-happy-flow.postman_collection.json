@@ -1,7 +1,7 @@
 {
 	"info": {
-		"name": "Valid ICO",
-		"_postman_id": "8a8f4c21-499a-142c-5cdf-2ffd842fc8d7",
+		"name": "Valid ICO - Happy Flow",
+		"_postman_id": "d1ff175e-170c-634f-29d5-bd99800a1398",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -991,7 +991,7 @@
 			"response": []
 		},
 		{
-			"name": "/api/admin/eth/send - send bitcoins",
+			"name": "/api/admin/eth/send/tx - send ether transaction to queue",
 			"event": [
 				{
 					"listen": "test",
@@ -1019,10 +1019,10 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"address\": \"{{payInEthAddress}}\",\r\n  \"amount\": {{eth_investment_amount}}\r\n}"
+					"raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"amount\": 0.5\r\n}"
 				},
 				"url": {
-					"raw": "{{domain}}/api/admin/eth/send",
+					"raw": "{{domain}}/api/admin/eth/send/tx",
 					"host": [
 						"{{domain}}"
 					],
@@ -1030,7 +1030,8 @@
 						"api",
 						"admin",
 						"eth",
-						"send"
+						"send",
+						"tx"
 					]
 				},
 				"description": ""
@@ -1038,7 +1039,7 @@
 			"response": []
 		},
 		{
-			"name": "/api/admin/btc/send - send ethers",
+			"name": "/api/admin/btc/send/tx - send bitcoin transaction to queue",
 			"event": [
 				{
 					"listen": "test",
@@ -1066,10 +1067,10 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"address\": \"{{payInBtcAddress}}\",\r\n  \"amount\": {{btc_investment_amount}}\r\n}"
+					"raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"amount\": 0.012\r\n}"
 				},
 				"url": {
-					"raw": "{{domain}}/api/admin/btc/send",
+					"raw": "{{domain}}/api/admin/btc/send/tx",
 					"host": [
 						"{{domain}}"
 					],
@@ -1077,7 +1078,8 @@
 						"api",
 						"admin",
 						"btc",
-						"send"
+						"send",
+						"tx"
 					]
 				},
 				"description": ""
@@ -1085,7 +1087,7 @@
 			"response": []
 		},
 		{
-			"name": "/api/admin/investors/{email}/emails - wait 10 mins and recheck emails",
+			"name": "/api/admin/fiat/send/tx - send fiat transaction to queue",
 			"event": [
 				{
 					"listen": "test",
@@ -1094,12 +1096,54 @@
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
-							"});",
-							"",
-							"pm.test(\"Must have 7 sent emails\", function () {",
-							"    var jsonData = pm.response.json();",
-							"    ",
-							"    pm.expect(Number(jsonData.emails.count())).to.eql(Number(pm.environment.get(\"investor-emails-size\")) + 7);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "adminAuthToken",
+						"value": "{{admin_auth_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"amount\": 300\r\n}"
+				},
+				"url": {
+					"raw": "{{domain}}/api/admin/fiat/send/tx",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"api",
+						"admin",
+						"fiat",
+						"send",
+						"tx"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/api/isalive - wait 1 minute",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
 							"});"
 						]
 					}
@@ -1109,7 +1153,7 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"setTimeout(function(){}, 600000);"
+							"setTimeout(function(){}, 60000);"
 						]
 					}
 				}
@@ -1131,16 +1175,13 @@
 					"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
 				},
 				"url": {
-					"raw": "{{domain}}/api/admin/investors/{{email}}/emails",
+					"raw": "{{domain}}/api/isalive",
 					"host": [
 						"{{domain}}"
 					],
 					"path": [
 						"api",
-						"admin",
-						"investors",
-						"{{email}}",
-						"emails"
+						"isalive"
 					]
 				},
 				"description": ""
@@ -1159,10 +1200,10 @@
 							"    pm.response.to.have.status(200);",
 							"});",
 							"",
-							"pm.test(\"Must have 2 new transactions\", function () {",
+							"pm.test(\"Must have 3 new transactions\", function () {",
 							"    var jsonData = pm.response.json();",
 							"    ",
-							"    pm.expect(Number(jsonData.transactions.count())).to.eql(Number(pm.environment.get(\"investor-transactions-size\")) + 2);",
+							"    pm.expect(Number(jsonData.transactions.count())).to.eql(Number(pm.environment.get(\"investor-transactions-size\")) + 3);",
 							"});"
 						]
 					}
@@ -1223,10 +1264,10 @@
 							"    pm.expect(Number(jsonData.amountInvestedEth) > Number(pm.environment.get(\"amountInvestedEth\"))).to.be.true;",
 							"});",
 							"",
-							"//pm.test(\"amountInvestedFiat was increased\", function() {",
-							"    //var jsonData = pm.response.json();",
-							"    //pm.expect(Number(jsonData.amountInvestedFiat) === Number(pm.environment.get(\"amountInvestedFiat\"))).to.be.true;",
-							"//});",
+							"pm.test(\"amountInvestedFiat was increased\", function() {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(Number(jsonData.amountInvestedFiat) > Number(pm.environment.get(\"amountInvestedFiat\"))).to.be.true;",
+							"});",
 							"",
 							"pm.test(\"amountInvestedToken was increased\", function() {",
 							"    var jsonData = pm.response.json();",
@@ -1295,9 +1336,9 @@
 							"    pm.expect(Number(jsonData.amountEth) > Number(pm.environment.get(\"amountEth\"))).to.be.true;",
 							"});",
 							"",
-							"pm.test(\"amountFiat was not changed\", function () {",
+							"pm.test(\"amountFiat was increased\", function () {",
 							"    var jsonData = pm.response.json();",
-							"    pm.expect(Number(jsonData.amountFiat) === Number(pm.environment.get(\"amountFiat\"))).to.be.true;",
+							"    pm.expect(Number(jsonData.amountFiat) > Number(pm.environment.get(\"amountFiat\"))).to.be.true;",
 							"});",
 							"",
 							"pm.test(\"amountUsd was increased\", function () {",
@@ -1339,6 +1380,113 @@
 						"admin",
 						"investors",
 						"{{email}}"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/api/admin/investors/{email}/history - recheck KYC investor change",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Investor profile history must be increased on 7 records\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(Number(jsonData.items.count())).to.eql(Number(pm.environment.get(\"investor-history-size\")) + 7);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "adminAuthToken",
+						"value": "{{admin_auth_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
+				},
+				"url": {
+					"raw": "{{domain}}/api/admin/investors/{{email}}/history",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"api",
+						"admin",
+						"investors",
+						"{{email}}",
+						"history"
+					]
+				},
+				"description": "recheck investor changes history"
+			},
+			"response": []
+		},
+		{
+			"name": "/api/admin/investors/{email}/emails - recheck emails",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Must have 8 sent emails\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    ",
+							"    pm.expect(Number(jsonData.emails.count())).to.eql(Number(pm.environment.get(\"investor-emails-size\")) + 8);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "adminAuthToken",
+						"value": "{{admin_auth_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
+				},
+				"url": {
+					"raw": "{{domain}}/api/admin/investors/{{email}}/emails",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"api",
+						"admin",
+						"investors",
+						"{{email}}",
+						"emails"
 					]
 				},
 				"description": ""

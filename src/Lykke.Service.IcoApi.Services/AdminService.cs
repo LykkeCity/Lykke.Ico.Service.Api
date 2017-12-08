@@ -165,6 +165,9 @@ namespace Lykke.Service.IcoApi.Services
                 message.Link = $"http://test.valid.global/eth/{message.TransactionId}";
             }
 
+            await _log.WriteInfoAsync(nameof(AdminService), nameof(SendTransactionMessageAsync), 
+                $"Message: {message.ToJson()}");
+
             await _transactionQueuePublisher.SendAsync(message);
 
             return message.UniqueId;
@@ -172,7 +175,8 @@ namespace Lykke.Service.IcoApi.Services
 
         public async Task<int> ImportPublicKeys(StreamReader reader)
         {
-            await _log.WriteInfoAsync(nameof(AdminService), nameof(ImportPublicKeys), $"Start of public keys import");
+            await _log.WriteInfoAsync(nameof(AdminService), nameof(ImportPublicKeys), 
+                $"Start of public keys import");
 
             var list = new List<IAddressPoolItem>();
             var csv = new CsvReader(reader);
