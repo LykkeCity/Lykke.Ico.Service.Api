@@ -1,4 +1,5 @@
 ﻿using Common.Log;
+using Lykke.Ico.Core;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Infrastructure.Auth;
 using Lykke.Service.IcoApi.Models;
@@ -24,16 +25,19 @@ namespace Lykke.Service.IcoApi.Controllers
         private readonly IAdminService _adminService;
         private readonly IBtcService _btcService;
         private readonly IEthService _ethService;
+        private readonly IFiatService _fiatService;
         private readonly IIcoExRateClient _icoExRateClient;
 
         public AdminController(ILog log, IInvestorService investorService, IAdminService adminService, 
-            IBtcService btcService, IEthService ethService, IIcoExRateClient icoExRateClient)
+            IBtcService btcService, IEthService ethService, IFiatService fiatService, 
+            IIcoExRateClient icoExRateClient)
         {
             _log = log;
             _investorService = investorService;
             _adminService = adminService;
             _btcService = btcService;
             _ethService = ethService;
+            _fiatService = fiatService;
             _icoExRateClient = icoExRateClient;
         }
 
@@ -222,6 +226,25 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
+        /// Sends ether transaction message to queue
+        /// </summary>
+        [AdminAuth]
+        [HttpPost("eth/send/tx")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> SendEthTransactionMessage([FromBody] TransactionMessageRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _adminService.SendTransactionMessageAsync(request.Email, CurrencyType.Ether, DateTime.UtcNow,
+                Guid.NewGuid().ToString(), request.Amount);
+
+            return Ok();
+        }
+
+        /// <summary>
         /// Returns bitcoin address by public key
         /// </summary>
         [AdminAuth]
@@ -268,6 +291,46 @@ namespace Lykke.Service.IcoApi.Controllers
             }
 
             return Ok(_btcService.SendToAddress(request.Address, request.Amount));
+        }
+
+        /// <summary>
+        /// Sends bitcoin transaction message to queue
+        /// </summary>
+        [AdminAuth]
+        [HttpPost("btc/send/tx")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> SendBtcTransactionMessage([FromBody] TransactionMessageRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _adminService.SendTransactionMessageAsync(request.Email, CurrencyType.Bitcoin, DateTime.UtcNow,
+                Guid.NewGuid().ToString(), request.Amount);
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Sends fiat transaction message to queue
+        /// </summary>
+        [AdminAuth]
+        [HttpPost("fiat/send/tx")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> SendFiatTransactionMessage([FromBody] TransactionMessageRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var fee = request.Amount * 0.039M;
+
+            await _adminService.SendTransactionMessageAsync(request.Email, CurrencyType.Fiat, DateTime.UtcNow, 
+                Guid.NewGuid().ToString(),  request.Amount - fee, fee);
+
+            return Ok();
         }
     }
 }

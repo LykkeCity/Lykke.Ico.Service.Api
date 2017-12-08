@@ -263,4 +263,13 @@ namespace Lykke.Service.IcoApi.Models
             };
         }
     }
+
+    public class TransactionMessageRequest
+    {
+        [Required]
+        public string Email { get; set; }
+
+        [Required]
+        public decimal Amount { get; set; }
+    }
 }

@@ -14,6 +14,11 @@ using System.Text;
 using Lykke.Ico.Core.Repositories.InvestorEmail;
 using Lykke.Ico.Core.Repositories.InvestorTransaction;
 using Lykke.Ico.Core.Repositories.CampaignSettings;
+using System;
+using Lykke.Ico.Core.Queues.Transactions;
+using Lykke.Ico.Core;
+using Common;
+using Lykke.Ico.Core.Queues;
 
 namespace Lykke.Service.IcoApi.Services
 {
@@ -31,6 +36,7 @@ namespace Lykke.Service.IcoApi.Services
         private readonly ICampaignInfoRepository _campaignInfoRepository;
         private readonly IAddressPoolRepository _addressPoolRepository;
         private readonly ICampaignSettingsRepository _campaignSettingsRepository;
+        private readonly IQueuePublisher<TransactionMessage> _transactionQueuePublisher;
 
         public AdminService(string btcNetwork,
             string ethNetwork,
@@ -43,7 +49,8 @@ namespace Lykke.Service.IcoApi.Services
             IAddressPoolHistoryRepository addressPoolHistoryRepository,
             ICampaignInfoRepository campaignInfoRepository,
             IAddressPoolRepository addressPoolRepository,
-            ICampaignSettingsRepository campaignSettingsRepository)
+            ICampaignSettingsRepository campaignSettingsRepository,
+            IQueuePublisher<TransactionMessage> transactionQueuePublisher)
         {
             _btcNetwork = btcNetwork;
             _ethNetwork = ethNetwork;
@@ -57,6 +64,7 @@ namespace Lykke.Service.IcoApi.Services
             _addressPoolRepository = addressPoolRepository;
             _investorTransactionRepository = cryptoInvestmentRepository;
             _campaignSettingsRepository = campaignSettingsRepository;
+            _transactionQueuePublisher = transactionQueuePublisher;
         }
 
         public async Task<Dictionary<string, string>> GetCampaignInfo()
@@ -121,6 +129,45 @@ namespace Lykke.Service.IcoApi.Services
         public async Task<IEnumerable<IInvestorTransaction>> GetInvestorTransactions(string email)
         {
             return await _investorTransactionRepository.GetByEmailAsync(email);
+        }
+
+        public async Task<string> SendTransactionMessageAsync(string email, CurrencyType currency, DateTime createdUtc, 
+            string transactionId, decimal amount, decimal fee = 0)
+        {
+            var investor = await _investorRepository.GetAsync(email);
+            if (investor == null)
+            {
+                throw new Exception($"Investor with email={email} was not found");
+            }
+
+            var message = new TransactionMessage
+            {
+                Email = email,
+                Amount = amount,
+                CreatedUtc = createdUtc,
+                Currency = currency,
+                Fee = fee,
+                TransactionId = $"fake_tx_{transactionId}",
+                UniqueId = $"fake_uid_{transactionId}"
+            };
+
+            if (currency == CurrencyType.Bitcoin)
+            {
+                message.BlockId = $"fake_btc_block_{Guid.NewGuid()}";
+                message.PayInAddress = investor.PayInBtcAddress;
+                message.Link = $"http://test.valid.global/btc/{message.TransactionId}";
+            }
+
+            if (currency == CurrencyType.Ether)
+            {
+                message.BlockId = $"fake_eth_block_{Guid.NewGuid()}";
+                message.PayInAddress = investor.PayInEthAddress;
+                message.Link = $"http://test.valid.global/eth/{message.TransactionId}";
+            }
+
+            await _transactionQueuePublisher.SendAsync(message);
+
+            return message.UniqueId;
         }
 
         public async Task<int> ImportPublicKeys(StreamReader reader)

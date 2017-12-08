@@ -2,6 +2,7 @@
 using Common.Log;
 using Lykke.Ico.Core.Queues;
 using Lykke.Ico.Core.Queues.Emails;
+using Lykke.Ico.Core.Queues.Transactions;
 using Lykke.Ico.Core.Repositories.AddressPool;
 using Lykke.Ico.Core.Repositories.AddressPoolHistory;
 using Lykke.Ico.Core.Repositories.CampaignInfo;
@@ -114,6 +115,10 @@ namespace Lykke.Service.IcoApi.Modules
                 .WithParameter("testSecretKey", _settings.CurrentValue.EthTestSecretKey)
                 .SingleInstance();
 
+            builder.RegisterType<FiatService>()
+                .As<IFiatService>()
+                .SingleInstance();
+
             builder.RegisterType<QueuePublisher<InvestorConfirmationMessage>>()
                 .As<IQueuePublisher<InvestorConfirmationMessage>>()
                 .WithParameter(TypedParameter.From(connectionStringManager))
@@ -123,6 +128,11 @@ namespace Lykke.Service.IcoApi.Modules
                 .As<IQueuePublisher<InvestorSummaryMessage>>()
                 .WithParameter(TypedParameter.From(connectionStringManager))
                 .SingleInstance();
+
+            builder.RegisterType<QueuePublisher<TransactionMessage>>()
+                            .As<IQueuePublisher<TransactionMessage>>()
+                            .WithParameter(TypedParameter.From(connectionStringManager))
+                            .SingleInstance();
         }
     }
 }
