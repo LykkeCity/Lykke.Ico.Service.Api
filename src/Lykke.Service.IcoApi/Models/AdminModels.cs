@@ -1,4 +1,5 @@
 ﻿using Lykke.Ico.Core;
+using Lykke.Ico.Core.Repositories.AddressPoolHistory;
 using Lykke.Ico.Core.Repositories.CampaignSettings;
 using Lykke.Ico.Core.Repositories.Investor;
 using Lykke.Ico.Core.Repositories.InvestorEmail;
@@ -271,5 +272,40 @@ namespace Lykke.Service.IcoApi.Models
 
         [Required]
         public decimal Amount { get; set; }
+    }
+
+    public class InvestorAddressPoolHistoryResponse
+    {
+        public AddressPoolHistoryItemModel[] Items { get; set; }
+
+        public static InvestorAddressPoolHistoryResponse Create(IEnumerable<IAddressPoolHistoryItem> items)
+        {
+            return new InvestorAddressPoolHistoryResponse
+            {
+                Items = items.Select(f => AddressPoolHistoryItemModel.Create(f)).ToArray()
+            };
+        }
+    }
+
+    public class AddressPoolHistoryItemModel
+    {
+        public string Email { get; set; }
+
+        public DateTime WhenUtc { get; set; }
+
+        public string EthPublicKey { get; set; }
+
+        public string BtcPublicKey { get; set; }
+
+        public static AddressPoolHistoryItemModel Create(IAddressPoolHistoryItem item)
+        {
+            return new AddressPoolHistoryItemModel
+            {
+                Email = item.Email,
+                WhenUtc = item.WhenUtc,
+                EthPublicKey = item.EthPublicKey,
+                BtcPublicKey = item.BtcPublicKey
+            };
+        }
     }
 }

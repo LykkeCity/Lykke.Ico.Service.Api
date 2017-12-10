@@ -109,7 +109,7 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
-        /// Returns the history of investor changes
+        /// Returns the history of investor profile changes
         /// </summary>
         [AdminAuth]
         [HttpGet("investors/{email}/history")]
@@ -119,7 +119,7 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
-        /// Returns the list of emails sent to user
+        /// Returns the list of emails sent to investor
         /// </summary>
         [AdminAuth]
         [HttpGet("investors/{email}/emails")]
@@ -129,13 +129,39 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
-        /// Returns the list of investor transactions
+        /// Returns the list of transactions maid by investor
         /// </summary>
         [AdminAuth]
         [HttpGet("investors/{email}/transactions")]
         public async Task<InvestorTransactionsResponse> GetInvestorTransactions([Required] string email)
         {
             return InvestorTransactionsResponse.Create(await _adminService.GetInvestorTransactions(email));
+        }
+
+        /// <summary>
+        /// Returns the list of address pool history items assigned to investor
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("investors/{email}/pool/history")]
+        public async Task<InvestorAddressPoolHistoryResponse> GetInvestorAddressPoolHistory([Required] string email)
+        {
+            return InvestorAddressPoolHistoryResponse.Create(await _adminService.GetInvestorAddressPoolHistory(email));
+        }
+
+        /// <summary>
+        /// Removes all data for investor from db
+        /// </summary>
+        /// <remarks>
+        /// profile history, address pool history, emails, transactions
+        /// </remarks>
+        [AdminAuth]
+        [HttpDelete("investors/{email}/all")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        public async Task<IActionResult> DeleteInvestorAllData([Required] string email)
+        {
+            await _adminService.DeleteInvestorAllDataAsync(email);
+
+            return NoContent();
         }
 
         /// <summary>

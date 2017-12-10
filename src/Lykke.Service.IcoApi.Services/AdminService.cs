@@ -114,11 +114,17 @@ namespace Lykke.Service.IcoApi.Services
             return await _investorHistoryRepository.GetAsync(email);
         }
 
-        public async Task DeleteInvestorHistoryAsync(string email)
+        public async Task DeleteInvestorAllDataAsync(string email)
         {
             await _investorEmailRepositoryy.RemoveAsync(email);
             await _investorHistoryRepository.RemoveAsync(email);
             await _addressPoolHistoryRepository.RemoveAsync(email);
+            await _investorTransactionRepository.RemoveAsync(email);
+        }
+
+        public async Task<IEnumerable<IAddressPoolHistoryItem>> GetInvestorAddressPoolHistory(string email)
+        {
+            return await _addressPoolHistoryRepository.GetAsync(email);
         }
 
         public async Task<IEnumerable<IInvestorEmail>> GetInvestorEmails(string email)
