@@ -1051,6 +1051,15 @@
 							"});"
 						]
 					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"setTimeout(function(){}, 1000);"
+						]
+					}
 				}
 			],
 			"request": {
@@ -1099,6 +1108,15 @@
 							"});"
 						]
 					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"setTimeout(function(){}, 1000);"
+						]
+					}
 				}
 			],
 			"request": {
@@ -1135,7 +1153,7 @@
 			"response": []
 		},
 		{
-			"name": "/api/isalive - wait 1 minute",
+			"name": "/api/isalive - wait 2 minutes",
 			"event": [
 				{
 					"listen": "test",
@@ -1153,7 +1171,7 @@
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"setTimeout(function(){}, 60000);"
+							"setTimeout(function(){}, 120000);"
 						]
 					}
 				}
