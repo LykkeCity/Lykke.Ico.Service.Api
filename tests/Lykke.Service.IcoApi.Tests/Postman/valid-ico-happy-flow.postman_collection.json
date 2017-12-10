@@ -54,6 +54,54 @@
 			"response": []
 		},
 		{
+			"name": "/api/admin/investors/{email}/all - delete all investor data",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "adminAuthToken",
+						"value": "{{admin_auth_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{domain}}/api/admin/investors/{{email}}/all",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"api",
+						"admin",
+						"investors",
+						"{{email}}",
+						"all"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
 			"name": "/api/admin/campaign/info - remember campaign data",
 			"event": [
 				{
@@ -323,6 +371,61 @@
 						"investors",
 						"{{email}}",
 						"transactions"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/api/admin/investors/{email}/pool/history - remember address pool number",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Remember transactions sent number\", function () {",
+							"    var jsonData = pm.response.json();",
+							"",
+							"    pm.environment.set(\"investor-address-pool-size\", (typeof jsonData.items === 'undefined') ? 0 : jsonData.items.count());",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "adminAuthToken",
+						"value": "{{admin_auth_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
+				},
+				"url": {
+					"raw": "{{domain}}/api/admin/investors/{{email}}/pool/history",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"api",
+						"admin",
+						"investors",
+						"{{email}}",
+						"pool",
+						"history"
 					]
 				},
 				"description": ""
@@ -1207,6 +1310,61 @@
 			"response": []
 		},
 		{
+			"name": "/api/admin/investors/{email}/pool/history - recheck address pool history",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Must have 1 new address pool history item\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    ",
+							"    pm.expect(Number(jsonData.items.count())).to.eql(Number(pm.environment.get(\"investor-address-pool-size\")) + 1);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "adminAuthToken",
+						"value": "{{admin_auth_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
+				},
+				"url": {
+					"raw": "{{domain}}/api/admin/investors/{{email}}/pool/history",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"api",
+						"admin",
+						"investors",
+						"{{email}}",
+						"pool",
+						"history"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
 			"name": "/api/admin/investors/{email}/transactions - recheck transactions",
 			"event": [
 				{
@@ -1405,7 +1563,7 @@
 			"response": []
 		},
 		{
-			"name": "/api/admin/investors/{email}/history - recheck KYC investor change",
+			"name": "/api/admin/investors/{email}/history - recheck investor profile changes",
 			"event": [
 				{
 					"listen": "test",

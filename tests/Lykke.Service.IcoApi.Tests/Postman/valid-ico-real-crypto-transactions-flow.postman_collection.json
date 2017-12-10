@@ -67,29 +67,21 @@
 			"response": []
 		},
 		{
-			"name": "/api/admin/campaign/info - remember campaign data",
+			"name": "/api/admin/investors/{email}/history - remember investor changes",
 			"event": [
 				{
 					"listen": "test",
 					"script": {
 						"type": "text/javascript",
 						"exec": [
-							"pm.test(\"Status code is 200\", function() {",
+							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
 							"});",
 							"",
-							"pm.test(\"Campaign data\", function() {",
+							"pm.test(\"Save Investor profile changes number\", function () {",
 							"    var jsonData = pm.response.json();",
 							"",
-							"    pm.environment.set(\"addressPoolCurrentSize\", (typeof jsonData.addressPoolCurrentSize === 'undefined') ? 0 : jsonData.addressPoolCurrentSize);",
-							"    pm.environment.set(\"investorsRegistered\", (typeof jsonData.investorsRegistered === 'undefined') ? 0 : jsonData.investorsRegistered);",
-							"    pm.environment.set(\"investorsConfirmed\", (typeof jsonData.investorsConfirmed === 'undefined') ? 0 : jsonData.investorsConfirmed);",
-							"    pm.environment.set(\"investorsFilledIn\", (typeof jsonData.investorsFilledIn === 'undefined') ? 0 : jsonData.investorsFilledIn);",
-							"    pm.environment.set(\"amountInvestedBtc\", (typeof jsonData.amountInvestedBtc === 'undefined') ? 0 : jsonData.amountInvestedBtc);",
-							"    pm.environment.set(\"amountInvestedEth\", (typeof jsonData.amountInvestedEth === 'undefined') ? 0 : jsonData.amountInvestedEth);",
-							"    pm.environment.set(\"amountInvestedFiat\", (typeof jsonData.amountInvestedFiat === 'undefined') ? 0 : jsonData.amountInvestedFiat);",
-							"    pm.environment.set(\"amountInvestedToken\", (typeof jsonData.amountInvestedToken === 'undefined') ? 0 : jsonData.amountInvestedToken);",
-							"    pm.environment.set(\"amountInvestedUsd\", (typeof jsonData.amountInvestedUsd === 'undefined') ? 0 : jsonData.amountInvestedUsd);",
+							"    pm.environment.set(\"investor-history-size\", (typeof jsonData.items === 'undefined') ? 0 : jsonData.items.count());",
 							"});"
 						]
 					}
@@ -112,15 +104,16 @@
 					"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
 				},
 				"url": {
-					"raw": "{{domain}}/api/admin/campaign/info",
+					"raw": "{{domain}}/api/admin/investors/{{email}}/history",
 					"host": [
 						"{{domain}}"
 					],
 					"path": [
 						"api",
 						"admin",
-						"campaign",
-						"info"
+						"investors",
+						"{{email}}",
+						"history"
 					]
 				},
 				"description": ""
@@ -229,6 +222,67 @@
 						"investors",
 						"{{email}}",
 						"transactions"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/api/admin/campaign/info - remember campaign data",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function() {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Campaign data\", function() {",
+							"    var jsonData = pm.response.json();",
+							"",
+							"    pm.environment.set(\"addressPoolCurrentSize\", (typeof jsonData.addressPoolCurrentSize === 'undefined') ? 0 : jsonData.addressPoolCurrentSize);",
+							"    pm.environment.set(\"investorsRegistered\", (typeof jsonData.investorsRegistered === 'undefined') ? 0 : jsonData.investorsRegistered);",
+							"    pm.environment.set(\"investorsConfirmed\", (typeof jsonData.investorsConfirmed === 'undefined') ? 0 : jsonData.investorsConfirmed);",
+							"    pm.environment.set(\"investorsFilledIn\", (typeof jsonData.investorsFilledIn === 'undefined') ? 0 : jsonData.investorsFilledIn);",
+							"    pm.environment.set(\"amountInvestedBtc\", (typeof jsonData.amountInvestedBtc === 'undefined') ? 0 : jsonData.amountInvestedBtc);",
+							"    pm.environment.set(\"amountInvestedEth\", (typeof jsonData.amountInvestedEth === 'undefined') ? 0 : jsonData.amountInvestedEth);",
+							"    pm.environment.set(\"amountInvestedFiat\", (typeof jsonData.amountInvestedFiat === 'undefined') ? 0 : jsonData.amountInvestedFiat);",
+							"    pm.environment.set(\"amountInvestedToken\", (typeof jsonData.amountInvestedToken === 'undefined') ? 0 : jsonData.amountInvestedToken);",
+							"    pm.environment.set(\"amountInvestedUsd\", (typeof jsonData.amountInvestedUsd === 'undefined') ? 0 : jsonData.amountInvestedUsd);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "adminAuthToken",
+						"value": "{{admin_auth_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
+				},
+				"url": {
+					"raw": "{{domain}}/api/admin/campaign/info",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"api",
+						"admin",
+						"campaign",
+						"info"
 					]
 				},
 				"description": ""
@@ -560,6 +614,59 @@
 					]
 				},
 				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "/api/admin/investors/{email}/history - recheck investor profile changes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Investor profile history must be increased on 2 records\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(Number(jsonData.items.count())).to.eql(Number(pm.environment.get(\"investor-history-size\")) + 2);",
+							"});"
+						]
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "adminAuthToken",
+						"value": "{{admin_auth_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
+				},
+				"url": {
+					"raw": "{{domain}}/api/admin/investors/{{email}}/history",
+					"host": [
+						"{{domain}}"
+					],
+					"path": [
+						"api",
+						"admin",
+						"investors",
+						"{{email}}",
+						"history"
+					]
+				},
+				"description": "recheck investor changes history"
 			},
 			"response": []
 		},
