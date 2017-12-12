@@ -577,7 +577,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a1b4543e-3eff-47fe-9ddd-23ba98b70871",
+								"id": "c331c402-b4fa-45a3-85b1-b3112c496bd1",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -585,7 +585,7 @@
 									"});",
 									"",
 									"var jsonData = JSON.parse(responseBody);",
-									"var current = Number(jsonData.emails.count());",
+									"var current = Number(jsonData.transactions.count());",
 									"var expected = Number(pm.environment.get(\"investor-transactions-size\")) + 1;",
 									"",
 									"if(current == expected) {",
@@ -826,7 +826,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "94985492-a398-42bc-8d6b-755c69d57216",
+								"id": "fcdb471f-ec8c-4798-ad06-6fadcaa1ec14",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -834,7 +834,7 @@
 									"});",
 									"",
 									"var jsonData = JSON.parse(responseBody);",
-									"var current = Number(jsonData.emails.count());",
+									"var current = Number(jsonData.transactions.count());",
 									"var expected = Number(pm.environment.get(\"investor-transactions-size\")) + 1;",
 									"",
 									"if(current == expected) {",
