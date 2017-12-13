@@ -1,14 +1,12 @@
 {
 	"info": {
 		"name": "Valid ICO - Happy Flow",
-		"_postman_id": "d1ff175e-170c-634f-29d5-bd99800a1398",
-		"description": "",
+		"_postman_id": "9563dce3-481c-856e-7da5-ee86f4e2ba0a",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
 			"name": "Remove Investor",
-			"description": "",
 			"item": [
 				{
 					"name": "/api/admin/investors/{email} - delete investor",
@@ -52,8 +50,7 @@
 								"investors",
 								"{{email}}"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -100,8 +97,7 @@
 								"{{email}}",
 								"all"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				}
@@ -109,7 +105,6 @@
 		},
 		{
 			"name": "Check Rates Service",
-			"description": "",
 			"item": [
 				{
 					"name": "/api/admin/rates/latest - recheck rates availability",
@@ -159,8 +154,7 @@
 								"rates",
 								"latest"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				}
@@ -168,7 +162,6 @@
 		},
 		{
 			"name": "Get Initial Data",
-			"description": "",
 			"item": [
 				{
 					"name": "/api/admin/campaign/info - remember campaign data",
@@ -226,8 +219,7 @@
 								"campaign",
 								"info"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -280,8 +272,7 @@
 								"{{email}}",
 								"history"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -334,8 +325,7 @@
 								"{{email}}",
 								"emails"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -388,8 +378,7 @@
 								"{{email}}",
 								"transactions"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -443,8 +432,7 @@
 								"pool",
 								"history"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -496,8 +484,7 @@
 								"address",
 								"random"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -549,8 +536,7 @@
 								"address",
 								"random"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -602,8 +588,7 @@
 								"address",
 								"random"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				}
@@ -611,7 +596,6 @@
 		},
 		{
 			"name": "Register Investor",
-			"description": "",
 			"item": [
 				{
 					"name": "/api/investor/register - register investor",
@@ -656,8 +640,7 @@
 								"investor",
 								"register"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -717,8 +700,7 @@
 								"{{email}}",
 								"emails"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -784,7 +766,6 @@
 		},
 		{
 			"name": "Confirm Investor",
-			"description": "",
 			"item": [
 				{
 					"name": "/api/admin/investors/{email} - get confirmation token",
@@ -837,8 +818,7 @@
 								"investors",
 								"{{email}}"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -886,8 +866,7 @@
 								"confirmation",
 								"{{confirmation_token}}"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -940,8 +919,7 @@
 								"investors",
 								"{{email}}"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -1007,7 +985,6 @@
 		},
 		{
 			"name": "Update Addresses",
-			"description": "",
 			"item": [
 				{
 					"name": "/api/investor - update investor addresses",
@@ -1049,8 +1026,7 @@
 								"api",
 								"investor"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -1110,8 +1086,7 @@
 								"{{email}}",
 								"emails"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -1180,8 +1155,7 @@
 								"api",
 								"investor"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -1247,8 +1221,7 @@
 								"campaign",
 								"info"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -1302,8 +1275,7 @@
 								"pool",
 								"history"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -1369,7 +1341,6 @@
 		},
 		{
 			"name": "Send BTC Transaction",
-			"description": "",
 			"item": [
 				{
 					"name": "/api/admin/investors/{email} - get pay-in address and amounts",
@@ -1423,8 +1394,7 @@
 								"investors",
 								"{{email}}"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -1471,8 +1441,7 @@
 								"send",
 								"tx"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -1482,6 +1451,7 @@
 						{
 							"listen": "test",
 							"script": {
+								"id": "8f592dd9-1ea3-436d-aee0-f8b24ed90699",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -1490,10 +1460,10 @@
 									"",
 									"var jsonData = JSON.parse(responseBody);",
 									"var current = Number(jsonData.emails.count());",
-									"var expected = Number(pm.environment.get(\"investor-emails-size\")) + 2;",
+									"var expected = Number(pm.environment.get(\"investor-emails-size\")) + 1;",
 									"",
 									"if(current == expected){",
-									"    console.info(\"2 emails recieved (1 transaction and 1 need more funds)\");",
+									"    console.info(\"1 email recieved (1 transaction)\");",
 									"    pm.environment.set(\"investor-emails-size\", current);",
 									"} else {",
 									"    console.info(\"Wait 10 secs\");",
@@ -1532,8 +1502,7 @@
 								"{{email}}",
 								"emails"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -1598,8 +1567,7 @@
 								"campaign",
 								"info"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -1660,8 +1628,7 @@
 								"investors",
 								"{{email}}"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -1717,8 +1684,7 @@
 								"{{email}}",
 								"transactions"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -1784,7 +1750,6 @@
 		},
 		{
 			"name": "Send ETH Transaction",
-			"description": "",
 			"item": [
 				{
 					"name": "/api/admin/investors/{email} - get pay-in address and amounts",
@@ -1838,8 +1803,7 @@
 								"investors",
 								"{{email}}"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -1886,8 +1850,7 @@
 								"send",
 								"tx"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -1897,6 +1860,7 @@
 						{
 							"listen": "test",
 							"script": {
+								"id": "ece577fd-3c1a-4c75-a469-21b8bb11bfe1",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -1905,10 +1869,10 @@
 									"",
 									"var jsonData = JSON.parse(responseBody);",
 									"var current = Number(jsonData.emails.count());",
-									"var expected = Number(pm.environment.get(\"investor-emails-size\")) + 2;",
+									"var expected = Number(pm.environment.get(\"investor-emails-size\")) + 1;",
 									"",
 									"if(current == expected){",
-									"    console.info(\"2 emails recieved (1 transaction and 1 need more funds)\");",
+									"    console.info(\"1 email recieved (1 transaction)\");",
 									"    pm.environment.set(\"investor-emails-size\", current);",
 									"} else {",
 									"    console.info(\"Wait 10 secs\");",
@@ -1947,8 +1911,7 @@
 								"{{email}}",
 								"emails"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -2010,8 +1973,7 @@
 								"campaign",
 								"info"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -2072,8 +2034,7 @@
 								"investors",
 								"{{email}}"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -2129,8 +2090,7 @@
 								"{{email}}",
 								"transactions"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -2196,7 +2156,6 @@
 		},
 		{
 			"name": "Send Fiat Transaction",
-			"description": "",
 			"item": [
 				{
 					"name": "/api/admin/investors/{email} - get pay-in address and amounts",
@@ -2248,8 +2207,7 @@
 								"investors",
 								"{{email}}"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -2296,8 +2254,7 @@
 								"send",
 								"tx"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -2307,6 +2264,7 @@
 						{
 							"listen": "test",
 							"script": {
+								"id": "5ae904e1-a7ca-4c1e-becb-1148c9050183",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -2315,10 +2273,10 @@
 									"",
 									"var jsonData = JSON.parse(responseBody);",
 									"var current = Number(jsonData.emails.count());",
-									"var expected = Number(pm.environment.get(\"investor-emails-size\")) + 2;",
+									"var expected = Number(pm.environment.get(\"investor-emails-size\")) + 1;",
 									"",
 									"if(current == expected){",
-									"    console.info(\"2 emails recieved (1 transaction and 1 KYC request)\");",
+									"    console.info(\"1 email recieved (1 transaction)\");",
 									"    pm.environment.set(\"investor-emails-size\", current);",
 									"} else {",
 									"    console.info(\"Wait 10 secs\");",
@@ -2357,8 +2315,7 @@
 								"{{email}}",
 								"emails"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -2420,8 +2377,7 @@
 								"campaign",
 								"info"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -2483,8 +2439,7 @@
 								"investors",
 								"{{email}}"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
@@ -2540,8 +2495,7 @@
 								"{{email}}",
 								"transactions"
 							]
-						},
-						"description": ""
+						}
 					},
 					"response": []
 				},
