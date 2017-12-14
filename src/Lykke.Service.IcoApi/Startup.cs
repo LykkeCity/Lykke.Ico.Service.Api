@@ -23,6 +23,7 @@ using Lykke.Service.IcoApi.Infrastructure;
 using Microsoft.AspNetCore.Http.Features;
 using Lykke.AzureStorage.Tables.Entity.Metamodel;
 using Lykke.AzureStorage.Tables.Entity.Metamodel.Providers;
+using Stripe;
 
 namespace Lykke.Service.IcoApi
 {
@@ -88,6 +89,8 @@ namespace Lykke.Service.IcoApi
                 builder.Populate(services);
                 ApplicationContainer = builder.Build();
 
+                StripeConfiguration.SetApiKey(appSettings.CurrentValue.IcoApiService.StripeSecretKey);
+
                 return new AutofacServiceProvider(ApplicationContainer);
             }
             catch (Exception ex)
@@ -116,7 +119,13 @@ namespace Lykke.Service.IcoApi
                 app.UseMvc();
                 app.UseSwagger();
                 app.UseSwaggerUi();
-                app.UseStaticFiles();
+                //app.UseStaticFiles();
+                app.UseStaticFiles(new StaticFileOptions()
+                {
+                    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(
+                            System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), @"Html")),
+                    RequestPath = new Microsoft.AspNetCore.Http.PathString("/html")
+                });
 
                 appLifetime.ApplicationStarted.Register(() => StartApplication().Wait());
                 appLifetime.ApplicationStopping.Register(() => StopApplication().Wait());

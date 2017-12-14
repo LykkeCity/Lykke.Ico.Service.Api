@@ -25,19 +25,16 @@ namespace Lykke.Service.IcoApi.Controllers
         private readonly IAdminService _adminService;
         private readonly IBtcService _btcService;
         private readonly IEthService _ethService;
-        private readonly IFiatService _fiatService;
         private readonly IIcoExRateClient _icoExRateClient;
 
         public AdminController(ILog log, IInvestorService investorService, IAdminService adminService, 
-            IBtcService btcService, IEthService ethService, IFiatService fiatService, 
-            IIcoExRateClient icoExRateClient)
+            IBtcService btcService, IEthService ethService, IIcoExRateClient icoExRateClient)
         {
             _log = log;
             _investorService = investorService;
             _adminService = adminService;
             _btcService = btcService;
             _ethService = ethService;
-            _fiatService = fiatService;
             _icoExRateClient = icoExRateClient;
         }
 

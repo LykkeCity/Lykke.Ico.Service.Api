@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Fiat Test</title>
+</head>
+<body>
+    <script src="https://checkout.stripe.com/checkout.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+    Email<br />
+    <input type="text" id="email" style="width: 300px;" />
+
+    <br />
+    Confirmation Token<br />
+    <input type="text" id="confirmationToken" style="width: 300px;" />
+
+    <br />
+    Amount (USD)<br />
+    <input type="text" id="amount" width="100" value="20" />
+
+    <br /><br />
+    <button id="investButton">Invest</button>
+
+    <script>
+    var handler = StripeCheckout.configure({
+      key: 'pk_test_uggNLHYZd6eSD5sRKQYWUArE',
+      locale: 'auto',
+        token: function (token) {
+            var data = {
+                token: token.id,
+                amount: Number($('#amount').val())
+            };
+
+            $.ajax({
+                url: '/api/investor/charge',
+                headers: {
+                    'authToken': $('#confirmationToken').val()
+                },
+                method: 'POST',
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(data),
+                traditional: true,
+                success: function (data) {
+                    alert(data.status);
+                }
+              });        
+          }
+    });
+
+    document.getElementById('investButton').addEventListener('click', function(e) {
+      handler.open({
+        name: 'Stripe.com',
+        currency: 'usd',
+        amount: Number($('#amount').val())*100,
+        email: $('#email').val()
+      });
+      e.preventDefault();
+    });
+
+    // Close Checkout on page navigation:
+    window.addEventListener('popstate', function() {
+      handler.close();
+    });
+    </script>    
+    
+</body>
+</html>

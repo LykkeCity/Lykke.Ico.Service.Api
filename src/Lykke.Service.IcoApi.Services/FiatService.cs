@@ -3,8 +3,11 @@ using Common.Log;
 using Lykke.Ico.Core;
 using Lykke.Ico.Core.Queues;
 using Lykke.Ico.Core.Queues.Transactions;
+using Lykke.Service.IcoApi.Core.Domain;
 using Lykke.Service.IcoApi.Core.Services;
+using Stripe;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Lykke.Service.IcoApi.Services
@@ -21,7 +24,80 @@ namespace Lykke.Service.IcoApi.Services
             _transactionQueuePublisher = transactionQueuePublisher;
         }
 
-        public async Task SendTxMessageAsync(string email, DateTime createdUtc, string transactionId, 
+        public async Task<FiatCharge> Charge(string email, string token, decimal amount)
+        {
+            try
+            {
+                var charge = await ChargeToken(email, token, amount);
+                await _log.WriteInfoAsync(nameof(FiatService), nameof(Charge),
+                    (new { StripeResponse = charge.StripeResponse.ResponseJson }).ToJson(), 
+                    "Charge object recieved");
+
+                if (!charge.Paid)
+                {
+                    return new FiatCharge
+                    {
+                        Status = FiatChargeStatus.Failed,
+                        FailureCode = charge.FailureCode,
+                        FailureMessage = charge.FailureMessage
+                    };
+                }
+
+                var fee = Decimal.Round(((decimal)charge.BalanceTransaction.Fee / 100), 2);
+
+                await SendTxMessageAsync(email, charge.Created.ToUniversalTime(), charge.Id, 
+                    amount - fee, fee);
+
+                return new FiatCharge
+                {
+                    Status = FiatChargeStatus.Success
+                };
+            }
+            catch (Exception ex)
+            {
+                return new FiatCharge
+                {
+                    Status = FiatChargeStatus.Failed,
+                    FailureMessage = ex.Message
+                };
+            }
+        }
+
+        private async Task<StripeCharge> ChargeToken(string email, string token, decimal amount)
+        {
+            var charges = new StripeChargeService { ExpandBalanceTransaction = true };
+            var options = new StripeChargeCreateOptions
+            {
+
+                Amount = Convert.ToInt32(Decimal.Round(amount, 2) * 100),
+                Currency = "usd",
+                SourceTokenOrExistingSourceId = token,
+                Metadata = new Dictionary<String, String>() { { "Email", email } }
+            };
+
+            try
+            {
+                return await charges.CreateAsync(options);
+            }
+            catch (StripeException ex)
+            {
+                await _log.WriteErrorAsync(nameof(FiatService), nameof(Charge),
+                    $"Failed to charge: {options.ToJson()}. StripeError: {ex.StripeError.ToJson()}",
+                    ex);
+
+                throw;
+            }
+            catch (Exception ex)
+            {
+                await _log.WriteErrorAsync(nameof(FiatService), nameof(Charge),
+                    $"Failed to charge: {options.ToJson()}",
+                    ex);
+
+                throw;
+            }
+        }
+
+        private async Task SendTxMessageAsync(string email, DateTime createdUtc, string transactionId,
             decimal amount, decimal fee)
         {
             var message = new TransactionMessage
@@ -35,10 +111,20 @@ namespace Lykke.Service.IcoApi.Services
                 UniqueId = transactionId
             };
 
-            await _log.WriteInfoAsync(nameof(FiatService), nameof(SendTxMessageAsync), 
-                $"Send TransactionMessage: {message.ToJson()}");
+            await _log.WriteInfoAsync(nameof(FiatService), nameof(SendTxMessageAsync),
+                $"TransactionMessage: {message.ToJson()}");
 
-            await _transactionQueuePublisher.SendAsync(message);
+            try
+            {
+                await _transactionQueuePublisher.SendAsync(message);
+            }
+            catch (Exception ex)
+            {
+                await _log.WriteErrorAsync(nameof(FiatService), nameof(Charge),
+                    $"Failed to send transaction message", ex);
+
+                throw;
+            }
         }
     }
 }

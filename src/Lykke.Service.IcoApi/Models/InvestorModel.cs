@@ -68,4 +68,32 @@ namespace Lykke.Service.IcoApi.Models
             };
         }
     }
+
+    public class ChargeInvestorRequest
+    {
+        [Required]
+        public string Token { get; set; }
+
+        [Required]
+        public decimal Amount { get; set; }
+    }
+
+    public class ChargeInvestorResponse
+    {
+        public FiatChargeStatus Status { get; set; }
+
+        public string FailureCode { get; set; }
+
+        public string FailureMessage { get; set; }
+
+        public static ChargeInvestorResponse Create(FiatCharge charge)
+        {
+            return new ChargeInvestorResponse
+            {
+                Status = charge.Status,
+                FailureCode = charge.FailureCode,
+                FailureMessage = charge.FailureMessage
+            };
+        }
+    }
 }
