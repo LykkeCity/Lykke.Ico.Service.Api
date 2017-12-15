@@ -62,7 +62,8 @@ namespace Lykke.Service.IcoApi.Services
             {
                 var token = Guid.NewGuid();
 
-                await _log.WriteInfoAsync(nameof(InvestorService), nameof(RegisterAsync), $"Create investor for email={email} and token={token}");
+                await _log.WriteInfoAsync(nameof(InvestorService), nameof(RegisterAsync), 
+                    $"email={email}, token={token}", "Create investor");
 
                 await _investorRepository.AddAsync(email, token);
                 await _investorAttributeRepository.SaveAsync(InvestorAttributeType.ConfirmationToken, email, token.ToString());
@@ -90,7 +91,9 @@ namespace Lykke.Service.IcoApi.Services
             var email = await _investorAttributeRepository.GetInvestorEmailAsync(InvestorAttributeType.ConfirmationToken, confirmationToken.ToString());
             if (string.IsNullOrEmpty(email))
             {
-                await _log.WriteInfoAsync(nameof(InvestorService), nameof(ConfirmAsync), $"Token {confirmationToken} is not found");
+                await _log.WriteInfoAsync(nameof(InvestorService), nameof(ConfirmAsync), 
+                    $"confirmationToken={confirmationToken}","Token was not found");
+
                 return false;
             }
 
@@ -114,7 +117,8 @@ namespace Lykke.Service.IcoApi.Services
         {
             var poolItem = await _addressPoolRepository.GetNextFree(email);
 
-            await _log.WriteInfoAsync(nameof(InvestorService), nameof(UpdateAsync), $"Address pool item: {poolItem.ToJson()}");
+            await _log.WriteInfoAsync(nameof(InvestorService), nameof(UpdateAsync), 
+                $"poolItem={poolItem.ToJson()}", "Retrieved address pool item");
             await _campaignInfoRepository.IncrementValue(CampaignInfoType.AddressPoolCurrentSize, -1);
 
             var payInEthPublicKey = poolItem.EthPublicKey;
@@ -123,8 +127,10 @@ namespace Lykke.Service.IcoApi.Services
             var payInBtcAddress = _btcService.GetAddressByPublicKey(poolItem.BtcPublicKey);
 
             await _log.WriteInfoAsync(nameof(InvestorService), nameof(UpdateAsync), 
-                $"Invertor to save: tokenAddress={tokenAddress}, refundEthAddress={refundEthAddress}, refundBtcAddress={refundBtcAddress}" +
-                $"payInEthPublicKey={payInEthPublicKey}, payInEthAddress={payInEthAddress}, payInBtcPublicKey={payInBtcPublicKey}, payInBtcAddress={payInBtcAddress}");
+                $"email={email}, tokenAddress={tokenAddress}, refundEthAddress={refundEthAddress}, " +
+                $"refundBtcAddress={refundBtcAddress}, payInEthPublicKey={payInEthPublicKey}, payInEthAddress={payInEthAddress}, " +
+                $"payInBtcPublicKey={payInBtcPublicKey}, payInBtcAddress={payInBtcAddress}",
+                "Update investor data");
             await _investorRepository.SaveAddressesAsync(email, tokenAddress, refundEthAddress, refundBtcAddress,
                 payInEthPublicKey, payInEthAddress, payInBtcPublicKey, payInBtcAddress);
 
@@ -144,7 +150,8 @@ namespace Lykke.Service.IcoApi.Services
                 ConfirmationLink = $"{_icoApiSettings.IcoSiteUrl}participate/verify/{token}" 
             };
 
-            await _log.WriteInfoAsync(nameof(InvestorService), nameof(SendConfirmationEmail), $"Send InvestorConfirmationMessage: {message.ToJson()}");
+            await _log.WriteInfoAsync(nameof(InvestorService), nameof(SendConfirmationEmail), 
+                $"message={message.ToJson()}", "Send InvestorConfirmationMessage");
             await _investorConfirmationQueuePublisher.SendAsync(message);
         }
 
@@ -162,7 +169,8 @@ namespace Lykke.Service.IcoApi.Services
                 LinkEthAddress = $"{_icoApiSettings.EthTrackerUrl}address"
             };
 
-            await _log.WriteInfoAsync(nameof(InvestorService), nameof(SendSummaryEmail), $"Send InvestorSummaryMessage: {message.ToJson()}");
+            await _log.WriteInfoAsync(nameof(InvestorService), nameof(SendSummaryEmail), 
+                $"message={message.ToJson()}", "Send InvestorSummaryMessage");
             await _investorSummaryQueuePublisher.SendAsync(message);
         }
     }
