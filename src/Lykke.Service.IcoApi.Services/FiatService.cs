@@ -30,7 +30,7 @@ namespace Lykke.Service.IcoApi.Services
             {
                 var charge = await ChargeToken(email, token, amount);
                 await _log.WriteInfoAsync(nameof(FiatService), nameof(Charge),
-                    (new { StripeResponse = charge.StripeResponse.ResponseJson }).ToJson(), 
+                    $"charge.StripeResponse={charge.StripeResponse.ResponseJson}",
                     "Charge object recieved");
 
                 if (!charge.Paid)
@@ -112,7 +112,7 @@ namespace Lykke.Service.IcoApi.Services
             };
 
             await _log.WriteInfoAsync(nameof(FiatService), nameof(SendTxMessageAsync),
-                $"TransactionMessage: {message.ToJson()}");
+                $"message={message.ToJson()}", "Transaction message to send");
 
             try
             {

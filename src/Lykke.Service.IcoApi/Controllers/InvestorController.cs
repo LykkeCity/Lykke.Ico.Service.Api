@@ -50,10 +50,9 @@ namespace Lykke.Service.IcoApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            await _log.WriteInfoAsync(
-                nameof(InvestorController), 
-                nameof(RegisterInvestor), 
-                $"Register investor with email={model.Email} from ip={GetRequestIP()}");
+            await _log.WriteInfoAsync(nameof(InvestorController), nameof(RegisterInvestor), 
+                $"email={model.Email}, ip={GetRequestIP()}",
+                "Register investor");
 
             var result = await _investorService.RegisterAsync(model.Email);
 
@@ -71,10 +70,9 @@ namespace Lykke.Service.IcoApi.Controllers
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> ConfirmInvestor(Guid token)
         {
-            await _log.WriteInfoAsync(
-                nameof(InvestorController), 
-                nameof(ConfirmInvestor), 
-                $"Confirm investor with token={token} from ip={GetRequestIP()}");
+            await _log.WriteInfoAsync(nameof(InvestorController), nameof(ConfirmInvestor), 
+                $"token={token}, ip={GetRequestIP()}",
+                "Confirm investor email");
 
             var success = await _investorService.ConfirmAsync(token);
             if (!success)
@@ -102,10 +100,9 @@ namespace Lykke.Service.IcoApi.Controllers
         {
             var email = GetAuthUserEmail();
 
-            await _log.WriteInfoAsync(
-                nameof(InvestorController), 
-                nameof(Get), 
-                $"Get investor with email={email} from ip={GetRequestIP()}");
+            await _log.WriteInfoAsync(nameof(InvestorController), nameof(Get),
+                            $"email={email}, ip={GetRequestIP()}",
+                            "Get investor");
 
             var investor = await _investorService.GetAsync(email);
 
@@ -146,10 +143,9 @@ namespace Lykke.Service.IcoApi.Controllers
                 return BadRequest(@"The token address is already defined");
             }
 
-            await _log.WriteInfoAsync(
-                nameof(InvestorController), 
-                nameof(Post), 
-                $"Save investor with email={email} from ip={GetRequestIP()}: {model.ToJson()}");
+            await _log.WriteInfoAsync(nameof(InvestorController), nameof(Post), 
+                $"email={email}, ip={GetRequestIP()}, model={model.ToJson()}",
+                "Save investor addresses");
 
             await _investorService.UpdateAsync(email, model.TokenAddress, model.RefundEthAddress, model.RefundBtcAddress);
 
@@ -176,7 +172,8 @@ namespace Lykke.Service.IcoApi.Controllers
             await _log.WriteInfoAsync(
                 nameof(InvestorController),
                 nameof(RegisterInvestor),
-                $"Charge investor with email={email} from ip={GetRequestIP()}. {model.ToJson()}");
+                $"email={email}, ip={GetRequestIP()}, model={model.ToJson()}",
+                "Charge investor card");
 
             var result = await _fiatService.Charge(email, model.Token, model.Amount);
 

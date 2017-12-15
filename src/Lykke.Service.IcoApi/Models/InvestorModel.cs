@@ -1,6 +1,7 @@
 ﻿using Lykke.Ico.Core.Repositories.Investor;
 using Lykke.Service.IcoApi.Core.Domain;
 using Newtonsoft.Json;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Lykke.Service.IcoApi.Models
@@ -55,8 +56,30 @@ namespace Lykke.Service.IcoApi.Models
 
         public string PayInBtcAddress { get; set; }
 
+        public KycStatus KycStatus { get; set; }
+
+        public decimal AmountBtc { get; set; }
+
+        public decimal AmountEth { get; set; }
+
+        public decimal AmountFiat { get; set; }
+
+        public decimal AmountUsd { get; set; }
+
+        public decimal AmountToken { get; set; }
+
         public static InvestorResponse Create(IInvestor investor)
         {
+            var kycStatus = KycStatus.None;
+            if (investor.KycRequestedUtc.HasValue)
+            {
+                kycStatus = KycStatus.Requested;
+            }
+            if (investor.KycPassed.HasValue)
+            {
+                kycStatus = investor.KycPassed.Value ? KycStatus.Success : KycStatus.Failed;
+            }
+
             return new InvestorResponse
             {
                 Email = investor.Email,
@@ -64,9 +87,23 @@ namespace Lykke.Service.IcoApi.Models
                 RefundEthAddress = investor.RefundEthAddress,
                 RefundBtcAddress = investor.RefundBtcAddress,
                 PayInEthAddress = investor.PayInEthAddress,
-                PayInBtcAddress = investor.PayInBtcAddress
+                PayInBtcAddress = investor.PayInBtcAddress,
+                KycStatus = kycStatus,
+                AmountBtc = investor.AmountBtc,
+                AmountEth = investor.AmountEth,
+                AmountFiat = investor.AmountFiat,
+                AmountUsd = Decimal.Round(investor.AmountUsd, 2, MidpointRounding.AwayFromZero),
+                AmountToken = investor.AmountToken
             };
         }
+    }
+
+    public enum KycStatus
+    {
+        None,
+        Requested,
+        Failed,
+        Success,
     }
 
     public class ChargeInvestorRequest
