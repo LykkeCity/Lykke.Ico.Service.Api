@@ -119,6 +119,10 @@ namespace Lykke.Service.IcoApi.Modules
                 .As<IFiatService>()
                 .SingleInstance();
 
+            builder.RegisterType<CampaignService>()
+                .As<ICampaignService>()
+                .SingleInstance();            
+
             builder.RegisterType<QueuePublisher<InvestorConfirmationMessage>>()
                 .As<IQueuePublisher<InvestorConfirmationMessage>>()
                 .WithParameter(TypedParameter.From(connectionStringManager))
