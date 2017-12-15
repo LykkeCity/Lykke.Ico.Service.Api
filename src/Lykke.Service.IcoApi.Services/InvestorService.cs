@@ -94,6 +94,16 @@ namespace Lykke.Service.IcoApi.Services
                 return false;
             }
 
+            var investor = await _investorRepository.GetAsync(email);
+            if (investor == null)
+            {
+                throw new Exception($"Investor with email={email} was not found");
+            }
+            if (investor.ConfirmedUtc.HasValue)
+            {
+                return true;
+            }
+
             await _investorRepository.ConfirmAsync(email);
             await _campaignInfoRepository.IncrementValue(CampaignInfoType.InvestorsConfirmed, 1);
 
