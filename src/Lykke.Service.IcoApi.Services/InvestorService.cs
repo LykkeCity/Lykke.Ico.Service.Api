@@ -92,7 +92,7 @@ namespace Lykke.Service.IcoApi.Services
             if (string.IsNullOrEmpty(email))
             {
                 await _log.WriteInfoAsync(nameof(InvestorService), nameof(ConfirmAsync), 
-                    $"confirmationToken={confirmationToken}","Token was not found");
+                    $"confirmationToken={confirmationToken}", "Token was not found");
 
                 return false;
             }
@@ -151,7 +151,7 @@ namespace Lykke.Service.IcoApi.Services
             };
 
             await _log.WriteInfoAsync(nameof(InvestorService), nameof(SendConfirmationEmail), 
-                $"message={message.ToJson()}", "Send InvestorConfirmationMessage");
+                $"message={message.ToJson()}", "Send investor confirmation message");
             await _investorConfirmationQueuePublisher.SendAsync(message);
         }
 
@@ -170,7 +170,7 @@ namespace Lykke.Service.IcoApi.Services
             };
 
             await _log.WriteInfoAsync(nameof(InvestorService), nameof(SendSummaryEmail), 
-                $"message={message.ToJson()}", "Send InvestorSummaryMessage");
+                $"message={message.ToJson()}", "Send investor summary message");
             await _investorSummaryQueuePublisher.SendAsync(message);
         }
     }

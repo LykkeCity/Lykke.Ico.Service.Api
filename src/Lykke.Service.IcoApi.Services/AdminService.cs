@@ -172,7 +172,7 @@ namespace Lykke.Service.IcoApi.Services
             }
 
             await _log.WriteInfoAsync(nameof(AdminService), nameof(SendTransactionMessageAsync), 
-                $"Message: {message.ToJson()}");
+                $"message={message.ToJson()}", "Send transaction message to queque");
 
             await _transactionQueuePublisher.SendAsync(message);
 
@@ -182,7 +182,7 @@ namespace Lykke.Service.IcoApi.Services
         public async Task<int> ImportPublicKeys(StreamReader reader)
         {
             await _log.WriteInfoAsync(nameof(AdminService), nameof(ImportPublicKeys), 
-                $"Start of public keys import");
+                "", "Start of public keys import");
 
             var list = new List<IAddressPoolItem>();
             var csv = new CsvReader(reader);
@@ -216,7 +216,8 @@ namespace Lykke.Service.IcoApi.Services
 
                 if (counter % 10000 == 0)
                 {
-                    await _log.WriteInfoAsync(nameof(AdminService), nameof(ImportPublicKeys), $"{counter} imported keys");
+                    await _log.WriteInfoAsync(nameof(AdminService), nameof(ImportPublicKeys), 
+                        $"counter={counter}", "Importing progress");
                 }
             }
 
@@ -225,8 +226,10 @@ namespace Lykke.Service.IcoApi.Services
                 await _addressPoolRepository.AddBatchAsync(list);
             }
 
-            await _log.WriteInfoAsync(nameof(AdminService), nameof(ImportPublicKeys), $"{counter} imported keys");
-            await _log.WriteInfoAsync(nameof(AdminService), nameof(ImportPublicKeys), $"End of public keys import");
+            await _log.WriteInfoAsync(nameof(AdminService), nameof(ImportPublicKeys), 
+                "", "{counter} imported keys");
+            await _log.WriteInfoAsync(nameof(AdminService), nameof(ImportPublicKeys), 
+                "", "End of public keys import");
 
             await _campaignInfoRepository.IncrementValue(CampaignInfoType.AddressPoolTotalSize, counter);
             await _campaignInfoRepository.IncrementValue(CampaignInfoType.AddressPoolCurrentSize, counter);
