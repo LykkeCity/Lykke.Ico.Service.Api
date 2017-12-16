@@ -124,15 +124,15 @@ namespace Lykke.Service.IcoApi.Controllers
             }
             if (!_ethService.ValidateAddress(model.TokenAddress))
             {
-                return BadRequest($"The address={model.TokenAddress} is invalid IRC20 address");
+                return BadRequest($"The token address={model.TokenAddress} is invalid IRC20 address");
             }
             if (!string.IsNullOrEmpty(model.RefundEthAddress) && !_ethService.ValidateAddress(model.RefundEthAddress))
             {
-                return BadRequest($"The address={model.RefundEthAddress} is invalid ETH address");
+                return BadRequest($"The refund ETH address={model.RefundEthAddress} is invalid ETH address");
             }
             if (!string.IsNullOrEmpty(model.RefundBtcAddress) && !_btcService.ValidateAddress(model.RefundBtcAddress))
             {
-                return BadRequest($"The address={model.RefundBtcAddress} is invalid BTC address");
+                return BadRequest($"The refund BTC address={model.RefundBtcAddress} is invalid BTC address");
             }
 
             var email = GetAuthUserEmail();

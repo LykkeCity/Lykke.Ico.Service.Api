@@ -229,13 +229,22 @@ namespace Lykke.Service.IcoApi.Models
     public class CampaignSettingsModel : ICampaignSettings
     {
         [Required]
-        public DateTime StartDateTimeUtc { get; set; }
+        public DateTime PreSaleStartDateTimeUtc { get; set; }
 
         [Required]
-        public DateTime EndDateTimeUtc { get; set; }
+        public DateTime PreSaleEndDateTimeUtc { get; set; }
 
         [Required]
-        public int TotalTokensAmount { get; set; }
+        public int PreSaleTotalTokensAmount { get; set; }
+
+        [Required]
+        public DateTime CrowdSaleStartDateTimeUtc { get; set; }
+
+        [Required]
+        public DateTime CrowdSaleEndDateTimeUtc { get; set; }
+
+        [Required]
+        public int CrowdSaleTotalTokensAmount { get; set; }
 
         [Required]
         public decimal TokenBasePriceUsd { get; set; }
@@ -255,9 +264,12 @@ namespace Lykke.Service.IcoApi.Models
 
             return new CampaignSettingsModel
             {
-                StartDateTimeUtc = settings.StartDateTimeUtc,
-                EndDateTimeUtc = settings.EndDateTimeUtc,
-                TotalTokensAmount = settings.TotalTokensAmount,
+                PreSaleStartDateTimeUtc = settings.PreSaleStartDateTimeUtc,
+                PreSaleEndDateTimeUtc = settings.PreSaleEndDateTimeUtc,
+                PreSaleTotalTokensAmount = settings.PreSaleTotalTokensAmount,
+                CrowdSaleStartDateTimeUtc = settings.CrowdSaleStartDateTimeUtc,
+                CrowdSaleEndDateTimeUtc = settings.CrowdSaleEndDateTimeUtc,
+                CrowdSaleTotalTokensAmount = settings.CrowdSaleTotalTokensAmount,
                 TokenBasePriceUsd = settings.TokenBasePriceUsd,
                 TokenDecimals = settings.TokenDecimals,
                 MinInvestAmountUsd = settings.MinInvestAmountUsd

@@ -1,16 +1,9 @@
-﻿using System.Net;
+﻿using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Common.Log;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Models;
-using Microsoft.AspNetCore.Mvc;
-using Lykke.Service.IcoApi.Infrastructure.Auth;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using Common.Log;
-using Common;
 using Lykke.Ico.Core.Repositories.CampaignInfo;
 
 namespace Lykke.Service.IcoApi.Controllers
@@ -50,9 +43,12 @@ namespace Lykke.Service.IcoApi.Controllers
 
             return new CampaignResponse
             {
-                StartDateTimeUtc = settings.StartDateTimeUtc,
-                EndDateTimeUtc = settings.EndDateTimeUtc,
-                TokensTotal = settings.TotalTokensAmount,
+                PreSaleStartDateTimeUtc = settings.PreSaleStartDateTimeUtc,
+                PreSaleEndDateTimeUtc = settings.PreSaleEndDateTimeUtc,
+                PreSaleTokensTotal = settings.PreSaleTotalTokensAmount,
+                CrowdSaleStartDateTimeUtc = settings.CrowdSaleStartDateTimeUtc,
+                CrowdSaleEndDateTimeUtc = settings.CrowdSaleEndDateTimeUtc,
+                CrowdSaleTokensTotal = settings.CrowdSaleTotalTokensAmount,
                 Investors = investors,
                 TokensSold = tokensSold
             };

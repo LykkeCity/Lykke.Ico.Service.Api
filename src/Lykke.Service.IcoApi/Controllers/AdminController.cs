@@ -67,8 +67,10 @@ namespace Lykke.Service.IcoApi.Controllers
         [HttpPost("campaign/settings")]
         public async Task<IActionResult> SaveCampaignSettings([FromBody] CampaignSettingsModel settings)
         {
-            settings.StartDateTimeUtc = settings.StartDateTimeUtc.ToUniversalTime();
-            settings.EndDateTimeUtc = settings.EndDateTimeUtc.ToUniversalTime();
+            settings.PreSaleStartDateTimeUtc = settings.PreSaleStartDateTimeUtc.ToUniversalTime();
+            settings.PreSaleEndDateTimeUtc = settings.PreSaleEndDateTimeUtc.ToUniversalTime();
+            settings.CrowdSaleStartDateTimeUtc = settings.CrowdSaleStartDateTimeUtc.ToUniversalTime();
+            settings.CrowdSaleEndDateTimeUtc = settings.CrowdSaleEndDateTimeUtc.ToUniversalTime();
 
             await _adminService.SaveCampaignSettings(settings);
 
