@@ -68,8 +68,6 @@ namespace Lykke.Service.IcoApi.Services
                 unspentCoins.AddRange(operation.ReceivedCoins.Select(coin => coin as Coin));
             }
 
-            var balance = unspentCoins.Sum(x => x.Amount.ToDecimal(MoneyUnit.BTC));
-
             var txBuilder = new TransactionBuilder();
             var tx = txBuilder
                 .AddCoins(unspentCoins)
