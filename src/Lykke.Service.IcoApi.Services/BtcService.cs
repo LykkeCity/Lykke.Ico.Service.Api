@@ -68,12 +68,14 @@ namespace Lykke.Service.IcoApi.Services
                 unspentCoins.AddRange(operation.ReceivedCoins.Select(coin => coin as Coin));
             }
 
+            var fee = Money.Satoshis(8476);
+
             var txBuilder = new TransactionBuilder();
             var tx = txBuilder
                 .AddCoins(unspentCoins)
                 .AddKeys(testWallet.PrivateKey)
                 .Send(destinationAddress, new Money(amount, MoneyUnit.BTC))
-                .SendFees("0.001")
+                .SendFees(fee)
                 .SetChange(testWallet)
                 .BuildTransaction(true);
 
