@@ -1,7 +1,8 @@
 {
 	"info": {
 		"name": "Valid ICO - Happy Flow",
-		"_postman_id": "9563dce3-481c-856e-7da5-ee86f4e2ba0a",
+		"_postman_id": "35bf57ee-de4b-8435-8e7c-ca3bee5744b2",
+		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -1512,7 +1513,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "d65f1e88-6835-4008-bbf2-5494e347daac",
+								"id": "4fad3307-b1cf-4a58-a70f-a5730e9d4dfd",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function() {",
@@ -1521,7 +1522,11 @@
 									"",
 									"pm.test(\"amountInvestedBtc is valid\", function() {",
 									"    var jsonData = pm.response.json();",
+									"    ",
+									"    console.info(\"jsonData.amountInvestedBtc: \" + jsonData.amountInvestedBtc);",
 									"    var current = Number(jsonData.amountInvestedBtc);",
+									"    ",
+									"    console.info(\"jsonData.amountInvestedBtc: \" + pm.environment.get(\"amountInvestedBtc\"));",
 									"    var expected = Number(pm.environment.get(\"amountInvestedBtc\")) + 0.012;",
 									"    ",
 									"    pm.expect(expected).to.eql(current);",
@@ -1836,7 +1841,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"amount\": 0.5\r\n}"
+							"raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"amount\": 0.8\r\n}"
 						},
 						"url": {
 							"raw": "{{domain}}/api/admin/eth/send/tx",
@@ -1921,7 +1926,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "62bd80d2-23e0-46d9-8aac-7177bc3e3e60",
+								"id": "5adf01be-3bb9-4210-be4f-9f9616bab03a",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function() {",
@@ -1930,7 +1935,14 @@
 									"",
 									"pm.test(\"amountInvestedEth is valid\", function() {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(Number(jsonData.amountInvestedEth)).to.eql(Number(pm.environment.get(\"amountInvestedEth\")) + 0.5);",
+									"    ",
+									"    console.info(\"jsonData.amountInvestedEth: \" + jsonData.amountInvestedEth);",
+									"    var current = Number(jsonData.amountInvestedEth);",
+									"    ",
+									"    console.info(\"environment.amountInvestedEth: \" + pm.environment.get(\"amountInvestedEth\"));",
+									"    var expected = Number(pm.environment.get(\"amountInvestedEth\")) + 0.8;",
+									"    ",
+									"    pm.expect(expected).to.eql(current);",
 									"});",
 									"",
 									"pm.test(\"amountInvestedToken was increased\", function() {",
@@ -1983,6 +1995,7 @@
 						{
 							"listen": "test",
 							"script": {
+								"id": "9c879d6a-3625-4c28-956a-aaad55f22bea",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -1991,7 +2004,7 @@
 									"",
 									"pm.test(\"amountEth is valid\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(Number(jsonData.amountEth)).to.eql(Number(pm.environment.get(\"amountEth\")) + 0.5);",
+									"    pm.expect(Number(jsonData.amountEth)).to.eql(Number(pm.environment.get(\"amountEth\")) + 0.8);",
 									"});",
 									"",
 									"pm.test(\"amountUsd was increased\", function () {",
@@ -2100,17 +2113,17 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "be83069d-c7f1-4917-b038-3e32ced33024",
+								"id": "4479615a-8b7e-4bcf-bddb-282013361df4",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"1 new record in profile history (increment amounts)\", function () {",
+									"pm.test(\"2 new record in profile history (increment amounts + kyc request)\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    var current = Number(jsonData.items.count());",
-									"    var expected = Number(pm.environment.get(\"investor-history-size\")) + 1;",
+									"    var expected = Number(pm.environment.get(\"investor-history-size\")) + 2;",
 									"    ",
 									"    pm.expect(current).to.eql(expected);",
 									"    pm.environment.set(\"investor-history-size\", current);    ",
@@ -2325,7 +2338,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "4bf95db4-574c-4215-8f50-3608351fe5e4",
+								"id": "fa9bf4e0-075b-495e-8d5c-090d8c9ea8de",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function() {",
@@ -2334,7 +2347,14 @@
 									"",
 									"pm.test(\"amountInvestedFiat is valid\", function() {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(Number(jsonData.amountInvestedFiat)).to.eql(Number(pm.environment.get(\"amountInvestedFiat\")) + (300 - 300*0.039));",
+									"    ",
+									"    console.info(\"jsonData.amountInvestedFiat: \" + jsonData.amountInvestedFiat);",
+									"    var current = Number(jsonData.amountInvestedFiat);",
+									"    ",
+									"    console.info(\"environment.amountInvestedFiat: \" + pm.environment.get(\"amountInvestedFiat\"));",
+									"    var expected = Number(pm.environment.get(\"amountInvestedFiat\")) + (300 - 300*0.039);",
+									"    ",
+									"    pm.expect(expected).to.eql(current);",
 									"});",
 									"",
 									"pm.test(\"amountInvestedToken was increased\", function() {",
@@ -2505,20 +2525,19 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "556542ba-7457-4219-a5c9-006878237e8c",
+								"id": "b7083c39-59b4-4d48-ba23-cbf4b7164ee4",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"2 new records in profile history (increment amounts + kyc request)\", function () {",
+									"pm.test(\"1 new records in profile history (increment amounts)\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    var current = Number(jsonData.items.count());",
-									"    var expected = Number(pm.environment.get(\"investor-history-size\")) + 2;",
+									"    var expected = Number(pm.environment.get(\"investor-history-size\") + 1);",
 									"    ",
-									"    pm.expect(current).to.eql(expected);",
-									"    pm.environment.set(\"investor-history-size\", current);    ",
+									"    pm.expect(expected).to.eql(current);",
 									"});"
 								]
 							}
