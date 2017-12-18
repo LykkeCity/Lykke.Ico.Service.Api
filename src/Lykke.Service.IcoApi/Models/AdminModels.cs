@@ -4,6 +4,7 @@ using Lykke.Ico.Core.Repositories.CampaignSettings;
 using Lykke.Ico.Core.Repositories.Investor;
 using Lykke.Ico.Core.Repositories.InvestorEmail;
 using Lykke.Ico.Core.Repositories.InvestorHistory;
+using Lykke.Ico.Core.Repositories.InvestorRefund;
 using Lykke.Ico.Core.Repositories.InvestorTransaction;
 using System;
 using System.Collections.Generic;
@@ -317,6 +318,42 @@ namespace Lykke.Service.IcoApi.Models
                 WhenUtc = item.CreatedUtc,
                 EthPublicKey = item.EthPublicKey,
                 BtcPublicKey = item.BtcPublicKey
+            };
+        }
+    }
+
+    public class InvestorRefundsResponse
+    {
+        public InvestorRefundModel[] Refunds { get; set; }
+
+        public static InvestorRefundsResponse Create(IEnumerable<IInvestorRefund> transactions)
+        {
+            return new InvestorRefundsResponse
+            {
+                Refunds = transactions.Select(f => InvestorRefundModel.Create(f)).ToArray()
+            };
+        }
+    }
+
+    public class InvestorRefundModel : IInvestorRefund
+    {
+        public string Email { get; set; }
+
+        public DateTime CreatedUtc { get; set; }
+
+        public InvestorRefundReason Reason { get; set; }
+
+        public string MessageJson { get; set; }
+
+
+        public static InvestorRefundModel Create(IInvestorRefund item)
+        {
+            return new InvestorRefundModel
+            {
+                Email = item.Email,
+                CreatedUtc = item.CreatedUtc,
+                Reason = item.Reason,
+                MessageJson = item.MessageJson
             };
         }
     }

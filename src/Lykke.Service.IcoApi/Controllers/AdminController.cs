@@ -138,6 +138,16 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
+        /// Returns the list of refunds for investor
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("investors/{email}/refunds")]
+        public async Task<InvestorRefundsResponse> GetInvestorRefunds([Required] string email)
+        {
+            return InvestorRefundsResponse.Create(await _adminService.GetInvestorRefunds(email));
+        }
+
+        /// <summary>
         /// Returns the list of address pool history items assigned to investor
         /// </summary>
         [AdminAuth]
@@ -161,6 +171,16 @@ namespace Lykke.Service.IcoApi.Controllers
             await _adminService.DeleteInvestorAllDataAsync(email);
 
             return NoContent();
+        }
+
+        /// <summary>
+        /// Returns the list of refunds for investor
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("/refunds")]
+        public async Task<InvestorRefundsResponse> GetRefunds()
+        {
+            return InvestorRefundsResponse.Create(await _adminService.GetRefunds());
         }
 
         /// <summary>

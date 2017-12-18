@@ -1,5 +1,11 @@
-﻿using Common.Log;
+﻿using System;
+using System.IO;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Text;
+using Common;
+using Common.Log;
+using CsvHelper;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Ico.Core.Repositories.Investor;
 using Lykke.Ico.Core.Repositories.InvestorAttribute;
@@ -7,18 +13,13 @@ using Lykke.Ico.Core.Repositories.AddressPool;
 using Lykke.Ico.Core.Repositories.InvestorHistory;
 using Lykke.Ico.Core.Repositories.AddressPoolHistory;
 using Lykke.Ico.Core.Repositories.CampaignInfo;
-using System.Collections.Generic;
-using System.IO;
-using CsvHelper;
-using System.Text;
 using Lykke.Ico.Core.Repositories.InvestorEmail;
 using Lykke.Ico.Core.Repositories.InvestorTransaction;
 using Lykke.Ico.Core.Repositories.CampaignSettings;
-using System;
 using Lykke.Ico.Core.Queues.Transactions;
 using Lykke.Ico.Core;
-using Common;
 using Lykke.Ico.Core.Queues;
+using Lykke.Ico.Core.Repositories.InvestorRefund;
 
 namespace Lykke.Service.IcoApi.Services
 {
@@ -29,6 +30,7 @@ namespace Lykke.Service.IcoApi.Services
         private readonly ILog _log;
         private readonly IInvestorRepository _investorRepository;
         private readonly IInvestorTransactionRepository _investorTransactionRepository;
+        private readonly IInvestorRefundRepository _investorRefundRepository;
         private readonly IInvestorAttributeRepository _investorAttributeRepository;
         private readonly IInvestorEmailRepository _investorEmailRepositoryy;
         private readonly IInvestorHistoryRepository _investorHistoryRepository;
@@ -42,7 +44,8 @@ namespace Lykke.Service.IcoApi.Services
             string ethNetwork,
             ILog log,
             IInvestorRepository investorRepository,
-            IInvestorTransactionRepository cryptoInvestmentRepository,
+            IInvestorTransactionRepository investorTransactionRepository,
+            IInvestorRefundRepository investorRefundRepository,
             IInvestorAttributeRepository investorAttributeRepository,
             IInvestorEmailRepository emailHistoryRepository,
             IInvestorHistoryRepository investorHistoryRepository,
@@ -62,7 +65,8 @@ namespace Lykke.Service.IcoApi.Services
             _addressPoolHistoryRepository = addressPoolHistoryRepository;
             _campaignInfoRepository = campaignInfoRepository;
             _addressPoolRepository = addressPoolRepository;
-            _investorTransactionRepository = cryptoInvestmentRepository;
+            _investorTransactionRepository = investorTransactionRepository;
+            _investorRefundRepository = investorRefundRepository;
             _campaignSettingsRepository = campaignSettingsRepository;
             _transactionQueuePublisher = transactionQueuePublisher;
         }
@@ -120,6 +124,7 @@ namespace Lykke.Service.IcoApi.Services
             await _investorHistoryRepository.RemoveAsync(email);
             await _addressPoolHistoryRepository.RemoveAsync(email);
             await _investorTransactionRepository.RemoveAsync(email);
+            await _investorRefundRepository.RemoveAsync(email);
         }
 
         public async Task<IEnumerable<IAddressPoolHistoryItem>> GetInvestorAddressPoolHistory(string email)
@@ -135,6 +140,16 @@ namespace Lykke.Service.IcoApi.Services
         public async Task<IEnumerable<IInvestorTransaction>> GetInvestorTransactions(string email)
         {
             return await _investorTransactionRepository.GetByEmailAsync(email);
+        }
+
+        public async Task<IEnumerable<IInvestorRefund>> GetInvestorRefunds(string email)
+        {
+            return await _investorRefundRepository.GetByEmailAsync(email);
+        }
+
+        public async Task<IEnumerable<IInvestorRefund>> GetRefunds()
+        {
+            return await _investorRefundRepository.GetAllAsync();
         }
 
         public async Task<string> SendTransactionMessageAsync(string email, CurrencyType currency, DateTime createdUtc, 

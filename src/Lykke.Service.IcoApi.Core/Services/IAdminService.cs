@@ -3,6 +3,7 @@ using Lykke.Ico.Core.Repositories.AddressPoolHistory;
 using Lykke.Ico.Core.Repositories.CampaignSettings;
 using Lykke.Ico.Core.Repositories.InvestorEmail;
 using Lykke.Ico.Core.Repositories.InvestorHistory;
+using Lykke.Ico.Core.Repositories.InvestorRefund;
 using Lykke.Ico.Core.Repositories.InvestorTransaction;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,8 @@ namespace Lykke.Service.IcoApi.Core.Services
         Task DeleteInvestorAllDataAsync(string email);
         Task<int> ImportPublicKeys(StreamReader reader);
         Task<IEnumerable<IInvestorTransaction>> GetInvestorTransactions(string email);
+        Task<IEnumerable<IInvestorRefund>> GetInvestorRefunds(string email);
+        Task<IEnumerable<IInvestorRefund>> GetRefunds();
         Task<string> SendTransactionMessageAsync(string email, CurrencyType currency, DateTime createdUtc, 
             string transactionId, decimal amount, decimal fee = 0M);
     }
