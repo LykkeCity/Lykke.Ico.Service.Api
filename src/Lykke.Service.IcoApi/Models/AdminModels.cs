@@ -314,7 +314,7 @@ namespace Lykke.Service.IcoApi.Models
             return new AddressPoolHistoryItemModel
             {
                 Email = item.Email,
-                WhenUtc = item.WhenUtc,
+                WhenUtc = item.CreatedUtc,
                 EthPublicKey = item.EthPublicKey,
                 BtcPublicKey = item.BtcPublicKey
             };

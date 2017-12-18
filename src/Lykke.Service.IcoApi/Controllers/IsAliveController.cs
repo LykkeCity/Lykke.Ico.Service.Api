@@ -4,7 +4,7 @@ using System.Net;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Models;
 using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.SwaggerGen.Annotations;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Lykke.Service.IcoApi.Controllers
 {

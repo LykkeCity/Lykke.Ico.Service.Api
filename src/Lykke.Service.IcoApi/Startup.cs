@@ -118,8 +118,11 @@ namespace Lykke.Service.IcoApi
 
                 app.UseMvc();
                 app.UseSwagger();
-                app.UseSwaggerUi();
-                //app.UseStaticFiles();
+                app.UseSwaggerUI(x =>
+                {
+                    x.RoutePrefix = "swagger/ui";
+                    x.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+                });
                 app.UseStaticFiles(new StaticFileOptions()
                 {
                     FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(
@@ -228,6 +231,8 @@ namespace Lykke.Service.IcoApi
 
                 aggregateLogger.AddLog(azureStorageLogger);
             }
+
+            aggregateLogger.AddIcoSlackLog(slackService);
 
             return aggregateLogger;
         }
