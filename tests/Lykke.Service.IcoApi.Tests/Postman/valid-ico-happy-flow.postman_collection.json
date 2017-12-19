@@ -1513,7 +1513,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "4fad3307-b1cf-4a58-a70f-a5730e9d4dfd",
+								"id": "2de1b349-3a42-4b6d-a1b3-58f34bfaf151",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function() {",
@@ -1524,10 +1524,10 @@
 									"    var jsonData = pm.response.json();",
 									"    ",
 									"    console.info(\"jsonData.amountInvestedBtc: \" + jsonData.amountInvestedBtc);",
-									"    var current = Number(jsonData.amountInvestedBtc);",
+									"    var current = Number.parseFloat(jsonData.amountInvestedBtc);",
 									"    ",
 									"    console.info(\"jsonData.amountInvestedBtc: \" + pm.environment.get(\"amountInvestedBtc\"));",
-									"    var expected = Number(pm.environment.get(\"amountInvestedBtc\")) + 0.012;",
+									"    var expected = (Number.parseFloat(pm.environment.get(\"amountInvestedBtc\"))*1000 + 0.012*1000) / 1000;",
 									"    ",
 									"    pm.expect(expected).to.eql(current);",
 									"});",
@@ -1582,6 +1582,7 @@
 						{
 							"listen": "test",
 							"script": {
+								"id": "845eb5a0-928a-4225-9dc7-5c28ae4cff38",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -1590,7 +1591,10 @@
 									"",
 									"pm.test(\"amountBtc is valid\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(Number(jsonData.amountBtc)).to.eql(Number(pm.environment.get(\"amountBtc\")) + 0.012);",
+									"    var current = Number(jsonData.amountBtc);",
+									"    var expected = (Number(pm.environment.get(\"amountBtc\"))*1000 + 0.012*1000) / 1000;",
+									"    ",
+									"    pm.expect(expected).to.eql(current);",
 									"});",
 									"",
 									"pm.test(\"amountUsd was increased\", function () {",
@@ -1926,7 +1930,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "5adf01be-3bb9-4210-be4f-9f9616bab03a",
+								"id": "f9c89e1f-31bf-4f4a-aa03-b1c9d57dd7c2",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function() {",
@@ -1940,7 +1944,7 @@
 									"    var current = Number(jsonData.amountInvestedEth);",
 									"    ",
 									"    console.info(\"environment.amountInvestedEth: \" + pm.environment.get(\"amountInvestedEth\"));",
-									"    var expected = Number(pm.environment.get(\"amountInvestedEth\")) + 0.8;",
+									"    var expected = (Number(pm.environment.get(\"amountInvestedEth\"))*10 + 0.8*10) / 10;",
 									"    ",
 									"    pm.expect(expected).to.eql(current);",
 									"});",
@@ -1995,7 +1999,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "9c879d6a-3625-4c28-956a-aaad55f22bea",
+								"id": "e1227c3f-76e0-470d-842e-ef7efca7bf26",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -2004,7 +2008,10 @@
 									"",
 									"pm.test(\"amountEth is valid\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(Number(jsonData.amountEth)).to.eql(Number(pm.environment.get(\"amountEth\")) + 0.8);",
+									"    var current = Number(jsonData.amountEth);",
+									"    var expected = (Number(pm.environment.get(\"amountEth\"))*10 + 0.8*10) / 10;",
+									"    ",
+									"    pm.expect(expected).to.eql(current);",
 									"});",
 									"",
 									"pm.test(\"amountUsd was increased\", function () {",
@@ -2338,7 +2345,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "fa9bf4e0-075b-495e-8d5c-090d8c9ea8de",
+								"id": "86c33c1f-3fd0-4ddf-ae26-00914b26d650",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function() {",
@@ -2352,7 +2359,7 @@
 									"    var current = Number(jsonData.amountInvestedFiat);",
 									"    ",
 									"    console.info(\"environment.amountInvestedFiat: \" + pm.environment.get(\"amountInvestedFiat\"));",
-									"    var expected = Number(pm.environment.get(\"amountInvestedFiat\")) + (300 - 300*0.039);",
+									"    var expected = (Number(pm.environment.get(\"amountInvestedFiat\"))*1000 + (300 - 300*0.039)*1000) / 1000;",
 									"    ",
 									"    pm.expect(expected).to.eql(current);",
 									"});",
@@ -2407,7 +2414,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "048c9496-0839-4355-801b-eed074a253a1",
+								"id": "2ff2f9bc-4103-457d-af80-05e9cbe07c54",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -2416,7 +2423,10 @@
 									"",
 									"pm.test(\"amountFiat was increased\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(Number(jsonData.amountFiat)).to.eql(Number(pm.environment.get(\"amountFiat\")) + (300 - 300*0.039));",
+									"    var current = Number(jsonData.amountFiat);",
+									"    var expected = (Number(pm.environment.get(\"amountFiat\"))*1000 + (300 - 300*0.039)*1000) / 1000;",
+									"    ",
+									"    pm.expect(expected).to.eql(current);",
 									"});",
 									"",
 									"pm.test(\"amountUsd was increased\", function () {",
