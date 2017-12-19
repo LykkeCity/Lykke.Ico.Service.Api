@@ -174,7 +174,7 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
-        /// Returns the list of refunds for investor
+        /// Returns the list of all refunds
         /// </summary>
         [AdminAuth]
         [HttpGet("/refunds")]

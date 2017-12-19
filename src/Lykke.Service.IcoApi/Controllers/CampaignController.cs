@@ -5,6 +5,7 @@ using Common.Log;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Models;
 using Lykke.Ico.Core.Repositories.CampaignInfo;
+using Lykke.Ico.Core.Repositories.CampaignSettings;
 
 namespace Lykke.Service.IcoApi.Controllers
 {
@@ -49,6 +50,7 @@ namespace Lykke.Service.IcoApi.Controllers
                 CrowdSaleStartDateTimeUtc = settings.CrowdSaleStartDateTimeUtc,
                 CrowdSaleEndDateTimeUtc = settings.CrowdSaleEndDateTimeUtc,
                 CrowdSaleTokensTotal = settings.CrowdSaleTotalTokensAmount,
+                TokensTotal = settings.GetTotalTokensAmount(),
                 Investors = investors,
                 TokensSold = tokensSold
             };

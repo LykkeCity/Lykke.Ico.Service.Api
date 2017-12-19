@@ -16,6 +16,8 @@ namespace Lykke.Service.IcoApi.Models
 
         public int CrowdSaleTokensTotal { get; set; }
 
+        public int TokensTotal { get; set; }
+
         public decimal TokensSold { get; set; }
 
         public int Investors { get; set; }
