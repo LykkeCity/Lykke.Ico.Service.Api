@@ -283,8 +283,8 @@ namespace Lykke.Service.IcoApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            await _adminService.SendTransactionMessageAsync(request.Email, CurrencyType.Ether, DateTime.UtcNow,
-                Guid.NewGuid().ToString(), request.Amount);
+            await _adminService.SendTransactionMessageAsync(request.Email, CurrencyType.Ether,
+                request.CreatedUtc, request.UniqueId, request.Amount);
 
             return Ok();
         }
@@ -351,8 +351,8 @@ namespace Lykke.Service.IcoApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            await _adminService.SendTransactionMessageAsync(request.Email, CurrencyType.Bitcoin, DateTime.UtcNow,
-                Guid.NewGuid().ToString(), request.Amount);
+            await _adminService.SendTransactionMessageAsync(request.Email, CurrencyType.Bitcoin,
+                request.CreatedUtc, request.UniqueId, request.Amount);
 
             return Ok();
         }
@@ -370,10 +370,8 @@ namespace Lykke.Service.IcoApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            var fee = request.Amount * 0.039M;
-
-            await _adminService.SendTransactionMessageAsync(request.Email, CurrencyType.Fiat, DateTime.UtcNow, 
-                Guid.NewGuid().ToString(),  request.Amount - fee, fee);
+            await _adminService.SendTransactionMessageAsync(request.Email, CurrencyType.Fiat, 
+                request.CreatedUtc, request.UniqueId, request.Amount);
 
             return Ok();
         }

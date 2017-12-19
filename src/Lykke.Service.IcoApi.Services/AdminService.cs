@@ -152,8 +152,8 @@ namespace Lykke.Service.IcoApi.Services
             return await _investorRefundRepository.GetAllAsync();
         }
 
-        public async Task<string> SendTransactionMessageAsync(string email, CurrencyType currency, DateTime createdUtc, 
-            string transactionId, decimal amount, decimal fee = 0)
+        public async Task<string> SendTransactionMessageAsync(string email, CurrencyType currency, 
+            DateTime? createdUtc, string uniqueId, decimal amount)
         {
             var investor = await _investorRepository.GetAsync(email);
             if (investor == null)
@@ -161,15 +161,25 @@ namespace Lykke.Service.IcoApi.Services
                 throw new Exception($"Investor with email={email} was not found");
             }
 
+            createdUtc = createdUtc ?? DateTime.UtcNow;
+            uniqueId = string.IsNullOrEmpty(uniqueId) ? Guid.NewGuid().ToString() : uniqueId;
+
+            var fee = 0M;
+            if (currency == CurrencyType.Fiat)
+            {
+                fee = amount * 0.039M;
+                amount = amount - fee;
+            }
+
             var message = new TransactionMessage
             {
                 Email = email,
                 Amount = amount,
-                CreatedUtc = createdUtc,
+                CreatedUtc = createdUtc.Value.ToUniversalTime(),
                 Currency = currency,
                 Fee = fee,
-                TransactionId = $"fake_tx_{transactionId}",
-                UniqueId = $"fake_uid_{transactionId}"
+                TransactionId = $"fake_tx_{uniqueId}",
+                UniqueId = $"fake_uid_{uniqueId}"
             };
 
             if (currency == CurrencyType.Bitcoin)

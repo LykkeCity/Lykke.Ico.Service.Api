@@ -188,6 +188,8 @@ namespace Lykke.Service.IcoApi.Models
 
         public decimal TokenPrice { get; set; }
 
+        public string TokenPriceContext { get; set; }
+
         public decimal ExchangeRate { get; set; }
 
         public string ExchangeRateContext { get; set; }
@@ -206,6 +208,7 @@ namespace Lykke.Service.IcoApi.Models
                 AmountToken = item.AmountToken,
                 Fee = item.Fee,
                 TokenPrice = item.TokenPrice,
+                TokenPriceContext = item.TokenPriceContext,
                 ExchangeRate = item.ExchangeRate,
                 ExchangeRateContext = item.ExchangeRateContext
             };
@@ -285,6 +288,16 @@ namespace Lykke.Service.IcoApi.Models
 
         [Required]
         public decimal Amount { get; set; }
+
+        /// <summary>
+        /// If null then DateTime.UtcNow is used
+        /// </summary>
+        public DateTime? CreatedUtc { get; set; }
+
+        /// <summary>
+        /// If null then automatically generated as Guid string
+        /// </summary>
+        public string UniqueId { get; set; }
     }
 
     public class InvestorAddressPoolHistoryResponse
