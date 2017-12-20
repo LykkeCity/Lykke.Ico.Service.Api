@@ -1,0 +1,1 @@
+newman run valid-ico-main-flow.postman_collection.json -e dev.postman_environment.json

@@ -42,6 +42,8 @@ namespace Lykke.Service.IcoApi.Controllers
                 tokensSold = 0;
             }
 
+            var tokenInfo = settings.GetTokenInfo(tokensSold, DateTime.UtcNow);
+
             return new CampaignResponse
             {
                 PreSaleStartDateTimeUtc = settings.PreSaleStartDateTimeUtc,
@@ -52,7 +54,9 @@ namespace Lykke.Service.IcoApi.Controllers
                 CrowdSaleTokensTotal = settings.CrowdSaleTotalTokensAmount,
                 TokensTotal = settings.GetTotalTokensAmount(),
                 Investors = investors,
-                TokensSold = tokensSold
+                TokensSold = tokensSold,
+                TokenPriceUsd = tokenInfo.Price,
+                Phase = tokenInfo.Phase
             };
         }
     }

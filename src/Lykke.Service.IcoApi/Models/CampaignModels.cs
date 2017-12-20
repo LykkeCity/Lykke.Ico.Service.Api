@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lykke.Ico.Core;
+using System;
 
 namespace Lykke.Service.IcoApi.Models
 {
@@ -19,6 +20,10 @@ namespace Lykke.Service.IcoApi.Models
         public int TokensTotal { get; set; }
 
         public decimal TokensSold { get; set; }
+
+        public decimal TokenPriceUsd { get; set; }
+
+        public TokenPricePhase Phase { get; set; }
 
         public int Investors { get; set; }
     }
