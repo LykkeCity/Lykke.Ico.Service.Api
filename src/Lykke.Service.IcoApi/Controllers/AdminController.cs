@@ -1,5 +1,4 @@
 ﻿using Common.Log;
-using Lykke.Ico.Core;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Infrastructure.Auth;
 using Lykke.Service.IcoApi.Models;
@@ -7,7 +6,6 @@ using Lykke.Service.IcoExRate.Client;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
@@ -95,19 +93,6 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
-        /// Removes investor from db. History is not deleted
-        /// </summary>
-        [AdminAuth]
-        [HttpDelete("investors/{email}")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> DeleteInvestor([Required] string email)
-        {
-            await _adminService.DeleteInvestorAsync(email);
-
-            return NoContent();
-        }
-
-        /// <summary>
         /// Returns the history of investor profile changes
         /// </summary>
         [AdminAuth]
@@ -138,11 +123,11 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
-        /// Returns the list of refunds for investor
+        /// Returns the list of failed transactions for investor
         /// </summary>
         [AdminAuth]
-        [HttpGet("investors/{email}/refunds")]
-        public async Task<InvestorRefundsResponse> GetInvestorRefunds([Required] string email)
+        [HttpGet("investors/{email}/transactions/failed")]
+        public async Task<InvestorRefundsResponse> GetInvestorFailedTransactions([Required] string email)
         {
             return InvestorRefundsResponse.Create(await _adminService.GetInvestorRefunds(email));
         }
@@ -158,27 +143,11 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
-        /// Removes all data for investor from db
-        /// </summary>
-        /// <remarks>
-        /// profile history, address pool history, emails, transactions
-        /// </remarks>
-        [AdminAuth]
-        [HttpDelete("investors/{email}/all")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> DeleteInvestorAllData([Required] string email)
-        {
-            await _adminService.DeleteInvestorAllDataAsync(email);
-
-            return NoContent();
-        }
-
-        /// <summary>
-        /// Returns the list of all refunds
+        /// Returns the list of all failed transactions
         /// </summary>
         [AdminAuth]
-        [HttpGet("/refunds")]
-        public async Task<InvestorRefundsResponse> GetRefunds()
+        [HttpGet("transactions/failed")]
+        public async Task<InvestorRefundsResponse> GetFailedTransactions()
         {
             return InvestorRefundsResponse.Create(await _adminService.GetRefunds());
         }
@@ -195,185 +164,6 @@ namespace Lykke.Service.IcoApi.Controllers
             {
                 await _adminService.ImportPublicKeys(reader);
             }
-        }
-
-        /// <summary>
-        /// Returns latest exchange rates
-        /// </summary>
-        [AdminAuth]
-        [HttpGet("rates/latest")]
-        public async Task<IList<IcoExRate.Client.AutorestClient.Models.AverageRateResponse>> GetLatestRates()
-        {
-            return await _icoExRateClient.GetAverageRates(DateTime.UtcNow);
-        }
-
-        /// <summary>
-        /// Returns exchange rate for provided pair and time
-        /// </summary>
-        [AdminAuth]
-        [HttpGet("rates/{assetPair}/{dateTimeUtc}")]
-        public async Task<IcoExRate.Client.AutorestClient.Models.AverageRateResponse> GetRatesByPairAndDateTime(
-            [Required] AssetPair assetPair,
-            [Required] DateTime dateTimeUtc)
-        {
-            var pair = Enum.Parse<IcoExRate.Client.AutorestClient.Models.Pair>(Enum.GetName(typeof(AssetPair), assetPair), true);
-
-            return await _icoExRateClient.GetAverageRate(pair, dateTimeUtc.ToUniversalTime());
-        }
-
-        /// <summary>
-        /// Returns ethereum address by public key
-        /// </summary>
-        [AdminAuth]
-        [HttpGet("eth/address/{key}")]
-        public AddressResponse GetEthAddressByKey([Required] string key)
-        {
-            return new AddressResponse { Address = _ethService.GetAddressByPublicKey(key) };
-        }
-
-        /// <summary>
-        /// Generates and returns random ethereum address
-        /// </summary>
-        [AdminAuth]
-        [HttpGet("eth/address/random")]
-        public AddressResponse GetRandomEthAddress()
-        {
-            var key = _ethService.GeneratePublicKey();
-            var address = _ethService.GetAddressByPublicKey(key);
-
-            return new AddressResponse { Address = address };
-        }
-
-        /// <summary>
-        /// Returns ether address balance
-        /// </summary>
-        [AdminAuth]
-        [HttpGet("eth/{address}/balance")]
-        public async Task<decimal> GetEthBalance([Required] string address)
-        {
-            return await _ethService.GetBalance(address);
-        }
-
-        /// <summary>
-        /// Sends ethers to address
-        /// </summary>
-        [AdminAuth]
-        [HttpPost("eth/send")]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> SendEth([FromBody] SendMoneyRequest request)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            return Ok(await _ethService.SendToAddress(request.Address, request.Amount));
-        }
-
-        /// <summary>
-        /// Sends ether transaction message to queue
-        /// </summary>
-        [AdminAuth]
-        [HttpPost("eth/send/tx")]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> SendEthTransactionMessage([FromBody] TransactionMessageRequest request)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            await _adminService.SendTransactionMessageAsync(request.Email, CurrencyType.Ether,
-                request.CreatedUtc, request.UniqueId, request.Amount);
-
-            return Ok();
-        }
-
-        /// <summary>
-        /// Returns bitcoin address by public key
-        /// </summary>
-        [AdminAuth]
-        [HttpGet("btc/address/{key}")]
-        public AddressResponse GetBtcAddressByKey([Required] string key)
-        {
-            return new AddressResponse { Address = _btcService.GetAddressByPublicKey(key) };
-        }
-
-        /// <summary>
-        /// Generates and returns random bitcoin address
-        /// </summary>
-        [AdminAuth]
-        [HttpGet("btc/address/random")]
-        public AddressResponse GetRandomBtcAddress()
-        {
-            var key = _btcService.GeneratePublicKey();
-            var address = _btcService.GetAddressByPublicKey(key);
-
-            return new AddressResponse { Address = address };
-        }
-
-        /// <summary>
-        /// Returns address balance
-        /// </summary>
-        [AdminAuth]
-        [HttpGet("btc/{address}/balance")]
-        public decimal GetBtcBalance([Required] string address)
-        {
-            return _btcService.GetBalance(address);
-        }
-
-        /// <summary>
-        /// Sends bitcoins to address
-        /// </summary>
-        [AdminAuth]
-        [HttpPost("btc/send")]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
-        public IActionResult SendBtc([FromBody] SendMoneyRequest request)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            return Ok(_btcService.SendToAddress(request.Address, request.Amount));
-        }
-
-        /// <summary>
-        /// Sends bitcoin transaction message to queue
-        /// </summary>
-        [AdminAuth]
-        [HttpPost("btc/send/tx")]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> SendBtcTransactionMessage([FromBody] TransactionMessageRequest request)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            await _adminService.SendTransactionMessageAsync(request.Email, CurrencyType.Bitcoin,
-                request.CreatedUtc, request.UniqueId, request.Amount);
-
-            return Ok();
-        }
-
-        /// <summary>
-        /// Sends fiat transaction message to queue
-        /// </summary>
-        [AdminAuth]
-        [HttpPost("fiat/send/tx")]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> SendFiatTransactionMessage([FromBody] TransactionMessageRequest request)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            await _adminService.SendTransactionMessageAsync(request.Email, CurrencyType.Fiat, 
-                request.CreatedUtc, request.UniqueId, request.Amount);
-
-            return Ok();
         }
     }
 }
