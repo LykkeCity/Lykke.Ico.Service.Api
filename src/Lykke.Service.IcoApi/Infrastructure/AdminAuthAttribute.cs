@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
 
-namespace Lykke.Service.IcoApi.Infrastructure.Auth
+namespace Lykke.Service.IcoApi.Infrastructure
 {
     public class AdminAuthAttribute : ActionFilterAttribute
     {

@@ -3,16 +3,16 @@ using System.Linq;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Lykke.Service.IcoApi.Infrastructure.Auth
+namespace Lykke.Service.IcoApi.Infrastructure
 {
-    public class AddSwaggerInvestorAuthHeaderParameter : IOperationFilter
+    public class AddSwaggerAdminAuthHeaderParameter : IOperationFilter
     {
         void IOperationFilter.Apply(Operation operation, OperationFilterContext context)
         {
             var filterPipeline = context.ApiDescription.ActionDescriptor.FilterDescriptors;
-            var isAuthorized = filterPipeline.Select(f => f.Filter).Any(f => f is InvestorAuthAttribute);
-            var authorizationRequired = context.ApiDescription.ControllerAttributes().Any(a => a is InvestorAuthAttribute);
-            if (!authorizationRequired) authorizationRequired = context.ApiDescription.ActionAttributes().Any(a => a is InvestorAuthAttribute);
+            var isAuthorized = filterPipeline.Select(f => f.Filter).Any(f => f is AdminAuthAttribute);
+            var authorizationRequired = context.ApiDescription.ControllerAttributes().Any(a => a is AdminAuthAttribute);
+            if (!authorizationRequired) authorizationRequired = context.ApiDescription.ActionAttributes().Any(a => a is AdminAuthAttribute);
 
             if (isAuthorized && authorizationRequired)
             {
@@ -21,9 +21,9 @@ namespace Lykke.Service.IcoApi.Infrastructure.Auth
 
                 operation.Parameters.Add(new NonBodyParameter
                 {
-                    Name = "authToken",
+                    Name = "adminAuthToken",
                     In = "header",
-                    Description = "Auth Token",
+                    Description = "Admin Auth Token",
                     Required = true,
                     Type = "string"
                 });

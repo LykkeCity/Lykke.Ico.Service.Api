@@ -15,5 +15,6 @@
         public string IcoSiteUrl { get; set; }
         public string StripeSecretKey { get; set; }
         public string AdminAuthKey { get; set; }
+        public bool DisableAdminDebugMethods { get; set; }
     }
 }

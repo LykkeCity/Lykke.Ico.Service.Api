@@ -1,7 +1,7 @@
 ﻿using Common;
 using Common.Log;
 using Lykke.Service.IcoApi.Core.Services;
-using Lykke.Service.IcoApi.Infrastructure.Auth;
+using Lykke.Service.IcoApi.Infrastructure;
 using Lykke.Service.IcoApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;

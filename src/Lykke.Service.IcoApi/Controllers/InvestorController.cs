@@ -2,7 +2,7 @@
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Models;
 using Microsoft.AspNetCore.Mvc;
-using Lykke.Service.IcoApi.Infrastructure.Auth;
+using Lykke.Service.IcoApi.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Threading.Tasks;

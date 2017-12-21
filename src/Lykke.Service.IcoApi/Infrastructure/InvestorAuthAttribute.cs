@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 using System.Security.Claims;
 
-namespace Lykke.Service.IcoApi.Infrastructure.Auth
+namespace Lykke.Service.IcoApi.Infrastructure
 {
     public class InvestorAuthAttribute : TypeFilterAttribute
     {

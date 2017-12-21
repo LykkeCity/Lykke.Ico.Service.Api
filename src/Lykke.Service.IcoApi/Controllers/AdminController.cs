@@ -1,6 +1,6 @@
 ﻿using Common.Log;
 using Lykke.Service.IcoApi.Core.Services;
-using Lykke.Service.IcoApi.Infrastructure.Auth;
+using Lykke.Service.IcoApi.Infrastructure;
 using Lykke.Service.IcoApi.Models;
 using Lykke.Service.IcoExRate.Client;
 using Microsoft.AspNetCore.Http;
@@ -62,6 +62,7 @@ namespace Lykke.Service.IcoApi.Controllers
         /// Save campaign settings
         /// </summary>
         [AdminAuth]
+        [DisableWhenOnProd]
         [HttpPost("campaign/settings")]
         public async Task<IActionResult> SaveCampaignSettings([FromBody] CampaignSettingsModel settings)
         {
@@ -156,6 +157,7 @@ namespace Lykke.Service.IcoApi.Controllers
         /// Imports the scv file with public keys
         /// </summary>
         [AdminAuth]
+        [DisableWhenOnProd]
         [HttpPost("pool/import")]
         [DisableRequestSizeLimit]
         public async Task ImportKeys([FromForm] IFormFile file)
