@@ -93,6 +93,8 @@ namespace Lykke.Service.IcoApi.Services
 
         public async Task DeleteInvestorAsync(string email)
         {
+            email = email.ToLowCase();
+
             var inverstor = await _investorRepository.GetAsync(email);
             if (inverstor != null)
             {
@@ -115,11 +117,15 @@ namespace Lykke.Service.IcoApi.Services
 
         public async Task<IEnumerable<IInvestorHistoryItem>> GetInvestorHistory(string email)
         {
+            email = email.ToLowCase();
+
             return await _investorHistoryRepository.GetAsync(email);
         }
 
         public async Task DeleteInvestorAllDataAsync(string email)
         {
+            email = email.ToLowCase();
+
             await _investorEmailRepositoryy.RemoveAsync(email);
             await _investorHistoryRepository.RemoveAsync(email);
             await _addressPoolHistoryRepository.RemoveAsync(email);
@@ -129,21 +135,29 @@ namespace Lykke.Service.IcoApi.Services
 
         public async Task<IEnumerable<IAddressPoolHistoryItem>> GetInvestorAddressPoolHistory(string email)
         {
+            email = email.ToLowCase();
+
             return await _addressPoolHistoryRepository.GetAsync(email);
         }
 
         public async Task<IEnumerable<IInvestorEmail>> GetInvestorEmails(string email)
         {
+            email = email.ToLowCase();
+
             return await _investorEmailRepositoryy.GetAsync(email);
         }
 
         public async Task<IEnumerable<IInvestorTransaction>> GetInvestorTransactions(string email)
         {
+            email = email.ToLowCase();
+
             return await _investorTransactionRepository.GetByEmailAsync(email);
         }
 
         public async Task<IEnumerable<IInvestorRefund>> GetInvestorRefunds(string email)
         {
+            email = email.ToLowCase();
+
             return await _investorRefundRepository.GetByEmailAsync(email);
         }
 
@@ -155,6 +169,8 @@ namespace Lykke.Service.IcoApi.Services
         public async Task<string> SendTransactionMessageAsync(string email, CurrencyType currency, 
             DateTime? createdUtc, string uniqueId, decimal amount)
         {
+            email = email.ToLowCase();
+
             var investor = await _investorRepository.GetAsync(email);
             if (investor == null)
             {

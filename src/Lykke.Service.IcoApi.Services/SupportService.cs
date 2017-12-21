@@ -1,4 +1,5 @@
-﻿using Common.Log;
+﻿using Common;
+using Common.Log;
 using Lykke.Ico.Core.Repositories.CampaignSettings;
 using Lykke.Ico.Core.Repositories.Investor;
 using Lykke.Service.IcoApi.Core.Services;
@@ -33,6 +34,8 @@ namespace Lykke.Service.IcoApi.Services
 
         public async Task UpdateInvestorAsync(string email, string tokenAddress, string refundEthAddress, string refundBtcAddress)
         {
+            email = email.ToLowCase();
+
             await _investorRepository.SaveAddressesAsync(email, tokenAddress, refundEthAddress, refundBtcAddress);
         }
     }

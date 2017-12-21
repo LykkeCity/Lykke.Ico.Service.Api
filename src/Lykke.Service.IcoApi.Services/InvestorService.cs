@@ -52,11 +52,15 @@ namespace Lykke.Service.IcoApi.Services
 
         public async Task<IInvestor> GetAsync(string email)
         {
+            email = email.ToLowCase();
+
             return await _investorRepository.GetAsync(email);
         }
 
         public async Task<RegisterResult> RegisterAsync(string email)
         {
+            email = email.ToLowCase();
+
             var investor = await _investorRepository.GetAsync(email);
             if (investor == null)
             {
@@ -115,6 +119,8 @@ namespace Lykke.Service.IcoApi.Services
 
         public async Task UpdateAsync(string email, string tokenAddress, string refundEthAddress, string refundBtcAddress)
         {
+            email = email.ToLowCase();
+
             var poolItem = await _addressPoolRepository.GetNextFree(email);
 
             await _log.WriteInfoAsync(nameof(InvestorService), nameof(UpdateAsync), 
