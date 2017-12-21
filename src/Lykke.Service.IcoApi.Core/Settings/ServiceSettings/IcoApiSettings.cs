@@ -14,5 +14,6 @@
         public string IcoExRateServiceUrl { get; set; }
         public string IcoSiteUrl { get; set; }
         public string StripeSecretKey { get; set; }
+        public string AdminAuthKey { get; set; }
     }
 }

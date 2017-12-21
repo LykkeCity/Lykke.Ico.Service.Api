@@ -14,7 +14,6 @@ using Lykke.Ico.Core.Repositories.InvestorHistory;
 using Lykke.Ico.Core.Repositories.InvestorRefund;
 using Lykke.Ico.Core.Repositories.InvestorTransaction;
 using Lykke.Service.IcoApi.Core.Services;
-using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
 using Lykke.Service.IcoApi.Services;
 using Lykke.Service.IcoExRate.Client;
 using Lykke.SettingsReader;
@@ -23,10 +22,10 @@ namespace Lykke.Service.IcoApi.Modules
 {
     public class ServiceModule : Module
     {
-        private readonly IReloadingManager<IcoApiSettings> _settings;
+        private readonly IReloadingManager<Core.Settings.ServiceSettings.IcoApiSettings> _settings;
         private readonly ILog _log;
 
-        public ServiceModule(IReloadingManager<IcoApiSettings> settings, ILog log)
+        public ServiceModule(IReloadingManager<Core.Settings.ServiceSettings.IcoApiSettings> settings, ILog log)
         {
             _settings = settings;
             _log = log;
@@ -144,9 +143,11 @@ namespace Lykke.Service.IcoApi.Modules
                 .SingleInstance();
 
             builder.RegisterType<QueuePublisher<TransactionMessage>>()
-                            .As<IQueuePublisher<TransactionMessage>>()
-                            .WithParameter(TypedParameter.From(connectionStringManager))
-                            .SingleInstance();
+                .As<IQueuePublisher<TransactionMessage>>()
+                .WithParameter(TypedParameter.From(connectionStringManager))
+                .SingleInstance();
+
+            builder.RegisterInstance(_settings.CurrentValue);
         }
     }
 }

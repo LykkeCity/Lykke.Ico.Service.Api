@@ -10,7 +10,7 @@
 			"name": "Remove Investor",
 			"item": [
 				{
-					"name": "/api/admin/investors/{email} - delete investor",
+					"name": "/api/debug/investors/{email} - delete investor",
 					"event": [
 						{
 							"listen": "test",
@@ -41,13 +41,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{domain}}/api/admin/investors/{{email}}",
+							"raw": "{{domain}}/api/debug/investors/{{email}}",
 							"host": [
 								"{{domain}}"
 							],
 							"path": [
 								"api",
-								"admin",
+								"debug",
 								"investors",
 								"{{email}}"
 							]
@@ -56,7 +56,7 @@
 					"response": []
 				},
 				{
-					"name": "/api/admin/investors/{email}/all - delete all investor data",
+					"name": "/api/debug/investors/{email}/all - delete all investor data",
 					"event": [
 						{
 							"listen": "test",
@@ -87,13 +87,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{domain}}/api/admin/investors/{{email}}/all",
+							"raw": "{{domain}}/api/debug/investors/{{email}}/all",
 							"host": [
 								"{{domain}}"
 							],
 							"path": [
 								"api",
-								"admin",
+								"debug",
 								"investors",
 								"{{email}}",
 								"all"
@@ -108,7 +108,7 @@
 			"name": "Check Rates Service",
 			"item": [
 				{
-					"name": "/api/admin/rates/latest - recheck rates availability",
+					"name": "/api/debug/rates/latest - recheck rates availability",
 					"event": [
 						{
 							"listen": "test",
@@ -145,13 +145,13 @@
 							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
 						},
 						"url": {
-							"raw": "{{domain}}/api/admin/rates/latest",
+							"raw": "{{domain}}/api/debug/rates/latest",
 							"host": [
 								"{{domain}}"
 							],
 							"path": [
 								"api",
-								"admin",
+								"debug",
 								"rates",
 								"latest"
 							]
@@ -1140,7 +1140,7 @@
 					"response": []
 				},
 				{
-					"name": "/api/admin/eth/address/random - get token address",
+					"name": "/api/debug/eth/address/random - get token address",
 					"event": [
 						{
 							"listen": "test",
@@ -1176,13 +1176,13 @@
 							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
 						},
 						"url": {
-							"raw": "{{domain}}/api/admin/eth/address/random",
+							"raw": "{{domain}}/api/debug/eth/address/random",
 							"host": [
 								"{{domain}}"
 							],
 							"path": [
 								"api",
-								"admin",
+								"debug",
 								"eth",
 								"address",
 								"random"
@@ -1192,7 +1192,7 @@
 					"response": []
 				},
 				{
-					"name": "/api/admin/eth/address/random - get eth refund address",
+					"name": "/api/debug/eth/address/random - get eth refund address",
 					"event": [
 						{
 							"listen": "test",
@@ -1228,13 +1228,13 @@
 							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
 						},
 						"url": {
-							"raw": "{{domain}}/api/admin/eth/address/random",
+							"raw": "{{domain}}/api/debug/eth/address/random",
 							"host": [
 								"{{domain}}"
 							],
 							"path": [
 								"api",
-								"admin",
+								"debug",
 								"eth",
 								"address",
 								"random"
@@ -1244,7 +1244,7 @@
 					"response": []
 				},
 				{
-					"name": "/api/admin/btc/address/random - get btc refund address",
+					"name": "/api/debug/btc/address/random - get btc refund address",
 					"event": [
 						{
 							"listen": "test",
@@ -1280,13 +1280,13 @@
 							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
 						},
 						"url": {
-							"raw": "{{domain}}/api/admin/btc/address/random",
+							"raw": "{{domain}}/api/debug/btc/address/random",
 							"host": [
 								"{{domain}}"
 							],
 							"path": [
 								"api",
-								"admin",
+								"debug",
 								"btc",
 								"address",
 								"random"
@@ -1915,7 +1915,7 @@
 					"response": []
 				},
 				{
-					"name": "/api/admin/btc/send/tx - send bitcoin transaction to queue",
+					"name": "/api/debug/btc/send/tx - send bitcoin transaction to queue",
 					"event": [
 						{
 							"listen": "test",
@@ -1946,13 +1946,13 @@
 							"raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"amount\": 0.012\r\n}"
 						},
 						"url": {
-							"raw": "{{domain}}/api/admin/btc/send/tx",
+							"raw": "{{domain}}/api/debug/btc/send/tx",
 							"host": [
 								"{{domain}}"
 							],
 							"path": [
 								"api",
-								"admin",
+								"debug",
 								"btc",
 								"send",
 								"tx"
@@ -2546,7 +2546,7 @@
 					"response": []
 				},
 				{
-					"name": "/api/admin/eth/send/tx - send ether transaction to queue",
+					"name": "/api/debug/eth/send/tx - send ether transaction to queue",
 					"event": [
 						{
 							"listen": "test",
@@ -2577,13 +2577,13 @@
 							"raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"amount\": 0.8\r\n}"
 						},
 						"url": {
-							"raw": "{{domain}}/api/admin/eth/send/tx",
+							"raw": "{{domain}}/api/debug/eth/send/tx",
 							"host": [
 								"{{domain}}"
 							],
 							"path": [
 								"api",
-								"admin",
+								"debug",
 								"eth",
 								"send",
 								"tx"
@@ -3175,7 +3175,7 @@
 					"response": []
 				},
 				{
-					"name": "/api/admin/fiat/send/tx - send fiat transaction to queue",
+					"name": "/api/debug/fiat/send/tx - send fiat transaction to queue",
 					"event": [
 						{
 							"listen": "test",
@@ -3206,13 +3206,13 @@
 							"raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"amount\": 300\r\n}"
 						},
 						"url": {
-							"raw": "{{domain}}/api/admin/fiat/send/tx",
+							"raw": "{{domain}}/api/debug/fiat/send/tx",
 							"host": [
 								"{{domain}}"
 							],
 							"path": [
 								"api",
-								"admin",
+								"debug",
 								"fiat",
 								"send",
 								"tx"
@@ -3535,7 +3535,7 @@
 			"description": "",
 			"item": [
 				{
-					"name": "/api/admin/investors/{email}/refunds - remember refunds",
+					"name": "/api/admin/investors/{email}/transactions/failed - remember failed transaction",
 					"event": [
 						{
 							"listen": "test",
@@ -3573,7 +3573,7 @@
 							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
 						},
 						"url": {
-							"raw": "{{domain}}/api/admin/investors/{{email}}/refunds",
+							"raw": "{{domain}}/api/admin/investors/{{email}}/transactions/failed",
 							"host": [
 								"{{domain}}"
 							],
@@ -3582,7 +3582,8 @@
 								"admin",
 								"investors",
 								"{{email}}",
-								"refunds"
+								"transactions",
+								"failed"
 							]
 						}
 					},
@@ -3643,7 +3644,7 @@
 					"response": []
 				},
 				{
-					"name": "/api/admin/eth/send/tx - send ether out of date transaction to queue",
+					"name": "/api/debug/eth/send/tx - send ether out of date transaction to queue",
 					"event": [
 						{
 							"listen": "test",
@@ -3674,13 +3675,13 @@
 							"raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"amount\": 0.2,\r\n  \"createdUtc\": \"2017-11-19T11:00:00.000Z\"\r\n}"
 						},
 						"url": {
-							"raw": "{{domain}}/api/admin/eth/send/tx",
+							"raw": "{{domain}}/api/debug/eth/send/tx",
 							"host": [
 								"{{domain}}"
 							],
 							"path": [
 								"api",
-								"admin",
+								"debug",
 								"eth",
 								"send",
 								"tx"
@@ -3690,12 +3691,12 @@
 					"response": []
 				},
 				{
-					"name": "/api/admin/investors/{email}/refunds - wait new refund record",
+					"name": "/api/admin/investors/{email}/transactions/failed - wait new failed transation record",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "f19627e6-46a5-49a5-a2a5-a43c6e28b708",
+								"id": "8bd6f78c-7a2f-45f0-abdf-fe7d318b30a0",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -3711,7 +3712,7 @@
 									"} else {",
 									"    console.info(\"Wait 10 secs\");",
 									"    setTimeout(function(){}, 10000);",
-									"    postman.setNextRequest(\"/api/admin/investors/{email}/refunds - wait new refund record\");",
+									"    postman.setNextRequest(\"/api/admin/investors/{email}/transactions/failed - wait new failed transation record\");",
 									"}"
 								]
 							}
@@ -3734,7 +3735,7 @@
 							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
 						},
 						"url": {
-							"raw": "{{domain}}/api/admin/investors/{{email}}/refunds",
+							"raw": "{{domain}}/api/admin/investors/{{email}}/transactions/failed",
 							"host": [
 								"{{domain}}"
 							],
@@ -3743,7 +3744,8 @@
 								"admin",
 								"investors",
 								"{{email}}",
-								"refunds"
+								"transactions",
+								"failed"
 							]
 						}
 					},

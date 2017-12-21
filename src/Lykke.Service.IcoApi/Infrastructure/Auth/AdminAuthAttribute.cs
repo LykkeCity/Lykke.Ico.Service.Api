@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
 
 namespace Lykke.Service.IcoApi.Infrastructure.Auth
 {
@@ -11,6 +12,8 @@ namespace Lykke.Service.IcoApi.Infrastructure.Auth
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             var key = "";
+
+            var apiSettings = context.HttpContext.RequestServices.GetService<IcoApiSettings>();
 
             if (context.HttpContext.Request.Headers.ContainsKey(HeaderName))
             {
@@ -25,7 +28,7 @@ namespace Lykke.Service.IcoApi.Infrastructure.Auth
                 key = forms[0];
             }
 
-            if (!"TEMP".Equals(key))
+            if (!apiSettings.AdminAuthKey.Equals(key))
             {
                 context.Result = new UnauthorizedResult();
             }

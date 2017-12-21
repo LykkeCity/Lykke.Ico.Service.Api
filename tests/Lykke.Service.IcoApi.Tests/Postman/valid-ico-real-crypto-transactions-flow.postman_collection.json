@@ -11,7 +11,7 @@
 			"description": "",
 			"item": [
 				{
-					"name": "/api/admin/investors/{email} - delete investor",
+					"name": "/api/debug/investors/{email} - delete investor",
 					"event": [
 						{
 							"listen": "test",
@@ -42,13 +42,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{domain}}/api/admin/investors/{{email}}",
+							"raw": "{{domain}}/api/debug/investors/{{email}}",
 							"host": [
 								"{{domain}}"
 							],
 							"path": [
 								"api",
-								"admin",
+								"debug",
 								"investors",
 								"{{email}}"
 							]
@@ -58,7 +58,7 @@
 					"response": []
 				},
 				{
-					"name": "/api/admin/investors/{email}/all - delete all investor data",
+					"name": "/api/debug/investors/{email}/all - delete all investor data",
 					"event": [
 						{
 							"listen": "test",
@@ -89,13 +89,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{domain}}/api/admin/investors/{{email}}/all",
+							"raw": "{{domain}}/api/debug/investors/{{email}}/all",
 							"host": [
 								"{{domain}}"
 							],
 							"path": [
 								"api",
-								"admin",
+								"debug",
 								"investors",
 								"{{email}}",
 								"all"
@@ -287,7 +287,7 @@
 					"response": []
 				},
 				{
-					"name": "/api/admin/eth/address/random - get token address",
+					"name": "/api/debug/eth/address/random - get token address",
 					"event": [
 						{
 							"listen": "test",
@@ -323,13 +323,13 @@
 							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
 						},
 						"url": {
-							"raw": "{{domain}}/api/admin/eth/address/random",
+							"raw": "{{domain}}/api/debug/eth/address/random",
 							"host": [
 								"{{domain}}"
 							],
 							"path": [
 								"api",
-								"admin",
+								"debug",
 								"eth",
 								"address",
 								"random"
@@ -400,255 +400,6 @@
 					"listen": "test",
 					"script": {
 						"id": "406e1bdc-0b8a-47e1-89e8-e4b227f49bd4",
-						"type": "text/javascript",
-						"exec": [
-							""
-						]
-					}
-				}
-			]
-		},
-		{
-			"name": "Send Ethers",
-			"description": "",
-			"item": [
-				{
-					"name": "/api/admin/investors/{email}/transactions - remember transactions",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Remember transactions sent number\", function () {",
-									"    var jsonData = pm.response.json();",
-									"",
-									"    pm.environment.set(\"investor-transactions-size\", (typeof jsonData.transactions === 'undefined') ? 0 : jsonData.transactions.count());",
-									"});"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "adminAuthToken",
-								"value": "{{admin_auth_token}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
-						},
-						"url": {
-							"raw": "{{domain}}/api/admin/investors/{{email}}/transactions",
-							"host": [
-								"{{domain}}"
-							],
-							"path": [
-								"api",
-								"admin",
-								"investors",
-								"{{email}}",
-								"transactions"
-							]
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "/api/admin/investors/{email} - get pay-in address",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "db005c8d-6eec-4c39-ac80-762e0dd484d1",
-								"type": "text/javascript",
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"",
-									"pm.test(\"Get data\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    ",
-									"    pm.environment.set(\"payInEthAddress\", jsonData.payInEthAddress);",
-									"});"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "adminAuthToken",
-								"value": "{{admin_auth_token}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
-						},
-						"url": {
-							"raw": "{{domain}}/api/admin/investors/{{email}}",
-							"host": [
-								"{{domain}}"
-							],
-							"path": [
-								"api",
-								"admin",
-								"investors",
-								"{{email}}"
-							]
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "/api/admin/eth/send - send ethers",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "5df51dae-d899-4c91-8d35-51348f4695ff",
-								"type": "text/javascript",
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"console.info(\"Transaction: \" + responseBody);"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "adminAuthToken",
-								"value": "{{admin_auth_token}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"address\": \"{{payInEthAddress}}\",\r\n  \"amount\": 0.01\r\n}"
-						},
-						"url": {
-							"raw": "{{domain}}/api/admin/eth/send",
-							"host": [
-								"{{domain}}"
-							],
-							"path": [
-								"api",
-								"admin",
-								"eth",
-								"send"
-							]
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "/api/admin/investors/{email}/emails - wait eth transaction",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "c331c402-b4fa-45a3-85b1-b3112c496bd1",
-								"type": "text/javascript",
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"var jsonData = JSON.parse(responseBody);",
-									"var current = Number(jsonData.transactions.count());",
-									"var expected = Number(pm.environment.get(\"investor-transactions-size\")) + 1;",
-									"",
-									"if(current == expected) {",
-									"    console.info(\"1 new transaction found\");",
-									"} else {",
-									"    console.info(\"Current: \" + current + \"; Expected: \" + expected);",
-									"    console.info(\"Wait 60 secs\");",
-									"    setTimeout(function(){}, 60000);",
-									"    postman.setNextRequest(\"/api/admin/investors/{email}/emails - wait eth transaction\");",
-									"}"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "adminAuthToken",
-								"value": "{{admin_auth_token}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
-						},
-						"url": {
-							"raw": "{{domain}}/api/admin/investors/{{email}}/transactions",
-							"host": [
-								"{{domain}}"
-							],
-							"path": [
-								"api",
-								"admin",
-								"investors",
-								"{{email}}",
-								"transactions"
-							]
-						},
-						"description": ""
-					},
-					"response": []
-				}
-			],
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"id": "dbcc0bc5-43ba-4091-84b8-a657d89a28d8",
-						"type": "text/javascript",
-						"exec": [
-							""
-						]
-					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"id": "d6d360f1-7434-49da-a1b9-85b51ae275c9",
 						"type": "text/javascript",
 						"exec": [
 							""
@@ -771,7 +522,7 @@
 					"response": []
 				},
 				{
-					"name": "/api/admin/btc/send - send bitcoins",
+					"name": "/api/debug/btc/send - send bitcoins",
 					"event": [
 						{
 							"listen": "test",
@@ -805,13 +556,13 @@
 							"raw": "{\r\n  \"address\": \"{{payInBtcAddress}}\",\r\n  \"amount\": 0.01\r\n}"
 						},
 						"url": {
-							"raw": "{{domain}}/api/admin/btc/send",
+							"raw": "{{domain}}/api/debug/btc/send",
 							"host": [
 								"{{domain}}"
 							],
 							"path": [
 								"api",
-								"admin",
+								"debug",
 								"btc",
 								"send"
 							]
@@ -898,6 +649,255 @@
 					"listen": "test",
 					"script": {
 						"id": "54f4c756-2954-4bb0-848c-b74f5e850058",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Send Ethers",
+			"description": "",
+			"item": [
+				{
+					"name": "/api/admin/investors/{email}/transactions - remember transactions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Remember transactions sent number\", function () {",
+									"    var jsonData = pm.response.json();",
+									"",
+									"    pm.environment.set(\"investor-transactions-size\", (typeof jsonData.transactions === 'undefined') ? 0 : jsonData.transactions.count());",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "adminAuthToken",
+								"value": "{{admin_auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
+						},
+						"url": {
+							"raw": "{{domain}}/api/admin/investors/{{email}}/transactions",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"investors",
+								"{{email}}",
+								"transactions"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "/api/admin/investors/{email} - get pay-in address",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "db005c8d-6eec-4c39-ac80-762e0dd484d1",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Get data\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    ",
+									"    pm.environment.set(\"payInEthAddress\", jsonData.payInEthAddress);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "adminAuthToken",
+								"value": "{{admin_auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
+						},
+						"url": {
+							"raw": "{{domain}}/api/admin/investors/{{email}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"investors",
+								"{{email}}"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "/api/debug/eth/send - send ethers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5df51dae-d899-4c91-8d35-51348f4695ff",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"console.info(\"Transaction: \" + responseBody);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "adminAuthToken",
+								"value": "{{admin_auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"address\": \"{{payInEthAddress}}\",\r\n  \"amount\": 0.01\r\n}"
+						},
+						"url": {
+							"raw": "{{domain}}/api/debug/eth/send",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"debug",
+								"eth",
+								"send"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "/api/admin/investors/{email}/emails - wait eth transaction",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c331c402-b4fa-45a3-85b1-b3112c496bd1",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"var current = Number(jsonData.transactions.count());",
+									"var expected = Number(pm.environment.get(\"investor-transactions-size\")) + 1;",
+									"",
+									"if(current == expected) {",
+									"    console.info(\"1 new transaction found\");",
+									"} else {",
+									"    console.info(\"Current: \" + current + \"; Expected: \" + expected);",
+									"    console.info(\"Wait 60 secs\");",
+									"    setTimeout(function(){}, 60000);",
+									"    postman.setNextRequest(\"/api/admin/investors/{email}/emails - wait eth transaction\");",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "adminAuthToken",
+								"value": "{{admin_auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
+						},
+						"url": {
+							"raw": "{{domain}}/api/admin/investors/{{email}}/transactions",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"investors",
+								"{{email}}",
+								"transactions"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "dbcc0bc5-43ba-4091-84b8-a657d89a28d8",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "d6d360f1-7434-49da-a1b9-85b51ae275c9",
 						"type": "text/javascript",
 						"exec": [
 							""
