@@ -175,7 +175,7 @@ namespace Lykke.Service.IcoApi.Controllers
                 $"email={email}, ip={GetRequestIP()}, model={model.ToJson()}",
                 "Charge investor card");
 
-            var result = await _fiatService.Charge(email, model.Token, model.Amount);
+            var result = await _fiatService.Charge(email, model.Token, model.Cents);
 
             return Ok(ChargeInvestorResponse.Create(result));
         }

@@ -24,11 +24,11 @@ namespace Lykke.Service.IcoApi.Services
             _transactionQueuePublisher = transactionQueuePublisher;
         }
 
-        public async Task<FiatCharge> Charge(string email, string token, decimal amount)
+        public async Task<FiatCharge> Charge(string email, string token, int cents)
         {
             try
             {
-                var charge = await ChargeToken(email, token, amount);
+                var charge = await ChargeToken(email, token, cents);
                 await _log.WriteInfoAsync(nameof(FiatService), nameof(Charge),
                     $"charge.StripeResponse={charge.StripeResponse.ResponseJson}",
                     "Charge object recieved");
@@ -43,6 +43,7 @@ namespace Lykke.Service.IcoApi.Services
                     };
                 }
 
+                var amount = Decimal.Round(((decimal)cents / 100), 2);
                 var fee = Decimal.Round(((decimal)charge.BalanceTransaction.Fee / 100), 2);
 
                 await SendTxMessageAsync(email, charge.Created.ToUniversalTime(), charge.Id, 
@@ -63,13 +64,13 @@ namespace Lykke.Service.IcoApi.Services
             }
         }
 
-        private async Task<StripeCharge> ChargeToken(string email, string token, decimal amount)
+        private async Task<StripeCharge> ChargeToken(string email, string token, int cents)
         {
             var charges = new StripeChargeService { ExpandBalanceTransaction = true };
             var options = new StripeChargeCreateOptions
             {
 
-                Amount = Convert.ToInt32(Decimal.Round(amount, 2) * 100),
+                Amount = cents,
                 Currency = "usd",
                 SourceTokenOrExistingSourceId = token,
                 Metadata = new Dictionary<String, String>() { { "Email", email } }
