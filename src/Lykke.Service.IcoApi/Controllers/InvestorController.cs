@@ -171,11 +171,11 @@ namespace Lykke.Service.IcoApi.Controllers
 
             await _log.WriteInfoAsync(
                 nameof(InvestorController),
-                nameof(RegisterInvestor),
+                nameof(ChargeInvestor),
                 $"email={email}, ip={GetRequestIP()}, model={model.ToJson()}",
                 "Charge investor card");
 
-            var result = await _fiatService.Charge(email, model.Token, model.Cents);
+            var result = await _fiatService.Charge(email, model.Token, model.Amount);
 
             return Ok(ChargeInvestorResponse.Create(result));
         }

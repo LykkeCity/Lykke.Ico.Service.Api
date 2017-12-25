@@ -111,8 +111,11 @@ namespace Lykke.Service.IcoApi.Models
         [Required]
         public string Token { get; set; }
 
-        [Required]
-        public int Cents { get; set; }
+        /// <summary>
+        /// Amount in cents
+        /// </summary>
+        [Required, Range(1, Int32.MaxValue)]
+        public int Amount { get; set; }
     }
 
     public class ChargeInvestorResponse
