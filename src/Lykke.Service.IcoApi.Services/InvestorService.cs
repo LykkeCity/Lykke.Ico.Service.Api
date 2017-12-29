@@ -57,6 +57,13 @@ namespace Lykke.Service.IcoApi.Services
             return await _investorRepository.GetAsync(email);
         }
 
+        public async Task<string> GetEmailByKycId(Guid kycId)
+        {
+            return await _investorAttributeRepository.GetInvestorEmailAsync(
+                InvestorAttributeType.KycId,
+                kycId.ToString());
+        }
+
         public async Task<RegisterResult> RegisterAsync(string email)
         {
             email = email.ToLowCase();
@@ -70,7 +77,8 @@ namespace Lykke.Service.IcoApi.Services
                     $"email={email}, token={token}", "Create investor");
 
                 await _investorRepository.AddAsync(email, token);
-                await _investorAttributeRepository.SaveAsync(InvestorAttributeType.ConfirmationToken, email, token.ToString());
+                await _investorAttributeRepository.SaveAsync(InvestorAttributeType.ConfirmationToken, 
+                    email, token.ToString());
                 await _campaignInfoRepository.IncrementValue(CampaignInfoType.InvestorsRegistered, 1);
 
                 await SendConfirmationEmail(email, token);
@@ -92,7 +100,9 @@ namespace Lykke.Service.IcoApi.Services
 
         public async Task<bool> ConfirmAsync(Guid confirmationToken)
         {
-            var email = await _investorAttributeRepository.GetInvestorEmailAsync(InvestorAttributeType.ConfirmationToken, confirmationToken.ToString());
+            var email = await _investorAttributeRepository.GetInvestorEmailAsync(
+                InvestorAttributeType.ConfirmationToken, 
+                confirmationToken.ToString());
             if (string.IsNullOrEmpty(email))
             {
                 await _log.WriteInfoAsync(nameof(InvestorService), nameof(ConfirmAsync), 
@@ -146,6 +156,18 @@ namespace Lykke.Service.IcoApi.Services
 
             var investor = await _investorRepository.GetAsync(email);
             await SendSummaryEmail(investor);
+        }
+
+        public async Task SaveKycResultAsync(string email, string kycStatus)
+        {
+            var kycPassed = kycStatus.ToString().ToUpper() == "OK";
+
+            await _investorRepository.SaveKycResultAsync(email, kycPassed);
+
+            if (kycPassed)
+            {
+                await _campaignInfoRepository.IncrementValue(CampaignInfoType.InvestorsKycPassed, 1);
+            }
         }
 
         private async Task SendConfirmationEmail(string email, Guid token)

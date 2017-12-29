@@ -9,10 +9,14 @@ namespace Lykke.Service.IcoApi.Core.Services
     {
         Task<IInvestor> GetAsync(string email);
 
+        Task<string> GetEmailByKycId(Guid kycId);
+
         Task<RegisterResult> RegisterAsync(string email);
 
         Task<bool> ConfirmAsync(Guid confirmationToken);
 
         Task UpdateAsync(string email, string tokenAddress, string refundEthAddress, string refundBtcAddress);
+
+        Task SaveKycResultAsync(string email, string kycStatus);
     }
 }

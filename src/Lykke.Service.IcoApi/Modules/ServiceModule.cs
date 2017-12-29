@@ -130,7 +130,17 @@ namespace Lykke.Service.IcoApi.Modules
 
             builder.RegisterType<SupportService>()
                 .As<ISupportService>()
-                .SingleInstance();            
+                .SingleInstance();
+
+            builder.RegisterType<SupportService>()
+                .As<ISupportService>()
+                .SingleInstance();
+
+            builder.RegisterType<EncryptionService>()
+                .As<IEncryptionService>()
+                .WithParameter("key", "E546C8DF278CD5931069B522E695D4F2")
+                .WithParameter("iv", "1234567890123456")
+                .SingleInstance();
 
             builder.RegisterType<QueuePublisher<InvestorConfirmationMessage>>()
                 .As<IQueuePublisher<InvestorConfirmationMessage>>()
