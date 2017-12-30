@@ -13,6 +13,7 @@ using Lykke.Ico.Core.Repositories.InvestorEmail;
 using Lykke.Ico.Core.Repositories.InvestorHistory;
 using Lykke.Ico.Core.Repositories.InvestorRefund;
 using Lykke.Ico.Core.Repositories.InvestorTransaction;
+using Lykke.Ico.Core.Services;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Services;
 using Lykke.Service.IcoExRate.Client;
@@ -136,10 +137,10 @@ namespace Lykke.Service.IcoApi.Modules
                 .As<ISupportService>()
                 .SingleInstance();
 
-            builder.RegisterType<EncryptionService>()
-                .As<IEncryptionService>()
-                .WithParameter("key", "E546C8DF278CD5931069B522E695D4F2")
-                .WithParameter("iv", "1234567890123456")
+            builder.RegisterType<UrlEncryptionService>()
+                .As<IUrlEncryptionService>()
+                .WithParameter("key", _settings.CurrentValue.KycServiceEncriptionKey)
+                .WithParameter("iv", _settings.CurrentValue.KycServiceEncriptionIv)
                 .SingleInstance();
 
             builder.RegisterType<QueuePublisher<InvestorConfirmationMessage>>()

@@ -1,9 +1,9 @@
 ﻿using Common.Log;
+using Lykke.Ico.Core.Services;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Threading.Tasks;
@@ -14,13 +14,13 @@ namespace Lykke.Service.IcoApi.Controllers
     public class KycController : Controller
     {
         private readonly ILog _log;
-        private readonly IEncryptionService _encryptionService;
+        private readonly IUrlEncryptionService _urlEncryptionService;
         private readonly IInvestorService _investorService;
 
-        public KycController(ILog log, IEncryptionService encryptionService, IInvestorService investorService)
+        public KycController(ILog log, IUrlEncryptionService urlEncryptionService, IInvestorService investorService)
         {
             _log = log;
-            _encryptionService = encryptionService;
+            _urlEncryptionService = urlEncryptionService;
             _investorService = investorService;
         }
 
@@ -43,7 +43,7 @@ namespace Lykke.Service.IcoApi.Controllers
             var message = "";
             try
             {
-                message = _encryptionService.Decrypt(request.Message);
+                message = _urlEncryptionService.Decrypt(request.Message);
             }
             catch
             {
