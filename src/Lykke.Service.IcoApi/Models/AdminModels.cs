@@ -370,4 +370,10 @@ namespace Lykke.Service.IcoApi.Models
             };
         }
     }
+
+    public class EncryptionMessageRequest
+    {
+        [Required]
+        public string Message { get; set; }
+    }
 }

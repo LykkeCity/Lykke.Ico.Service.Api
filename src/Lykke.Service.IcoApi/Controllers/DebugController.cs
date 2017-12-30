@@ -1,5 +1,6 @@
 ﻿using Common.Log;
 using Lykke.Ico.Core;
+using Lykke.Ico.Core.Services;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Infrastructure;
 using Lykke.Service.IcoApi.Models;
@@ -24,9 +25,11 @@ namespace Lykke.Service.IcoApi.Controllers
         private readonly IBtcService _btcService;
         private readonly IEthService _ethService;
         private readonly IIcoExRateClient _icoExRateClient;
+        private readonly IUrlEncryptionService _urlEncryptionService;
 
         public DebugController(ILog log, IInvestorService investorService, IAdminService adminService,
-            IBtcService btcService, IEthService ethService, IIcoExRateClient icoExRateClient)
+            IBtcService btcService, IEthService ethService, IIcoExRateClient icoExRateClient,
+            IUrlEncryptionService urlEncryptionService)
         {
             _log = log;
             _investorService = investorService;
@@ -34,6 +37,7 @@ namespace Lykke.Service.IcoApi.Controllers
             _btcService = btcService;
             _ethService = ethService;
             _icoExRateClient = icoExRateClient;
+            _urlEncryptionService = urlEncryptionService;
         }
 
         /// <summary>
@@ -253,10 +257,48 @@ namespace Lykke.Service.IcoApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            await _adminService.SendTransactionMessageAsync(request.Email, CurrencyType.Fiat,
+            var result = await _adminService.SendTransactionMessageAsync(request.Email, CurrencyType.Fiat,
                 request.CreatedUtc, request.UniqueId, request.Amount);
 
-            return Ok();
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Encrypt kyc message
+        /// </summary>
+        [AdminAuth]
+        [DisableWhenOnProd]
+        [HttpPost("kyc/encrypt")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+        public IActionResult EncryptKycMessage([FromBody] EncryptionMessageRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var result = _urlEncryptionService.Encrypt(request.Message);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Decrypt kyc message
+        /// </summary>
+        [AdminAuth]
+        [DisableWhenOnProd]
+        [HttpPost("kyc/decrypt")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+        public IActionResult DecryptKycMessage([FromBody] EncryptionMessageRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var result = _urlEncryptionService.Decrypt(request.Message);
+
+            return Ok(result);
         }
     }
 }
