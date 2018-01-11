@@ -1,6 +1,4 @@
 ﻿using Lykke.Ico.Core;
-using Lykke.Ico.Core.Repositories.AddressPool;
-using Lykke.Ico.Core.Repositories.AddressPoolHistory;
 using Lykke.Ico.Core.Repositories.CampaignSettings;
 using Lykke.Ico.Core.Repositories.InvestorEmail;
 using Lykke.Ico.Core.Repositories.InvestorHistory;
@@ -29,5 +27,6 @@ namespace Lykke.Service.IcoApi.Core.Services
         Task<string> SendTransactionMessageAsync(string email, CurrencyType currency, 
             DateTime? createdUtc, string uniqueId, decimal amount);
         Task<IEnumerable<(int Id, string BtcPublicKey, string EthPublicKey)>> GetPublicKeys(int[] ids);
+        Task<IEnumerable<IInvestorTransaction>> GetLatestTransactions();
     }
 }

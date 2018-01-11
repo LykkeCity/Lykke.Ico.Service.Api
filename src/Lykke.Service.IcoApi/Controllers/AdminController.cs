@@ -146,6 +146,16 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
+        /// Returns the latest transactions
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("transactions/latest")]
+        public async Task<InvestorTransactionsResponse> GetLatestTransactions()
+        {
+            return InvestorTransactionsResponse.Create(await _adminService.GetLatestTransactions());
+        }
+
+        /// <summary>
         /// Returns the list of public keys.
         /// </summary>
         /// <remarks>

@@ -76,6 +76,11 @@ namespace Lykke.Service.IcoApi.Services
         {
             var dictionary = await _campaignInfoRepository.GetAllAsync();
 
+            if (dictionary.ContainsKey(nameof(CampaignInfoType.LatestTransactions)))
+            {
+                dictionary.Remove(nameof(CampaignInfoType.LatestTransactions));
+            }                
+
             dictionary.Add("BctNetwork", _btcNetwork);
             dictionary.Add("EthNetwork", _ethNetwork);
 
@@ -237,6 +242,28 @@ namespace Lykke.Service.IcoApi.Services
             }
 
             return list;
+        }
+
+        public async Task<IEnumerable<IInvestorTransaction>> GetLatestTransactions()
+        {
+            var list = await _campaignInfoRepository.GetLatestTransactionsAsync();
+            if (list == null || !list.Any())
+            {
+                return Enumerable.Empty<IInvestorTransaction>();
+            }
+
+            var result = new List<IInvestorTransaction>();
+
+            foreach (var item in list)
+            {
+                var tx = await _investorTransactionRepository.GetAsync(item.Email, item.UniqueId);
+                if (tx != null)
+                {
+                    result.Add(tx);
+                }
+            }
+
+            return result;
         }
 
         public async Task<int> ImportPublicKeys(StreamReader reader)
