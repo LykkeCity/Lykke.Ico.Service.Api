@@ -232,6 +232,8 @@ namespace Lykke.Service.IcoApi.Services
                     list.Add((itemHistory.Id, itemHistory.BtcPublicKey, itemHistory.EthPublicKey));
                     continue;
                 }
+
+                list.Add((itemHistory.Id, "", ""));
             }
 
             return list;
