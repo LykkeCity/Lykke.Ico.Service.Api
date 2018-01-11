@@ -143,6 +143,10 @@ namespace Lykke.Service.IcoApi.Modules
                 .WithParameter("iv", _settings.CurrentValue.KycServiceEncriptionIv)
                 .SingleInstance();
 
+            builder.RegisterType<KycService>()
+                .As<IKycService>()
+                .SingleInstance();
+
             builder.RegisterType<QueuePublisher<InvestorConfirmationMessage>>()
                 .As<IQueuePublisher<InvestorConfirmationMessage>>()
                 .WithParameter(TypedParameter.From(connectionStringManager))

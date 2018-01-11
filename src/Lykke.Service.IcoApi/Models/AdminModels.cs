@@ -264,6 +264,9 @@ namespace Lykke.Service.IcoApi.Models
         public bool KycEnableRequestSending { get; set; }
 
         [Required]
+        public string KycCampaignId { get; set; }
+
+        [Required]
         public string KycLinkTemplate { get; set; }
 
         public static CampaignSettingsModel Create(ICampaignSettings settings)
@@ -285,6 +288,7 @@ namespace Lykke.Service.IcoApi.Models
                 TokenDecimals = settings.TokenDecimals,
                 MinInvestAmountUsd = settings.MinInvestAmountUsd,
                 KycEnableRequestSending = settings.KycEnableRequestSending,
+                KycCampaignId = settings.KycCampaignId,
                 KycLinkTemplate = settings.KycLinkTemplate            
             };
         }

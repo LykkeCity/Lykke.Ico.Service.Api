@@ -58,6 +58,8 @@ namespace Lykke.Service.IcoApi.Models
 
         public KycStatus KycStatus { get; set; }
 
+        public string KycLink { get; set; }
+
         public decimal AmountBtc { get; set; }
 
         public decimal AmountEth { get; set; }
@@ -68,7 +70,7 @@ namespace Lykke.Service.IcoApi.Models
 
         public decimal AmountToken { get; set; }
 
-        public static InvestorResponse Create(IInvestor investor)
+        public static InvestorResponse Create(IInvestor investor, string kycLink)
         {
             var kycStatus = KycStatus.None;
             if (investor.KycRequestedUtc.HasValue)
@@ -89,6 +91,7 @@ namespace Lykke.Service.IcoApi.Models
                 PayInEthAddress = investor.PayInEthAddress,
                 PayInBtcAddress = investor.PayInBtcAddress,
                 KycStatus = kycStatus,
+                KycLink = kycLink,
                 AmountBtc = investor.AmountBtc,
                 AmountEth = investor.AmountEth,
                 AmountFiat = investor.AmountFiat,

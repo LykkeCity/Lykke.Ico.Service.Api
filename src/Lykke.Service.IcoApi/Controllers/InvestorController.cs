@@ -11,6 +11,7 @@ using System.Linq;
 using System.Security.Claims;
 using Common.Log;
 using Common;
+using Lykke.Ico.Core.Services;
 
 namespace Lykke.Service.IcoApi.Controllers
 {
@@ -24,9 +25,11 @@ namespace Lykke.Service.IcoApi.Controllers
         private readonly IEthService _ethService;
         private readonly IFiatService _fiatService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IKycService _kycService;
 
         public InvestorController(ILog log, IInvestorService investorService, IBtcService btcService,
-            IEthService ethService, IFiatService fiatService, IHttpContextAccessor httpContextAccessor)
+            IEthService ethService, IFiatService fiatService, IHttpContextAccessor httpContextAccessor,
+            IKycService kycService)
         {
             _log = log;
             _investorService = investorService;
@@ -34,6 +37,7 @@ namespace Lykke.Service.IcoApi.Controllers
             _ethService = ethService;
             _fiatService = fiatService;
             _httpContextAccessor = httpContextAccessor;
+            _kycService = kycService;
         }
 
         /// <summary>
@@ -95,7 +99,6 @@ namespace Lykke.Service.IcoApi.Controllers
         [HttpGet]
         [InvestorAuth]
         [ProducesResponseType(typeof(InvestorResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> Get()
         {
             var email = GetAuthUserEmail();
@@ -105,8 +108,10 @@ namespace Lykke.Service.IcoApi.Controllers
                             "Get investor");
 
             var investor = await _investorService.GetAsync(email);
+            var kycLink = await _kycService.GetKycLink(investor.Email, investor.KycRequestId);
+            var response = InvestorResponse.Create(investor, kycLink);
 
-            return Ok(InvestorResponse.Create(investor));
+            return Ok(response);
         }
 
         /// <summary>
