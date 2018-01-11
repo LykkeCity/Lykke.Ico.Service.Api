@@ -20,6 +20,7 @@ using Lykke.Ico.Core.Queues.Transactions;
 using Lykke.Ico.Core;
 using Lykke.Ico.Core.Queues;
 using Lykke.Ico.Core.Repositories.InvestorRefund;
+using System.Linq;
 
 namespace Lykke.Service.IcoApi.Services
 {
@@ -34,8 +35,8 @@ namespace Lykke.Service.IcoApi.Services
         private readonly IInvestorAttributeRepository _investorAttributeRepository;
         private readonly IInvestorEmailRepository _investorEmailRepositoryy;
         private readonly IInvestorHistoryRepository _investorHistoryRepository;
-        private readonly IAddressPoolHistoryRepository _addressPoolHistoryRepository;
         private readonly ICampaignInfoRepository _campaignInfoRepository;
+        private readonly IAddressPoolHistoryRepository _addressPoolHistoryRepository;
         private readonly IAddressPoolRepository _addressPoolRepository;
         private readonly ICampaignSettingsRepository _campaignSettingsRepository;
         private readonly IQueuePublisher<TransactionMessage> _transactionQueuePublisher;
@@ -128,16 +129,8 @@ namespace Lykke.Service.IcoApi.Services
 
             await _investorEmailRepositoryy.RemoveAsync(email);
             await _investorHistoryRepository.RemoveAsync(email);
-            await _addressPoolHistoryRepository.RemoveAsync(email);
             await _investorTransactionRepository.RemoveAsync(email);
             await _investorRefundRepository.RemoveAsync(email);
-        }
-
-        public async Task<IEnumerable<IAddressPoolHistoryItem>> GetInvestorAddressPoolHistory(string email)
-        {
-            email = email.ToLowCase();
-
-            return await _addressPoolHistoryRepository.GetAsync(email);
         }
 
         public async Task<IEnumerable<IInvestorEmail>> GetInvestorEmails(string email)
@@ -218,6 +211,30 @@ namespace Lykke.Service.IcoApi.Services
             await _transactionQueuePublisher.SendAsync(message);
 
             return message.UniqueId;
+        }
+
+        public async Task<IEnumerable<(int Id, string BtcPublicKey, string EthPublicKey)>> GetPublicKeys(int[] ids)
+        {
+            var list = new List<(int, string, string)>();
+
+            foreach (var id in ids)
+            {
+                var item = await _addressPoolRepository.Get(id);
+                if (item != null)
+                {
+                    list.Add((item.Id, item.BtcPublicKey, item.EthPublicKey));
+                    continue;
+                }
+
+                var itemHistory = await _addressPoolHistoryRepository.Get(id);
+                if (itemHistory != null)
+                {
+                    list.Add((itemHistory.Id, itemHistory.BtcPublicKey, itemHistory.EthPublicKey));
+                    continue;
+                }
+            }
+
+            return list;
         }
 
         public async Task<int> ImportPublicKeys(StreamReader reader)

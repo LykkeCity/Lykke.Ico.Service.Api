@@ -1086,60 +1086,6 @@
 					"response": []
 				},
 				{
-					"name": "/api/admin/investors/{email}/pool/history - remember address pool",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Remember transactions sent number\", function () {",
-									"    var jsonData = pm.response.json();",
-									"",
-									"    pm.environment.set(\"investor-address-pool-size\", (typeof jsonData.items === 'undefined') ? 0 : jsonData.items.count());",
-									"});"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "adminAuthToken",
-								"value": "{{admin_auth_token}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
-						},
-						"url": {
-							"raw": "{{domain}}/api/admin/investors/{{email}}/pool/history",
-							"host": [
-								"{{domain}}"
-							],
-							"path": [
-								"api",
-								"admin",
-								"investors",
-								"{{email}}",
-								"pool",
-								"history"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "/api/debug/eth/address/random - get token address",
 					"event": [
 						{
@@ -1520,60 +1466,6 @@
 								"admin",
 								"campaign",
 								"info"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/api/admin/investors/{email}/pool/history - check address pool history",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"type": "text/javascript",
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Must have 1 new address pool history item\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    ",
-									"    pm.expect(Number(jsonData.items.count())).to.eql(Number(pm.environment.get(\"investor-address-pool-size\")) + 1);",
-									"});"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "adminAuthToken",
-								"value": "{{admin_auth_token}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
-						},
-						"url": {
-							"raw": "{{domain}}/api/admin/investors/{{email}}/pool/history",
-							"host": [
-								"{{domain}}"
-							],
-							"path": [
-								"api",
-								"admin",
-								"investors",
-								"{{email}}",
-								"pool",
-								"history"
 							]
 						}
 					},
@@ -3203,7 +3095,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"amount\": 300\r\n}"
+							"raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"amount\": 30000\r\n}"
 						},
 						"url": {
 							"raw": "{{domain}}/api/debug/fiat/send/tx",

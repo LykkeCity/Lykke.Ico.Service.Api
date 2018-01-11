@@ -6,9 +6,11 @@ using Lykke.Service.IcoExRate.Client;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -134,16 +136,6 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
-        /// Returns the list of address pool history items assigned to investor
-        /// </summary>
-        [AdminAuth]
-        [HttpGet("investors/{email}/pool/history")]
-        public async Task<InvestorAddressPoolHistoryResponse> GetInvestorAddressPoolHistory([Required] string email)
-        {
-            return InvestorAddressPoolHistoryResponse.Create(await _adminService.GetInvestorAddressPoolHistory(email));
-        }
-
-        /// <summary>
         /// Returns the list of all failed transactions
         /// </summary>
         [AdminAuth]
@@ -151,6 +143,30 @@ namespace Lykke.Service.IcoApi.Controllers
         public async Task<InvestorRefundsResponse> GetFailedTransactions()
         {
             return InvestorRefundsResponse.Create(await _adminService.GetRefunds());
+        }
+
+        /// <summary>
+        /// Returns the list of public keys.
+        /// </summary>
+        /// <remarks>
+        /// sample: /api/pool/keys/1,2,100
+        /// </remarks>
+        [AdminAuth]
+        [HttpGet("pool/keys/{ids}")]
+        public async Task<PoolKeysResponse> GetPoolPublicKeys([Required] string ids)
+        {
+            var response = new PoolKeysResponse();
+            var array = ids.Split(',').Select(f => Int32.Parse(f)).ToArray();
+            var keys = await _adminService.GetPublicKeys(array);
+
+            response.Keys.AddRange(keys.Select(f => new PoolKeysModel
+            {
+                Id = f.Id,
+                BtcPublicKey = f.BtcPublicKey,
+                EthPublicKey = f.EthPublicKey
+            }));
+
+            return response;
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using Lykke.Ico.Core;
+using Lykke.Ico.Core.Repositories.AddressPool;
 using Lykke.Ico.Core.Repositories.AddressPoolHistory;
 using Lykke.Ico.Core.Repositories.CampaignSettings;
 using Lykke.Ico.Core.Repositories.Investor;
@@ -259,6 +260,12 @@ namespace Lykke.Service.IcoApi.Models
         [Required]
         public decimal MinInvestAmountUsd { get; set; }
 
+        [Required]
+        public bool KycEnableRequestSending { get; set; }
+
+        [Required]
+        public string KycLinkTemplate { get; set; }
+
         public static CampaignSettingsModel Create(ICampaignSettings settings)
         {
             if (settings == null)
@@ -276,7 +283,9 @@ namespace Lykke.Service.IcoApi.Models
                 CrowdSaleTotalTokensAmount = settings.CrowdSaleTotalTokensAmount,
                 TokenBasePriceUsd = settings.TokenBasePriceUsd,
                 TokenDecimals = settings.TokenDecimals,
-                MinInvestAmountUsd = settings.MinInvestAmountUsd
+                MinInvestAmountUsd = settings.MinInvestAmountUsd,
+                KycEnableRequestSending = settings.KycEnableRequestSending,
+                KycLinkTemplate = settings.KycLinkTemplate            
             };
         }
     }
@@ -375,5 +384,24 @@ namespace Lykke.Service.IcoApi.Models
     {
         [Required]
         public string Message { get; set; }
+    }
+
+    public class PoolKeysResponse
+    {
+        public PoolKeysResponse()
+        {
+            Keys = new List<PoolKeysModel>();
+        }
+
+        public List<PoolKeysModel> Keys { get; set; }
+    }
+
+    public class PoolKeysModel
+    {
+        public int Id { get; set; }
+
+        public string BtcPublicKey { get; set; }
+
+        public string EthPublicKey { get; set; }
     }
 }
