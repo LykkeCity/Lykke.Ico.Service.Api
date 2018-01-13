@@ -17,6 +17,7 @@
         public string KycServiceEncriptionKey { get; set; }
         public string KycServiceEncriptionIv { get; set; }
         public string AdminAuthKey { get; set; }
-        public bool DisableAdminDebugMethods { get; set; }
+        public bool DisableAdminMethods { get; set; }
+        public bool DisableDebugMethods { get; set; }
     }
 }

@@ -266,6 +266,13 @@ namespace Lykke.Service.IcoApi.Services
             return result;
         }
 
+        public async Task UpdateInvestorAsync(string email, string tokenAddress, string refundEthAddress, string refundBtcAddress)
+        {
+            email = email.ToLowCase();
+
+            await _investorRepository.SaveAddressesAsync(email, tokenAddress, refundEthAddress, refundBtcAddress);
+        }
+
         public async Task<int> ImportPublicKeys(StreamReader reader)
         {
             await _log.WriteInfoAsync(nameof(AdminService), nameof(ImportPublicKeys), 

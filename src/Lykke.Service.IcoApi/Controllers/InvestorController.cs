@@ -1,17 +1,17 @@
 ﻿using System.Net;
-using Lykke.Service.IcoApi.Core.Services;
-using Lykke.Service.IcoApi.Models;
-using Microsoft.AspNetCore.Mvc;
-using Lykke.Service.IcoApi.Infrastructure;
-using Microsoft.AspNetCore.Http;
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using Lykke.Service.IcoApi.Core.Services;
+using Lykke.Service.IcoApi.Models;
+using Lykke.Service.IcoApi.Infrastructure;
+using Lykke.Ico.Core.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Common.Log;
 using Common;
-using Lykke.Ico.Core.Services;
 
 namespace Lykke.Service.IcoApi.Controllers
 {
@@ -93,9 +93,6 @@ namespace Lykke.Service.IcoApi.Controllers
         /// <summary>
         /// Get Investor info
         /// </summary>
-        /// <remarks>
-        /// If rndAddress is empty, then it needs to ask user to fill in it first to create pay-in addresses
-        /// </remarks>
         [HttpGet]
         [InvestorAuth]
         [ProducesResponseType(typeof(InvestorResponse), (int)HttpStatusCode.OK)]

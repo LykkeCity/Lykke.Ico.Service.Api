@@ -1,4 +1,6 @@
-﻿using Common.Log;
+﻿using Common;
+using Common.Log;
+using Lykke.Ico.Core.Services;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Infrastructure;
 using Lykke.Service.IcoApi.Models;
@@ -26,9 +28,13 @@ namespace Lykke.Service.IcoApi.Controllers
         private readonly IBtcService _btcService;
         private readonly IEthService _ethService;
         private readonly IIcoExRateClient _icoExRateClient;
+        private readonly IPrivateInvestorService _privateInvestorService;
+        private readonly IKycService _kycService;
+
 
         public AdminController(ILog log, IInvestorService investorService, IAdminService adminService, 
-            IBtcService btcService, IEthService ethService, IIcoExRateClient icoExRateClient)
+            IBtcService btcService, IEthService ethService, IIcoExRateClient icoExRateClient,
+            IPrivateInvestorService privateInvestorService, IKycService kycService)
         {
             _log = log;
             _investorService = investorService;
@@ -36,6 +42,8 @@ namespace Lykke.Service.IcoApi.Controllers
             _btcService = btcService;
             _ethService = ethService;
             _icoExRateClient = icoExRateClient;
+            _privateInvestorService = privateInvestorService;
+            _kycService = kycService;
         }
 
         /// <summary>
@@ -64,7 +72,7 @@ namespace Lykke.Service.IcoApi.Controllers
         /// Save campaign settings
         /// </summary>
         [AdminAuth]
-        [DisableWhenOnProd]
+        [DisableAdminMethods]
         [HttpPost("campaign/settings")]
         public async Task<IActionResult> SaveCampaignSettings([FromBody] CampaignSettingsModel settings)
         {
@@ -72,6 +80,9 @@ namespace Lykke.Service.IcoApi.Controllers
             settings.PreSaleEndDateTimeUtc = settings.PreSaleEndDateTimeUtc.ToUniversalTime();
             settings.CrowdSaleStartDateTimeUtc = settings.CrowdSaleStartDateTimeUtc.ToUniversalTime();
             settings.CrowdSaleEndDateTimeUtc = settings.CrowdSaleEndDateTimeUtc.ToUniversalTime();
+
+            await _log.WriteInfoAsync(nameof(AdminController), nameof(SaveCampaignSettings),
+               $"settings={settings.ToJson()}", "Save campaign settings");
 
             await _adminService.SaveCampaignSettings(settings);
 
@@ -93,6 +104,47 @@ namespace Lykke.Service.IcoApi.Controllers
             }
 
             return Ok(FullInvestorResponse.Create(investor));
+        }
+
+        /// <summary>
+        /// Update investor token and refunds addresses
+        /// </summary>
+        [AdminAuth]
+        [DisableAdminMethods]
+        [HttpPost("investors/{email}")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> UpdateInvestor([Required] string email, [FromBody] InvestorRequest model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (!_ethService.ValidateAddress(model.TokenAddress))
+            {
+                return BadRequest($"The token address={model.TokenAddress} is invalid IRC20 address");
+            }
+            if (!string.IsNullOrEmpty(model.RefundEthAddress) && !_ethService.ValidateAddress(model.RefundEthAddress))
+            {
+                return BadRequest($"The refund ETH address={model.RefundEthAddress} is invalid ETH address");
+            }
+            if (!string.IsNullOrEmpty(model.RefundBtcAddress) && !_btcService.ValidateAddress(model.RefundBtcAddress))
+            {
+                return BadRequest($"The refund BTC address={model.RefundBtcAddress} is invalid BTC address");
+            }
+
+            var investor = await _investorService.GetAsync(email);
+            if (investor == null)
+            {
+                return NotFound(ErrorResponse.Create("Investor not found"));
+            }
+
+            await _log.WriteInfoAsync(nameof(AdminController), nameof(UpdateInvestor),
+               $"email={email}, model={model.ToJson()}", "Update investor addresses");
+
+            await _adminService.UpdateInvestorAsync(email, model.TokenAddress,
+                model.RefundEthAddress, model.RefundBtcAddress);
+
+            return Ok();
         }
 
         /// <summary>
@@ -133,6 +185,55 @@ namespace Lykke.Service.IcoApi.Controllers
         public async Task<InvestorRefundsResponse> GetInvestorFailedTransactions([Required] string email)
         {
             return InvestorRefundsResponse.Create(await _adminService.GetInvestorRefunds(email));
+        }
+
+        /// <summary>
+        /// Get private investor
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("investors/private")]
+        [ProducesResponseType(typeof(PrivateInvestorResponse), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetPrivateInvestor([Required] string email)
+        {
+            var investor = await _privateInvestorService.GetAsync(email);
+            if (investor == null)
+            {
+                return NotFound();
+            }
+
+            var kycLink = await _kycService.GetKycLink(investor.Email, investor.KycRequestId);
+            var response = PrivateInvestorResponse.Create(investor, kycLink);
+
+            return Ok(response);
+        }
+
+        /// <summary>
+        /// Create private investor and genarates KYC link
+        /// </summary>
+        [AdminAuth]
+        [DisableAdminMethods]
+        [HttpPost("investors/private")]
+        [ProducesResponseType(typeof(PrivateInvestorResponse), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> CreatePrivateInvestor([FromBody, Required] CreatePrivateInvestorRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var investor = await _privateInvestorService.GetAsync(request.Email);
+            if (investor == null)
+            {
+                await _privateInvestorService.CreateAsync(request.Email);
+                await _privateInvestorService.RequestKycAsync(request.Email);
+
+                investor = await _privateInvestorService.GetAsync(request.Email);
+            }
+
+            var kycLink = await _kycService.GetKycLink(investor.Email, investor.KycRequestId);
+            var response = PrivateInvestorResponse.Create(investor, kycLink);
+
+            return Ok(response);
         }
 
         /// <summary>
@@ -183,7 +284,7 @@ namespace Lykke.Service.IcoApi.Controllers
         /// Imports the scv file with public keys
         /// </summary>
         [AdminAuth]
-        [DisableWhenOnProd]
+        [DisableAdminMethods]
         [HttpPost("pool/import")]
         [DisableRequestSizeLimit]
         public async Task ImportKeys([FromForm] IFormFile file)

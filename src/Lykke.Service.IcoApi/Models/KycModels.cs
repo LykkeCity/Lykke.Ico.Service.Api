@@ -12,6 +12,6 @@ namespace Lykke.Service.IcoApi.Models
     public class KycMessage
     {
         public Guid KycId { get; set; }
-        public string KycStat { get; set; }
+        public string KycStatus { get; set; }
     }
 }

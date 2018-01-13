@@ -28,5 +28,6 @@ namespace Lykke.Service.IcoApi.Core.Services
             DateTime? createdUtc, string uniqueId, decimal amount);
         Task<IEnumerable<(int Id, string BtcPublicKey, string EthPublicKey)>> GetPublicKeys(int[] ids);
         Task<IEnumerable<IInvestorTransaction>> GetLatestTransactions();
+        Task UpdateInvestorAsync(string email, string tokenAddress, string refundEthAddress, string refundBtcAddress);
     }
 }

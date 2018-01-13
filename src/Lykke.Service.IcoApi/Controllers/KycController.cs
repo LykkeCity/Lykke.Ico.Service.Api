@@ -16,12 +16,15 @@ namespace Lykke.Service.IcoApi.Controllers
         private readonly ILog _log;
         private readonly IUrlEncryptionService _urlEncryptionService;
         private readonly IInvestorService _investorService;
+        private readonly IPrivateInvestorService _privateInvestorService;
 
-        public KycController(ILog log, IUrlEncryptionService urlEncryptionService, IInvestorService investorService)
+        public KycController(ILog log, IUrlEncryptionService urlEncryptionService, IInvestorService investorService,
+            IPrivateInvestorService privateInvestorService)
         {
             _log = log;
             _urlEncryptionService = urlEncryptionService;
             _investorService = investorService;
+            _privateInvestorService = privateInvestorService;
         }
 
         /// <summary>
@@ -63,20 +66,28 @@ namespace Lykke.Service.IcoApi.Controllers
             {
                 return BadRequest("Decrypted message is null");
             }
-            if (string.IsNullOrEmpty(kycMessage.KycStat))
+            if (string.IsNullOrEmpty(kycMessage.KycStatus))
             {
-                return BadRequest("KycStat is null or empty");
+                return BadRequest("KycStatus is null or empty");
             }
 
-            var email = await _investorService.GetEmailByKycId(kycMessage.KycId);
-            if (string.IsNullOrEmpty(email))
+            var investorEmail = await _investorService.GetEmailByKycId(kycMessage.KycId);
+            if (!string.IsNullOrEmpty(investorEmail))
             {
-                return BadRequest($"Investor not found for provided KycId={kycMessage.KycId}");
+                await _investorService.SaveKycResultAsync(investorEmail, kycMessage.KycStatus);
+
+                return Ok();
             }
 
-            await _investorService.SaveKycResultAsync(email, kycMessage.KycStat);
+            var privateInvestorEmail = await _privateInvestorService.GetEmailByKycId(kycMessage.KycId);
+            if (!string.IsNullOrEmpty(privateInvestorEmail))
+            {
+                await _privateInvestorService.SaveKycResultAsync(privateInvestorEmail, kycMessage.KycStatus);
 
-            return Ok();
+                return Ok();
+            }
+
+            return BadRequest($"Investor was not found for provided KycId={kycMessage.KycId}");
         }
     }
 }

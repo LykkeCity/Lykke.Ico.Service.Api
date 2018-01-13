@@ -44,7 +44,7 @@ namespace Lykke.Service.IcoApi.Controllers
         /// Removes investor from db. History is not deleted
         /// </summary>
         [AdminAuth]
-        [DisableWhenOnProd]
+        [DisableDebugMethods]
         [HttpDelete("investors/{email}")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> DeleteInvestor([Required] string email)
@@ -61,7 +61,7 @@ namespace Lykke.Service.IcoApi.Controllers
         /// profile history, address pool history, emails, transactions
         /// </remarks>
         [AdminAuth]
-        [DisableWhenOnProd]
+        [DisableDebugMethods]
         [HttpDelete("investors/{email}/all")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> DeleteInvestorAllData([Required] string email)
@@ -75,7 +75,7 @@ namespace Lykke.Service.IcoApi.Controllers
         /// Returns latest exchange rates
         /// </summary>
         [AdminAuth]
-        [DisableWhenOnProd]
+        [DisableDebugMethods]
         [HttpGet("rates/latest")]
         public async Task<IList<IcoExRate.Client.AutorestClient.Models.AverageRateResponse>> GetLatestRates()
         {
@@ -86,7 +86,7 @@ namespace Lykke.Service.IcoApi.Controllers
         /// Returns exchange rate for provided pair and time
         /// </summary>
         [AdminAuth]
-        [DisableWhenOnProd]
+        [DisableDebugMethods]
         [HttpGet("rates/{assetPair}/{dateTimeUtc}")]
         public async Task<IcoExRate.Client.AutorestClient.Models.AverageRateResponse> GetRatesByPairAndDateTime(
             [Required] AssetPair assetPair,
@@ -101,7 +101,7 @@ namespace Lykke.Service.IcoApi.Controllers
         /// Returns ethereum address by public key
         /// </summary>
         [AdminAuth]
-        [DisableWhenOnProd]
+        [DisableDebugMethods]
         [HttpGet("eth/address/{key}")]
         public AddressResponse GetEthAddressByKey([Required] string key)
         {
@@ -112,7 +112,7 @@ namespace Lykke.Service.IcoApi.Controllers
         /// Generates and returns random ethereum address
         /// </summary>
         [AdminAuth]
-        [DisableWhenOnProd]
+        [DisableDebugMethods]
         [HttpGet("eth/address/random")]
         public AddressResponse GetRandomEthAddress()
         {
@@ -126,7 +126,7 @@ namespace Lykke.Service.IcoApi.Controllers
         /// Returns ether address balance
         /// </summary>
         [AdminAuth]
-        [DisableWhenOnProd]
+        [DisableDebugMethods]
         [HttpGet("eth/{address}/balance")]
         public async Task<decimal> GetEthBalance([Required] string address)
         {
@@ -137,7 +137,7 @@ namespace Lykke.Service.IcoApi.Controllers
         /// Sends ethers to address
         /// </summary>
         [AdminAuth]
-        [DisableWhenOnProd]
+        [DisableDebugMethods]
         [HttpPost("eth/send")]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> SendEth([FromBody] SendMoneyRequest request)
@@ -154,7 +154,7 @@ namespace Lykke.Service.IcoApi.Controllers
         /// Sends ether transaction message to queue
         /// </summary>
         [AdminAuth]
-        [DisableWhenOnProd]
+        [DisableDebugMethods]
         [HttpPost("eth/send/tx")]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> SendEthTransactionMessage([FromBody] TransactionMessageRequest request)
@@ -174,7 +174,7 @@ namespace Lykke.Service.IcoApi.Controllers
         /// Returns bitcoin address by public key
         /// </summary>
         [AdminAuth]
-        [DisableWhenOnProd]
+        [DisableDebugMethods]
         [HttpGet("btc/address/{key}")]
         public AddressResponse GetBtcAddressByKey([Required] string key)
         {
@@ -185,7 +185,7 @@ namespace Lykke.Service.IcoApi.Controllers
         /// Generates and returns random bitcoin address
         /// </summary>
         [AdminAuth]
-        [DisableWhenOnProd]
+        [DisableDebugMethods]
         [HttpGet("btc/address/random")]
         public AddressResponse GetRandomBtcAddress()
         {
@@ -199,7 +199,7 @@ namespace Lykke.Service.IcoApi.Controllers
         /// Returns address balance
         /// </summary>
         [AdminAuth]
-        [DisableWhenOnProd]
+        [DisableDebugMethods]
         [HttpGet("btc/{address}/balance")]
         public decimal GetBtcBalance([Required] string address)
         {
@@ -210,7 +210,7 @@ namespace Lykke.Service.IcoApi.Controllers
         /// Sends bitcoins to address
         /// </summary>
         [AdminAuth]
-        [DisableWhenOnProd]
+        [DisableDebugMethods]
         [HttpPost("btc/send")]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
         public IActionResult SendBtc([FromBody] SendMoneyRequest request)
@@ -227,7 +227,7 @@ namespace Lykke.Service.IcoApi.Controllers
         /// Sends bitcoin transaction message to queue
         /// </summary>
         [AdminAuth]
-        [DisableWhenOnProd]
+        [DisableDebugMethods]
         [HttpPost("btc/send/tx")]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> SendBtcTransactionMessage([FromBody] TransactionMessageRequest request)
@@ -247,7 +247,7 @@ namespace Lykke.Service.IcoApi.Controllers
         /// Sends fiat transaction message to queue
         /// </summary>
         [AdminAuth]
-        [DisableWhenOnProd]
+        [DisableDebugMethods]
         [HttpPost("fiat/send/tx")]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> SendFiatTransactionMessage([FromBody] TransactionMessageRequest request)
@@ -267,7 +267,7 @@ namespace Lykke.Service.IcoApi.Controllers
         /// Encrypt kyc message
         /// </summary>
         [AdminAuth]
-        [DisableWhenOnProd]
+        [DisableDebugMethods]
         [HttpPost("kyc/encrypt")]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
         public IActionResult EncryptKycMessage([FromBody] EncryptionMessageRequest request)
@@ -286,7 +286,7 @@ namespace Lykke.Service.IcoApi.Controllers
         /// Decrypt kyc message
         /// </summary>
         [AdminAuth]
-        [DisableWhenOnProd]
+        [DisableDebugMethods]
         [HttpPost("kyc/decrypt")]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
         public IActionResult DecryptKycMessage([FromBody] EncryptionMessageRequest request)

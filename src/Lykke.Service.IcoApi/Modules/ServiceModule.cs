@@ -13,6 +13,8 @@ using Lykke.Ico.Core.Repositories.InvestorEmail;
 using Lykke.Ico.Core.Repositories.InvestorHistory;
 using Lykke.Ico.Core.Repositories.InvestorRefund;
 using Lykke.Ico.Core.Repositories.InvestorTransaction;
+using Lykke.Ico.Core.Repositories.PrivateInvestor;
+using Lykke.Ico.Core.Repositories.PrivateInvestorAttribute;
 using Lykke.Ico.Core.Services;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Services;
@@ -98,6 +100,16 @@ namespace Lykke.Service.IcoApi.Modules
                 .WithParameter(TypedParameter.From(connectionStringManager))
                 .SingleInstance();
 
+            builder.RegisterType<PrivateInvestorRepository>()
+                .As<IPrivateInvestorRepository>()
+                .WithParameter(TypedParameter.From(connectionStringManager))
+                .SingleInstance();
+
+            builder.RegisterType<PrivateInvestorAttributeRepository>()
+                .As<IPrivateInvestorAttributeRepository>()
+                .WithParameter(TypedParameter.From(connectionStringManager))
+                .SingleInstance();
+
             builder.RegisterType<InvestorService>()
                 .As<IInvestorService>()
                 .WithParameter(TypedParameter.From(_settings.CurrentValue))
@@ -129,14 +141,6 @@ namespace Lykke.Service.IcoApi.Modules
                 .As<ICampaignService>()
                 .SingleInstance();
 
-            builder.RegisterType<SupportService>()
-                .As<ISupportService>()
-                .SingleInstance();
-
-            builder.RegisterType<SupportService>()
-                .As<ISupportService>()
-                .SingleInstance();
-
             builder.RegisterType<UrlEncryptionService>()
                 .As<IUrlEncryptionService>()
                 .WithParameter("key", _settings.CurrentValue.KycServiceEncriptionKey)
@@ -145,6 +149,10 @@ namespace Lykke.Service.IcoApi.Modules
 
             builder.RegisterType<KycService>()
                 .As<IKycService>()
+                .SingleInstance();
+
+            builder.RegisterType<PrivateInvestorService>()
+                .As<IPrivateInvestorService>()
                 .SingleInstance();
 
             builder.RegisterType<QueuePublisher<InvestorConfirmationMessage>>()

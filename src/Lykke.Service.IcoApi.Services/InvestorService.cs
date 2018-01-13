@@ -160,6 +160,8 @@ namespace Lykke.Service.IcoApi.Services
 
         public async Task SaveKycResultAsync(string email, string kycStatus)
         {
+            email = email.ToLowCase();
+
             var kycPassed = kycStatus.ToString().ToUpper() == "OK";
 
             await _investorRepository.SaveKycResultAsync(email, kycPassed);
