@@ -177,7 +177,7 @@ namespace Lykke.Service.IcoApi.Services
             var message = new InvestorConfirmationMessage
             {
                 EmailTo = email,
-                ConfirmationLink = $"{_icoApiSettings.IcoSiteUrl}participate/verify/{token}" 
+                ConfirmationLink = _icoApiSettings.SiteEmailConfirmationPageUrl.Replace("{token}", token.ToString())
             };
 
             await _log.WriteInfoAsync(nameof(InvestorService), nameof(SendConfirmationEmail), 
@@ -190,11 +190,10 @@ namespace Lykke.Service.IcoApi.Services
             var message = new InvestorSummaryMessage
             {
                 EmailTo = investor.Email,
+                LinkToSummaryPage = _icoApiSettings.SiteSummaryPageUrl.Replace("{token}", investor.ConfirmationToken.Value.ToString()),
                 TokenAddress = investor.TokenAddress,
                 RefundBtcAddress = investor.RefundBtcAddress,
                 RefundEthAddress = investor.RefundEthAddress,
-                PayInBtcAddress = investor.PayInBtcAddress,
-                PayInEthAddress = investor.PayInEthAddress,
                 LinkBtcAddress = $"{_icoApiSettings.BtcTrackerUrl}address",
                 LinkEthAddress = $"{_icoApiSettings.EthTrackerUrl}address"
             };

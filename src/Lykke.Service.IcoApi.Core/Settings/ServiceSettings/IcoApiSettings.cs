@@ -12,7 +12,8 @@
         public string EthTrackerUrl { get; set; }
         public string EthTestSecretKey { get; set; }
         public string IcoExRateServiceUrl { get; set; }
-        public string IcoSiteUrl { get; set; }
+        public string SiteEmailConfirmationPageUrl { get; set; }
+        public string SiteSummaryPageUrl { get; set; }
         public string StripeSecretKey { get; set; }
         public string KycServiceEncriptionKey { get; set; }
         public string KycServiceEncriptionIv { get; set; }
