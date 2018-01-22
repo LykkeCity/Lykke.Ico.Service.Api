@@ -30,11 +30,13 @@ namespace Lykke.Service.IcoApi.Controllers
         private readonly IIcoExRateClient _icoExRateClient;
         private readonly IPrivateInvestorService _privateInvestorService;
         private readonly IKycService _kycService;
+        private readonly ICampaignService _campaignService;
 
 
         public AdminController(ILog log, IInvestorService investorService, IAdminService adminService, 
             IBtcService btcService, IEthService ethService, IIcoExRateClient icoExRateClient,
-            IPrivateInvestorService privateInvestorService, IKycService kycService)
+            IPrivateInvestorService privateInvestorService, IKycService kycService,
+            ICampaignService campaignService)
         {
             _log = log;
             _investorService = investorService;
@@ -44,6 +46,7 @@ namespace Lykke.Service.IcoApi.Controllers
             _icoExRateClient = icoExRateClient;
             _privateInvestorService = privateInvestorService;
             _kycService = kycService;
+            _campaignService = campaignService;
         }
 
         /// <summary>
@@ -63,7 +66,7 @@ namespace Lykke.Service.IcoApi.Controllers
         [HttpGet("campaign/settings")]
         public async Task<CampaignSettingsModel> GetCampaignSettings()
         {
-            var settings = await _adminService.GetCampaignSettings();
+            var settings = await _campaignService.GetCampaignSettings();
 
             return CampaignSettingsModel.Create(settings);
         }
@@ -84,7 +87,7 @@ namespace Lykke.Service.IcoApi.Controllers
             await _log.WriteInfoAsync(nameof(AdminController), nameof(SaveCampaignSettings),
                $"settings={settings.ToJson()}", "Save campaign settings");
 
-            await _adminService.SaveCampaignSettings(settings);
+            await _campaignService.SaveCampaignSettings(settings);
 
             return Ok();
         }

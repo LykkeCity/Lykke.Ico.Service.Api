@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Captcha Test</title>
+</head>
+<body>
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+    Email<br />
+    <input type="text" id="email" style="width: 300px;" />
+    <input type="hidden" id="g-recaptcha-response" value="ttt" />
+
+    <br /><br />
+    <div class="g-recaptcha" data-sitekey="6LcUdUEUAAAAAI2ZB8QHWjtliCtUZ3r4fQUTS5UA"></div>
+		
+	<br /><br />
+    <button id="registerButton">Register</button>
+
+    <script>
+        function captchaCallback(response) {
+            $('g-recaptcha-response').val(response);
+        }
+
+        document.getElementById('registerButton').addEventListener('click', function (e) {
+            var data = {
+                "email": $('#email').val()
+            };
+
+            $.ajax({
+                url: '/api/investor/register',
+                headers: {
+                    'g-recaptcha-response': $('#g-recaptcha-response').val()
+                },
+                method: 'POST',
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                traditional: true,
+                success: function (data) {
+                    alert(data.result);
+                },
+                error: function (request, status, error) {
+                    alert(request.responseText);
+                }
+            }); 
+
+            e.preventDefault();
+        });
+    </script>
+</body>
+</html>

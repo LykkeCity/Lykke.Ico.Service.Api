@@ -7,6 +7,9 @@ namespace Lykke.Service.IcoApi.Core.Services
     public interface ICampaignService
     {
         Task<string> GetCampaignInfoValue(CampaignInfoType type);
+
         Task<ICampaignSettings> GetCampaignSettings();
+
+        Task SaveCampaignSettings(ICampaignSettings settings);
     }
 }

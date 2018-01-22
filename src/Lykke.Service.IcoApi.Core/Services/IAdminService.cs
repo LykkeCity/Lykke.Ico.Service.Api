@@ -14,8 +14,6 @@ namespace Lykke.Service.IcoApi.Core.Services
     public interface IAdminService
     {
         Task<Dictionary<string, string>> GetCampaignInfo();
-        Task<ICampaignSettings> GetCampaignSettings();
-        Task SaveCampaignSettings(ICampaignSettings settings);
         Task<IEnumerable<IInvestorHistoryItem>> GetInvestorHistory(string email);
         Task<IEnumerable<IInvestorEmail>> GetInvestorEmails(string email);
         Task DeleteInvestorAsync(string email);

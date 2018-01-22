@@ -26,5 +26,7 @@ namespace Lykke.Service.IcoApi.Models
         public TokenPricePhase Phase { get; set; }
 
         public int Investors { get; set; }
+
+        public bool CaptchaEnabled { get; set; }
     }
 }

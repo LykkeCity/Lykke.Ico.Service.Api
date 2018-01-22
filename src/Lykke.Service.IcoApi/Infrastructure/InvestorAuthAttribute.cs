@@ -16,7 +16,7 @@ namespace Lykke.Service.IcoApi.Infrastructure
         private class InvestorAuthAttributeImpl : IAuthorizationFilter
         {
             private readonly IInvestorAttributeRepository _investorAttributeRepository;
-            private readonly string HeaderName = "authToken";
+            private readonly string _headerName = "authToken";
 
             public InvestorAuthAttributeImpl(IInvestorAttributeRepository investorAttributeRepository)
             {
@@ -25,9 +25,9 @@ namespace Lykke.Service.IcoApi.Infrastructure
 
             public void OnAuthorization(AuthorizationFilterContext context)
             {
-                if (context.HttpContext.Request.Headers.ContainsKey(HeaderName))
+                if (context.HttpContext.Request.Headers.ContainsKey(_headerName))
                 {
-                    var apiKeyFromRequest = context.HttpContext.Request.Headers[HeaderName];
+                    var apiKeyFromRequest = context.HttpContext.Request.Headers[_headerName];
                     if (Guid.TryParse(apiKeyFromRequest, out var token))
                     {
                         var email = _investorAttributeRepository.GetInvestorEmailAsync(InvestorAttributeType.ConfirmationToken, token.ToString()).Result;

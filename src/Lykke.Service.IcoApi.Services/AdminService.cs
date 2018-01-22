@@ -87,16 +87,6 @@ namespace Lykke.Service.IcoApi.Services
             return dictionary;
         }
 
-        public async Task<ICampaignSettings> GetCampaignSettings()
-        {
-            return await _campaignSettingsRepository.GetAsync();
-        }
-
-        public async Task SaveCampaignSettings(ICampaignSettings settings)
-        {
-            await _campaignSettingsRepository.SaveAsync(settings);
-        }
-
         public async Task DeleteInvestorAsync(string email)
         {
             email = email.ToLowCase();

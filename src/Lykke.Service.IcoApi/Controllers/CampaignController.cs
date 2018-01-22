@@ -56,7 +56,8 @@ namespace Lykke.Service.IcoApi.Controllers
                 Investors = investors,
                 TokensSold = tokensSold,
                 TokenPriceUsd = tokenInfo.Price,
-                Phase = tokenInfo.Phase
+                Phase = tokenInfo.Phase,
+                CaptchaEnabled = settings.CaptchaEnable
             };
         }
     }

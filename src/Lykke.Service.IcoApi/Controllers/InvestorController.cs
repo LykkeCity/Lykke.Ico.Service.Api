@@ -45,6 +45,7 @@ namespace Lykke.Service.IcoApi.Controllers
         /// </summary>
         [HttpPost]
         [Route("register")]
+        [ValidateReCaptcha]
         [ProducesResponseType(typeof(RegisterInvestorResponse), (int)HttpStatusCode.OK)]
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> RegisterInvestor([FromBody] RegisterInvestorRequest model)
@@ -52,7 +53,7 @@ namespace Lykke.Service.IcoApi.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
-            }
+            }            
 
             await _log.WriteInfoAsync(nameof(InvestorController), nameof(RegisterInvestor), 
                 $"email={model.Email}, ip={GetRequestIP()}",

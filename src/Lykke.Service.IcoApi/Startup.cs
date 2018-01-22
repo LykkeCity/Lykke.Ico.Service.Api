@@ -48,6 +48,7 @@ namespace Lykke.Service.IcoApi
             try
             {
                 services
+                    .AddMemoryCache()
                     .AddMvc()
                     .AddJsonOptions(options =>
                     {

@@ -269,6 +269,9 @@ namespace Lykke.Service.IcoApi.Models
         [Required]
         public string KycLinkTemplate { get; set; }
 
+        [Required]
+        public bool CaptchaEnable { get; set; }
+
         public static CampaignSettingsModel Create(ICampaignSettings settings)
         {
             if (settings == null)
@@ -289,7 +292,8 @@ namespace Lykke.Service.IcoApi.Models
                 MinInvestAmountUsd = settings.MinInvestAmountUsd,
                 KycEnableRequestSending = settings.KycEnableRequestSending,
                 KycCampaignId = settings.KycCampaignId,
-                KycLinkTemplate = settings.KycLinkTemplate            
+                KycLinkTemplate = settings.KycLinkTemplate,
+                CaptchaEnable = settings.CaptchaEnable
             };
         }
     }
