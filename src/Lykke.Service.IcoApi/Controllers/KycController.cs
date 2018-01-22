@@ -89,5 +89,23 @@ namespace Lykke.Service.IcoApi.Controllers
 
             return BadRequest($"Investor was not found for provided KycId={kycMessage.KycId}");
         }
+
+        /// <summary>
+        /// Encrypt text
+        /// </summary>
+        [HttpPost("debug/encrypt/{text}")]
+        public string EncryptKycMessage([Required] string text)
+        {
+            return _urlEncryptionService.Encrypt(text);
+        }
+
+        /// <summary>
+        /// Decrypt text
+        /// </summary>
+        [HttpPost("debug/decrypt/{text}")]
+        public string DecryptKycMessage([Required] string text)
+        {
+            return _urlEncryptionService.Decrypt(text);
+        }
     }
 }

@@ -264,7 +264,7 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
-        /// Encrypt kyc message
+        /// Encrypt message
         /// </summary>
         [AdminAuth]
         [DisableDebugMethods]
@@ -283,7 +283,7 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
-        /// Decrypt kyc message
+        /// Decrypt message
         /// </summary>
         [AdminAuth]
         [DisableDebugMethods]
