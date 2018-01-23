@@ -28,6 +28,9 @@
     <None Update="Dockerfile">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
+    <None Update="Html\captcha.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Html\fiat.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
