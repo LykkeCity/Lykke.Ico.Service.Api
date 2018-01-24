@@ -352,20 +352,20 @@ namespace Lykke.Service.IcoApi.Models
         }
     }
 
-    public class InvestorRefundsResponse
+    public class InvestorFailedTransactionsResponse
     {
-        public InvestorRefundModel[] Refunds { get; set; }
+        public InvestorFailedTransaction[] Items { get; set; }
 
-        public static InvestorRefundsResponse Create(IEnumerable<IInvestorRefund> transactions)
+        public static InvestorFailedTransactionsResponse Create(IEnumerable<IInvestorRefund> transactions)
         {
-            return new InvestorRefundsResponse
+            return new InvestorFailedTransactionsResponse
             {
-                Refunds = transactions.Select(f => InvestorRefundModel.Create(f)).ToArray()
+                Items = transactions.Select(f => InvestorFailedTransaction.Create(f)).ToArray()
             };
         }
     }
 
-    public class InvestorRefundModel : IInvestorRefund
+    public class InvestorFailedTransaction : IInvestorRefund
     {
         public string Email { get; set; }
 
@@ -376,9 +376,9 @@ namespace Lykke.Service.IcoApi.Models
         public string MessageJson { get; set; }
 
 
-        public static InvestorRefundModel Create(IInvestorRefund item)
+        public static InvestorFailedTransaction Create(IInvestorRefund item)
         {
-            return new InvestorRefundModel
+            return new InvestorFailedTransaction
             {
                 Email = item.Email,
                 CreatedUtc = item.CreatedUtc,

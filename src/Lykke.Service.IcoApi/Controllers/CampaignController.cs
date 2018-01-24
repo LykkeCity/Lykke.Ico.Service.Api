@@ -6,6 +6,9 @@ using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Models;
 using Lykke.Ico.Core.Repositories.CampaignInfo;
 using Lykke.Ico.Core.Repositories.CampaignSettings;
+using Lykke.Ico.Core;
+using System.Linq;
+using Lykke.Ico.Core.Repositories.InvestorRefund;
 
 namespace Lykke.Service.IcoApi.Controllers
 {
@@ -29,35 +32,26 @@ namespace Lykke.Service.IcoApi.Controllers
         public async Task<CampaignResponse> GetCampaign()
         {
             var settings = await _campaignService.GetCampaignSettings();
+            var failedTxs = await _campaignService.GetRefunds();
 
-            var investorsConfirmed = await _campaignService.GetCampaignInfoValue(CampaignInfoType.InvestorsConfirmed);
-            if (!Int32.TryParse(investorsConfirmed, out var investors))
+            var now = DateTime.UtcNow;
+            var campaignActive = false;
+
+            if (settings.IsPreSale(now) &&
+                !failedTxs.Any(f => f.Reason == InvestorRefundReason.PreSaleTokensSoldOut))
             {
-                investors = 0;
+                campaignActive = true;
             }
-
-            var amountInvestedToken = await _campaignService.GetCampaignInfoValue(CampaignInfoType.AmountInvestedToken);
-            if (!Decimal.TryParse(amountInvestedToken, out var tokensSold))
+            if (settings.IsCrowdSale(now) &&
+                !failedTxs.Any(f => f.Reason == InvestorRefundReason.TokensSoldOut))
             {
-                tokensSold = 0;
+                campaignActive = true;
             }
-
-            var tokenInfo = settings.GetTokenInfo(tokensSold, DateTime.UtcNow);
 
             return new CampaignResponse
             {
-                PreSaleStartDateTimeUtc = settings.PreSaleStartDateTimeUtc,
-                PreSaleEndDateTimeUtc = settings.PreSaleEndDateTimeUtc,
-                PreSaleTokensTotal = settings.PreSaleTotalTokensAmount,
-                CrowdSaleStartDateTimeUtc = settings.CrowdSaleStartDateTimeUtc,
-                CrowdSaleEndDateTimeUtc = settings.CrowdSaleEndDateTimeUtc,
-                CrowdSaleTokensTotal = settings.CrowdSaleTotalTokensAmount,
-                TokensTotal = settings.GetTotalTokensAmount(),
-                Investors = investors,
-                TokensSold = tokensSold,
-                TokenPriceUsd = tokenInfo.Price,
-                Phase = tokenInfo.Phase,
-                CaptchaEnabled = settings.CaptchaEnable
+                CaptchaEnabled = settings.CaptchaEnable,
+                CampaignActive = campaignActive
             };
         }
     }

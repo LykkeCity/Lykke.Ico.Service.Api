@@ -1,6 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Lykke.Ico.Core.Repositories.CampaignInfo;
 using Lykke.Ico.Core.Repositories.CampaignSettings;
+using System.Collections.Generic;
+using Lykke.Ico.Core.Repositories.InvestorRefund;
 
 namespace Lykke.Service.IcoApi.Core.Services
 {
@@ -11,5 +13,7 @@ namespace Lykke.Service.IcoApi.Core.Services
         Task<ICampaignSettings> GetCampaignSettings();
 
         Task SaveCampaignSettings(ICampaignSettings settings);
+
+        Task<IEnumerable<IInvestorRefund>> GetRefunds();
     }
 }

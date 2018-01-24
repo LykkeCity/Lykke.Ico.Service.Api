@@ -1,5 +1,8 @@
 ﻿using Common;
 using Common.Log;
+using Lykke.Ico.Core;
+using Lykke.Ico.Core.Repositories.CampaignInfo;
+using Lykke.Ico.Core.Repositories.CampaignSettings;
 using Lykke.Ico.Core.Services;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Infrastructure;
@@ -56,7 +59,22 @@ namespace Lykke.Service.IcoApi.Controllers
         [HttpGet("campaign/info")]
         public async Task<Dictionary<string, string>> GetCampaignInfo()
         {
-            return await _adminService.GetCampaignInfo();
+            var info = await _adminService.GetCampaignInfo();
+            var settings = await _campaignService.GetCampaignSettings();
+
+            if (!Decimal.TryParse(info[nameof(CampaignInfoType.AmountInvestedToken)], out var tokensSold))
+            {
+                tokensSold = 0;
+            }
+
+            var tokenInfo = settings.GetTokenInfo(tokensSold, DateTime.UtcNow);
+            if (tokenInfo != null)
+            {
+                info.Add("TokenPriceUsd", tokenInfo.Price.ToString());
+                info.Add("Phase", Enum.GetName(typeof(TokenPricePhase), tokenInfo.Phase));
+            }
+
+            return info;
         }
 
         /// <summary>
@@ -185,9 +203,9 @@ namespace Lykke.Service.IcoApi.Controllers
         /// </summary>
         [AdminAuth]
         [HttpGet("investors/{email}/transactions/failed")]
-        public async Task<InvestorRefundsResponse> GetInvestorFailedTransactions([Required] string email)
+        public async Task<InvestorFailedTransactionsResponse> GetInvestorFailedTransactions([Required] string email)
         {
-            return InvestorRefundsResponse.Create(await _adminService.GetInvestorRefunds(email));
+            return InvestorFailedTransactionsResponse.Create(await _adminService.GetInvestorRefunds(email));
         }
 
         /// <summary>
@@ -244,9 +262,9 @@ namespace Lykke.Service.IcoApi.Controllers
         /// </summary>
         [AdminAuth]
         [HttpGet("transactions/failed")]
-        public async Task<InvestorRefundsResponse> GetFailedTransactions()
+        public async Task<InvestorFailedTransactionsResponse> GetFailedTransactions()
         {
-            return InvestorRefundsResponse.Create(await _adminService.GetRefunds());
+            return InvestorFailedTransactionsResponse.Create(await _adminService.GetRefunds());
         }
 
         /// <summary>

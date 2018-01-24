@@ -5,6 +5,8 @@ using Lykke.Ico.Core.Repositories.CampaignSettings;
 using Lykke.Service.IcoApi.Core.Services;
 using Microsoft.Extensions.Caching.Memory;
 using System;
+using Lykke.Ico.Core.Repositories.InvestorRefund;
+using System.Collections.Generic;
 
 namespace Lykke.Service.IcoApi.Services
 {
@@ -13,17 +15,20 @@ namespace Lykke.Service.IcoApi.Services
         private readonly ILog _log;
         private readonly ICampaignInfoRepository _campaignInfoRepository;
         private readonly ICampaignSettingsRepository _campaignSettingsRepository;
+        private readonly IInvestorRefundRepository _investorRefundRepository;
         private readonly IMemoryCache _cache;
         private const string _cachKey = "CampaignSettings";
 
         public CampaignService(ILog log,
             ICampaignInfoRepository campaignInfoRepository,
             ICampaignSettingsRepository campaignSettingsRepository,
+            IInvestorRefundRepository investorRefundRepository,
             IMemoryCache cache)
         {
             _log = log;
             _campaignInfoRepository = campaignInfoRepository;
             _campaignSettingsRepository = campaignSettingsRepository;
+            _investorRefundRepository = investorRefundRepository;
             _cache = cache;
         }
 
@@ -49,6 +54,11 @@ namespace Lykke.Service.IcoApi.Services
             await _campaignSettingsRepository.SaveAsync(settings);
 
             _cache.Remove(_cachKey);
-        }        
+        }
+
+        public async Task<IEnumerable<IInvestorRefund>> GetRefunds()
+        {
+            return await _investorRefundRepository.GetAllAsync();
+        }
     }
 }
