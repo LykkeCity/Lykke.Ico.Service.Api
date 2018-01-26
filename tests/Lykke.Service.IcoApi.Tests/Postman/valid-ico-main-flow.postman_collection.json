@@ -3588,7 +3588,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "8bd6f78c-7a2f-45f0-abdf-fe7d318b30a0",
+								"id": "3e38fe41-2055-4d57-ad6f-7f1c12dc5c0b",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -3596,7 +3596,7 @@
 									"});",
 									"",
 									"var jsonData = JSON.parse(responseBody);",
-									"var current = Number(jsonData.refunds.count());",
+									"var current = Number(jsonData.items.count());",
 									"var expected = Number(pm.environment.get(\"investor-refunds-size\")) + 1;",
 									"",
 									"if(current == expected){",

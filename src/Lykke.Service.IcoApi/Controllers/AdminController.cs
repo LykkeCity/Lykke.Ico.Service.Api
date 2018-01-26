@@ -62,7 +62,9 @@ namespace Lykke.Service.IcoApi.Controllers
             var info = await _adminService.GetCampaignInfo();
             var settings = await _campaignService.GetCampaignSettings();
 
-            if (!Decimal.TryParse(info[nameof(CampaignInfoType.AmountInvestedToken)], out var tokensSold))
+            var key = nameof(CampaignInfoType.AmountInvestedToken);
+            var tokensSoldStr = info.ContainsKey(key) ? info[key] : "";
+            if (!Decimal.TryParse(tokensSoldStr, out var tokensSold))
             {
                 tokensSold = 0;
             }
