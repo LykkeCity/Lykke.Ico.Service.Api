@@ -1,6 +1,7 @@
 ﻿using Common.Log;
 using Lykke.Ico.Core.Services;
 using Lykke.Service.IcoApi.Core.Services;
+using Lykke.Service.IcoApi.Infrastructure;
 using Lykke.Service.IcoApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -93,6 +94,7 @@ namespace Lykke.Service.IcoApi.Controllers
         /// <summary>
         /// Encrypt text
         /// </summary>
+        [DisableDebugMethods]
         [HttpPost("debug/encrypt/{text}")]
         public string EncryptKycMessage([Required] string text)
         {
@@ -102,6 +104,7 @@ namespace Lykke.Service.IcoApi.Controllers
         /// <summary>
         /// Decrypt text
         /// </summary>
+        [DisableDebugMethods]
         [HttpPost("debug/decrypt/{text}")]
         public string DecryptKycMessage([Required] string text)
         {
