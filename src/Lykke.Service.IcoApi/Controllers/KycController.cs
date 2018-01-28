@@ -54,6 +54,9 @@ namespace Lykke.Service.IcoApi.Controllers
                 return BadRequest("Failed to decrypt message");
             }
 
+            await _log.WriteInfoAsync(nameof(KycController), nameof(SaveKycResults),
+                $"message={message}", "Decrypted kyc message");
+
             KycMessage kycMessage;
             try
             {
