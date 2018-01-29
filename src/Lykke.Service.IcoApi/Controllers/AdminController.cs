@@ -179,8 +179,7 @@ namespace Lykke.Service.IcoApi.Controllers
         /// </summary>
         [AdminAuth]
         [HttpGet("investors/amountUsd/moreThan/{amount}")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        public async Task<IActionResult> GetInvestorsInvestedMoreThanAmountUsd([Required] decimal amount)
+        public async Task<IEnumerable<FullInvestorResponse>> GetInvestorsInvestedMoreThanAmountUsd([Required] decimal amount)
         {
             var cachKey = $"AllInvestorsWithAmountUsdMoreThen-{amount}";
 
@@ -195,9 +194,7 @@ namespace Lykke.Service.IcoApi.Controllers
                 _cache.Set(cachKey, investors, cacheEntryOptions);
             }
 
-            var result = investors.Select(f => FullInvestorResponse.Create(f));
-
-            return Ok(result);
+            return investors.Select(f => FullInvestorResponse.Create(f));
         }
 
         /// <summary>
