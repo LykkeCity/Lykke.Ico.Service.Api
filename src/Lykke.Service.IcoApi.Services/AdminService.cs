@@ -111,6 +111,11 @@ namespace Lykke.Service.IcoApi.Services
             }
         }
 
+        public async Task<IEnumerable<IInvestor>> GetAllInvestors()
+        {
+            return await _investorRepository.GetAllAsync();
+        }
+
         public async Task<IEnumerable<IInvestorHistoryItem>> GetInvestorHistory(string email)
         {
             email = email.ToLowCase();

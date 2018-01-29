@@ -3,6 +3,7 @@ using Common.Log;
 using Lykke.Ico.Core;
 using Lykke.Ico.Core.Repositories.CampaignInfo;
 using Lykke.Ico.Core.Repositories.CampaignSettings;
+using Lykke.Ico.Core.Repositories.Investor;
 using Lykke.Ico.Core.Services;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Infrastructure;
@@ -10,6 +11,7 @@ using Lykke.Service.IcoApi.Models;
 using Lykke.Service.IcoExRate.Client;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -34,12 +36,13 @@ namespace Lykke.Service.IcoApi.Controllers
         private readonly IPrivateInvestorService _privateInvestorService;
         private readonly IKycService _kycService;
         private readonly ICampaignService _campaignService;
+        private readonly IMemoryCache _cache;
 
 
         public AdminController(ILog log, IInvestorService investorService, IAdminService adminService, 
             IBtcService btcService, IEthService ethService, IIcoExRateClient icoExRateClient,
             IPrivateInvestorService privateInvestorService, IKycService kycService,
-            ICampaignService campaignService)
+            ICampaignService campaignService, IMemoryCache cache)
         {
             _log = log;
             _investorService = investorService;
@@ -50,6 +53,7 @@ namespace Lykke.Service.IcoApi.Controllers
             _privateInvestorService = privateInvestorService;
             _kycService = kycService;
             _campaignService = campaignService;
+            _cache = cache;
         }
 
         /// <summary>
@@ -168,6 +172,32 @@ namespace Lykke.Service.IcoApi.Controllers
                 model.RefundEthAddress, model.RefundBtcAddress);
 
             return Ok();
+        }
+
+        /// <summary>
+        /// Returns investors invested more than {amount} USD
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("investors/amountUsd/moreThan/{amount}")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        public async Task<IActionResult> GetInvestorsInvestedMoreThanAmountUsd([Required] decimal amount)
+        {
+            var cachKey = $"AllInvestorsWithAmountUsdMoreThen-{amount}";
+
+            if (!_cache.TryGetValue(cachKey, out IEnumerable<IInvestor> investors))
+            {
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(5));
+
+                investors = await _adminService.GetAllInvestors();
+                investors = investors.Where(f => f.AmountUsd > amount).OrderByDescending(f => f.AmountUsd);
+
+                _cache.Set(cachKey, investors, cacheEntryOptions);
+            }
+
+            var result = investors.Select(f => FullInvestorResponse.Create(f));
+
+            return Ok(result);
         }
 
         /// <summary>
