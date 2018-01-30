@@ -68,5 +68,13 @@ namespace Lykke.Service.IcoApi.Services
 
             await _privateInvestorRepository.SaveKycResultAsync(email, kycPassed);
         }
+
+        public async Task RemoveAsync(string email, string kycId)
+        {
+            email = email.ToLowCase();
+
+            await _privateInvestorRepository.RemoveAsync(email);
+            await _privateInvestorAttributeRepository.RemoveAsync(PrivateInvestorAttributeType.KycId, kycId);
+        }
     }
 }

@@ -18,14 +18,16 @@ namespace Lykke.Service.IcoApi.Controllers
         private readonly IUrlEncryptionService _urlEncryptionService;
         private readonly IInvestorService _investorService;
         private readonly IPrivateInvestorService _privateInvestorService;
+        private readonly IKycService _kycService;
 
         public KycController(ILog log, IUrlEncryptionService urlEncryptionService, IInvestorService investorService,
-            IPrivateInvestorService privateInvestorService)
+            IPrivateInvestorService privateInvestorService, IKycService kycService)
         {
             _log = log;
             _urlEncryptionService = urlEncryptionService;
             _investorService = investorService;
             _privateInvestorService = privateInvestorService;
+            _kycService = kycService;
         }
 
         /// <summary>
@@ -92,6 +94,28 @@ namespace Lykke.Service.IcoApi.Controllers
             }
 
             return BadRequest($"Investor was not found for provided KycId={kycMessage.KycId}");
+        }
+
+        /// <summary>
+        /// Encrypt text
+        /// </summary>
+        [DisableDebugMethods]
+        [HttpPost("debug/create/link")]
+        public async Task<string> CreateKycLink([Required, EmailAddress] string email)
+        {
+            var investor = await _privateInvestorService.GetAsync(email);
+            if (investor != null)
+            {
+                await _privateInvestorService.RemoveAsync(email, investor.KycRequestId);
+            }
+
+            await _privateInvestorService.CreateAsync(email);
+            await _privateInvestorService.RequestKycAsync(email);
+
+            var newInvestor = await _privateInvestorService.GetAsync(email);
+            var kycLink = await _kycService.GetKycLink(newInvestor.Email, newInvestor.KycRequestId);
+
+            return kycLink;
         }
 
         /// <summary>
