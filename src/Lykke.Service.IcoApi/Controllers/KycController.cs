@@ -103,6 +103,9 @@ namespace Lykke.Service.IcoApi.Controllers
         [HttpPost("debug/create/link")]
         public async Task<string> CreateKycLink([Required, EmailAddress] string email)
         {
+            await _log.WriteInfoAsync(nameof(KycController), nameof(CreateKycLink),
+                $"email={email}", "Create kyc link");
+
             var investor = await _privateInvestorService.GetAsync(email);
             if (investor != null)
             {
