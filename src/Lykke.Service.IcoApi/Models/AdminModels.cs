@@ -272,6 +272,9 @@ namespace Lykke.Service.IcoApi.Models
         [Required]
         public bool CaptchaEnable { get; set; }
 
+        [Required]
+        public bool EnableCampaignFrontEnd { get; set; }
+
         public static CampaignSettingsModel Create(ICampaignSettings settings)
         {
             if (settings == null)
@@ -293,7 +296,8 @@ namespace Lykke.Service.IcoApi.Models
                 KycEnableRequestSending = settings.KycEnableRequestSending,
                 KycCampaignId = settings.KycCampaignId,
                 KycLinkTemplate = settings.KycLinkTemplate,
-                CaptchaEnable = settings.CaptchaEnable
+                CaptchaEnable = settings.CaptchaEnable,
+                EnableCampaignFrontEnd = settings.EnableCampaignFrontEnd
             };
         }
     }

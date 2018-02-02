@@ -21,6 +21,7 @@ using Lykke.Ico.Core;
 using Lykke.Ico.Core.Queues;
 using Lykke.Ico.Core.Repositories.InvestorRefund;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace Lykke.Service.IcoApi.Services
 {
@@ -157,6 +158,33 @@ namespace Lykke.Service.IcoApi.Services
         public async Task<IEnumerable<IInvestorRefund>> GetRefunds()
         {
             return await _investorRefundRepository.GetAllAsync();
+        }
+
+        public async Task ResendRefunds()
+        {
+            var refunds = await _investorRefundRepository.GetAllAsync();
+            if (!refunds.Any())
+            {
+                await _log.WriteInfoAsync(nameof(AdminService), nameof(ResendRefunds),
+                    "There are not failed txs to resend");
+
+                return;
+            }
+
+            await _log.WriteInfoAsync(nameof(AdminService), nameof(ResendRefunds),
+                    $"There are {refunds.Count()} failed txs to resend");
+
+            refunds = refunds.OrderBy(f => f.CreatedUtc);
+
+            foreach (var refund in refunds)
+            {
+                var message = JsonConvert.DeserializeObject<TransactionMessage>(refund.MessageJson);
+
+                await _log.WriteInfoAsync(nameof(AdminService), nameof(ResendRefunds),
+                    $"message={message.ToJson()}", "Send failed tx to queue");
+
+                await _transactionQueuePublisher.SendAsync(message);
+            }
         }
 
         public async Task<string> SendTransactionMessageAsync(string email, CurrencyType currency, 

@@ -48,6 +48,11 @@ namespace Lykke.Service.IcoApi.Controllers
                 campaignActive = true;
             }
 
+            if (campaignActive)
+            {
+                campaignActive = settings.EnableCampaignFrontEnd;
+            }            
+
             return new CampaignResponse
             {
                 CaptchaEnabled = settings.CaptchaEnable,

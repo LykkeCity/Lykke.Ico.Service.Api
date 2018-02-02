@@ -297,6 +297,16 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
+        /// Resends the all failed transactions to queue again
+        /// </summary>
+        [AdminAuth]
+        [HttpPost("transactions/failed/resend")]
+        public async Task ResendFailedTransactions()
+        {
+            await _adminService.ResendRefunds();
+        }
+
+        /// <summary>
         /// Returns the latest transactions
         /// </summary>
         [AdminAuth]

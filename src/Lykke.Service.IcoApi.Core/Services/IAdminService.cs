@@ -23,6 +23,7 @@ namespace Lykke.Service.IcoApi.Core.Services
         Task<IEnumerable<IInvestorTransaction>> GetInvestorTransactions(string email);
         Task<IEnumerable<IInvestorRefund>> GetInvestorRefunds(string email);
         Task<IEnumerable<IInvestorRefund>> GetRefunds();
+        Task ResendRefunds();
         Task<string> SendTransactionMessageAsync(string email, CurrencyType currency, 
             DateTime? createdUtc, string uniqueId, decimal amount);
         Task<IEnumerable<(int Id, string BtcPublicKey, string EthPublicKey)>> GetPublicKeys(int[] ids);
