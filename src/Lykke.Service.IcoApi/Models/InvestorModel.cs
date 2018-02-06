@@ -18,6 +18,13 @@ namespace Lykke.Service.IcoApi.Models
         public RegisterResult Result { get; set; }
     }
 
+    public class LoginInvestorRequest
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+    }
+
     public class ConfirmInvestorRequest
     {
         [Required]

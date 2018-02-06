@@ -66,7 +66,7 @@ namespace Lykke.Service.IcoApi.Services
 
         public async Task<RegisterResult> RegisterAsync(string email)
         {
-            email = email.ToLowCase();
+            email = email.ToLowCase().Trim();
 
             var investor = await _investorRepository.GetAsync(email);
             if (investor == null)
@@ -185,7 +185,7 @@ namespace Lykke.Service.IcoApi.Services
             await _investorConfirmationQueuePublisher.SendAsync(message);
         }
 
-        private async Task SendSummaryEmail(IInvestor investor)
+        public async Task SendSummaryEmail(IInvestor investor)
         {
             var message = new InvestorSummaryMessage
             {

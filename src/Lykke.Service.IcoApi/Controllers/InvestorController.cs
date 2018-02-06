@@ -65,6 +65,42 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
+        /// Login investor
+        /// </summary>
+        /// <remarks>
+        /// Returns 204 in case if investor was not found or did not fill in Token Address. Returns 200 when summary email was sent
+        /// </remarks>
+        [HttpPost]
+        [Route("login")]
+        [ValidateReCaptcha]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> LoginInvestor([FromBody] LoginInvestorRequest model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            await _log.WriteInfoAsync(nameof(InvestorController), nameof(RegisterInvestor),
+                $"email={model.Email}, ip={GetRequestIP()}",
+                "Login investor");
+
+            var email = model.Email.Trim().ToLowCase();
+
+            var investor = await _investorService.GetAsync(email);
+            if (investor == null || string.IsNullOrEmpty(investor.TokenAddress))
+            {
+                return NoContent();
+            }
+
+            await _investorService.SendSummaryEmail(investor);
+
+            return Ok();
+        }
+
+        /// <summary>
         /// Confirms investor email and returns auth token
         /// </summary>
         /// <param name="token"></param>
