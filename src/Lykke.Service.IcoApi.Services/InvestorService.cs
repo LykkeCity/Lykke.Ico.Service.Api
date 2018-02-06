@@ -11,6 +11,7 @@ using Lykke.Ico.Core.Repositories.AddressPool;
 using Lykke.Service.IcoApi.Core.Domain;
 using Lykke.Ico.Core.Repositories.CampaignInfo;
 using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
+using System.Linq;
 
 namespace Lykke.Service.IcoApi.Services
 {
@@ -59,9 +60,22 @@ namespace Lykke.Service.IcoApi.Services
 
         public async Task<string> GetEmailByKycId(Guid kycId)
         {
-            return await _investorAttributeRepository.GetInvestorEmailAsync(
+            var email = await _investorAttributeRepository.GetInvestorEmailAsync(
                 InvestorAttributeType.KycId,
                 kycId.ToString());
+
+            if (string.IsNullOrEmpty(email))
+            {
+                var allInvestors = await _investorRepository.GetAllAsync();
+                var investor = allInvestors.FirstOrDefault(f => f.KycRequestId == kycId.ToString());
+
+                if (investor != null)
+                {
+                    email = investor.Email;
+                }
+            }
+
+            return email;
         }
 
         public async Task<RegisterResult> RegisterAsync(string email)
