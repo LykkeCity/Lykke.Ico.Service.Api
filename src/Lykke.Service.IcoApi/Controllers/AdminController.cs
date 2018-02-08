@@ -1,5 +1,6 @@
 ﻿using Common;
 using Common.Log;
+using CsvHelper;
 using Lykke.Ico.Core;
 using Lykke.Ico.Core.Repositories.CampaignInfo;
 using Lykke.Ico.Core.Repositories.CampaignSettings;
@@ -19,6 +20,7 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Lykke.Service.IcoApi.Controllers
@@ -353,6 +355,26 @@ namespace Lykke.Service.IcoApi.Controllers
             {
                 await _adminService.ImportPublicKeys(reader);
             }
+        }
+
+        /// <summary>
+        /// Returns all investors in scv format
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("reports/csv/investors")]
+        public async Task<FileContentResult> GetAllInvestorsCsv()
+        {
+            var investors = await _adminService.GetAllInvestors();
+            var records = investors.Select(f => FullInvestorResponse.Create(f));
+
+            using (var writer = new StringWriter())
+            {
+                var scv = new CsvWriter(writer);
+
+                scv.WriteRecords(records);
+
+                return File(Encoding.UTF8.GetBytes(writer.ToString()), "text/csv", "investors.csv");
+            }                
         }
     }
 }
