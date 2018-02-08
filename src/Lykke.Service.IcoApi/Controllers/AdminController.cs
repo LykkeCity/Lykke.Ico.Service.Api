@@ -319,6 +319,36 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
+        /// Sends KYC reminder emails to all investors with non processed KYC
+        /// </summary>
+        [AdminAuth]
+        [HttpPost("investors/send/kycReminderEmails")]
+        public async Task<SendKycReminderEmailsResponse> SendKycReminderEmails()
+        {
+            return SendKycReminderEmailsResponse.Create(await _adminService.SendKycReminderEmails());
+        }
+
+        /// <summary>
+        /// Returns all investors in scv format
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("reports/csv/investors")]
+        public async Task<FileContentResult> GetAllInvestorsCsv()
+        {
+            var investors = await _adminService.GetAllInvestors();
+            var records = investors.Select(f => FullInvestorResponse.Create(f));
+
+            using (var writer = new StringWriter())
+            {
+                var scv = new CsvWriter(writer);
+
+                scv.WriteRecords(records);
+
+                return File(Encoding.UTF8.GetBytes(writer.ToString()), "text/csv", "investors.csv");
+            }
+        }
+
+        /// <summary>
         /// Returns the list of public keys.
         /// </summary>
         /// <remarks>
@@ -355,26 +385,6 @@ namespace Lykke.Service.IcoApi.Controllers
             {
                 await _adminService.ImportPublicKeys(reader);
             }
-        }
-
-        /// <summary>
-        /// Returns all investors in scv format
-        /// </summary>
-        [AdminAuth]
-        [HttpGet("reports/csv/investors")]
-        public async Task<FileContentResult> GetAllInvestorsCsv()
-        {
-            var investors = await _adminService.GetAllInvestors();
-            var records = investors.Select(f => FullInvestorResponse.Create(f));
-
-            using (var writer = new StringWriter())
-            {
-                var scv = new CsvWriter(writer);
-
-                scv.WriteRecords(records);
-
-                return File(Encoding.UTF8.GetBytes(writer.ToString()), "text/csv", "investors.csv");
-            }                
         }
     }
 }

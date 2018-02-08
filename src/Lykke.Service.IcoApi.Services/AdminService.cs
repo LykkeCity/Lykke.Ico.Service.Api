@@ -17,18 +17,18 @@ using Lykke.Ico.Core.Repositories.InvestorEmail;
 using Lykke.Ico.Core.Repositories.InvestorTransaction;
 using Lykke.Ico.Core.Repositories.CampaignSettings;
 using Lykke.Ico.Core.Queues.Transactions;
+using Lykke.Ico.Core.Queues.Emails;
 using Lykke.Ico.Core;
 using Lykke.Ico.Core.Queues;
 using Lykke.Ico.Core.Repositories.InvestorRefund;
 using System.Linq;
 using Newtonsoft.Json;
+using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
 
 namespace Lykke.Service.IcoApi.Services
 {
     public class AdminService : IAdminService
     {
-        private readonly string _btcNetwork;
-        private readonly string _ethNetwork;
         private readonly ILog _log;
         private readonly IInvestorRepository _investorRepository;
         private readonly IInvestorTransactionRepository _investorTransactionRepository;
@@ -41,10 +41,10 @@ namespace Lykke.Service.IcoApi.Services
         private readonly IAddressPoolRepository _addressPoolRepository;
         private readonly ICampaignSettingsRepository _campaignSettingsRepository;
         private readonly IQueuePublisher<TransactionMessage> _transactionQueuePublisher;
+        private readonly IQueuePublisher<InvestorKycReminderMessage> _investorKycReminderPublisher;
+        private readonly IcoApiSettings _icoApiSettings;
 
-        public AdminService(string btcNetwork,
-            string ethNetwork,
-            ILog log,
+        public AdminService(ILog log,
             IInvestorRepository investorRepository,
             IInvestorTransactionRepository investorTransactionRepository,
             IInvestorRefundRepository investorRefundRepository,
@@ -55,10 +55,10 @@ namespace Lykke.Service.IcoApi.Services
             ICampaignInfoRepository campaignInfoRepository,
             IAddressPoolRepository addressPoolRepository,
             ICampaignSettingsRepository campaignSettingsRepository,
-            IQueuePublisher<TransactionMessage> transactionQueuePublisher)
+            IQueuePublisher<TransactionMessage> transactionQueuePublisher,
+            IQueuePublisher<InvestorKycReminderMessage> investorKycReminderPublisher,
+            IcoApiSettings icoApiSettings)
         {
-            _btcNetwork = btcNetwork;
-            _ethNetwork = ethNetwork;
             _log = log;
             _investorRepository = investorRepository;
             _investorAttributeRepository = investorAttributeRepository;
@@ -71,6 +71,8 @@ namespace Lykke.Service.IcoApi.Services
             _investorRefundRepository = investorRefundRepository;
             _campaignSettingsRepository = campaignSettingsRepository;
             _transactionQueuePublisher = transactionQueuePublisher;
+            _investorKycReminderPublisher = investorKycReminderPublisher;
+            _icoApiSettings = icoApiSettings;
         }
 
         public async Task<Dictionary<string, string>> GetCampaignInfo()
@@ -82,8 +84,8 @@ namespace Lykke.Service.IcoApi.Services
                 dictionary.Remove(nameof(CampaignInfoType.LatestTransactions));
             }                
 
-            dictionary.Add("BctNetwork", _btcNetwork);
-            dictionary.Add("EthNetwork", _ethNetwork);
+            dictionary.Add("BctNetwork", _icoApiSettings.BtcNetwork);
+            dictionary.Add("EthNetwork", _icoApiSettings.EthNetwork);
 
             return dictionary;
         }
@@ -287,6 +289,31 @@ namespace Lykke.Service.IcoApi.Services
             }
 
             return result;
+        }
+
+        public async Task<string[]> SendKycReminderEmails()
+        {
+            var investors = await _investorRepository.GetAllAsync();
+            var investorsToSend = investors.Where(f => !f.KycPassed.HasValue && !string.IsNullOrEmpty(f.KycRequestId));
+
+            await _log.WriteInfoAsync(nameof(AdminService), nameof(SendKycReminderEmails),
+                $"Send kyc reminder emails to {investorsToSend.Count()} investors");
+
+            foreach (var investor in investorsToSend)
+            {
+                var message = new InvestorKycReminderMessage
+                {
+                    EmailTo = investor.Email,
+                    LinkToSummaryPage = _icoApiSettings.SiteSummaryPageUrl.Replace("{token}", investor.ConfirmationToken.Value.ToString())
+                };
+
+                await _log.WriteInfoAsync(nameof(AdminService), nameof(SendKycReminderEmails),
+                    $"message={message.ToJson()}", "Send kyc reminder message to queue");
+
+                await _investorKycReminderPublisher.SendAsync(message);
+            }
+
+            return investorsToSend.Select(f => f.Email).ToArray();
         }
 
         public async Task UpdateInvestorAsync(string email, string tokenAddress, string refundEthAddress, string refundBtcAddress)

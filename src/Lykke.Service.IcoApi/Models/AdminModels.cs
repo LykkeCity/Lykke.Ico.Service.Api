@@ -416,4 +416,20 @@ namespace Lykke.Service.IcoApi.Models
 
         public string EthPublicKey { get; set; }
     }
+
+    public class SendKycReminderEmailsResponse
+    {
+        public int SentEmailsNumber { get; set; }
+
+        public string[] Investorts { get; set; }
+
+        public static SendKycReminderEmailsResponse Create(string[] investors)
+        {
+            return new SendKycReminderEmailsResponse
+            {
+                SentEmailsNumber = investors.Count(),
+                Investorts = investors.ToArray()
+            };
+        }
+    }
 }

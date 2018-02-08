@@ -83,7 +83,7 @@ namespace Lykke.Service.IcoApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            await _log.WriteInfoAsync(nameof(InvestorController), nameof(RegisterInvestor),
+            await _log.WriteInfoAsync(nameof(InvestorController), nameof(LoginInvestor),
                 $"email={model.Email}, ip={GetRequestIP()}",
                 "Login investor");
 
