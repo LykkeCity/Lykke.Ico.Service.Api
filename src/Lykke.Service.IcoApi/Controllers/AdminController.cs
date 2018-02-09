@@ -349,6 +349,46 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
+        /// Returns all transactions in scv format
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("reports/csv/transactions")]
+        public async Task<FileContentResult> GetAllTransactionsCsv()
+        {
+            var txs = await _adminService.GetAllInvestorTransactions();
+            var response = InvestorTransactionsResponse.Create(txs);
+
+            using (var writer = new StringWriter())
+            {
+                var scv = new CsvWriter(writer);
+
+                scv.WriteRecords(response.Transactions);
+
+                return File(Encoding.UTF8.GetBytes(writer.ToString()), "text/csv", "transactions.csv");
+            }
+        }
+
+        /// <summary>
+        /// Returns all failed transactions in scv format
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("reports/csv/transactions/failed")]
+        public async Task<FileContentResult> GetAllFailedTransactionsCsv()
+        {
+            var txs = await _adminService.GetAllInvestorFailedTransactions();
+            var response = InvestorFailedTransactionsResponse.Create(txs);
+
+            using (var writer = new StringWriter())
+            {
+                var scv = new CsvWriter(writer);
+
+                scv.WriteRecords(response.Items);
+
+                return File(Encoding.UTF8.GetBytes(writer.ToString()), "text/csv", "transactions-failed.csv");
+            }
+        }
+
+        /// <summary>
         /// Returns the list of public keys.
         /// </summary>
         /// <remarks>

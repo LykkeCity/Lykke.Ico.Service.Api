@@ -18,7 +18,7 @@
 
   <ItemGroup>
     <PackageReference Include="Lykke.Common" Version="4.2.0" />
-    <PackageReference Include="Lykke.Ico.Core" Version="1.0.128" />
+    <PackageReference Include="Lykke.Ico.Core" Version="1.0.129" />
   </ItemGroup>
 
 </Project>
