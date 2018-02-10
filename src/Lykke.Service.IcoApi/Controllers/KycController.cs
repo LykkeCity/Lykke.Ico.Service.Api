@@ -77,14 +77,6 @@ namespace Lykke.Service.IcoApi.Controllers
                 return BadRequest("KycStatus is null or empty");
             }
 
-            var investorEmail = await _investorService.GetEmailByKycId(kycMessage.KycId);
-            if (!string.IsNullOrEmpty(investorEmail))
-            {
-                await _investorService.SaveKycResultAsync(investorEmail, kycMessage.KycStatus);
-
-                return Ok();
-            }
-
             var privateInvestorEmail = await _privateInvestorService.GetEmailByKycId(kycMessage.KycId);
             if (!string.IsNullOrEmpty(privateInvestorEmail))
             {
@@ -92,6 +84,14 @@ namespace Lykke.Service.IcoApi.Controllers
 
                 return Ok();
             }
+
+            var investorEmail = await _investorService.GetEmailByKycId(kycMessage.KycId);
+            if (!string.IsNullOrEmpty(investorEmail))
+            {
+                await _investorService.SaveKycResultAsync(investorEmail, kycMessage.KycStatus);
+
+                return Ok();
+            }            
 
             return BadRequest($"Investor was not found for provided KycId={kycMessage.KycId}");
         }
