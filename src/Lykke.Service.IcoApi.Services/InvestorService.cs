@@ -11,6 +11,8 @@ using Lykke.Ico.Core.Repositories.AddressPool;
 using Lykke.Service.IcoApi.Core.Domain;
 using Lykke.Ico.Core.Repositories.CampaignInfo;
 using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
+using Lykke.Service.IcoCommon.Client;
+using Lykke.Service.IcoCommon.Client.Models;
 
 namespace Lykke.Service.IcoApi.Services
 {
@@ -23,6 +25,7 @@ namespace Lykke.Service.IcoApi.Services
         private readonly IInvestorAttributeRepository _investorAttributeRepository;
         private readonly IAddressPoolRepository _addressPoolRepository;
         private readonly ICampaignInfoRepository _campaignInfoRepository;
+        private readonly IIcoCommonServiceClient _icoCommonServiceClient;
         private readonly IQueuePublisher<InvestorConfirmationMessage> _investorConfirmationQueuePublisher;
         private readonly IQueuePublisher<InvestorSummaryMessage> _investorSummaryQueuePublisher;
         private readonly IcoApiSettings _icoApiSettings;
@@ -34,6 +37,7 @@ namespace Lykke.Service.IcoApi.Services
             IInvestorAttributeRepository investorAttributeRepository,
             IAddressPoolRepository addressPoolRepository,
             ICampaignInfoRepository campaignInfoRepository,
+            IIcoCommonServiceClient icoCommonServiceClient,
             IQueuePublisher<InvestorConfirmationMessage> investorConfirmationQueuePublisher,
             IQueuePublisher<InvestorSummaryMessage> investorSummaryQueuePublisher,
             IcoApiSettings icoApiSettings)
@@ -45,6 +49,7 @@ namespace Lykke.Service.IcoApi.Services
             _investorAttributeRepository = investorAttributeRepository;
             _addressPoolRepository = addressPoolRepository;
             _campaignInfoRepository = campaignInfoRepository;
+            _icoCommonServiceClient = icoCommonServiceClient;
             _investorConfirmationQueuePublisher = investorConfirmationQueuePublisher;
             _investorSummaryQueuePublisher = investorSummaryQueuePublisher;
             _icoApiSettings = icoApiSettings;
@@ -153,6 +158,22 @@ namespace Lykke.Service.IcoApi.Services
             await _investorAttributeRepository.SaveAsync(InvestorAttributeType.PayInBtcAddress, email, payInBtcAddress);
             await _investorAttributeRepository.SaveAsync(InvestorAttributeType.PayInEthAddress, email, payInEthAddress);
             await _campaignInfoRepository.IncrementValue(CampaignInfoType.InvestorsFilledIn, 1);
+
+            await _icoCommonServiceClient.AddPayInAddressAsync(new PayInAddressModel
+            {
+                Address = payInBtcAddress,
+                CampaignId = _icoApiSettings.CampaignId,
+                Currency = CurrencyType.BTC,
+                Email = email
+            });
+
+            await _icoCommonServiceClient.AddPayInAddressAsync(new PayInAddressModel
+            {
+                Address = payInEthAddress,
+                CampaignId = _icoApiSettings.CampaignId,
+                Currency = CurrencyType.ETH,
+                Email = email
+            });
 
             var investor = await _investorRepository.GetAsync(email);
             await SendSummaryEmail(investor);

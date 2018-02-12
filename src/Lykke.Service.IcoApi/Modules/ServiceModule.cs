@@ -18,6 +18,7 @@ using Lykke.Ico.Core.Repositories.PrivateInvestorAttribute;
 using Lykke.Ico.Core.Services;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Services;
+using Lykke.Service.IcoCommon.Client;
 using Lykke.Service.IcoExRate.Client;
 using Lykke.SettingsReader;
 
@@ -49,6 +50,8 @@ namespace Lykke.Service.IcoApi.Modules
                 .As<IShutdownManager>();
 
             builder.RegisterIcoExRateClient(_settings.CurrentValue.IcoExRateServiceUrl, _log);
+
+            builder.RegisterIcoCommonClient(_settings.CurrentValue.IcoCommonServiceUrl, _log);
 
             builder.RegisterType<InvestorRepository>()
                 .As<IInvestorRepository>()

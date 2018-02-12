@@ -4,7 +4,6 @@ using Lykke.Ico.Core.Repositories.CampaignInfo;
 using Lykke.Ico.Core.Repositories.CampaignSettings;
 using Lykke.Service.IcoApi.Core.Services;
 using Microsoft.Extensions.Caching.Memory;
-using System;
 using Lykke.Ico.Core.Repositories.InvestorRefund;
 using System.Collections.Generic;
 

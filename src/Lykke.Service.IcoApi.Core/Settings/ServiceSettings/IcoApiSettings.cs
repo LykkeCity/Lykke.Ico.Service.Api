@@ -12,6 +12,7 @@
         public string EthTrackerUrl { get; set; }
         public string EthTestSecretKey { get; set; }
         public string IcoExRateServiceUrl { get; set; }
+        public string IcoCommonServiceUrl { get; set; }
         public string SiteEmailConfirmationPageUrl { get; set; }
         public string SiteSummaryPageUrl { get; set; }
         public string StripeSecretKey { get; set; }
@@ -21,5 +22,6 @@
         public bool DisableAdminMethods { get; set; }
         public bool DisableDebugMethods { get; set; }
         public string CaptchaSecret { get; set; }
+        public string CampaignId { get; set; }
     }
 }
