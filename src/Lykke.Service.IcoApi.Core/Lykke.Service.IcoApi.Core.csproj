@@ -9,16 +9,12 @@
 
   <ItemGroup>
     <Compile Remove="Domain\Ico\**" />
-    <Compile Remove="Repositories\**" />
     <EmbeddedResource Remove="Domain\Ico\**" />
-    <EmbeddedResource Remove="Repositories\**" />
     <None Remove="Domain\Ico\**" />
-    <None Remove="Repositories\**" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Lykke.Common" Version="4.4.2" />
-    <PackageReference Include="Lykke.Ico.Core" Version="2.0.2" />
   </ItemGroup>
 
 </Project>

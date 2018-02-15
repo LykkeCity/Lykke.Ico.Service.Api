@@ -1,4 +1,4 @@
-﻿namespace Lykke.Service.IcoApi.Core.Domain
+﻿namespace Lykke.Service.IcoApi.Core.Domain.Fiat
 {
     public class FiatCharge
     {

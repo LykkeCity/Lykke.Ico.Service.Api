@@ -1,9 +1,9 @@
 ﻿using Common;
 using Common.Log;
-using Lykke.Ico.Core;
-using Lykke.Ico.Core.Queues;
-using Lykke.Ico.Core.Queues.Transactions;
 using Lykke.Service.IcoApi.Core.Domain;
+using Lykke.Service.IcoApi.Core.Domain.Fiat;
+using Lykke.Service.IcoApi.Core.Queues;
+using Lykke.Service.IcoApi.Core.Queues.Transactions;
 using Lykke.Service.IcoApi.Core.Services;
 using Stripe;
 using System;

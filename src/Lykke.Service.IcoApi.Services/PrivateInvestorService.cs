@@ -1,7 +1,7 @@
 ﻿using Common;
 using Common.Log;
-using Lykke.Ico.Core.Repositories.PrivateInvestor;
-using Lykke.Ico.Core.Repositories.PrivateInvestorAttribute;
+using Lykke.Service.IcoApi.Core.Domain.PrivateInvestor;
+using Lykke.Service.IcoApi.Core.Repositories;
 using Lykke.Service.IcoApi.Core.Services;
 using System;
 using System.Threading.Tasks;

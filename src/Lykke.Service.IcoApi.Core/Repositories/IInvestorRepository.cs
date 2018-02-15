@@ -1,19 +1,32 @@
-﻿using Lykke.Service.IcoApi.Core.Domain.Ico;
+﻿using Lykke.Service.IcoApi.Core.Domain;
+using Lykke.Service.IcoApi.Core.Domain.Investor;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Lykke.Service.IcoApi.Core.Repositories
 {
-    public  interface IInvestorRepository
+    public interface IInvestorRepository
     {
-        Task AddAsync(Investor investor);
+        Task<IEnumerable<IInvestor>> GetAllAsync();
 
-        Task<IEnumerable<Investor>> GetAllAsync();
+        Task<IInvestor> GetAsync(string email);
 
-        Task<Investor> GetAsync(string email);
+        Task<IInvestor> AddAsync(string email, Guid confirmationToken);
+
+        Task ConfirmAsync(string email);
+
+        Task SaveAddressesAsync(string email, string tokenAddress, string refundEthAddress, string refundBtcAddress);
+
+        Task SaveAddressesAsync(string email, string tokenAddress, string refundEthAddress, string refundBtcAddress,
+           string payInEthPublicKey, string payInEthAddress, string payInBtcPublicKey, string payInBtcAddress);
+
+        Task IncrementAmount(string email, CurrencyType type, decimal amount, decimal amountUsd, decimal amountToken);
+
+        Task SaveKycAsync(string email, string kycRequestId);
+
+        Task SaveKycResultAsync(string email, bool kycPassed);
 
         Task RemoveAsync(string email);
-
-        Task UpdateAsync(Investor investor);
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Common.Log;
-using Lykke.Ico.Core.Services;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Infrastructure;
 using Lykke.Service.IcoApi.Models;

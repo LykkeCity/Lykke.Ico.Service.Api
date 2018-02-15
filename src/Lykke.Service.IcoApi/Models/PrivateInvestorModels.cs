@@ -1,5 +1,4 @@
-﻿using Lykke.Ico.Core.Repositories.PrivateInvestor;
-using System;
+﻿using Lykke.Service.IcoApi.Core.Domain.PrivateInvestor;
 using System.ComponentModel.DataAnnotations;
 
 namespace Lykke.Service.IcoApi.Models

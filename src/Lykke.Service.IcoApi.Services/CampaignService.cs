@@ -1,11 +1,11 @@
 ﻿using Common.Log;
 using System.Threading.Tasks;
-using Lykke.Ico.Core.Repositories.CampaignInfo;
-using Lykke.Ico.Core.Repositories.CampaignSettings;
-using Lykke.Service.IcoApi.Core.Services;
-using Microsoft.Extensions.Caching.Memory;
-using Lykke.Ico.Core.Repositories.InvestorRefund;
 using System.Collections.Generic;
+using Microsoft.Extensions.Caching.Memory;
+using Lykke.Service.IcoApi.Core.Services;
+using Lykke.Service.IcoApi.Core.Repositories;
+using Lykke.Service.IcoApi.Core.Domain.Campaign;
+using Lykke.Service.IcoApi.Core.Domain.Investor;
 
 namespace Lykke.Service.IcoApi.Services
 {

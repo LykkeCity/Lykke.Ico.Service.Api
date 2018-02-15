@@ -1,5 +1,5 @@
-﻿using Lykke.Ico.Core.Repositories.Investor;
-using Lykke.Service.IcoApi.Core.Domain;
+﻿using Lykke.Service.IcoApi.Core.Domain;
+using Lykke.Service.IcoApi.Core.Domain.Investor;
 using System;
 using System.Threading.Tasks;
 

@@ -3,16 +3,15 @@ using Common.Log;
 using System;
 using System.Threading.Tasks;
 using Lykke.Service.IcoApi.Core.Services;
-using Lykke.Ico.Core.Repositories.Investor;
-using Lykke.Ico.Core.Repositories.InvestorAttribute;
-using Lykke.Ico.Core.Queues.Emails;
-using Lykke.Ico.Core.Queues;
-using Lykke.Ico.Core.Repositories.AddressPool;
 using Lykke.Service.IcoApi.Core.Domain;
-using Lykke.Ico.Core.Repositories.CampaignInfo;
 using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
 using Lykke.Service.IcoCommon.Client;
 using Lykke.Service.IcoCommon.Client.Models;
+using Lykke.Service.IcoApi.Core.Repositories;
+using Lykke.Service.IcoApi.Core.Queues;
+using Lykke.Service.IcoApi.Core.Queues.Emails;
+using Lykke.Service.IcoApi.Core.Domain.Investor;
+using Lykke.Service.IcoApi.Core.Domain.Campaign;
 
 namespace Lykke.Service.IcoApi.Services
 {
@@ -163,7 +162,7 @@ namespace Lykke.Service.IcoApi.Services
             {
                 Address = payInBtcAddress,
                 CampaignId = _icoApiSettings.CampaignId,
-                Currency = CurrencyType.BTC,
+                Currency = IcoCommon.Client.Models.CurrencyType.BTC,
                 Email = email
             });
 
@@ -171,7 +170,7 @@ namespace Lykke.Service.IcoApi.Services
             {
                 Address = payInEthAddress,
                 CampaignId = _icoApiSettings.CampaignId,
-                Currency = CurrencyType.ETH,
+                Currency = IcoCommon.Client.Models.CurrencyType.ETH,
                 Email = email
             });
 

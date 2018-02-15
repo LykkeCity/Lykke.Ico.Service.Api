@@ -1,25 +1,15 @@
 ﻿using Autofac;
 using Common.Log;
-using Lykke.Ico.Core.Queues;
-using Lykke.Ico.Core.Queues.Emails;
-using Lykke.Ico.Core.Queues.Transactions;
-using Lykke.Ico.Core.Repositories.AddressPool;
-using Lykke.Ico.Core.Repositories.AddressPoolHistory;
-using Lykke.Ico.Core.Repositories.CampaignInfo;
-using Lykke.Ico.Core.Repositories.CampaignSettings;
-using Lykke.Ico.Core.Repositories.Investor;
-using Lykke.Ico.Core.Repositories.InvestorAttribute;
-using Lykke.Ico.Core.Repositories.InvestorEmail;
-using Lykke.Ico.Core.Repositories.InvestorHistory;
-using Lykke.Ico.Core.Repositories.InvestorRefund;
-using Lykke.Ico.Core.Repositories.InvestorTransaction;
-using Lykke.Ico.Core.Repositories.PrivateInvestor;
-using Lykke.Ico.Core.Repositories.PrivateInvestorAttribute;
-using Lykke.Ico.Core.Services;
+using Lykke.JobTriggers.Extenstions;
+using Lykke.Service.IcoApi.Core.Queues;
+using Lykke.Service.IcoApi.Core.Queues.Emails;
+using Lykke.Service.IcoApi.Core.Queues.Transactions;
+using Lykke.Service.IcoApi.Core.Repositories;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Services;
 using Lykke.Service.IcoCommon.Client;
 using Lykke.Service.IcoExRate.Client;
+using Lykke.Services.IcoApi.AzureRepositories;
 using Lykke.SettingsReader;
 
 namespace Lykke.Service.IcoApi.Modules
@@ -168,10 +158,20 @@ namespace Lykke.Service.IcoApi.Modules
                 .WithParameter(TypedParameter.From(connectionStringManager))
                 .SingleInstance();
 
+            builder.RegisterType<QueuePublisher<InvestorNewTransactionMessage>>()
+                .As<IQueuePublisher<InvestorNewTransactionMessage>>()
+                .WithParameter(TypedParameter.From(connectionStringManager));
+
             builder.RegisterType<QueuePublisher<TransactionMessage>>()
                 .As<IQueuePublisher<TransactionMessage>>()
                 .WithParameter(TypedParameter.From(connectionStringManager))
                 .SingleInstance();
+
+            builder.AddTriggers(
+                pool =>
+                {
+                    pool.AddDefaultConnection(_settings.ConnectionString(x => x.AzureQueue.ConnectionString));
+                });
 
             builder.RegisterInstance(_settings.CurrentValue);
         }

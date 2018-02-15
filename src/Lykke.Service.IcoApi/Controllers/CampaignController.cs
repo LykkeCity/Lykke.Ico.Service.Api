@@ -1,14 +1,12 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Common.Log;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Models;
-using Lykke.Ico.Core.Repositories.CampaignInfo;
-using Lykke.Ico.Core.Repositories.CampaignSettings;
-using Lykke.Ico.Core;
-using System.Linq;
-using Lykke.Ico.Core.Repositories.InvestorRefund;
+using Lykke.Service.IcoApi.Services.Extensions;
+using Lykke.Service.IcoApi.Core.Domain.Investor;
 
 namespace Lykke.Service.IcoApi.Controllers
 {

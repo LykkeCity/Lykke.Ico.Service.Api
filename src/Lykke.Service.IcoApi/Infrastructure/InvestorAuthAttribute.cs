@@ -1,4 +1,5 @@
-﻿using Lykke.Ico.Core.Repositories.InvestorAttribute;
+﻿using Lykke.Service.IcoApi.Core.Domain.Investor;
+using Lykke.Service.IcoApi.Core.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;

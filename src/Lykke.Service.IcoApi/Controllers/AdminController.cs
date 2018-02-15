@@ -1,13 +1,12 @@
 ﻿using Common;
 using Common.Log;
-using Lykke.Ico.Core;
-using Lykke.Ico.Core.Repositories.CampaignInfo;
-using Lykke.Ico.Core.Repositories.CampaignSettings;
-using Lykke.Ico.Core.Repositories.Investor;
-using Lykke.Ico.Core.Services;
+using Lykke.Service.IcoApi.Core.Domain.Campaign;
+using Lykke.Service.IcoApi.Core.Domain.Investor;
+using Lykke.Service.IcoApi.Core.Domain.Token;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Infrastructure;
 using Lykke.Service.IcoApi.Models;
+using Lykke.Service.IcoApi.Services.Extensions;
 using Lykke.Service.IcoExRate.Client;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

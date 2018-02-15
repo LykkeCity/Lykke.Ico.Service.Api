@@ -1,8 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Lykke.Ico.Core.Repositories.CampaignInfo;
-using Lykke.Ico.Core.Repositories.CampaignSettings;
 using System.Collections.Generic;
-using Lykke.Ico.Core.Repositories.InvestorRefund;
+using Lykke.Service.IcoApi.Core.Domain.Investor;
+using Lykke.Service.IcoApi.Core.Domain.Campaign;
 
 namespace Lykke.Service.IcoApi.Core.Services
 {

@@ -7,7 +7,6 @@ using System.Security.Claims;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Models;
 using Lykke.Service.IcoApi.Infrastructure;
-using Lykke.Ico.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Common.Log;

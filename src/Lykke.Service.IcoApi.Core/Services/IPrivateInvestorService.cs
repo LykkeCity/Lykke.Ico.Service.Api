@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Lykke.Service.IcoApi.Core.Domain.PrivateInvestor;
+using System;
 using System.Threading.Tasks;
-using Lykke.Ico.Core.Repositories.PrivateInvestor;
 
 namespace Lykke.Service.IcoApi.Core.Services
 {

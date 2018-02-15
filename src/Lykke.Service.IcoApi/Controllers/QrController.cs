@@ -1,5 +1,5 @@
-﻿using Lykke.Ico.Core.Helpers;
-using Lykke.Service.IcoApi.Models;
+﻿using Lykke.Service.IcoApi.Models;
+using Lykke.Service.IcoApi.Services.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Net;

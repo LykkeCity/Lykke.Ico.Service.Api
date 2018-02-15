@@ -2,6 +2,7 @@
 {
     public class IcoApiSettings
     {
+        public AzureQueueSettings AzureQueue { get; set; }
         public DbSettings Db { get; set; }
         public string BtcUrl { get; set; }
         public string BtcNetwork { get; set; }

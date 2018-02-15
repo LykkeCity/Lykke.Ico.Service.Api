@@ -1,12 +1,7 @@
-﻿using Lykke.Ico.Core;
-using Lykke.Ico.Core.Repositories.AddressPool;
-using Lykke.Ico.Core.Repositories.AddressPoolHistory;
-using Lykke.Ico.Core.Repositories.CampaignSettings;
-using Lykke.Ico.Core.Repositories.Investor;
-using Lykke.Ico.Core.Repositories.InvestorEmail;
-using Lykke.Ico.Core.Repositories.InvestorHistory;
-using Lykke.Ico.Core.Repositories.InvestorRefund;
-using Lykke.Ico.Core.Repositories.InvestorTransaction;
+﻿using Lykke.Service.IcoApi.Core.Domain;
+using Lykke.Service.IcoApi.Core.Domain.AddressPool;
+using Lykke.Service.IcoApi.Core.Domain.Campaign;
+using Lykke.Service.IcoApi.Core.Domain.Investor;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

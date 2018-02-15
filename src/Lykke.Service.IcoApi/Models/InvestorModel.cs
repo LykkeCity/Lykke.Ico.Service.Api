@@ -1,5 +1,6 @@
-﻿using Lykke.Ico.Core.Repositories.Investor;
-using Lykke.Service.IcoApi.Core.Domain;
+﻿using Lykke.Service.IcoApi.Core.Domain;
+using Lykke.Service.IcoApi.Core.Domain.Fiat;
+using Lykke.Service.IcoApi.Core.Domain.Investor;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel.DataAnnotations;

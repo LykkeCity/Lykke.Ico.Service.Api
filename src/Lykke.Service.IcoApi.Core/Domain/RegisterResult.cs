@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace Lykke.Service.IcoApi.Core.Domain
+﻿namespace Lykke.Service.IcoApi.Core.Domain
 {
     public enum RegisterResult
     {

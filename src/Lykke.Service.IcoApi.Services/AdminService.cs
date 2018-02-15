@@ -3,24 +3,18 @@ using System.IO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Text;
+using System.Linq;
 using Common;
 using Common.Log;
 using CsvHelper;
 using Lykke.Service.IcoApi.Core.Services;
-using Lykke.Ico.Core.Repositories.Investor;
-using Lykke.Ico.Core.Repositories.InvestorAttribute;
-using Lykke.Ico.Core.Repositories.AddressPool;
-using Lykke.Ico.Core.Repositories.InvestorHistory;
-using Lykke.Ico.Core.Repositories.AddressPoolHistory;
-using Lykke.Ico.Core.Repositories.CampaignInfo;
-using Lykke.Ico.Core.Repositories.InvestorEmail;
-using Lykke.Ico.Core.Repositories.InvestorTransaction;
-using Lykke.Ico.Core.Repositories.CampaignSettings;
-using Lykke.Ico.Core.Queues.Transactions;
-using Lykke.Ico.Core;
-using Lykke.Ico.Core.Queues;
-using Lykke.Ico.Core.Repositories.InvestorRefund;
-using System.Linq;
+using Lykke.Service.IcoApi.Core.Repositories;
+using Lykke.Service.IcoApi.Core.Queues;
+using Lykke.Service.IcoApi.Core.Queues.Transactions;
+using Lykke.Service.IcoApi.Core.Domain.Campaign;
+using Lykke.Service.IcoApi.Core.Domain.Investor;
+using Lykke.Service.IcoApi.Core.Domain;
+using Lykke.Service.IcoApi.Core.Domain.AddressPool;
 
 namespace Lykke.Service.IcoApi.Services
 {
