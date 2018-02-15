@@ -23,6 +23,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Lykke.AzureStorage.Tables.Entity.Metamodel;
 using Lykke.AzureStorage.Tables.Entity.Metamodel.Providers;
 using Stripe;
+using Lykke.JobTriggers.Triggers;
 
 namespace Lykke.Service.IcoApi
 {
@@ -32,6 +33,9 @@ namespace Lykke.Service.IcoApi
         public IContainer ApplicationContainer { get; private set; }
         public IConfigurationRoot Configuration { get; }
         public ILog Log { get; private set; }
+
+        private TriggerHost _triggerHost;
+        private Task _triggerHostTask;
 
         public Startup(IHostingEnvironment env)
         {
@@ -147,6 +151,9 @@ namespace Lykke.Service.IcoApi
             {
                 await ApplicationContainer.Resolve<IStartupManager>().StartAsync();
 
+                _triggerHost = new TriggerHost(new AutofacServiceProvider(ApplicationContainer));
+                _triggerHostTask = _triggerHost.Start();
+
                 await Log.WriteMonitorAsync("", "", "Started");
             }
             catch (Exception ex)
@@ -161,6 +168,9 @@ namespace Lykke.Service.IcoApi
             try
             {
                 await ApplicationContainer.Resolve<IShutdownManager>().StopAsync();
+
+                _triggerHost?.Cancel();
+                await _triggerHostTask;
             }
             catch (Exception ex)
             {
