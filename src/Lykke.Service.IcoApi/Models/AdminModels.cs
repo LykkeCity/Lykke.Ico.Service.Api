@@ -423,17 +423,23 @@ namespace Lykke.Service.IcoApi.Models
 
     public class SendKycReminderEmailsResponse
     {
-        public int SentEmailsNumber { get; set; }
+        public int InvestorsNumber { get; set; }
 
-        public string[] Investorts { get; set; }
+        public string[] Investors { get; set; }
 
-        public static SendKycReminderEmailsResponse Create(string[] investors)
+        public static SendKycReminderEmailsResponse Create(IEnumerable<IInvestor> investors)
         {
             return new SendKycReminderEmailsResponse
             {
-                SentEmailsNumber = investors.Count(),
-                Investorts = investors.ToArray()
+                InvestorsNumber = investors.Count(),
+                Investors = investors.Select(f => f.Email).ToArray()
             };
         }
+    }
+
+    public enum KycReminderType
+    {
+        NotCompletedKyc,
+        FailedKyc
     }
 }

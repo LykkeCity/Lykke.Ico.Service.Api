@@ -301,15 +301,9 @@ namespace Lykke.Service.IcoApi.Services
             return result;
         }
 
-        public async Task<string[]> SendKycReminderEmails()
+        public async Task SendKycReminderEmails(IEnumerable<IInvestor> investors)
         {
-            var investors = await _investorRepository.GetAllAsync();
-            var investorsToSend = investors.Where(f => !f.KycPassed.HasValue && !string.IsNullOrEmpty(f.KycRequestId));
-
-            await _log.WriteInfoAsync(nameof(AdminService), nameof(SendKycReminderEmails),
-                $"Send kyc reminder emails to {investorsToSend.Count()} investors");
-
-            foreach (var investor in investorsToSend)
+            foreach (var investor in investors)
             {
                 var message = new InvestorKycReminderMessage
                 {
@@ -322,8 +316,6 @@ namespace Lykke.Service.IcoApi.Services
 
                 await _investorKycReminderPublisher.SendAsync(message);
             }
-
-            return investorsToSend.Select(f => f.Email).ToArray();
         }
 
         public async Task UpdateInvestorAsync(string email, string tokenAddress, string refundEthAddress, string refundBtcAddress)
