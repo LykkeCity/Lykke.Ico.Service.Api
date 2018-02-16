@@ -177,6 +177,40 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
+        /// Update investor KYC status
+        /// </summary>
+        [AdminAuth]
+        [DisableAdminMethods]
+        [HttpPost("investors/{email}/kyc/{status}")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> UpdateInvestorKycStatus([Required] string email, [Required] KycStatusManual status)
+        {
+            var investor = await _investorService.GetAsync(email);
+            if (investor == null)
+            {
+                return NotFound(ErrorResponse.Create("Investor not found"));
+            }
+
+            await _log.WriteInfoAsync(nameof(AdminController), nameof(UpdateInvestorKycStatus),
+               $"email={email}, status={Enum.GetName(typeof(KycStatusManual), status)}", 
+               "Update investor kyc status");
+
+            bool? kycPassed = null;
+            if (status == KycStatusManual.Success)
+            {
+                kycPassed = true;
+            }
+            if (status == KycStatusManual.Failed)
+            {
+                kycPassed = false;
+            }
+
+            await _adminService.UpdateInvestorKycAsync(investor, kycPassed);
+
+            return Ok();
+        }
+
+        /// <summary>
         /// Returns investors invested more than {amount} USD
         /// </summary>
         [AdminAuth]

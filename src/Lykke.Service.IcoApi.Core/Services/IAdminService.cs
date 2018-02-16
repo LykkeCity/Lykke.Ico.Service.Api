@@ -32,5 +32,6 @@ namespace Lykke.Service.IcoApi.Core.Services
         Task<IEnumerable<IInvestorTransaction>> GetLatestTransactions();
         Task SendKycReminderEmails(IEnumerable<IInvestor> investors);
         Task UpdateInvestorAsync(string email, string tokenAddress, string refundEthAddress, string refundBtcAddress);
+        Task UpdateInvestorKycAsync(IInvestor investor, bool? kycPassed);
     }
 }

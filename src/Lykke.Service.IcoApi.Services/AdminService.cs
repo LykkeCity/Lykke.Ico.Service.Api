@@ -325,6 +325,19 @@ namespace Lykke.Service.IcoApi.Services
             await _investorRepository.SaveAddressesAsync(email, tokenAddress, refundEthAddress, refundBtcAddress);
         }
 
+        public async Task UpdateInvestorKycAsync(IInvestor investor, bool? kycPassed)
+        {
+            if (string.IsNullOrEmpty(investor.KycRequestId))
+            {
+                var kycId = Guid.NewGuid().ToString();
+
+                await _investorRepository.SaveKycAsync(investor.Email, kycId);
+                await _investorAttributeRepository.SaveAsync(InvestorAttributeType.KycId, investor.Email, kycId);
+            }
+
+            await _investorRepository.SaveKycResultAsync(investor.Email, kycPassed, true);
+        }
+
         public async Task<int> ImportPublicKeys(StreamReader reader)
         {
             await _log.WriteInfoAsync(nameof(AdminService), nameof(ImportPublicKeys), 

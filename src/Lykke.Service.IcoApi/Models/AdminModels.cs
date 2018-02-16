@@ -48,6 +48,8 @@ namespace Lykke.Service.IcoApi.Models
 
         public DateTime? KycPassedUtc { get; set; }
 
+        public DateTime? KycManuallyUpdatedUtc { get; set; }
+
         public decimal AmountBtc { get; set; }
 
         public decimal AmountEth { get; set; }
@@ -78,6 +80,7 @@ namespace Lykke.Service.IcoApi.Models
                 KycRequestedUtc = investor.KycRequestedUtc,
                 KycPassed = investor.KycPassed,
                 KycPassedUtc = investor.KycPassedUtc,
+                KycManuallyUpdatedUtc = investor.KycManuallyUpdatedUtc,
                 AmountBtc = investor.AmountBtc,
                 AmountEth = investor.AmountEth,
                 AmountFiat = investor.AmountFiat,
@@ -441,5 +444,11 @@ namespace Lykke.Service.IcoApi.Models
     {
         NotCompletedKyc,
         FailedKyc
+    }
+    public enum KycStatusManual
+    {
+        Requested,
+        Failed,
+        Success
     }
 }

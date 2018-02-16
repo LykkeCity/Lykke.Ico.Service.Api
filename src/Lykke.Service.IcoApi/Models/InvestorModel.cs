@@ -113,7 +113,7 @@ namespace Lykke.Service.IcoApi.Models
         None,
         Requested,
         Failed,
-        Success,
+        Success
     }
 
     public class ChargeInvestorRequest

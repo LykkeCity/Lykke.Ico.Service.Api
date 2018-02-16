@@ -124,6 +124,7 @@ namespace Lykke.Service.IcoApi.Controllers
         /// <summary>
         /// Encrypt text
         /// </summary>
+        [AdminAuth]
         [DisableDebugMethods]
         [HttpPost("debug/encrypt/{text}")]
         public string EncryptKycMessage([Required] string text)
@@ -134,6 +135,7 @@ namespace Lykke.Service.IcoApi.Controllers
         /// <summary>
         /// Decrypt text
         /// </summary>
+        [AdminAuth]
         [DisableDebugMethods]
         [HttpPost("debug/decrypt/{text}")]
         public string DecryptKycMessage([Required] string text)
