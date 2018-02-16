@@ -37,6 +37,18 @@ namespace Lykke.Service.IcoApi.Controllers
             var now = DateTime.UtcNow;
             var campaignActive = false;
 
+            var amountInvestedToken = await _campaignService.GetCampaignInfoValue(CampaignInfoType.AmountInvestedToken);
+            if (!Decimal.TryParse(amountInvestedToken, out var tokensSold))
+            {
+                tokensSold = 0;
+            }
+
+            var amountInvestedUsd = await _campaignService.GetCampaignInfoValue(CampaignInfoType.AmountInvestedUsd);
+            if (!Decimal.TryParse(amountInvestedUsd, out var investedUsd))
+            {
+                investedUsd = 0;
+            }
+
             if (settings.IsPreSale(now) &&
                 !failedTxs.Any(f => f.Reason == InvestorRefundReason.PreSaleTokensSoldOut))
             {
@@ -51,10 +63,17 @@ namespace Lykke.Service.IcoApi.Controllers
             if (campaignActive)
             {
                 campaignActive = settings.EnableCampaignFrontEnd;
-            }            
+            }
+
+            var tokenInfo = settings.GetTokenInfo(tokensSold, DateTime.UtcNow);
 
             return new CampaignResponse
             {
+                InvestedUsd = investedUsd,
+                TokensTotal = settings.GetTotalTokensAmount(),
+                TokensSold = tokensSold,
+                TokenPriceUsd = tokenInfo.Price,
+                Phase = tokenInfo.Phase,
                 CaptchaEnabled = settings.CaptchaEnable,
                 CampaignActive = campaignActive
             };
