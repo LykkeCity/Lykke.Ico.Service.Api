@@ -110,6 +110,16 @@ namespace Lykke.Service.IcoApi.Services
             return await _investorRepository.GetAllAsync();
         }
 
+        public async Task<IEnumerable<IInvestorTransaction>> GetAllInvestorTransactions()
+        {
+            return await _investorTransactionRepository.GetAllAsync();
+        }
+
+        public async Task<IEnumerable<IInvestorRefund>> GetAllInvestorFailedTransactions()
+        {
+            return await _investorRefundRepository.GetAllAsync();
+        }
+
         public async Task<IEnumerable<IInvestorHistoryItem>> GetInvestorHistory(string email)
         {
             email = email.ToLowCase();

@@ -360,15 +360,16 @@ namespace Lykke.Service.IcoApi.Services
         {
             try
             {
-                var kycRequestId = Guid.NewGuid().ToString();
+                var kycId = Guid.NewGuid().ToString();
 
                 await _log.WriteInfoAsync(nameof(SaveInvestorKyc),
-                    $"email: {email}, kycRequestId: {kycRequestId}",
+                    $"email: {email}, kycId: {kycId}",
                     $"Save KYC request info");
 
-                await _investorRepository.SaveKycAsync(email, kycRequestId);
+                await _investorRepository.SaveKycAsync(email, kycId);
+                await _investorAttributeRepository.SaveAsync(InvestorAttributeType.KycId, email, kycId);
 
-                return kycRequestId;
+                return kycId;
             }
             catch (Exception ex)
             {

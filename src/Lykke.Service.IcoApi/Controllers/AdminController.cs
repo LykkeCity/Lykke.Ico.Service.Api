@@ -1,5 +1,6 @@
 ﻿using Common;
 using Common.Log;
+using CsvHelper;
 using Lykke.Service.IcoApi.Core.Domain.Campaign;
 using Lykke.Service.IcoApi.Core.Domain.Investor;
 using Lykke.Service.IcoApi.Core.Domain.Token;
@@ -18,6 +19,7 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Lykke.Service.IcoApi.Controllers
@@ -303,6 +305,66 @@ namespace Lykke.Service.IcoApi.Controllers
         public async Task<InvestorTransactionsResponse> GetLatestTransactions()
         {
             return InvestorTransactionsResponse.Create(await _adminService.GetLatestTransactions());
+        }
+
+        /// <summary>
+        /// Returns all investors in csv format
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("reports/csv/investors")]
+        public async Task<FileContentResult> GetAllInvestorsCsv()
+        {
+            var investors = await _adminService.GetAllInvestors();
+            var records = investors.Select(f => FullInvestorResponse.Create(f));
+
+            using (var writer = new StringWriter())
+            {
+                var scv = new CsvWriter(writer);
+
+                scv.WriteRecords(records);
+
+                return File(Encoding.UTF8.GetBytes(writer.ToString()), "text/csv", "investors.csv");
+            }
+        }
+
+        /// <summary>
+        /// Returns all transactions in csv format
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("reports/csv/transactions")]
+        public async Task<FileContentResult> GetAllTransactionsCsv()
+        {
+            var txs = await _adminService.GetAllInvestorTransactions();
+            var response = InvestorTransactionsResponse.Create(txs);
+
+            using (var writer = new StringWriter())
+            {
+                var scv = new CsvWriter(writer);
+
+                scv.WriteRecords(response.Transactions);
+
+                return File(Encoding.UTF8.GetBytes(writer.ToString()), "text/csv", "transactions.csv");
+            }
+        }
+
+        /// <summary>
+        /// Returns all failed transactions in csv format
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("reports/csv/transactions/failed")]
+        public async Task<FileContentResult> GetAllFailedTransactionsCsv()
+        {
+            var txs = await _adminService.GetAllInvestorFailedTransactions();
+            var response = InvestorFailedTransactionsResponse.Create(txs);
+
+            using (var writer = new StringWriter())
+            {
+                var scv = new CsvWriter(writer);
+
+                scv.WriteRecords(response.Items);
+
+                return File(Encoding.UTF8.GetBytes(writer.ToString()), "text/csv", "transactions-failed.csv");
+            }
         }
 
         /// <summary>
