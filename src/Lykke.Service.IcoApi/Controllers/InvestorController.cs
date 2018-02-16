@@ -191,33 +191,33 @@ namespace Lykke.Service.IcoApi.Controllers
             return Ok();
         }
 
-        /// <summary>
-        /// Charge investor card
-        /// </summary>
-        [HttpPost]
-        [InvestorAuth]
-        [Route("charge")]
-        [ProducesResponseType(typeof(ChargeInvestorResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> ChargeInvestor([FromBody] ChargeInvestorRequest model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        ///// <summary>
+        ///// Charge investor card
+        ///// </summary>
+        //[HttpPost]
+        //[InvestorAuth]
+        //[Route("charge")]
+        //[ProducesResponseType(typeof(ChargeInvestorResponse), (int)HttpStatusCode.OK)]
+        //[ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
+        //public async Task<IActionResult> ChargeInvestor([FromBody] ChargeInvestorRequest model)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
 
-            var email = GetAuthUserEmail();
+        //    var email = GetAuthUserEmail();
 
-            await _log.WriteInfoAsync(
-                nameof(InvestorController),
-                nameof(ChargeInvestor),
-                $"email={email}, ip={GetRequestIP()}, model={model.ToJson()}",
-                "Charge investor card");
+        //    await _log.WriteInfoAsync(
+        //        nameof(InvestorController),
+        //        nameof(ChargeInvestor),
+        //        $"email={email}, ip={GetRequestIP()}, model={model.ToJson()}",
+        //        "Charge investor card");
 
-            var result = await _fiatService.Charge(email, model.Token, model.Amount);
+        //    var result = await _fiatService.Charge(email, model.Token, model.Amount);
 
-            return Ok(ChargeInvestorResponse.Create(result));
-        }
+        //    return Ok(ChargeInvestorResponse.Create(result));
+        //}
 
         private string GetAuthUserEmail()
         {
