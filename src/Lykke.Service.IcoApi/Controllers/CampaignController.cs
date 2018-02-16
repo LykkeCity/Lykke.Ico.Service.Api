@@ -69,6 +69,7 @@ namespace Lykke.Service.IcoApi.Controllers
 
             return new CampaignResponse
             {
+                HardCapUsd = settings.HardCapUsd,
                 InvestedUsd = investedUsd,
                 TokensTotal = settings.GetTotalTokensAmount(),
                 TokensSold = tokensSold,

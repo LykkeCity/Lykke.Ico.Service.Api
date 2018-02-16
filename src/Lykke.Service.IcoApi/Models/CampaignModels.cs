@@ -4,6 +4,8 @@ namespace Lykke.Service.IcoApi.Models
 {
     public class CampaignResponse
     {
+        public decimal HardCapUsd { get; set; }
+
         public decimal InvestedUsd { get; set; }
 
         public int TokensTotal { get; set; }

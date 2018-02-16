@@ -261,6 +261,9 @@ namespace Lykke.Service.IcoApi.Models
         public decimal MinInvestAmountUsd { get; set; }
 
         [Required]
+        public decimal HardCapUsd { get; set; }
+
+        [Required]
         public bool KycEnableRequestSending { get; set; }
 
         [Required]
@@ -293,6 +296,7 @@ namespace Lykke.Service.IcoApi.Models
                 TokenBasePriceUsd = settings.TokenBasePriceUsd,
                 TokenDecimals = settings.TokenDecimals,
                 MinInvestAmountUsd = settings.MinInvestAmountUsd,
+                HardCapUsd = settings.HardCapUsd,
                 KycEnableRequestSending = settings.KycEnableRequestSending,
                 KycCampaignId = settings.KycCampaignId,
                 KycLinkTemplate = settings.KycLinkTemplate,
