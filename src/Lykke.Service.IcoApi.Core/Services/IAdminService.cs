@@ -14,7 +14,6 @@ namespace Lykke.Service.IcoApi.Core.Services
         Task<IEnumerable<IInvestorTransaction>> GetAllInvestorTransactions();
         Task<IEnumerable<IInvestorRefund>> GetAllInvestorFailedTransactions();
         Task<IEnumerable<IInvestorHistoryItem>> GetInvestorHistory(string email);
-        Task<IEnumerable<IInvestorEmail>> GetInvestorEmails(string email);
         Task DeleteInvestorAsync(string email);
         Task DeleteInvestorAllDataAsync(string email);
         Task<int> ImportPublicKeys(StreamReader reader);

@@ -5,9 +5,11 @@ using Lykke.Service.IcoApi.Core.Domain.Campaign;
 using Lykke.Service.IcoApi.Core.Domain.Investor;
 using Lykke.Service.IcoApi.Core.Domain.Token;
 using Lykke.Service.IcoApi.Core.Services;
+using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
 using Lykke.Service.IcoApi.Infrastructure;
 using Lykke.Service.IcoApi.Models;
 using Lykke.Service.IcoApi.Services.Extensions;
+using Lykke.Service.IcoCommon.Client;
 using Lykke.Service.IcoExRate.Client;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -38,12 +40,14 @@ namespace Lykke.Service.IcoApi.Controllers
         private readonly IKycService _kycService;
         private readonly ICampaignService _campaignService;
         private readonly IMemoryCache _cache;
-
+        private readonly IcoApiSettings _settings;
+        private readonly IIcoCommonServiceClient _icoCommonServiceClient;
 
         public AdminController(ILog log, IInvestorService investorService, IAdminService adminService, 
             IBtcService btcService, IEthService ethService, IIcoExRateClient icoExRateClient,
             IPrivateInvestorService privateInvestorService, IKycService kycService,
-            ICampaignService campaignService, IMemoryCache cache)
+            ICampaignService campaignService, IMemoryCache cache, IcoApiSettings settings, 
+            IIcoCommonServiceClient icoCommonServiceClient)
         {
             _log = log;
             _investorService = investorService;
@@ -55,6 +59,8 @@ namespace Lykke.Service.IcoApi.Controllers
             _kycService = kycService;
             _campaignService = campaignService;
             _cache = cache;
+            _settings = settings;
+            _icoCommonServiceClient = icoCommonServiceClient;
         }
 
         /// <summary>
@@ -215,7 +221,11 @@ namespace Lykke.Service.IcoApi.Controllers
         [HttpGet("investors/{email}/emails")]
         public async Task<InvestorEmailsResponse> GetInvestorEmails([Required] string email)
         {
-            return InvestorEmailsResponse.Create(await _adminService.GetInvestorEmails(email));
+            email = email.ToLowCase();
+
+            var emails = await _icoCommonServiceClient.GetSentEmailsAsync(email, _settings.CampaignId);
+
+            return InvestorEmailsResponse.Create(emails);
         }
 
         /// <summary>

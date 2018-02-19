@@ -15,6 +15,8 @@ using Lykke.Service.IcoApi.Core.Domain.Campaign;
 using Lykke.Service.IcoApi.Core.Domain.Investor;
 using Lykke.Service.IcoApi.Core.Domain;
 using Lykke.Service.IcoApi.Core.Domain.AddressPool;
+using Lykke.Service.IcoCommon.Client;
+using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
 
 namespace Lykke.Service.IcoApi.Services
 {
@@ -131,17 +133,9 @@ namespace Lykke.Service.IcoApi.Services
         {
             email = email.ToLowCase();
 
-            await _investorEmailRepositoryy.RemoveAsync(email);
             await _investorHistoryRepository.RemoveAsync(email);
             await _investorTransactionRepository.RemoveAsync(email);
             await _investorRefundRepository.RemoveAsync(email);
-        }
-
-        public async Task<IEnumerable<IInvestorEmail>> GetInvestorEmails(string email)
-        {
-            email = email.ToLowCase();
-
-            return await _investorEmailRepositoryy.GetAsync(email);
         }
 
         public async Task<IEnumerable<IInvestorTransaction>> GetInvestorTransactions(string email)

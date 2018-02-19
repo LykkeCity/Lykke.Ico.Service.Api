@@ -29,6 +29,9 @@ namespace Lykke.Service.IcoApi.Modules
         {
             var connectionStringManager = _settings.ConnectionString(x => x.Db.IcoDataConnString);
 
+            builder.RegisterInstance(_settings.CurrentValue)
+                .SingleInstance();
+
             builder.RegisterType<HealthService>()
                 .As<IHealthService>()
                 .SingleInstance();
@@ -105,7 +108,6 @@ namespace Lykke.Service.IcoApi.Modules
 
             builder.RegisterType<InvestorService>()
                 .As<IInvestorService>()
-                .WithParameter(TypedParameter.From(_settings.CurrentValue))
                 .SingleInstance();
 
             builder.RegisterType<AdminService>()
@@ -150,7 +152,6 @@ namespace Lykke.Service.IcoApi.Modules
 
             builder.RegisterType<TransactionService>()
                 .As<ITransactionService>()
-                .WithParameter(TypedParameter.From(_settings.CurrentValue))
                 .SingleInstance();
 
             builder.RegisterType<QueuePublisher<InvestorConfirmationMessage>>()

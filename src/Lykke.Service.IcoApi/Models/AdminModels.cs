@@ -118,7 +118,7 @@ namespace Lykke.Service.IcoApi.Models
     {
         public InvestorEmailModel[] Emails { get; set; }
 
-        public static InvestorEmailsResponse Create(IEnumerable<IInvestorEmail> emails)
+        public static InvestorEmailsResponse Create(IEnumerable<IcoCommon.Client.Models.EmailModel> emails)
         {
             return new InvestorEmailsResponse { Emails = emails.Select(f => InvestorEmailModel.Create(f)).ToArray() };
         }
@@ -136,15 +136,15 @@ namespace Lykke.Service.IcoApi.Models
 
         public string Body { get; set; }
 
-        public static InvestorEmailModel Create(IInvestorEmail item)
+        public static InvestorEmailModel Create(IcoCommon.Client.Models.EmailModel email)
         {
             return new InvestorEmailModel
             {
-                Email = item.Email,
-                WhenUtc = item.WhenUtc,
-                Type = item.Type,
-                Subject = item.Subject,
-                Body = item.Body
+                Email = email.To,
+                WhenUtc = email.SentUtc,
+                Type = email.TemplateId,
+                Subject = email.Subject,
+                Body = email.Body
             };
         }
     }
