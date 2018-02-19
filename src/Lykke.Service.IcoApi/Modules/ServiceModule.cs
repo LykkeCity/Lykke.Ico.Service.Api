@@ -150,7 +150,7 @@ namespace Lykke.Service.IcoApi.Modules
 
             builder.RegisterType<TransactionService>()
                 .As<ITransactionService>()
-                .WithParameter("siteSummaryPageUrl", _settings.CurrentValue.SiteSummaryPageUrl)
+                .WithParameter(TypedParameter.From(_settings.CurrentValue))
                 .SingleInstance();
 
             builder.RegisterType<QueuePublisher<InvestorConfirmationMessage>>()

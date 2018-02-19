@@ -200,9 +200,18 @@ namespace Lykke.Service.IcoApi.Services
                 ConfirmationLink = _icoApiSettings.SiteEmailConfirmationPageUrl.Replace("{token}", token.ToString())
             };
 
-            await _log.WriteInfoAsync(nameof(InvestorService), nameof(SendConfirmationEmail), 
+            await _log.WriteInfoAsync(nameof(InvestorService), nameof(SendConfirmationEmail),
                 $"message={message.ToJson()}", "Send investor confirmation message");
-            await _investorConfirmationQueuePublisher.SendAsync(message);
+
+            await _icoCommonServiceClient.SendEmailAsync(new EmailDataModel
+            {
+                To = email,
+                TemplateId = "confirmation",
+                CampaignId = _icoApiSettings.CampaignId,
+                Data = message
+            });
+
+            //await _investorConfirmationQueuePublisher.SendAsync(message);
         }
 
         private async Task SendSummaryEmail(IInvestor investor)
@@ -218,9 +227,18 @@ namespace Lykke.Service.IcoApi.Services
                 LinkEthAddress = $"{_icoApiSettings.EthTrackerUrl}address"
             };
 
-            await _log.WriteInfoAsync(nameof(InvestorService), nameof(SendSummaryEmail), 
+            await _log.WriteInfoAsync(nameof(InvestorService), nameof(SendSummaryEmail),
                 $"message={message.ToJson()}", "Send investor summary message");
-            await _investorSummaryQueuePublisher.SendAsync(message);
+
+            await _icoCommonServiceClient.SendEmailAsync(new EmailDataModel
+            {
+                To = investor.Email,
+                TemplateId = "summary",
+                CampaignId = _icoApiSettings.CampaignId,
+                Data = message
+            });
+
+            //await _investorSummaryQueuePublisher.SendAsync(message);
         }
     }
 }

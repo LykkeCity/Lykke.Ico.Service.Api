@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 using Common.Log;
 using Lykke.Service.IcoExRate.Client;
 using Lykke.Service.IcoApi.Core.Repositories;
-using Lykke.Service.IcoApi.Core.Queues.Emails;
-using Lykke.Service.IcoApi.Core.Queues;
 using Lykke.Service.IcoApi.Core.Domain.Campaign;
 using Lykke.Service.IcoApi.Core.Domain.Investor;
 using Lykke.Service.IcoApi.Core.Services;
@@ -15,6 +13,10 @@ using Lykke.Service.IcoApi.Services;
 using Lykke.Service.IcoApi.Core.Queues.Transactions;
 using Lykke.Service.IcoApi.Core.Domain;
 using Common;
+using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
+using Lykke.Service.IcoCommon.Client;
+using System.Threading;
+using Lykke.Service.IcoCommon.Client.Models;
 
 namespace Lykke.Job.IcoInvestment.Tests
 {
@@ -28,7 +30,7 @@ namespace Lykke.Job.IcoInvestment.Tests
         private Mock<IInvestorTransactionRepository> _investorTransactionRepository;
         private Mock<IInvestorRefundRepository> _investorRefundRepository;
         private Mock<IInvestorRepository> _investorRepository;
-        private Mock<IQueuePublisher<InvestorNewTransactionMessage>> _investmentMailSender;
+        private Mock<IIcoCommonServiceClient> _icoCommonServiceClient;
         private ICampaignSettings _campaignSettings;
         private IInvestor _investor;
         private IInvestorTransaction _investorTransaction;
@@ -112,14 +114,18 @@ namespace Lykke.Job.IcoInvestment.Tests
                 .Setup(m => m.SaveAsync(It.IsAny<string>(), It.IsAny<InvestorRefundReason>(), It.IsAny<string>()))
                 .Returns(() => Task.CompletedTask);
 
-            _investmentMailSender = new Mock<IQueuePublisher<InvestorNewTransactionMessage>>();
+            _icoCommonServiceClient = new Mock<IIcoCommonServiceClient>();
 
-            _investmentMailSender
-                .Setup(m => m.SendAsync(It.IsAny<InvestorNewTransactionMessage>()))
+            _icoCommonServiceClient
+                .Setup(m => m.SendEmailAsync(It.IsAny<EmailDataModel>()))
                 .Returns(() => Task.CompletedTask);
 
             _urlEncryptionService = new UrlEncryptionService("E546C8DF278CD5931069B522E695D4F2", "1234567890123456");
             _kycService = new KycService(_campaignSettingsRepository.Object, _urlEncryptionService);
+
+            var settings = new IcoApiSettings {
+                SiteSummaryPageUrl = "http://test-ito.valid.global/summary/{token}/overview"
+            };
 
             return new TransactionService(
                 _log,
@@ -130,9 +136,9 @@ namespace Lykke.Job.IcoInvestment.Tests
                 _investorTransactionRepository.Object,
                 _investorRefundRepository.Object,
                 _investorRepository.Object,
-                _investmentMailSender.Object,
                 _kycService,
-                "http://test-ito.valid.global/summary/{token}/overview");
+                _icoCommonServiceClient.Object,
+                settings);
         }
 
         [Fact]
@@ -149,7 +155,7 @@ namespace Lykke.Job.IcoInvestment.Tests
             var uniqueId = "testTransaction";
             var testEmail = "test@test.test";
             var testLink = "testLink";
-            var testCurrency = CurrencyType.Bitcoin;
+            var testCurrency = Service.IcoApi.Core.Domain.CurrencyType.Bitcoin;
             var svc = Init(testEmail, Decimal.ToDouble(testExchangeRate));
 
             // Act
@@ -172,7 +178,8 @@ namespace Lykke.Job.IcoInvestment.Tests
             _investorTransactionRepository.Verify(m => m.SaveAsync(It.IsAny<IInvestorTransaction>()));
 
             // Mail sent
-            _investmentMailSender.Verify(m => m.SendAsync(It.Is<InvestorNewTransactionMessage>(msg => msg.EmailTo == testEmail)));
+            _icoCommonServiceClient.Verify(m => m.SendEmailAsync(
+                It.Is<Service.IcoCommon.Client.Models.EmailDataModel>(msg => msg.To == testEmail)));
 
             // Total amount incremented
             _campaignInfoRepository.Verify(m => m.IncrementValue(

@@ -17,6 +17,8 @@ using Lykke.Service.IcoApi.Core.Domain.Investor;
 using Lykke.Service.IcoApi.Services.Helpers;
 using Lykke.Service.IcoApi.Core.Domain;
 using Lykke.Service.IcoExRate.Client.AutorestClient.Models;
+using Lykke.Service.IcoCommon.Client;
+using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
 
 namespace Lykke.Service.IcoApi.Services
 {
@@ -30,9 +32,9 @@ namespace Lykke.Service.IcoApi.Services
         private readonly IInvestorTransactionRepository _investorTransactionRepository;
         private readonly IInvestorRefundRepository _investorRefundRepository;
         private readonly IInvestorRepository _investorRepository;
-        private readonly IQueuePublisher<InvestorNewTransactionMessage> _investmentMailSender;
         private readonly IKycService _kycService;
-        private readonly string _siteSummaryPageUrl;
+        private readonly IIcoCommonServiceClient _icoCommonServiceClient;
+        private readonly IcoApiSettings _icoApiSettings;
 
         public TransactionService(
             ILog log,
@@ -43,9 +45,9 @@ namespace Lykke.Service.IcoApi.Services
             IInvestorTransactionRepository investorTransactionRepository,
             IInvestorRefundRepository investorRefundRepository,
             IInvestorRepository investorRepository,
-            IQueuePublisher<InvestorNewTransactionMessage> investmentMailSender,
             IKycService kycService,
-            string siteSummaryPageUrl)
+            IIcoCommonServiceClient icoCommonServiceClient,
+            IcoApiSettings icoApiSettings)
         {
             _log = log;
             _exRateClient = exRateClient;
@@ -55,9 +57,9 @@ namespace Lykke.Service.IcoApi.Services
             _investorTransactionRepository = investorTransactionRepository;
             _investorRefundRepository = investorRefundRepository;
             _investorRepository = investorRepository;
-            _investmentMailSender = investmentMailSender;
             _kycService = kycService;
-            _siteSummaryPageUrl = siteSummaryPageUrl;
+            _icoCommonServiceClient = icoCommonServiceClient;
+            _icoApiSettings = icoApiSettings;
         }
 
         public async Task Process(TransactionMessage msg)
@@ -253,6 +255,8 @@ namespace Lykke.Service.IcoApi.Services
             try
             {
                 var investor = await _investorRepository.GetAsync(tx.Email);
+                var linkToSummaryPage = _icoApiSettings.SiteSummaryPageUrl.Replace("{token}", 
+                    investor.ConfirmationToken.Value.ToString());
 
                 var message = new InvestorNewTransactionMessage
                 {
@@ -264,7 +268,7 @@ namespace Lykke.Service.IcoApi.Services
                     TransactionAmountToken = tx.AmountToken.RoundDown(4),
                     TransactionFee = tx.Fee,
                     TransactionAsset = tx.Currency.ToAssetName(),
-                    LinkToSummaryPage = _siteSummaryPageUrl.Replace("{token}", investor.ConfirmationToken.Value.ToString()),
+                    LinkToSummaryPage = linkToSummaryPage,
                     LinkTransactionDetails = link,
                     MinAmount = settings.MinInvestAmountUsd,
                     MoreInvestmentRequired = investor.AmountUsd < settings.MinInvestAmountUsd
@@ -285,7 +289,15 @@ namespace Lykke.Service.IcoApi.Services
                     $"message: {message.ToJson()}",
                     $"Send transaction confirmation message to queue");
 
-                await _investmentMailSender.SendAsync(message);
+                await _icoCommonServiceClient.SendEmailAsync(new IcoCommon.Client.Models.EmailDataModel
+                {
+                    To = tx.Email,
+                    TemplateId = "new-transaction",
+                    CampaignId = _icoApiSettings.CampaignId,
+                    Data = message
+                });
+
+                //await _investmentMailSender.SendAsync(message);
             }
             catch (Exception ex)
             {
