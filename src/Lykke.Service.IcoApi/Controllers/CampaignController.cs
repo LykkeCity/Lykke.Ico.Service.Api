@@ -55,7 +55,7 @@ namespace Lykke.Service.IcoApi.Controllers
                 campaignActive = true;
             }
             if (settings.IsCrowdSale(now) &&
-                !failedTxs.Any(f => f.Reason == InvestorRefundReason.TokensSoldOut))
+                !failedTxs.Any(f => f.Reason == InvestorRefundReason.TokensSoldOut || f.Reason == InvestorRefundReason.HardCapUsdExceeded))
             {
                 campaignActive = true;
             }
@@ -69,10 +69,7 @@ namespace Lykke.Service.IcoApi.Controllers
 
             return new CampaignResponse
             {
-                HardCapUsd = settings.HardCapUsd,
                 InvestedUsd = investedUsd,
-                TokensTotal = settings.GetTotalTokensAmount(),
-                TokensSold = tokensSold,
                 TokenPriceUsd = tokenInfo.Price,
                 Phase = tokenInfo.Phase,
                 CaptchaEnabled = settings.CaptchaEnable,
