@@ -1,11 +1,8 @@
-﻿using Lykke.Service.IcoApi.Core.Domain;
-
+﻿
 namespace Lykke.Service.IcoApi.Core.Queues.Emails
 {
-    [QueueMessage(QueueName = Consts.Emails.Queues.InvestorNewTransaction)]
-    public class InvestorNewTransactionMessage : IInvestorMessage
+    public class InvestorNewTransactionMessage
     {
-        public string EmailTo { get; set; }
         public string LinkToSummaryPage { get; set; }
         public string LinkTransactionDetails { get; set; }
         public bool KycRequired { get; set; }

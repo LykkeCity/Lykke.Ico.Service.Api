@@ -25,8 +25,6 @@ namespace Lykke.Service.IcoApi.Services
         private readonly IAddressPoolRepository _addressPoolRepository;
         private readonly ICampaignInfoRepository _campaignInfoRepository;
         private readonly IIcoCommonServiceClient _icoCommonServiceClient;
-        private readonly IQueuePublisher<InvestorConfirmationMessage> _investorConfirmationQueuePublisher;
-        private readonly IQueuePublisher<InvestorSummaryMessage> _investorSummaryQueuePublisher;
         private readonly IcoApiSettings _icoApiSettings;
 
         public InvestorService(ILog log,
@@ -37,8 +35,6 @@ namespace Lykke.Service.IcoApi.Services
             IAddressPoolRepository addressPoolRepository,
             ICampaignInfoRepository campaignInfoRepository,
             IIcoCommonServiceClient icoCommonServiceClient,
-            IQueuePublisher<InvestorConfirmationMessage> investorConfirmationQueuePublisher,
-            IQueuePublisher<InvestorSummaryMessage> investorSummaryQueuePublisher,
             IcoApiSettings icoApiSettings)
         {
             _log = log;
@@ -49,8 +45,6 @@ namespace Lykke.Service.IcoApi.Services
             _addressPoolRepository = addressPoolRepository;
             _campaignInfoRepository = campaignInfoRepository;
             _icoCommonServiceClient = icoCommonServiceClient;
-            _investorConfirmationQueuePublisher = investorConfirmationQueuePublisher;
-            _investorSummaryQueuePublisher = investorSummaryQueuePublisher;
             _icoApiSettings = icoApiSettings;
         }
 
@@ -196,7 +190,6 @@ namespace Lykke.Service.IcoApi.Services
         {
             var message = new InvestorConfirmationMessage
             {
-                EmailTo = email,
                 ConfirmationLink = _icoApiSettings.SiteEmailConfirmationPageUrl.Replace("{token}", token.ToString())
             };
 
@@ -210,15 +203,12 @@ namespace Lykke.Service.IcoApi.Services
                 CampaignId = _icoApiSettings.CampaignId,
                 Data = message
             });
-
-            //await _investorConfirmationQueuePublisher.SendAsync(message);
         }
 
         private async Task SendSummaryEmail(IInvestor investor)
         {
             var message = new InvestorSummaryMessage
             {
-                EmailTo = investor.Email,
                 LinkToSummaryPage = _icoApiSettings.SiteSummaryPageUrl.Replace("{token}", investor.ConfirmationToken.Value.ToString()),
                 TokenAddress = investor.TokenAddress,
                 RefundBtcAddress = investor.RefundBtcAddress,
@@ -237,8 +227,6 @@ namespace Lykke.Service.IcoApi.Services
                 CampaignId = _icoApiSettings.CampaignId,
                 Data = message
             });
-
-            //await _investorSummaryQueuePublisher.SendAsync(message);
         }
     }
 }

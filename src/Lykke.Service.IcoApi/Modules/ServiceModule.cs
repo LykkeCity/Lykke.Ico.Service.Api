@@ -61,11 +61,6 @@ namespace Lykke.Service.IcoApi.Modules
                 .WithParameter(TypedParameter.From(connectionStringManager))
                 .SingleInstance();
 
-            builder.RegisterType<InvestorEmailRepository>()
-                .As<IInvestorEmailRepository>()
-                .WithParameter(TypedParameter.From(connectionStringManager))
-                .SingleInstance();
-
             builder.RegisterType<InvestorHistoryRepository>()
                 .As<IInvestorHistoryRepository>()
                 .WithParameter(TypedParameter.From(connectionStringManager))
@@ -153,20 +148,6 @@ namespace Lykke.Service.IcoApi.Modules
             builder.RegisterType<TransactionService>()
                 .As<ITransactionService>()
                 .SingleInstance();
-
-            builder.RegisterType<QueuePublisher<InvestorConfirmationMessage>>()
-                .As<IQueuePublisher<InvestorConfirmationMessage>>()
-                .WithParameter(TypedParameter.From(connectionStringManager))
-                .SingleInstance();
-
-            builder.RegisterType<QueuePublisher<InvestorSummaryMessage>>()
-                .As<IQueuePublisher<InvestorSummaryMessage>>()
-                .WithParameter(TypedParameter.From(connectionStringManager))
-                .SingleInstance();
-
-            builder.RegisterType<QueuePublisher<InvestorNewTransactionMessage>>()
-                .As<IQueuePublisher<InvestorNewTransactionMessage>>()
-                .WithParameter(TypedParameter.From(connectionStringManager));
 
             builder.RegisterType<QueuePublisher<TransactionMessage>>()
                 .As<IQueuePublisher<TransactionMessage>>()

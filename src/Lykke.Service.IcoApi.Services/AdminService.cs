@@ -15,8 +15,6 @@ using Lykke.Service.IcoApi.Core.Domain.Campaign;
 using Lykke.Service.IcoApi.Core.Domain.Investor;
 using Lykke.Service.IcoApi.Core.Domain;
 using Lykke.Service.IcoApi.Core.Domain.AddressPool;
-using Lykke.Service.IcoCommon.Client;
-using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
 
 namespace Lykke.Service.IcoApi.Services
 {
@@ -29,7 +27,6 @@ namespace Lykke.Service.IcoApi.Services
         private readonly IInvestorTransactionRepository _investorTransactionRepository;
         private readonly IInvestorRefundRepository _investorRefundRepository;
         private readonly IInvestorAttributeRepository _investorAttributeRepository;
-        private readonly IInvestorEmailRepository _investorEmailRepositoryy;
         private readonly IInvestorHistoryRepository _investorHistoryRepository;
         private readonly ICampaignInfoRepository _campaignInfoRepository;
         private readonly IAddressPoolHistoryRepository _addressPoolHistoryRepository;
@@ -44,7 +41,6 @@ namespace Lykke.Service.IcoApi.Services
             IInvestorTransactionRepository investorTransactionRepository,
             IInvestorRefundRepository investorRefundRepository,
             IInvestorAttributeRepository investorAttributeRepository,
-            IInvestorEmailRepository emailHistoryRepository,
             IInvestorHistoryRepository investorHistoryRepository,
             IAddressPoolHistoryRepository addressPoolHistoryRepository,
             ICampaignInfoRepository campaignInfoRepository,
@@ -58,7 +54,6 @@ namespace Lykke.Service.IcoApi.Services
             _investorRepository = investorRepository;
             _investorAttributeRepository = investorAttributeRepository;
             _investorHistoryRepository = investorHistoryRepository;
-            _investorEmailRepositoryy = emailHistoryRepository;
             _addressPoolHistoryRepository = addressPoolHistoryRepository;
             _campaignInfoRepository = campaignInfoRepository;
             _addressPoolRepository = addressPoolRepository;

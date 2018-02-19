@@ -260,7 +260,6 @@ namespace Lykke.Service.IcoApi.Services
 
                 var message = new InvestorNewTransactionMessage
                 {
-                    EmailTo = tx.Email,
                     InvestedAmountUsd = investor.AmountUsd.RoundDown(2),
                     InvestedAmountToken = investor.AmountToken.RoundDown(4),
                     TransactionAmount = tx.Amount,
@@ -296,8 +295,6 @@ namespace Lykke.Service.IcoApi.Services
                     CampaignId = _icoApiSettings.CampaignId,
                     Data = message
                 });
-
-                //await _investmentMailSender.SendAsync(message);
             }
             catch (Exception ex)
             {
