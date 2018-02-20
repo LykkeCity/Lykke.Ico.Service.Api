@@ -12,12 +12,12 @@ namespace Lykke.Job.IcoInvestment.AzureQueueHandlers
     public class TransactionQueueHandler
     {
         private ILog _log;
-        private ITransactionService _blockchainTxService;
+        private ITransactionService _transactionService;
 
-        public TransactionQueueHandler(ILog log, ITransactionService blockchainTxService)
+        public TransactionQueueHandler(ILog log, ITransactionService transactionService)
         {
             _log = log;
-            _blockchainTxService = blockchainTxService;
+            _transactionService = transactionService;
         }
         
         [QueueTrigger(Consts.Transactions.Queues.Investor)]
@@ -25,7 +25,7 @@ namespace Lykke.Job.IcoInvestment.AzureQueueHandlers
         {
             try
             {
-                await _blockchainTxService.Process(msg);
+                await _transactionService.Process(msg);
             }
             catch (Exception ex)
             {
