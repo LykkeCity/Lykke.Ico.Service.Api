@@ -1,5 +1,4 @@
-﻿
-namespace Lykke.Service.IcoApi.Core.Queues.Emails
+﻿namespace Lykke.Service.IcoApi.Core.Emails
 {
     public class InvestorNewTransactionMessage
     {

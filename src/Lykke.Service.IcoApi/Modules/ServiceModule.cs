@@ -2,7 +2,6 @@
 using Common.Log;
 using Lykke.JobTriggers.Extenstions;
 using Lykke.Service.IcoApi.Core.Queues;
-using Lykke.Service.IcoApi.Core.Queues.Emails;
 using Lykke.Service.IcoApi.Core.Queues.Transactions;
 using Lykke.Service.IcoApi.Core.Repositories;
 using Lykke.Service.IcoApi.Core.Services;

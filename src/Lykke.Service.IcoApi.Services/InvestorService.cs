@@ -8,8 +8,7 @@ using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
 using Lykke.Service.IcoCommon.Client;
 using Lykke.Service.IcoCommon.Client.Models;
 using Lykke.Service.IcoApi.Core.Repositories;
-using Lykke.Service.IcoApi.Core.Queues;
-using Lykke.Service.IcoApi.Core.Queues.Emails;
+using Lykke.Service.IcoApi.Core.Emails;
 using Lykke.Service.IcoApi.Core.Domain.Investor;
 using Lykke.Service.IcoApi.Core.Domain.Campaign;
 
