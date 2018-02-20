@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Common.Log;
+using Lykke.Job.IcoInvestment.AzureQueueHandlers;
 using Lykke.JobTriggers.Extenstions;
 using Lykke.Service.IcoApi.Core.Queues;
 using Lykke.Service.IcoApi.Core.Queues.Messages;
@@ -27,6 +28,8 @@ namespace Lykke.Service.IcoApi.Modules
         protected override void Load(ContainerBuilder builder)
         {
             var connectionStringManager = _settings.ConnectionString(x => x.Db.IcoDataConnString);
+
+            TransactionQueueTriggerAttribute.CampaignId = _settings.CurrentValue.CampaignId;
 
             builder.RegisterInstance(_settings.CurrentValue)
                 .SingleInstance();

@@ -1,9 +1,8 @@
-﻿using System.Threading.Tasks;
-using Common.Log;
-using System;
+﻿using System;
+using System.Threading.Tasks;
 using Common;
+using Common.Log;
 using Lykke.Service.IcoApi.Core.Services;
-using Lykke.Service.IcoApi.Core.Domain;
 using Lykke.Service.IcoApi.Core.Queues.Messages;
 using Lykke.JobTriggers.Triggers.Attributes;
 
@@ -20,7 +19,7 @@ namespace Lykke.Job.IcoInvestment.AzureQueueHandlers
             _transactionService = transactionService;
         }
         
-        [QueueTrigger(Consts.Transactions.Queues.Investor)]
+        [TransactionQueueTrigger(30000)]
         public async Task HandleTransactionMessage(TransactionMessage msg)
         {
             try
@@ -35,6 +34,17 @@ namespace Lykke.Job.IcoInvestment.AzureQueueHandlers
 
                 throw;
             }
+        }
+    }
+
+    public class TransactionQueueTriggerAttribute : QueueTriggerAttribute
+    {
+        public static string CampaignId { set; get; }
+
+        public TransactionQueueTriggerAttribute(int maxPoolingIntervalMs = -1)
+            : base($"{CampaignId}-transaction", maxPoolingIntervalMs)
+        {
+
         }
     }
 }   
