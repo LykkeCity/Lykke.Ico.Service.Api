@@ -1,10 +1,9 @@
 ﻿using Lykke.Service.IcoApi.Core.Domain;
 using System;
 
-namespace Lykke.Service.IcoApi.Core.Queues.Transactions
+namespace Lykke.Service.IcoApi.Core.Queues.Messages
 {
-    [QueueMessage(QueueName = Consts.Transactions.Queues.Investor)]
-    public class TransactionMessage : IMessage
+    public class TransactionMessage
     {
         public string Email { get; set; }
 

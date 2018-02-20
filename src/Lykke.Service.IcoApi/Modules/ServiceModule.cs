@@ -2,7 +2,7 @@
 using Common.Log;
 using Lykke.JobTriggers.Extenstions;
 using Lykke.Service.IcoApi.Core.Queues;
-using Lykke.Service.IcoApi.Core.Queues.Transactions;
+using Lykke.Service.IcoApi.Core.Queues.Messages;
 using Lykke.Service.IcoApi.Core.Repositories;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Services;
@@ -150,7 +150,8 @@ namespace Lykke.Service.IcoApi.Modules
 
             builder.RegisterType<QueuePublisher<TransactionMessage>>()
                 .As<IQueuePublisher<TransactionMessage>>()
-                .WithParameter(TypedParameter.From(connectionStringManager))
+                .WithParameter("connectionStringManager", connectionStringManager)
+                .WithParameter("queueName", $"{_settings.CurrentValue.CampaignId.ToLower()}-transaction")
                 .SingleInstance();
 
             builder.AddTriggers(

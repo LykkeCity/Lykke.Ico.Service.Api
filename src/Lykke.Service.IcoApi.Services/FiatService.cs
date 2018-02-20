@@ -3,7 +3,7 @@ using Common.Log;
 using Lykke.Service.IcoApi.Core.Domain;
 using Lykke.Service.IcoApi.Core.Domain.Fiat;
 using Lykke.Service.IcoApi.Core.Queues;
-using Lykke.Service.IcoApi.Core.Queues.Transactions;
+using Lykke.Service.IcoApi.Core.Queues.Messages;
 using Lykke.Service.IcoApi.Core.Services;
 using Stripe;
 using System;

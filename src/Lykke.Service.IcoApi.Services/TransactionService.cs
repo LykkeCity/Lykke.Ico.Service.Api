@@ -9,7 +9,7 @@ using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoExRate.Client;
 using Lykke.Service.IcoApi.Core.Repositories;
 using Lykke.Service.IcoApi.Core.Emails;
-using Lykke.Service.IcoApi.Core.Queues.Transactions;
+using Lykke.Service.IcoApi.Core.Queues.Messages;
 using Lykke.Service.IcoApi.Core.Domain.Campaign;
 using Lykke.Service.IcoApi.Services.Extensions;
 using Lykke.Service.IcoApi.Core.Domain.Investor;

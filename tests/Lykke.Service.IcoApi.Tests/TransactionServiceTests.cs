@@ -10,12 +10,10 @@ using Lykke.Service.IcoApi.Core.Domain.Investor;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoExRate.Client.AutorestClient.Models;
 using Lykke.Service.IcoApi.Services;
-using Lykke.Service.IcoApi.Core.Queues.Transactions;
-using Lykke.Service.IcoApi.Core.Domain;
+using Lykke.Service.IcoApi.Core.Queues.Messages;
 using Common;
 using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
 using Lykke.Service.IcoCommon.Client;
-using System.Threading;
 using Lykke.Service.IcoCommon.Client.Models;
 
 namespace Lykke.Job.IcoInvestment.Tests

@@ -4,7 +4,7 @@ using System;
 using Common;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Core.Domain;
-using Lykke.Service.IcoApi.Core.Queues.Transactions;
+using Lykke.Service.IcoApi.Core.Queues.Messages;
 using Lykke.JobTriggers.Triggers.Attributes;
 
 namespace Lykke.Job.IcoInvestment.AzureQueueHandlers
