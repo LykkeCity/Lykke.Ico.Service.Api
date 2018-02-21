@@ -13,6 +13,7 @@ namespace Lykke.Service.IcoApi.Core.Services
         Task<string> GetEmailByKycId(Guid kycId);
         Task RequestKycAsync(string email);
         Task SaveKycResultAsync(string email, string kycStatus);
+        Task SaveManualKycResultAsync(string email, bool? kycPassed);
         Task RemoveAsync(string email, string kycId);
     }
 }
