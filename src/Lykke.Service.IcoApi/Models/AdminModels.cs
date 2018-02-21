@@ -174,6 +174,8 @@ namespace Lykke.Service.IcoApi.Models
     {
         public string Email { get; set; }
 
+        public DateTime ProcessedUtc { get; set; }
+
         public string UniqueId { get; set; }
 
         public string TransactionId { get; set; }
@@ -203,6 +205,7 @@ namespace Lykke.Service.IcoApi.Models
             return new InvestorTransactionModel
             {
                 Email = item.Email,
+                ProcessedUtc = item.ProcessedUtc,
                 UniqueId = item.UniqueId,
                 CreatedUtc = item.CreatedUtc,
                 Currency = item.Currency,

@@ -4,6 +4,7 @@ using Lykke.Ico.Core.Repositories.PrivateInvestor;
 using Lykke.Ico.Core.Repositories.PrivateInvestorAttribute;
 using Lykke.Service.IcoApi.Core.Services;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Lykke.Service.IcoApi.Services
@@ -21,6 +22,11 @@ namespace Lykke.Service.IcoApi.Services
             _log = log;
             _privateInvestorRepository = privateInvestorRepository;
             _privateInvestorAttributeRepository = privateInvestorAttributeRepository;
+        }
+
+        public async Task<IEnumerable<IPrivateInvestor>> GetAllAsync()
+        {
+            return await _privateInvestorRepository.GetAllAsync();
         }
 
         public async Task<IPrivateInvestor> GetAsync(string email)

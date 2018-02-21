@@ -234,6 +234,28 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
+        /// Returns private or regular investor email by KycId
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("investors/kycId/equals/{kycId}")]
+        public async Task<IActionResult> GetInvestorByKycId([Required] Guid kycId)
+        {
+            var privateInvestorEmail = await _privateInvestorService.GetEmailByKycId(kycId);
+            if (!string.IsNullOrEmpty(privateInvestorEmail))
+            {
+                return Ok(new { type = "private", email = privateInvestorEmail });
+            }
+
+            var investorEmail = await _investorService.GetEmailByKycId(kycId);
+            if (!string.IsNullOrEmpty(investorEmail))
+            {
+                return Ok(new { type = "regular", email = investorEmail });
+            }
+
+            return NotFound();
+        }
+
+        /// <summary>
         /// Returns the history of investor profile changes
         /// </summary>
         [AdminAuth]
@@ -415,6 +437,27 @@ namespace Lykke.Service.IcoApi.Controllers
                 scv.WriteRecords(records);
 
                 return File(Encoding.UTF8.GetBytes(writer.ToString()), "text/csv", "investors.csv");
+            }
+        }
+
+        /// <summary>
+        /// Returns all private investors in scv format
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("reports/csv/investors/private")]
+        public async Task<FileContentResult> GetAllPrivateInvestorsCsv()
+        {
+            var investors = await _privateInvestorService.GetAllAsync();
+            var records = investors.Select(f => 
+                PrivateInvestorResponse.Create(f, _kycService.GetKycLink(f.Email, f.KycRequestId).Result));
+
+            using (var writer = new StringWriter())
+            {
+                var scv = new CsvWriter(writer);
+
+                scv.WriteRecords(records);
+
+                return File(Encoding.UTF8.GetBytes(writer.ToString()), "text/csv", "private-investors.csv");
             }
         }
 
