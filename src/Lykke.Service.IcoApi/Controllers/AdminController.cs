@@ -23,6 +23,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using EmailTemplateModel = Lykke.Service.IcoCommon.Client.Models.EmailTemplateModel;
 
 namespace Lykke.Service.IcoApi.Controllers
 {
@@ -414,6 +415,17 @@ namespace Lykke.Service.IcoApi.Controllers
             {
                 await _adminService.ImportPublicKeys(reader);
             }
+        }
+
+        /// <summary>
+        /// Returns campaign email templates content.
+        /// </summary>
+        /// <returns></returns>
+        [AdminAuth]
+        [HttpGet("campaign/email/templates")]
+        public async Task<IList<EmailTemplateModel>> GetCampaignEmailTemplates()
+        {
+            return await _icoCommonServiceClient.GetCampaignEmailTemplatesAsync(_settings.CampaignId);
         }
     }
 }

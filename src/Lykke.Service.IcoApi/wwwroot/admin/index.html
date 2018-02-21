@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <base href="/admin/" />
+    <title>ICO API</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="lib/angular/angular-material.min.css" />
+    <link rel="stylesheet" href="content/css/site.css" />
+</head>
+<body ng-app="admin" layout="row" ng-cloak>
+
+    <md-sidenav class="md-sidenav-left" md-is-locked-open="true" md-whiteframe="4" style="width:164px;">
+        <md-toolbar layout-padding>
+            <strong>ICO API</strong>
+        </md-toolbar>
+        <md-content flex layout="column" style="background-color: #333; color: #fff;">
+            <md-list>
+                <md-list-item><a href="campaign-info">Info</a></md-list-item>
+                <md-list-item><a href="campaign-settings">Settings</a></md-list-item>
+                <md-list-item><a href="campaign-email-templates">Email Templates</a></md-list-item>
+                <md-icon>face</md-icon>
+            </md-list>
+        </md-content>
+    </md-sidenav>
+
+    <md-content flex layout="column">
+        <md-toolbar>
+        </md-toolbar>
+        <a href="campain-info">Info</a>
+        <ng-view></ng-view>
+    </md-content>
+
+
+    <script src="lib/angular/angular.min.js"></script>
+    <script src="lib/angular/angular-animate.min.js"></script>
+    <script src="lib/angular/angular-aria.min.js"></script>
+    <script src="lib/angular/angular-messages.min.js"></script>
+    <script src="lib/angular/angular-material.min.js"></script>
+    <script src="lib/angular/angular-route.min.js"></script>
+    <script src="index.js" type="module">
+    </script>
+</body>
+</html>
