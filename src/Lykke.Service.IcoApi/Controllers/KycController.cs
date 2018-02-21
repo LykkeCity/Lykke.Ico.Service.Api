@@ -1,4 +1,5 @@
-﻿using Common.Log;
+﻿using Common;
+using Common.Log;
 using Lykke.Ico.Core.Services;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Infrastructure;
@@ -80,6 +81,10 @@ namespace Lykke.Service.IcoApi.Controllers
             var privateInvestorEmail = await _privateInvestorService.GetEmailByKycId(kycMessage.KycId);
             if (!string.IsNullOrEmpty(privateInvestorEmail))
             {
+                await _log.WriteInfoAsync(nameof(KycController), nameof(SaveKycResults),
+                    $"privateInvestorEmail={privateInvestorEmail}, kycMessage={kycMessage.ToJson()}", 
+                    "Kyc result for private investor");
+
                 await _privateInvestorService.SaveKycResultAsync(privateInvestorEmail, kycMessage.KycStatus);
 
                 return Ok();
@@ -88,10 +93,17 @@ namespace Lykke.Service.IcoApi.Controllers
             var investorEmail = await _investorService.GetEmailByKycId(kycMessage.KycId);
             if (!string.IsNullOrEmpty(investorEmail))
             {
+                await _log.WriteInfoAsync(nameof(KycController), nameof(SaveKycResults),
+                    $"investorEmail={privateInvestorEmail}, kycMessage={kycMessage.ToJson()}",
+                    "Kyc result for investor");
+
                 await _investorService.SaveKycResultAsync(investorEmail, kycMessage.KycStatus);
 
                 return Ok();
-            }            
+            }
+
+            await _log.WriteInfoAsync(nameof(KycController), nameof(SaveKycResults),
+                $"kycMessage={kycMessage.ToJson()}", "Investor not found for provided KycId");
 
             return BadRequest($"Investor was not found for provided KycId={kycMessage.KycId}");
         }
