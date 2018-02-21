@@ -14,6 +14,12 @@ namespace Lykke.Service.IcoApi.Models
 
         public string KycLink { get; set; }
 
+        DateTime UpdatedUtc { get; set; }
+
+        public DateTime? KycPassedUtc { get; set; }
+
+        public DateTime? KycManuallyUpdatedUtc { get; set; }
+
         public static PrivateInvestorResponse Create(IPrivateInvestor investor, string kycLink)
         {
             var kycStatus = KycStatus.None;
@@ -31,7 +37,10 @@ namespace Lykke.Service.IcoApi.Models
                 Email = investor.Email,
                 KycId = investor.KycRequestId,
                 KycStatus = kycStatus,
-                KycLink = kycLink
+                KycLink = kycLink,
+                UpdatedUtc = investor.UpdatedUtc,
+                KycPassedUtc = investor.KycPassedUtc,
+                KycManuallyUpdatedUtc = investor.KycManuallyUpdatedUtc
             };
         }
     }
