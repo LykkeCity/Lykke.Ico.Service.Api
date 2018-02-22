@@ -1,3 +1,79 @@
 ﻿* {
     box-sizing: border-box;
 }
+
+#sidenav {
+    width: 48px;
+    background-color: #333;
+}
+
+#sidenav.expanded {
+    width: 320px;
+}
+
+#sidenav .logo {
+    height: 40px;
+}
+
+#sidenav > a {
+    display: block;
+    padding: 12px 0 12px 12px;
+    color: #bbb;
+    text-decoration: none;
+    vertical-align: middle;
+}
+
+#sidenav > a > md-icon {
+    color: #bbb;
+}
+
+#sidenav > a:hover {
+    color: #fff;
+}
+
+#sidenav > a:hover > md-icon {
+    color: #fff;
+}
+
+#sidenav > a.active {
+    color: #fff;
+}
+
+#sidenav > a.active > md-icon {
+    color: #fff;
+}
+
+#sidenav > a > .title {
+    display: none;
+}
+
+#sidenav.expanded > a > .title {
+    display: inline-block;
+}
+
+#sidenav > a > .arrow {
+    display: none;
+    float: right;
+    margin-top: 6px;
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-right: 6px solid #fafafa;
+}
+
+#sidenav > a.active > .arrow {
+    display: inline-block;
+}
+
+.grey {
+    background-color: #eee;
+}
+
+.no-margin {
+    margin: 0;
+}
+
+.no-padding {
+    padding: 0;
+}

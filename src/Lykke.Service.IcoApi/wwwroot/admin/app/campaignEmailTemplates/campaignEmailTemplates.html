@@ -1,3 +1,31 @@
-﻿<ul>
-    <li ng-repeat="t in vm.templates">{{t.campaignId}}/{{t.templateId}}</li>
-</ul>
+﻿<!--<md-toolbar>
+    <div class="md-toolbar-tools">
+        <h3 flex md-truncate>Email Templates</h3>
+    </div>
+</md-toolbar>-->
+<div flex layout="row">
+    <md-list flex="20" class="grey">
+        <md-list-item ng-repeat="t in vm.templates | orderBy:'templateId'" ng-click="vm.selectTemplate(t)" ng-class="{ selected: t == vm.template }">
+            {{t.templateId}}
+        </md-list-item>
+    </md-list>
+
+    <form flex="20" layout="column" layout-padding>
+
+        <md-input-container class="md-accent">
+            <label>TemplateId</label>
+            <input type="text" ng-model="vm.template.templateId" />
+        </md-input-container>
+        <md-input-container class="md-accent">
+            <label>Subject</label>
+            <input type="text" ng-model="vm.template.subject" />
+        </md-input-container>
+
+    </form>
+
+    <div flex="60" id="editor"></div>
+</div>
+
+<md-button class="md-fab" style="position:absolute; right:16px; top: 16px;" ng-click="vm.save()">
+    <md-icon>save</md-icon>
+</md-button>
