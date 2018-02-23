@@ -55,7 +55,15 @@ namespace Lykke.Service.IcoApi.Controllers
                 campaignActive = true;
             }
             if (settings.IsCrowdSale(now) &&
-                !failedTxs.Any(f => f.Reason == InvestorRefundReason.TokensSoldOut || f.Reason == InvestorRefundReason.HardCapUsdExceeded))
+                !failedTxs.Any(f => f.Reason == InvestorRefundReason.TokensSoldOut || f.Reason == InvestorRefundReason.HardCapUsdExceeded) &&
+                tokensSold < settings.GetTotalTokensAmount() &&
+                investedUsd < settings.HardCapUsd)
+            {
+                campaignActive = true;
+            }
+
+            var tokenInfo = settings.GetTokenInfo(tokensSold, DateTime.UtcNow);
+            if (tokenInfo != null)
             {
                 campaignActive = true;
             }
@@ -65,13 +73,11 @@ namespace Lykke.Service.IcoApi.Controllers
                 campaignActive = settings.EnableCampaignFrontEnd;
             }
 
-            var tokenInfo = settings.GetTokenInfo(tokensSold, DateTime.UtcNow);
-
             return new CampaignResponse
             {
                 InvestedUsd = investedUsd,
-                TokenPriceUsd = tokenInfo.Price,
-                Phase = tokenInfo.Phase,
+                TokenPriceUsd = tokenInfo?.Price,
+                Phase = tokenInfo?.Phase,
                 CaptchaEnabled = settings.CaptchaEnable,
                 CampaignActive = campaignActive
             };

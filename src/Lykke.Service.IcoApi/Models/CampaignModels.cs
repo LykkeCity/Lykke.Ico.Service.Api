@@ -6,9 +6,9 @@ namespace Lykke.Service.IcoApi.Models
     {
         public decimal InvestedUsd { get; set; }
 
-        public decimal TokenPriceUsd { get; set; }
+        public decimal? TokenPriceUsd { get; set; }
 
-        public TokenPricePhase Phase { get; set; }
+        public TokenPricePhase? Phase { get; set; }
 
         public bool CampaignActive { get; set; }
 
