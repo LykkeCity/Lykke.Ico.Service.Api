@@ -427,5 +427,25 @@ namespace Lykke.Service.IcoApi.Controllers
         {
             return await _icoCommonServiceClient.GetCampaignEmailTemplatesAsync(_settings.CampaignId);
         }
+
+        /// <summary>
+        /// Returns campaign email templates content.
+        /// </summary>
+        /// <returns></returns>
+        [AdminAuth]
+        [HttpPost("campaign/email/templates")]
+        public async Task<IActionResult> AddOrUpdateCampaignEmailTemplate([FromBody]EmailTemplateModel emailTemplate)
+        {
+            if (string.IsNullOrEmpty(emailTemplate.TemplateId))
+            {
+                return BadRequest(ErrorResponse.Create("TemplateId is required"));
+            }
+
+            emailTemplate.CampaignId = _settings.CampaignId;
+
+            await _icoCommonServiceClient.AddOrUpdateEmailTemplateAsync(emailTemplate);
+
+            return Ok();
+        }
     }
 }

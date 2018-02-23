@@ -5,6 +5,7 @@
 #sidenav {
     width: 48px;
     background-color: #333;
+    z-index: 1;
 }
 
 #sidenav.expanded {
@@ -66,14 +67,16 @@
     display: inline-block;
 }
 
-.grey {
-    background-color: #eee;
+#email-template-editor {
+    overflow: hidden;
 }
 
-.no-margin {
-    margin: 0;
+#email-template-save-button {
+    position: absolute;
+    right: 16px;
+    top: 16px;
 }
 
-.no-padding {
-    padding: 0;
+campaign-email-templates md-list-item.selected {
+    background-color: #ddd;
 }

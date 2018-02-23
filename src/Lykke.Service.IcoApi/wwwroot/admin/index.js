@@ -2,3 +2,4 @@
 import * as tpl from "./app/campaignEmailTemplates/campaignEmailTemplates.js";
 import * as inf from "./app/campaignInfo/campaignInfo.js";
 import * as stn from "./app/campaignSettings/campaignSettings.js";
+import * as lgn from "./app/login/login.js";

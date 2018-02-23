@@ -8,17 +8,23 @@
     <link rel="stylesheet" href="lib/angular/angular-material.min.css" />
     <link rel="stylesheet" href="content/css/site.css" />
 </head>
-<body ng-app="admin" ng-cloak layout="row">
-    
-    <app flex layout="row"></app>
+<body ng-app="admin" ng-cloak class="layout-row">
 
+    <app class="flex layout-row"></app>
+
+    <script>
+        var require = { paths: { 'vs': 'lib/monaco-editor/min/vs' } };
+    </script>
+
+    <script src="lib/monaco-editor/min/vs/loader.js"></script>
+    <script src="lib/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
+    <script src="lib/monaco-editor/min/vs/editor/editor.main.js"></script>
     <script src="lib/angular/angular.min.js"></script>
     <script src="lib/angular/angular-animate.min.js"></script>
     <script src="lib/angular/angular-aria.min.js"></script>
     <script src="lib/angular/angular-messages.min.js"></script>
     <script src="lib/angular/angular-material.min.js"></script>
     <script src="lib/angular/angular-route.min.js"></script>
-    <script src="lib/monaco-editor/loader.js"></script>
     <script src="index.js" type="module">
     </script>
 </body>

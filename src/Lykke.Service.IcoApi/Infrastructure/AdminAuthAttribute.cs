@@ -22,6 +22,7 @@ namespace Lykke.Service.IcoApi.Infrastructure
             }
 
             if (string.IsNullOrEmpty(key) &&
+                context.HttpContext.Request.HasFormContentType &&
                 context.HttpContext.Request.Form.ContainsKey(HeaderName))
             {
                 var forms = context.HttpContext.Request.Form[HeaderName];
