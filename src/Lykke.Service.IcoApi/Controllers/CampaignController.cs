@@ -62,16 +62,12 @@ namespace Lykke.Service.IcoApi.Controllers
                 campaignActive = true;
             }
 
-            var tokenInfo = settings.GetTokenInfo(tokensSold, DateTime.UtcNow);
-            if (tokenInfo != null)
-            {
-                campaignActive = true;
-            }
-
             if (campaignActive)
             {
                 campaignActive = settings.EnableCampaignFrontEnd;
             }
+
+            var tokenInfo = settings.GetTokenInfo(tokensSold, DateTime.UtcNow);
 
             return new CampaignResponse
             {
