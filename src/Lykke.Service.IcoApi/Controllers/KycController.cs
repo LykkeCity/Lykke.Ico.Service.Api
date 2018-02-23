@@ -94,7 +94,7 @@ namespace Lykke.Service.IcoApi.Controllers
             if (!string.IsNullOrEmpty(investorEmail))
             {
                 await _log.WriteInfoAsync(nameof(KycController), nameof(SaveKycResults),
-                    $"investorEmail={privateInvestorEmail}, kycMessage={kycMessage.ToJson()}",
+                    $"investorEmail={investorEmail}, kycMessage={kycMessage.ToJson()}",
                     "Kyc result for investor");
 
                 await _investorService.SaveKycResultAsync(investorEmail, kycMessage.KycStatus);
