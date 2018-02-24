@@ -4,6 +4,7 @@ using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Infrastructure;
 using Lykke.Service.IcoApi.Models;
 using Lykke.Service.IcoExRate.Client;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
@@ -97,14 +98,35 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
+        /// Generates and returns random ethereum public key
+        /// </summary>
+        [AdminAuth]
+        [DisableDebugMethods]
+        [HttpGet("eth/key/random")]
+        public IActionResult GetRandomEthPublicKey()
+        {
+            return Ok(new  { Key = _ethService.GeneratePublicKey() });
+        }
+
+        /// <summary>
         /// Returns ethereum address by public key
         /// </summary>
         [AdminAuth]
         [DisableDebugMethods]
         [HttpGet("eth/address/{key}")]
-        public AddressResponse GetEthAddressByKey([Required] string key)
+        public IActionResult GetEthAddressByKey([Required] string key)
         {
-            return new AddressResponse { Address = _ethService.GetAddressByPublicKey(key) };
+            try
+            {
+                var address = new AddressResponse { Address = _ethService.GetAddressByPublicKey(key) };
+
+                return Ok(address);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, 
+                    ErrorResponse.Create(ex.Message));
+            }
         }
 
         /// <summary>
@@ -170,14 +192,56 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
+        /// Generates and returns random bitcoin public key
+        /// </summary>
+        [AdminAuth]
+        [DisableDebugMethods]
+        [HttpGet("btc/key/random")]
+        public IActionResult GetRandomBtcPublicKey()
+        {
+            return Ok(new { Key = _btcService.GeneratePublicKey() });
+        }
+
+        /// <summary>
         /// Returns bitcoin address by public key
         /// </summary>
         [AdminAuth]
         [DisableDebugMethods]
         [HttpGet("btc/address/{key}")]
-        public AddressResponse GetBtcAddressByKey([Required] string key)
+        public IActionResult GetBtcAddressByKey([Required] string key)
         {
-            return new AddressResponse { Address = _btcService.GetAddressByPublicKey(key) };
+            try
+            {
+                var address = new AddressResponse { Address = _btcService.GetAddressByPublicKey(key) };
+
+                return Ok(address);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ErrorResponse.Create(ex.Message));
+            }
+        }
+
+        /// <summary>
+        /// Returns bitcoin address by public key and network
+        /// </summary>
+        [AdminAuth]
+        [DisableDebugMethods]
+        [HttpGet("btc/address/{key}/{network}")]
+        public IActionResult GetBtcAddressByKeyAndNetwork([Required] string key, [Required] BtcNetwork network)
+        {
+            try
+            {
+                var address = _btcService.GetAddressByPublicKey(key, Enum.GetName(typeof(BtcNetwork), network));
+
+                return Ok(new AddressResponse { Address = address });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    ErrorResponse.Create(ex.Message));
+            }
         }
 
         /// <summary>

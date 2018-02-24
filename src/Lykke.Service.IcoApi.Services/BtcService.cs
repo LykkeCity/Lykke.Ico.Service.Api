@@ -23,6 +23,11 @@ namespace Lykke.Service.IcoApi.Services
             return new PubKey(key).GetAddress(_btcNetwork).ToString();
         }
 
+        public string GetAddressByPublicKey(string key, string btcNetwork)
+        {
+            return new PubKey(key).GetAddress(Network.GetNetwork(btcNetwork)).ToString();
+        }
+
         public bool ValidateAddress(string address)
         {
             try
