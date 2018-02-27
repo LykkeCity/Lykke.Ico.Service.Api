@@ -1,23 +1,14 @@
-﻿<!--<md-toolbar>
-    <div class="md-toolbar-tools">
-        <h3 flex md-truncate>Email Templates</h3>
-    </div>
-</md-toolbar>-->
-<div class="flex layout-row">
-    <md-list class="flex-20" md-whiteframe="8">
-        <md-list-item ng-repeat="t in vm.templates | orderBy:'templateId'" ng-click="vm.selectTemplate(t)" md-colors="{ background: t == vm.selectedTemplate ? 'primary' : 'background' }">
-            {{t.templateId}}
-        </md-list-item>
-    </md-list>
-    <form class="flex-20 layout-column layout-padding" name="templateForm">
-        <md-input-container class="md-accent">
-            <label>Subject</label>
-            <input type="text" ng-model="vm.selectedTemplate.subject" />
-        </md-input-container>
-    </form>
-    <div class="flex-60" id="email-template-editor"></div>
-</div>
+﻿<md-list flex="20" md-whiteframe="4">
+    <md-list-item ng-repeat="t in $ctrl.templates | orderBy:'templateId'" ng-click="$ctrl.selectTemplate(t)" md-colors="$ctrl.listColors(t)">
+        {{t.templateId}}
+    </md-list-item>
+</md-list>
 
-<md-button class="md-fab" id="email-template-save-button" ng-click="vm.save()" ng-disabled="!vm.selectedTemplate">
-    <md-icon>save</md-icon>
-</md-button>
+<form flex="20" layout="column" layout-padding name="templateForm">
+    <md-input-container>
+        <label>Subject</label>
+        <input type="text" ng-model="$ctrl.selectedTemplate.subject" />
+    </md-input-container>
+</form>
+
+<div flex="60" id="email-template-editor"></div>

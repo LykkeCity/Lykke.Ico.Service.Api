@@ -1,19 +1,22 @@
 ﻿import { app } from "../app.js";
 
 class CampaignInfoController implements ng.IComponentController {
-    constructor(private $http: ng.IHttpService) {
+    constructor(private $element: ng.IRootElementService) {
     }
 
     $onInit() {
     }
 
-    loadTemplates() {
+    $postLink() {
+        // there is no :host class for angular 1.x.x,
+        // so style component root element manually
+        this.$element
+            .addClass("layout-fill") // fill parent
+            .addClass("layout-column"); // define self layout
     }
 }
 
 app.component("campaignInfo", {
-    bindings: {},
     controller: CampaignInfoController,
-    controllerAs: "vm",
     templateUrl: "app/campaignInfo/campaignInfo.html",
 });

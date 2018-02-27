@@ -1,47 +1,67 @@
 /// <reference path="../../node_modules/monaco-editor/monaco.d.ts" />
 
-import { app } from "../app.js";
+import { app, IAppCommand, AppToastType } from "../app.js";
+import { ShellController } from "../shell.js";
 
-export class CampaignEmailTemplate {
+class CampaignEmailTemplate {
     campaignId: string;
     templateId: string;
     subject: string;
     body: string;
 }
 
-export class CampaignEmailTemplatesController implements ng.IComponentController {
+class CampaignEmailTemplatesController implements ng.IComponentController {
 
-    private editor: monaco.editor.IStandaloneCodeEditor;
     private templatesUrl = "/api/admin/campaign/email/templates";
+    private shell: ShellController;
+    private editor: monaco.editor.IStandaloneCodeEditor;
 
-    constructor(private $http: ng.IHttpService, private $timeout: ng.ITimeoutService) {
+    constructor(private $element: ng.IRootElementService, private $http: ng.IHttpService, private $timeout: ng.ITimeoutService, private $mdTheming: ng.material.IThemingService) {
     }
 
+    customCommands: IAppCommand[] = [{ name: "Save", action: () => this.save() }];
     templates: CampaignEmailTemplate[];
     selectedTemplate: CampaignEmailTemplate;
 
     $onInit() {
-        // init code editor by timeout because at the moment of component
-        // initialization page layout may not be fully ready
-        this.$timeout(() => this.initEditor()).then(() => this.loadTemplates());
+        // init code editor through $timeout service in order 
+        // to give time for md-* directives to prepare layout
+        this.loadTemplates()
+            .then(() => this.$timeout(() => this.initEditor()))
+            .then(() => this.selectTemplate());
+
+        // append "save" command to the application toolbar
+        this.shell.appendCustomCommands(this.customCommands);
     }
 
-    loadTemplates() {
-        this.$http.get<CampaignEmailTemplate[]>(this.templatesUrl, { headers: { adminAuthToken: "smarcAdm2@" } })
+    $onDestroy() {
+        // delete "save" command to the application toolbar
+        this.shell.deleteCustomCommands(this.customCommands);
+    }
+
+    $postLink() {
+        // there is no :host class for angular 1.x.x,
+        // so style component root element manually
+        this.$element
+            .addClass("layout-fill") // fill parent
+            .addClass("layout-row"); // define self layout
+    }
+
+    loadTemplates(): ng.IPromise<void> {
+        return this.$http.get<CampaignEmailTemplate[]>(this.templatesUrl)
             .then(response => {
                 this.templates = response.data || [];
-                this.selectTemplate();
             });
     }
 
     initEditor() {
         this.editor = monaco.editor.create(document.getElementById('email-template-editor'), {
             language: 'razor',
-            minimap: {
-                enabled: false
-            },
+            minimap: { enabled: false },
             renderIndentGuides: true,
-            theme: "vs",
+            theme: this.$mdTheming.THEMES.default.isDark
+                ? "vs-dark"
+                : "vs"
         });
     }
 
@@ -51,7 +71,7 @@ export class CampaignEmailTemplatesController implements ng.IComponentController
     };
 
     save() {
-        if (!this.selectTemplate) {
+        if (!this.selectedTemplate) {
             return;
         }
 
@@ -62,14 +82,23 @@ export class CampaignEmailTemplatesController implements ng.IComponentController
             return;
         }
 
-        this.$http.post(this.templatesUrl, this.selectedTemplate, { headers: { adminAuthToken: "smarcAdm2@" } })
+        this.$http
+            .post(this.templatesUrl, this.selectedTemplate)
             .then(response => alert("Changes saved!"), response => alert(response.data.errorMessage));
     };
+
+    listColors(template: CampaignEmailTemplate) {
+        const hue = this.$mdTheming.THEMES.default.isDark ? "800" : "200";
+        return {
+            background: template == this.selectedTemplate ? `background-${hue}` : 'background'
+        };
+    }
 }
 
 app.component("campaignEmailTemplates", {
-    bindings: {},
     controller: CampaignEmailTemplatesController,
-    controllerAs: "vm",
     templateUrl: "app/campaignEmailTemplates/campaignEmailTemplates.html",
+    require: {
+        shell: "^shell",
+    }
 });

@@ -1,14 +1,20 @@
 import { app } from "../app.js";
 class CampaignSettingsController {
-    constructor($http) {
+    constructor($element, $http) {
+        this.$element = $element;
         this.$http = $http;
     }
     $onInit() {
     }
+    $postLink() {
+        // there is no :host class for angular 1.x.x,
+        // so style component root element manually
+        this.$element
+            .addClass("layout-fill") // fill parent
+            .addClass("layout-column"); // define self layout
+    }
 }
 app.component("campaignSettings", {
-    bindings: {},
     controller: CampaignSettingsController,
-    controllerAs: "vm",
-    templateUrl: "app/campaignSettings/campaignSettings.html",
+    templateUrl: "app/campaignSettings/campaignSettings.html"
 });

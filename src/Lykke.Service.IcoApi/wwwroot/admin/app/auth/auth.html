@@ -1,0 +1,31 @@
+﻿<md-dialog id="auth-dialog">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h6>Login</h6>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <form layout="column" layout-padding name="loginForm">
+            <md-input-container>
+                <label>Username</label>
+                <input type="text" name="username" ng-model="$ctrl.credentials.username" ng-required="true" />
+            </md-input-container>
+            <md-input-container>
+                <label>Password</label>
+                <input type="password" ng-model="$ctrl.credentials.password" ng-required="true" />
+                
+            </md-input-container>
+            <md-input-container class="errors">
+                <!--due to specific styling place error messages within md-input-container-->
+                <div ng-messages="$ctrl.errors" ng-show="$ctrl.errors.forbidden">
+                    <div ng-message="forbidden">Access denied</div>
+                </div>
+            </md-input-container>
+
+        </form>
+
+    </md-dialog-content>
+    <md-dialog-actions>
+        <md-button ng-click="$ctrl.login()">Login</md-button>
+    </md-dialog-actions>
+</md-dialog>

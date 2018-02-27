@@ -20,12 +20,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\admin\app\authService.ts" />
+    <Content Remove="wwwroot\admin\app\app.ts" />
+    <Content Remove="wwwroot\admin\app\auth\auth.ts" />
     <Content Remove="wwwroot\admin\app\campaignEmailTemplates\campaignEmailTemplates.ts" />
     <Content Remove="wwwroot\admin\app\campaignInfo\campaignInfo.ts" />
     <Content Remove="wwwroot\admin\app\campaignSettings\campaignSettings.ts" />
-    <Content Remove="wwwroot\admin\app\app.ts" />
-    <Content Remove="wwwroot\admin\app\login\login.ts" />
+    <Content Remove="wwwroot\admin\app\loginService.ts" />
+    <Content Remove="wwwroot\admin\app\shell.ts" />
   </ItemGroup>
   
   <ItemGroup>
@@ -130,12 +131,12 @@
   </ItemGroup>
   
   <ItemGroup>
-    <TypeScriptCompile Include="wwwroot\admin\app\authService.ts" />
     <TypeScriptCompile Include="wwwroot\admin\app\campaignEmailTemplates\campaignEmailTemplates.ts" />
     <TypeScriptCompile Include="wwwroot\admin\app\campaignInfo\campaignInfo.ts" />
     <TypeScriptCompile Include="wwwroot\admin\app\campaignSettings\campaignSettings.ts" />
+    <TypeScriptCompile Include="wwwroot\admin\app\shell.ts" />
+    <TypeScriptCompile Include="wwwroot\admin\app\auth\auth.ts" />
     <TypeScriptCompile Include="wwwroot\admin\app\app.ts" />
-    <TypeScriptCompile Include="wwwroot\admin\app\login\login.ts" />
   </ItemGroup>
 
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">

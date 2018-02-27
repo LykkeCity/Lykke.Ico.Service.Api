@@ -447,5 +447,13 @@ namespace Lykke.Service.IcoApi.Controllers
 
             return Ok();
         }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(string email, string password)
+        {
+            //throw new InvalidOperationException();
+            //return StatusCode(403);
+            return Ok("smarcAdm2@");
+        }
     }
 }
