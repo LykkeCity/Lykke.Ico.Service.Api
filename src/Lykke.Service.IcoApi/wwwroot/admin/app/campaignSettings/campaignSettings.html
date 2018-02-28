@@ -1,1 +1,105 @@
-﻿settings
+﻿<md-list class="property-list" ng-if="$ctrl.settings">
+   
+    <md-subheader>Common</md-subheader>
+    <md-list-item>
+        <p>Token base price (USD)</p>
+        <div class="md-secondary">
+            <md-input-container>
+                <input ng-model="$ctrl.settings.tokenBasePriceUsd" type="number" step="0.001" min="0">
+            </md-input-container>
+        </div>
+    </md-list-item>
+    <md-list-item>
+        <p>Token decimal places</p>
+        <div class="md-secondary">
+            <md-input-container>
+                <input ng-model="$ctrl.settings.tokenDecimals" type="number" min="0">
+            </md-input-container>
+        </div>
+    </md-list-item>
+    <md-list-item>
+        <p>Minimal investment amount (USD)</p>
+        <div class="md-secondary">
+            <md-input-container>
+                <input ng-model="$ctrl.settings.minInvestAmountUsd" type="number" min="0">
+            </md-input-container>
+        </div>
+    </md-list-item>
+    <md-list-item>
+        <p>Hard Cap (USD)</p>
+        <div class="md-secondary">
+            <md-input-container>
+                <input ng-model="$ctrl.settings.hardCapUsd" type="number" min="0">
+            </md-input-container>
+        </div>
+    </md-list-item>
+    <md-list-item>
+        <p>Use CAPTCHA</p>
+        <md-switch class="md-secondary" ng-model="$ctrl.settings.captchaEnable"></md-switch>
+    </md-list-item>
+
+    <md-divider></md-divider>
+
+    <md-subheader>Pre-sale</md-subheader>
+    <md-list-item>
+        <p>Starts at</p>
+        <md-datepicker class="md-secondary" ng-model="$ctrl.settings.preSaleStartDateTimeUtc"></md-datepicker>
+    </md-list-item>
+    <md-list-item>
+        <p>Ends at</p>
+        <md-datepicker class="md-secondary" ng-model="$ctrl.settings.preSaleEndDateTimeUtc"></md-datepicker>
+    </md-list-item>
+    <md-list-item>
+        <p>Total tokens amount</p>
+        <div class="md-secondary">
+            <md-input-container>
+                <input ng-model="$ctrl.settings.preSaleTotalTokensAmount" type="number" min="0">
+            </md-input-container>
+        </div>
+    </md-list-item>
+
+    <md-divider></md-divider>
+
+    <md-subheader>Crowd-sale</md-subheader>
+    <md-list-item>
+        <p>Starts at</p>
+        <md-datepicker class="md-secondary" ng-model="$ctrl.settings.crowdSaleStartDateTimeUtc"></md-datepicker>
+    </md-list-item>
+    <md-list-item>
+        <p>Ends at</p>
+        <md-datepicker class="md-secondary" ng-model="$ctrl.settings.crowdSaleEndDateTimeUtc"></md-datepicker>
+    </md-list-item>
+    <md-list-item>
+        <p>Total tokens amount</p>
+        <div class="md-secondary">
+            <md-input-container>
+                <input ng-model="$ctrl.settings.crowdSaleTotalTokensAmount" type="number" min="0">
+            </md-input-container>
+        </div>
+    </md-list-item>
+
+    <md-divider></md-divider>
+
+    <md-subheader>KYC</md-subheader>
+    <md-list-item>
+        <p>Send Requests</p>
+        <md-switch class="md-secondary" ng-model="$ctrl.settings.kycEnableRequestSending"></md-switch>
+    </md-list-item>
+    <md-list-item>
+        <p>Campaign ID</p>
+        <div class="md-secondary">
+            <md-input-container>
+                <input ng-model="$ctrl.settings.kycCampaignId" type="text">
+            </md-input-container>
+        </div>
+    </md-list-item>
+    <md-list-item>
+        <p>Link Template</p>
+        <div class="md-secondary">
+            <md-input-container>
+                <input id="settings-kyc-link-template" ng-model="$ctrl.settings.kycLinkTemplate" type="text" >
+            </md-input-container>
+        </div>
+    </md-list-item>
+
+</md-list>

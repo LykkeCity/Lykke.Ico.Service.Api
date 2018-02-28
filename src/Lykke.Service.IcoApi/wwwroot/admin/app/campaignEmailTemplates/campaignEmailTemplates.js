@@ -1,5 +1,5 @@
 /// <reference path="../../node_modules/monaco-editor/monaco.d.ts" />
-import { app } from "../app.js";
+import { app, AppToastType } from "../app.js";
 class CampaignEmailTemplate {
 }
 class CampaignEmailTemplatesController {
@@ -9,7 +9,10 @@ class CampaignEmailTemplatesController {
         this.$timeout = $timeout;
         this.$mdTheming = $mdTheming;
         this.templatesUrl = "/api/admin/campaign/email/templates";
-        this.customCommands = [{ name: "Save", action: () => this.save() }];
+        this.customCommands = [{
+                name: "Save",
+                action: () => this.save()
+            }];
     }
     $onInit() {
         // init code editor through $timeout service in order 
@@ -21,7 +24,6 @@ class CampaignEmailTemplatesController {
         this.shell.appendCustomCommands(this.customCommands);
     }
     $onDestroy() {
-        // delete "save" command to the application toolbar
         this.shell.deleteCustomCommands(this.customCommands);
     }
     $postLink() {
@@ -51,7 +53,6 @@ class CampaignEmailTemplatesController {
         this.selectedTemplate = template || this.templates[0];
         this.editor.setValue(this.selectedTemplate && this.selectedTemplate.body ? this.selectedTemplate.body : "");
     }
-    ;
     save() {
         if (!this.selectedTemplate) {
             return;
@@ -63,10 +64,10 @@ class CampaignEmailTemplatesController {
         }
         this.$http
             .post(this.templatesUrl, this.selectedTemplate)
-            .then(response => alert("Changes saved!"), response => alert(response.data.errorMessage));
+            .then(_ => this.shell.toast({ message: "Changes saved", type: AppToastType.Success }));
     }
-    ;
     listColors(template) {
+        // TODO: convert to directive
         const hue = this.$mdTheming.THEMES.default.isDark ? "800" : "200";
         return {
             background: template == this.selectedTemplate ? `background-${hue}` : 'background'

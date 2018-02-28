@@ -1,17 +1,21 @@
-import { app, AppEvent, AppToastType, IAppToast, IAppCommand, IAppRoute } from "./app.js";
+import { app, AppEvent, AppToastType, AppToast, AppCommand, IAppRoute, SysEvent } from "../app.js";
 
 export class ShellController implements ng.IComponentController {
 
     constructor(private $element: ng.IRootElementService, private $rootScope: ng.IRootScopeService,
         private $location: ng.ILocationService, private $mdSidenav: ng.material.ISidenavService, private $mdToast: ng.material.IToastService,
-        readonly appRoutes: IAppRoute[]) {
+        private $route: ng.route.IRouteService, readonly appRoutes: IAppRoute[]) {
 
-        $rootScope.$on(AppEvent.Toast, (e: ng.IAngularEvent, toast: IAppToast) => {
+        $rootScope.$on(AppEvent.Toast, (e: ng.IAngularEvent, toast: AppToast) => {
             this.toast(toast);
         });
 
-        $rootScope.$on("$routeChangeSuccess", () => {
-            this.customCommands = []; // clean children's toolbar
+        $rootScope.$on(AppEvent.ReloadRoute, () => {
+            this.$route.reload();
+        });
+
+        $rootScope.$on(SysEvent.RouteChangeSuccess, () => {
+            this.customCommands = []; // clean custom toolbar
         });
     }
 
@@ -25,7 +29,7 @@ export class ShellController implements ng.IComponentController {
 
     title = "Lykke ICO Platform";
 
-    customCommands: IAppCommand[] = [];
+    customCommands: AppCommand[] = [];
 
     navigateTo(route: IAppRoute) {
         this.$location.url(`/${route.link}`);
@@ -36,8 +40,8 @@ export class ShellController implements ng.IComponentController {
         this.$mdSidenav('sidenav').toggle();
     }
 
-    toast(toast: IAppToast) {
-        let model = this.$mdToast.simple().textContent(toast.message).position("bottom right").toastClass(`md-toast-${toast.type}`);
+    toast(toast: AppToast) {
+        let model = this.$mdToast.simple().textContent(toast.message).position("top right").toastClass(`md-toast-${toast.type}`);
 
         if (toast.type == AppToastType.Error) {
             model = model.hideDelay(false).action("Close");
@@ -46,27 +50,24 @@ export class ShellController implements ng.IComponentController {
         this.$mdToast.show(model);
     }
 
-    appendCustomCommands(commands: IAppCommand[]) {
+    appendCustomCommands(commands: AppCommand[]) {
         commands.forEach(command => {
-            if (this.customCommands.find(c => c.name == command.name) == null) {
+            if (this.customCommands.indexOf(command) < 0) {
                 this.customCommands.push(command);
             }
         });
     }
 
-    deleteCustomCommands(commands: IAppCommand[]) {
+    deleteCustomCommands(commands: AppCommand[]) {
         commands.forEach(command => {
-            let index = this.customCommands.findIndex(c => c.name == command.name);
-            if (index >= 0) {
-                this.customCommands.splice(index, 1);
-            }
+            this.customCommands.splice(this.customCommands.indexOf(command, 1));
         });
     }
 }
 
 app.component("shell", {
     controller: ShellController,
-    templateUrl: "app/shell.html",
+    templateUrl: "app/shell/shell.html",
 });
 
 

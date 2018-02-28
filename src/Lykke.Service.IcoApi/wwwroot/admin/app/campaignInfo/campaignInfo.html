@@ -1,1 +1,82 @@
-﻿info
+﻿<md-list class="property-list" ng-if="$ctrl.info">
+
+    <md-subheader>Campaign</md-subheader>
+    <md-list-item ng-click="null">
+        <p>Phase</p>
+        <p class="md-secondary">{{$ctrl.info.phase}}</p>
+    </md-list-item>
+    <md-list-item>
+        <p>Token price (USD)</p>
+        <p class="md-secondary">{{$ctrl.info.tokenPriceUsd | number}}</p>
+    </md-list-item>
+    <md-list-item>
+        <p>Address pool</p>
+        <p class="md-secondary">
+            {{$ctrl.info.addressPoolTotalSize || 0 - $ctrl.info.addressPoolCurrentSize || 0 | number}} of {{$ctrl.info.addressPoolTotalSize || 0 | number}} used,
+            {{$ctrl.info.addressPoolCurrentSize || 0}} remains
+        </p>
+    </md-list-item>
+
+    <md-divider></md-divider>
+
+    <md-subheader>Investments</md-subheader>
+    <md-list-item>
+        <p>BTC</p>
+        <p class="md-secondary">{{$ctrl.info.amountInvestedBtc | number}}</p>
+    </md-list-item>
+    <md-list-item>
+        <p>ETH</p>
+        <p class="md-secondary">{{$ctrl.info.amountInvestedEth | number}}</p>
+    </md-list-item>
+    <md-list-item>
+        <p>Fiat</p>
+        <p class="md-secondary">{{$ctrl.info.amountInvestedFiat | number}}</p>
+    </md-list-item>
+    <md-list-item>
+        <p>Tokens sold</p>
+        <p class="md-secondary">{{$ctrl.info.amountInvestedToken | number}}</p>
+    </md-list-item>
+    <md-list-item>
+        <p>Total (USD)</p>
+        <p class="md-secondary">{{$ctrl.info.amountInvestedUsd | number}}</p>
+    </md-list-item>
+
+    <md-divider></md-divider>
+
+    <md-subheader>Investors</md-subheader>
+    <md-list-item>
+        <p>Registered</p>
+        <p class="md-secondary">{{$ctrl.info.investorsRegistered | number}}</p>
+    </md-list-item>
+    <md-list-item>
+        <p>Confirmed</p>
+        <p class="md-secondary">{{$ctrl.info.investorsConfirmed | number}}</p>
+    </md-list-item>
+    <md-list-item>
+        <p>Filled-in</p>
+        <p class="md-secondary">{{$ctrl.info.investorsFilledIn | number}}</p>
+    </md-list-item>
+    <md-list-item>
+        <p>KYC-passed</p>
+        <p class="md-secondary">{{$ctrl.info.investorsKycPassed | number}}</p>
+    </md-list-item>
+
+    <md-subheader>Blockchain State</md-subheader>
+    <md-list-item>
+        <p>BTC network</p>
+        <p class="md-secondary">{{$ctrl.info.bctNetwork}}</p>
+    </md-list-item>
+    <md-list-item>
+        <p>Last Processed BTC block</p>
+        <p class="md-secondary">{{$ctrl.info.lastProcessedBlockBtc}}</p>
+    </md-list-item>
+    <md-list-item>
+        <p>ETH network</p>
+        <p class="md-secondary">{{$ctrl.info.ethNetwork}}</p>
+    </md-list-item>
+    <md-list-item>
+        <p>Last Processed ETH block</p>
+        <p class="md-secondary">{{$ctrl.info.lastProcessedBlockEth}} <span ng-if="$ctrl.info.lastProcessedBlockEthInfura">({{$ctrl.info.lastProcessedBlockEthInfura}} by Infura)</span></p>
+    </md-list-item>
+
+</md-list>

@@ -1,13 +1,5 @@
-﻿import { app, IAppRoute, AppEvent, AppToastType } from "./app/app.js";
-import { AuthService } from "./app/auth/auth.js";
-
-// in most cases components are independent ES6 modules (not imported by any other module)
-// so we import them explicitly at the application entry point
-
-import "./app/shell.js";
-import "./app/campaignEmailTemplates/campaignEmailTemplates.js";
-import "./app/campaignInfo/campaignInfo.js";
-import "./app/campaignSettings/campaignSettings.js";
+﻿import { app, IAppRoute, AppEvent, AppToastType } from "./app.js";
+import { AuthService, AuthUtils  } from "./auth/auth.js";
 
 const appRoutes: IAppRoute[] = [
     { link: "campaign-info", icon: "info", name: "Info", template: "<campaign-info></campaign-info>" },
@@ -35,21 +27,24 @@ app.config(($routeProvider: ng.route.IRouteProvider, $locationProvider: ng.ILoca
 
 // config interceptors
 app.config(($httpProvider: ng.IHttpProvider) => {
-    $httpProvider.interceptors.push(($q: ng.IQService, $rootScope: ng.IRootScopeService) => {
+    $httpProvider.interceptors.push(($q: ng.IQService, $rootScope: ng.IRootScopeService, authUtils: AuthUtils) => {
         return {
             request: request => {
-                if (!!AuthService.AuthToken) {
-                    request.headers["adminAuthToken"] = AuthService.AuthToken;
+                if (!!authUtils.authToken) {
+                    request.headers["adminAuthToken"] = authUtils.authToken;
                 }
                 return request;
             },
             responseError: response => {
-                if (!AuthService.isAuthForbidden(response)) {
+                if (!authUtils.isAuthorized(response)) {
+                    $rootScope.$emit(AppEvent.ReloadRoute);
+                } else if (!authUtils.isLoginForbidden(response)) {
                     $rootScope.$emit(AppEvent.Toast, {
-                        message: response.data.Message || response.statusText || "Technical problem",
+                        message: (response.data && response.data.Message) || response.statusText || "Technical problem",
                         type: AppToastType.Error
                     });
                 }
+                
                 return $q.reject(response);
             }
         };
@@ -60,5 +55,5 @@ app.config(($httpProvider: ng.IHttpProvider) => {
 app.config(($mdThemingProvider: ng.material.IThemingProvider) => {
     $mdThemingProvider
         .theme("default")
-        //.dark();
+    //.dark();
 });

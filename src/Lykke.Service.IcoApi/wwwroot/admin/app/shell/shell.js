@@ -1,19 +1,23 @@
-import { app, AppEvent, AppToastType } from "./app.js";
+import { app, AppEvent, AppToastType, SysEvent } from "../app.js";
 export class ShellController {
-    constructor($element, $rootScope, $location, $mdSidenav, $mdToast, appRoutes) {
+    constructor($element, $rootScope, $location, $mdSidenav, $mdToast, $route, appRoutes) {
         this.$element = $element;
         this.$rootScope = $rootScope;
         this.$location = $location;
         this.$mdSidenav = $mdSidenav;
         this.$mdToast = $mdToast;
+        this.$route = $route;
         this.appRoutes = appRoutes;
         this.title = "Lykke ICO Platform";
         this.customCommands = [];
         $rootScope.$on(AppEvent.Toast, (e, toast) => {
             this.toast(toast);
         });
-        $rootScope.$on("$routeChangeSuccess", () => {
-            this.customCommands = []; // clean children's toolbar
+        $rootScope.$on(AppEvent.ReloadRoute, () => {
+            this.$route.reload();
+        });
+        $rootScope.$on(SysEvent.RouteChangeSuccess, () => {
+            this.customCommands = []; // clean custom toolbar
         });
     }
     $postLink() {
@@ -31,7 +35,7 @@ export class ShellController {
         this.$mdSidenav('sidenav').toggle();
     }
     toast(toast) {
-        let model = this.$mdToast.simple().textContent(toast.message).position("bottom right").toastClass(`md-toast-${toast.type}`);
+        let model = this.$mdToast.simple().textContent(toast.message).position("top right").toastClass(`md-toast-${toast.type}`);
         if (toast.type == AppToastType.Error) {
             model = model.hideDelay(false).action("Close");
         }
@@ -39,21 +43,18 @@ export class ShellController {
     }
     appendCustomCommands(commands) {
         commands.forEach(command => {
-            if (this.customCommands.find(c => c.name == command.name) == null) {
+            if (this.customCommands.indexOf(command) < 0) {
                 this.customCommands.push(command);
             }
         });
     }
     deleteCustomCommands(commands) {
         commands.forEach(command => {
-            let index = this.customCommands.findIndex(c => c.name == command.name);
-            if (index >= 0) {
-                this.customCommands.splice(index, 1);
-            }
+            this.customCommands.splice(this.customCommands.indexOf(command, 1));
         });
     }
 }
 app.component("shell", {
     controller: ShellController,
-    templateUrl: "app/shell.html",
+    templateUrl: "app/shell/shell.html",
 });

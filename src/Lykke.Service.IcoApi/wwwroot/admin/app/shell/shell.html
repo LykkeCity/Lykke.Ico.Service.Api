@@ -1,7 +1,7 @@
 ﻿<md-toolbar layout="row" class="md-toolbar-tools">
     <md-button class="md-icon-button" ng-click="$ctrl.toggleSidenav()"><md-icon>menu</md-icon></md-button>
     <h6 class="flex md-truncate">{{$ctrl.title}}</h6>
-    <md-button ng-repeat="c in $ctrl.commands" ng-click="c.action()">{{c.name}}</md-button>
+    <md-button ng-repeat="c in $ctrl.customCommands" ng-click="c.action()">{{c.name}}</md-button>
 </md-toolbar>
 
 <div flex layout="row">
@@ -12,7 +12,7 @@
             <h6>{{$ctrl.title}}</h6>
         </md-toolbar>
         <md-list flex>
-            <md-list-item ng-repeat="r in $ctrl.routes" ng-click="$ctrl.navigateTo(r)">
+            <md-list-item ng-repeat="r in $ctrl.appRoutes" ng-click="$ctrl.navigateTo(r)">
                 <md-icon>{{r.icon}}</md-icon>
                 <p class="md-caption">{{r.name}}</p>
             </md-list-item>

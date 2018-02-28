@@ -20,6 +20,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\admin\app\app.config.ts" />
     <Content Remove="wwwroot\admin\app\app.ts" />
     <Content Remove="wwwroot\admin\app\auth\auth.ts" />
     <Content Remove="wwwroot\admin\app\campaignEmailTemplates\campaignEmailTemplates.ts" />
@@ -131,12 +132,25 @@
   </ItemGroup>
   
   <ItemGroup>
+    <TypeScriptCompile Include="wwwroot\admin\app\app.config.ts" />
     <TypeScriptCompile Include="wwwroot\admin\app\campaignEmailTemplates\campaignEmailTemplates.ts" />
     <TypeScriptCompile Include="wwwroot\admin\app\campaignInfo\campaignInfo.ts" />
     <TypeScriptCompile Include="wwwroot\admin\app\campaignSettings\campaignSettings.ts" />
-    <TypeScriptCompile Include="wwwroot\admin\app\shell.ts" />
+    <TypeScriptCompile Include="wwwroot\admin\app\shell\shell.ts" />
     <TypeScriptCompile Include="wwwroot\admin\app\auth\auth.ts" />
     <TypeScriptCompile Include="wwwroot\admin\app\app.ts" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Content Update="wwwroot\admin\index_.js">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>index_.tt</DependentUpon>
+    </Content>
   </ItemGroup>
 
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">

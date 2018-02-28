@@ -3,7 +3,12 @@ declare global {
     const angular: ng.IAngularStatic;
 }
 
+export enum SysEvent {
+    RouteChangeSuccess = "$routeChangeSuccess",
+}
+
 export enum AppEvent {
+    ReloadRoute = "reloadRoute",
     Toast = "toast"
 }
 
@@ -13,7 +18,7 @@ export enum AppToastType {
     Success = "success"
 }
 
-export interface IAppToast {
+export class AppToast {
     message: string;
     type: AppToastType;
 }
@@ -24,7 +29,7 @@ export interface IAppRoute extends ng.route.IRoute {
     isActive?: boolean;
 }
 
-export interface IAppCommand {
+export class AppCommand {
     name: string;
     action: Function;
 }

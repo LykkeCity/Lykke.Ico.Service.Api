@@ -1,7 +1,7 @@
 /// <reference path="../../node_modules/monaco-editor/monaco.d.ts" />
 
-import { app, IAppCommand, AppToastType } from "../app.js";
-import { ShellController } from "../shell.js";
+import { app, AppCommand, AppToast, AppToastType } from "../app.js";
+import { ShellController } from "../shell/shell.js";
 
 class CampaignEmailTemplate {
     campaignId: string;
@@ -13,13 +13,16 @@ class CampaignEmailTemplate {
 class CampaignEmailTemplatesController implements ng.IComponentController {
 
     private templatesUrl = "/api/admin/campaign/email/templates";
-    private shell: ShellController;
     private editor: monaco.editor.IStandaloneCodeEditor;
+    private shell: ShellController;
+    private customCommands: AppCommand[] = [{
+        name: "Save",
+        action: () => this.save()
+    }];
 
     constructor(private $element: ng.IRootElementService, private $http: ng.IHttpService, private $timeout: ng.ITimeoutService, private $mdTheming: ng.material.IThemingService) {
     }
 
-    customCommands: IAppCommand[] = [{ name: "Save", action: () => this.save() }];
     templates: CampaignEmailTemplate[];
     selectedTemplate: CampaignEmailTemplate;
 
@@ -35,7 +38,6 @@ class CampaignEmailTemplatesController implements ng.IComponentController {
     }
 
     $onDestroy() {
-        // delete "save" command to the application toolbar
         this.shell.deleteCustomCommands(this.customCommands);
     }
 
@@ -68,7 +70,7 @@ class CampaignEmailTemplatesController implements ng.IComponentController {
     selectTemplate(template?: CampaignEmailTemplate) {
         this.selectedTemplate = template || this.templates[0];
         this.editor.setValue(this.selectedTemplate && this.selectedTemplate.body ? this.selectedTemplate.body : "");
-    };
+    }
 
     save() {
         if (!this.selectedTemplate) {
@@ -84,10 +86,11 @@ class CampaignEmailTemplatesController implements ng.IComponentController {
 
         this.$http
             .post(this.templatesUrl, this.selectedTemplate)
-            .then(response => alert("Changes saved!"), response => alert(response.data.errorMessage));
-    };
+            .then(_ => this.shell.toast({ message: "Changes saved", type: AppToastType.Success }));
+    }
 
     listColors(template: CampaignEmailTemplate) {
+        // TODO: convert to directive
         const hue = this.$mdTheming.THEMES.default.isDark ? "800" : "200";
         return {
             background: template == this.selectedTemplate ? `background-${hue}` : 'background'
@@ -101,4 +104,4 @@ app.component("campaignEmailTemplates", {
     require: {
         shell: "^shell",
     }
-});
+}); 

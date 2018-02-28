@@ -1,38 +1,63 @@
 import { app } from "../app.js";
-class Credentials {
+export class Credentials {
 }
 class AuthDialogController {
-    constructor($scope, authService) {
+    constructor($scope, authService, authUtils) {
         this.$scope = $scope;
         this.authService = authService;
+        this.authUtils = authUtils;
         this.credentials = new Credentials();
         this.errors = {};
-    }
-    login() {
-        this.authService.login(this.credentials)
-            .catch(response => {
-            this.errors.forbidden = AuthService.isAuthForbidden(response);
-        });
     }
     $onInit() {
         this.$scope.$watch(() => this.credentials, () => this.errors = {}, true);
     }
+    login() {
+        this.errors = {};
+        this.authService.login(this.credentials)
+            .catch(response => {
+            this.errors.forbidden = this.authUtils.isLoginForbidden(response);
+        });
+    }
+}
+/**
+ * Keeps auth data and provides auth utils
+ * without dependency on any other service.
+ */
+export class AuthUtils {
+    constructor() {
+        this.authTokenStorageKey = "authToken";
+        this.authUrl = "/api/admin/login";
+    }
+    get authToken() {
+        return sessionStorage.getItem(this.authTokenStorageKey);
+    }
+    set authToken(value) {
+        sessionStorage.setItem(this.authTokenStorageKey, value);
+    }
+    isAuthorized(response) {
+        if (response.status == 401) {
+            sessionStorage.removeItem(this.authTokenStorageKey);
+            return false;
+        }
+        return true;
+    }
+    isLoginForbidden(response) {
+        return response.config.url.startsWith(this.authUrl) && response.status == 403;
+    }
 }
 export class AuthService {
-    constructor($mdDialog, $q, $http) {
+    constructor($mdDialog, $q, $http, authUtils) {
         this.$mdDialog = $mdDialog;
         this.$q = $q;
         this.$http = $http;
-    }
-    static isAuthForbidden(response) {
-        return response.config.url.indexOf(AuthService.AuthUrl) > -1 && response.status == 403;
+        this.authUtils = authUtils;
     }
     authenticate() {
-        if (!!AuthService.AuthToken) {
+        if (this.authUtils.authToken) {
             return this.$q.resolve();
         }
-        return this.$mdDialog
-            .show({
+        return this.$mdDialog.show({
             bindToController: true,
             controller: AuthDialogController,
             controllerAs: "$ctrl",
@@ -40,19 +65,16 @@ export class AuthService {
             parent: angular.element(document.body),
             clickOutsideToClose: false,
             escapeToClose: false
-        })
-            .then(value => {
-            AuthService.AuthToken = value;
         });
     }
     login(credentials) {
         return this.$http
-            .post(AuthService.AuthUrl, credentials)
+            .post(this.authUtils.authUrl, credentials)
             .then(response => {
+            this.authUtils.authToken = response.data;
             this.$mdDialog.hide();
-            AuthService.AuthToken = response.data;
         });
     }
 }
-AuthService.AuthUrl = "/api/admin/login";
+app.constant("authUtils", new AuthUtils());
 app.service("authService", AuthService);

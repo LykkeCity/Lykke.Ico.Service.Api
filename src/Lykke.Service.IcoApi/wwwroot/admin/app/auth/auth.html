@@ -9,11 +9,16 @@
             <md-input-container>
                 <label>Username</label>
                 <input type="text" name="username" ng-model="$ctrl.credentials.username" ng-required="true" />
+                <div ng-messages="loginForm.username.$error">
+                    <div ng-message="required">Username is required</div>
+                </div>
             </md-input-container>
             <md-input-container>
                 <label>Password</label>
-                <input type="password" ng-model="$ctrl.credentials.password" ng-required="true" />
-                
+                <input type="password" name="password" ng-model="$ctrl.credentials.password" ng-required="true" />
+                <div ng-messages="loginForm.password.$error">
+                    <div ng-message="required">Password is required</div>
+                </div>
             </md-input-container>
             <md-input-container class="errors">
                 <!--due to specific styling place error messages within md-input-container-->
@@ -21,11 +26,9 @@
                     <div ng-message="forbidden">Access denied</div>
                 </div>
             </md-input-container>
-
         </form>
-
     </md-dialog-content>
     <md-dialog-actions>
-        <md-button ng-click="$ctrl.login()">Login</md-button>
+        <md-button ng-click="$ctrl.login()" ng-disabled="loginForm.$invalid">Login</md-button>
     </md-dialog-actions>
 </md-dialog>
