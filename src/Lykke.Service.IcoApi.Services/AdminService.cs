@@ -401,5 +401,178 @@ namespace Lykke.Service.IcoApi.Services
             public string btcPublic { get; set; }
             public string ethPublic { get; set; }
         }
+
+        public async Task<string> Recalculate20MTxs(bool saveChanges)
+        {
+            var report = new StringBuilder();
+            var amountTokens = 20_000_000M;
+            var tokenPrice = 0.065M * 0.75M;
+            var amountUsd = amountTokens * tokenPrice;
+            var settings = await _campaignSettingsRepository.GetAsync();
+
+            report.AppendLine("Start");
+            report.AppendLine($"- When (UTC): {DateTime.UtcNow}");
+            report.AppendLine($"- Tokens Amount: {amountTokens}");
+            report.AppendLine($"- Token Price: {tokenPrice}");
+            report.AppendLine($"- Usd Amount: {amountUsd}");
+
+            report.AppendLine("");
+            report.AppendLine("Transactions");
+
+            var txsAll = await _investorTransactionRepository.GetAllAsync();
+            var txsAllOld = await _investorTransactionRepository.GetAllAsync();
+            var investors = await _investorRepository.GetAllAsync();
+
+            report.AppendLine($"- Total txs: {txsAll.Count()}");
+
+            var txsCrowdSale = txsAll
+                .Where(f => f.CreatedUtc > DateTime.Parse("2018-02-24T00:00:00.000Z"))
+                .OrderBy(f => f.CreatedUtc)
+                .ThenBy(f => f.ProcessedUtc);
+            report.AppendLine($"- Crowdsale txs: {txsCrowdSale.Count()}");
+
+            var txs = new List<IInvestorTransaction>();
+            foreach (var txCrowdSale in txsCrowdSale)
+            {
+                if (txs.Sum(f => f.AmountUsd) < amountUsd)
+                {
+                    txs.Add(txCrowdSale);
+                }
+            }
+            report.AppendLine($"- 20M txs: {txs.Count()}");
+
+            var totalUsd20M = 0M;
+            var totalTokens20M = 0M;
+            var totalTokens20MOld = 0M;
+            foreach (var tx in txs)
+            {
+                totalUsd20M += tx.AmountUsd;
+                totalTokens20MOld += tx.AmountToken;
+
+                var tokenPriceList = TokenPrice.GetPriceList(settings, tx.CreatedUtc, tx.AmountUsd, totalTokens20M);
+                var txTokenAmountNew = tokenPriceList.Sum(p => p.Count);
+                var tokenPriceNew = tokenPriceList.Count == 1 ? tokenPriceList[0].Price : tx.AmountUsd / txTokenAmountNew;
+
+                totalTokens20M += txTokenAmountNew;
+
+                report.AppendLine($"  - tx: createdUtc={tx.CreatedUtc.ToString("yyyy-MM-dd'T'HH:mm:ss.fffK")}, email={tx.Email}");
+                report.AppendLine($"    AmountToken: old={tx.AmountToken}, new={txTokenAmountNew}, diff={txTokenAmountNew - tx.AmountToken}");
+                report.AppendLine($"    TokenPrice: old={tx.TokenPrice}, new={tokenPriceNew}");
+                report.AppendLine($"    TokenPriceContext: old={tx.TokenPriceContext}, new={tokenPriceList.ToJson()}");
+                report.AppendLine($"    Total USD 20M: {totalUsd20M}");
+
+                tx.AmountToken = txTokenAmountNew;
+                tx.TokenPrice = tokenPriceNew;
+                tx.TokenPriceContext = tokenPriceList.ToJson();
+
+                if (saveChanges)
+                {
+                    await _investorTransactionRepository.SaveAsync(tx);
+                }
+            }
+
+            report.AppendLine($"- Total tokens 20M (old): {totalTokens20MOld}");
+            report.AppendLine($"- Total tokens 20M (new): {totalTokens20M}");
+
+            report.AppendLine("");
+            report.AppendLine("Investors");
+
+            foreach (var tx in txs)
+            {
+                var txOld = txsAllOld.First(f => f.UniqueId == tx.UniqueId);
+                var investor = investors.First(f => f.Email == tx.Email);
+                var diffTokens = tx.AmountToken - txOld.AmountToken;
+
+                report.AppendLine($"- {investor.Email}: " +
+                    $"old={investor.AmountToken}, " +
+                    $"new={investor.AmountToken + diffTokens}, " +
+                    $"diff={diffTokens}");
+
+                if (saveChanges)
+                {
+                    await _investorRepository.IncrementTokens(investor.Email, diffTokens);
+                }
+            }
+
+            report.AppendLine("");
+            report.AppendLine("CampaignInfo");
+
+            var amountInvestedToken = Decimal.Parse(await _campaignInfoRepository.GetValueAsync(CampaignInfoType.AmountInvestedToken));
+            var amountInvestedTokenDiff = totalTokens20M - totalTokens20MOld;
+            var amountInvestedTokenNew = amountInvestedToken + amountInvestedTokenDiff;
+
+            report.AppendLine($"- AmountInvestedToken (old): {amountInvestedToken}");
+            report.AppendLine($"- AmountInvestedToken (new): {amountInvestedTokenNew}");
+            report.AppendLine($"- AmountInvestedToken (diff): {amountInvestedTokenDiff}");
+
+            if (saveChanges)
+            {
+                await _campaignInfoRepository.IncrementValue(CampaignInfoType.AmountInvestedToken, amountInvestedTokenDiff);
+            }
+
+            return report.ToString();
+        }
+
+        public class TokenPrice
+        {
+            public TokenPrice(decimal count, decimal price, string phase)
+            {
+                Count = count;
+                Price = price;
+                Phase = phase;
+            }
+
+            public decimal Count { get; }
+            public decimal Price { get; }
+            public string Phase { get; }
+
+            public static IList<TokenPrice> GetPriceList(ICampaignSettings campaignSettings, DateTime txDateTimeUtc,
+                decimal amountUsd, decimal currentTotal)
+            {
+                var tokenInfo = campaignSettings.GetTokenInfo(currentTotal, txDateTimeUtc);
+                if (tokenInfo == null)
+                {
+                    return null;
+                }
+
+                var priceList = new List<TokenPrice>();
+                var tokenPhase = Enum.GetName(typeof(TokenPricePhase), tokenInfo.Phase);
+                var tokens = RoundDown((amountUsd / tokenInfo.Price), campaignSettings.TokenDecimals);
+
+                if (tokenInfo.Phase == TokenPricePhase.CrowdSaleInitial)
+                {
+                    var tokensBelow = Consts.CrowdSale.InitialAmount - currentTotal;
+                    if (tokensBelow > 0M)
+                    {
+                        if (tokens > tokensBelow)
+                        {
+                            // tokens below threshold
+                            priceList.Add(new TokenPrice(tokensBelow, tokenInfo.Price, tokenPhase));
+
+                            // tokens above threshold
+                            var amountUsdAbove = amountUsd - (tokensBelow * tokenInfo.Price);
+                            var priceAbove = campaignSettings.GetTokenPrice(TokenPricePhase.CrowdSaleFirstDay);
+                            var tokensAbove = RoundDown((amountUsdAbove / priceAbove), campaignSettings.TokenDecimals);
+
+                            priceList.Add(new TokenPrice(tokensAbove, priceAbove, nameof(TokenPricePhase.CrowdSaleFirstDay)));
+
+                            return priceList;
+                        }
+                    }
+                }
+
+                priceList.Add(new TokenPrice(tokens, tokenInfo.Price, tokenPhase));
+
+                return priceList;
+            }
+
+            public static decimal RoundDown(decimal self, double decimalPlaces)
+            {
+                var power = Convert.ToDecimal(Math.Pow(10, decimalPlaces));
+                var value = Math.Floor(self * power) / power;
+
+                return value;
+            }
+        }
     }
 }

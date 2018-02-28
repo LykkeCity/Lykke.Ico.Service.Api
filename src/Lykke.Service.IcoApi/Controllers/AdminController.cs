@@ -573,5 +573,34 @@ namespace Lykke.Service.IcoApi.Controllers
                 await _adminService.ImportPublicKeys(reader);
             }
         }
+
+        /// <summary>
+        /// Get report for txs recalcalcation for 20m crowdsale phase
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("transactions/recalculate/20M")]
+        public async Task<IActionResult> GetKycReminders()
+        {
+            var report = await _adminService.Recalculate20MTxs(false);
+
+            return File(Encoding.UTF8.GetBytes(report), "text/csv", "report.txt");
+        }
+
+        /// <summary>
+        /// Recalcalcate txs and related data for 20m crowdsale phase
+        /// </summary>
+        [AdminAuth]
+        [HttpPost("transactions/recalculate/20M")]
+        public async Task<IActionResult> PostKycReminderEmails([Required] string confirmationPhrase)
+        {
+            if (confirmationPhrase != "confirm")
+            {
+                return BadRequest($"The confirmationPhrase={confirmationPhrase} is not valid");
+            }
+
+            var report = await _adminService.Recalculate20MTxs(true);
+
+            return File(Encoding.UTF8.GetBytes(report), "text/csv", "report.txt");
+        }
     }
 }
