@@ -60,6 +60,18 @@ namespace Lykke.Service.IcoApi.Models
 
         public decimal AmountToken { get; set; }
 
+        public string ReferralCode { get; set; }
+
+        public DateTime? ReferralCodeUtc { get; set; }
+
+        public string ReferralCodeApplied { get; set; }
+
+        public DateTime? ReferralCodeAppliedUtc { get; set; }
+
+        public int ReferralsNumber { get; set; }
+
+        public DateTime? ReferralsNumberUtc { get; set; }
+
         public static FullInvestorResponse Create(IInvestor investor)
         {
             return new FullInvestorResponse
@@ -85,7 +97,13 @@ namespace Lykke.Service.IcoApi.Models
                 AmountEth = investor.AmountEth,
                 AmountFiat = investor.AmountFiat,
                 AmountUsd = investor.AmountUsd,
-                AmountToken = investor.AmountToken
+                AmountToken = investor.AmountToken,
+                ReferralCode = investor.ReferralCode,
+                ReferralCodeUtc = investor.ReferralCodeUtc,
+                ReferralCodeApplied = investor.ReferralCodeApplied,
+                ReferralCodeAppliedUtc = investor.ReferralCodeAppliedUtc,
+                ReferralsNumber = investor.ReferralsNumber,
+                ReferralsNumberUtc = investor.ReferralsNumberUtc
             };
         }
     }
@@ -284,6 +302,15 @@ namespace Lykke.Service.IcoApi.Models
         [Required]
         public bool EnableCampaignFrontEnd { get; set; }
 
+        [Required]
+        public bool EnableReferralProgram { get; set; }
+
+        public int? ReferralCodeLength { get; set; }
+
+        public decimal? ReferralOwnerDiscount { get; set; }
+
+        public decimal? ReferralDiscount { get; set; }
+
         public static CampaignSettingsModel Create(ICampaignSettings settings)
         {
             if (settings == null)
@@ -307,7 +334,11 @@ namespace Lykke.Service.IcoApi.Models
                 KycCampaignId = settings.KycCampaignId,
                 KycLinkTemplate = settings.KycLinkTemplate,
                 CaptchaEnable = settings.CaptchaEnable,
-                EnableCampaignFrontEnd = settings.EnableCampaignFrontEnd
+                EnableCampaignFrontEnd = settings.EnableCampaignFrontEnd,
+                EnableReferralProgram = settings.EnableReferralProgram,
+                ReferralCodeLength = settings.ReferralCodeLength,
+                ReferralOwnerDiscount = settings.ReferralOwnerDiscount,
+                ReferralDiscount = settings.ReferralDiscount
             };
         }
     }

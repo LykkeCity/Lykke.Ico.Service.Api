@@ -20,6 +20,10 @@ namespace Lykke.Service.IcoApi.Models
 
         public DateTime? KycManuallyUpdatedUtc { get; set; }
 
+        public string ReferralCode { get; set; }
+
+        public DateTime? ReferralCodeUtc { get; set; }
+
         public static PrivateInvestorResponse Create(IPrivateInvestor investor, string kycLink)
         {
             var kycStatus = KycStatus.None;
@@ -40,7 +44,9 @@ namespace Lykke.Service.IcoApi.Models
                 KycLink = kycLink,
                 UpdatedUtc = investor.UpdatedUtc,
                 KycPassedUtc = investor.KycPassedUtc,
-                KycManuallyUpdatedUtc = investor.KycManuallyUpdatedUtc
+                KycManuallyUpdatedUtc = investor.KycManuallyUpdatedUtc,
+                ReferralCode = investor.ReferralCode,
+                ReferralCodeUtc = investor.ReferralCodeUtc
             };
         }
     }

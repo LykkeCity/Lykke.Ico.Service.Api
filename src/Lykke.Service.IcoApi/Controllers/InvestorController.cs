@@ -26,10 +26,11 @@ namespace Lykke.Service.IcoApi.Controllers
         private readonly IFiatService _fiatService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IKycService _kycService;
+        private readonly IReferralCodeService _referralCodeService;
 
         public InvestorController(ILog log, IInvestorService investorService, IBtcService btcService,
             IEthService ethService, IFiatService fiatService, IHttpContextAccessor httpContextAccessor,
-            IKycService kycService)
+            IKycService kycService, IReferralCodeService referralCodeService)
         {
             _log = log;
             _investorService = investorService;
@@ -38,6 +39,7 @@ namespace Lykke.Service.IcoApi.Controllers
             _fiatService = fiatService;
             _httpContextAccessor = httpContextAccessor;
             _kycService = kycService;
+            _referralCodeService = referralCodeService;
         }
 
         /// <summary>
@@ -50,16 +52,29 @@ namespace Lykke.Service.IcoApi.Controllers
         [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> RegisterInvestor([FromBody] RegisterInvestorRequest model)
         {
+            await _log.WriteInfoAsync(nameof(InvestorController), nameof(RegisterInvestor),
+                $"model={model.ToJson()}, ip={GetRequestIP()}",
+                "Register investor");
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
-            }            
+            }
 
-            await _log.WriteInfoAsync(nameof(InvestorController), nameof(RegisterInvestor), 
-                $"email={model.Email}, ip={GetRequestIP()}",
-                "Register investor");
+            if (!string.IsNullOrEmpty(model.ReferralCode))
+            {
+                var email = await _referralCodeService.GetReferralEmail(model.ReferralCode);
+                if (string.IsNullOrEmpty(email))
+                {
+                    await _log.WriteInfoAsync(nameof(InvestorController), nameof(RegisterInvestor),
+                        $"model={model.ToJson()}, ip={GetRequestIP()}",
+                        "Wrong referral code");
 
-            var result = await _investorService.RegisterAsync(model.Email);
+                    return BadRequest($"The referral code={model.ReferralCode} was not found");
+                }
+            }
+
+            var result = await _investorService.RegisterAsync(model.Email, model.ReferralCode);
 
             return Ok(new RegisterInvestorResponse { Result = result } );
         }

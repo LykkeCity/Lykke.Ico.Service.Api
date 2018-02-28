@@ -78,7 +78,7 @@ namespace Lykke.Service.IcoApi.Services
             return email;
         }
 
-        public async Task<RegisterResult> RegisterAsync(string email)
+        public async Task<RegisterResult> RegisterAsync(string email, string referralCode)
         {
             email = email.ToLowCase().Trim();
 
@@ -94,6 +94,18 @@ namespace Lykke.Service.IcoApi.Services
                 await _investorAttributeRepository.SaveAsync(InvestorAttributeType.ConfirmationToken, 
                     email, token.ToString());
                 await _campaignInfoRepository.IncrementValue(CampaignInfoType.InvestorsRegistered, 1);
+
+                if (!string.IsNullOrEmpty(referralCode))
+                {
+                    await _investorRepository.ApplyReferralCode(email, referralCode);
+
+                    var referralEmail = await _investorAttributeRepository.GetInvestorEmailAsync(
+                        InvestorAttributeType.ReferralCode, referralCode);
+                    if (referralEmail != null)
+                    {
+                        await _investorRepository.IncrementReferrals(referralEmail);
+                    }
+                }
 
                 await SendConfirmationEmail(email, token);
 

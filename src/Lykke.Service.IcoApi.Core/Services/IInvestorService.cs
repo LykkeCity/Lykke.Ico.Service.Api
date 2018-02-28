@@ -11,7 +11,7 @@ namespace Lykke.Service.IcoApi.Core.Services
 
         Task<string> GetEmailByKycId(Guid kycId);
 
-        Task<RegisterResult> RegisterAsync(string email);
+        Task<RegisterResult> RegisterAsync(string email, string referralCode);
 
         Task<bool> ConfirmAsync(Guid confirmationToken);
 

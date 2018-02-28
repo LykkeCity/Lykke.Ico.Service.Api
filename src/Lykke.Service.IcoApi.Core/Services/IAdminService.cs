@@ -34,5 +34,6 @@ namespace Lykke.Service.IcoApi.Core.Services
         Task UpdateInvestorAsync(string email, string tokenAddress, string refundEthAddress, string refundBtcAddress);
         Task UpdateInvestorKycAsync(IInvestor investor, bool? kycPassed);
         Task<string> Recalculate20MTxs(bool saveChanges);
+        Task<IEnumerable<(string Email, string Code)>> GenerateReferralCodes();
     }
 }

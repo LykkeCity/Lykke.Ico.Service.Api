@@ -11,6 +11,8 @@ namespace Lykke.Service.IcoApi.Models
         [Required]
         [EmailAddress]
         public string Email { get; set; }
+
+        public string ReferralCode { get; set; }
     }
 
     public class RegisterInvestorResponse

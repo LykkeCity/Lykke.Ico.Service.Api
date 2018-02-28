@@ -602,5 +602,22 @@ namespace Lykke.Service.IcoApi.Controllers
 
             return File(Encoding.UTF8.GetBytes(report), "text/csv", "report.txt");
         }
+
+        /// <summary>
+        /// Generate referral codes for investors/private investors
+        /// </summary>
+        [AdminAuth]
+        [HttpPost("referrals/generateCode")]
+        public async Task<IActionResult> GenerateReferralCode([Required] string confirmationPhrase)
+        {
+            if (confirmationPhrase != "confirm")
+            {
+                return BadRequest($"The confirmationPhrase={confirmationPhrase} is not valid");
+            }
+
+            var result = await _adminService.GenerateReferralCodes();
+
+            return Ok(result.Select(f => new { email = f.Email, code = f.Code }));
+        }
     }
 }

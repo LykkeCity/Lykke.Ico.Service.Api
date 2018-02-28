@@ -3,10 +3,17 @@ using System.IO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Text;
+using System.Linq;
 using Common;
 using Common.Log;
 using CsvHelper;
+using Newtonsoft.Json;
 using Lykke.Service.IcoApi.Core.Services;
+using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
+using Lykke.Ico.Core;
+using Lykke.Ico.Core.Queues;
+using Lykke.Ico.Core.Queues.Transactions;
+using Lykke.Ico.Core.Queues.Emails;
 using Lykke.Ico.Core.Repositories.Investor;
 using Lykke.Ico.Core.Repositories.InvestorAttribute;
 using Lykke.Ico.Core.Repositories.AddressPool;
@@ -16,14 +23,10 @@ using Lykke.Ico.Core.Repositories.CampaignInfo;
 using Lykke.Ico.Core.Repositories.InvestorEmail;
 using Lykke.Ico.Core.Repositories.InvestorTransaction;
 using Lykke.Ico.Core.Repositories.CampaignSettings;
-using Lykke.Ico.Core.Queues.Transactions;
-using Lykke.Ico.Core.Queues.Emails;
-using Lykke.Ico.Core;
-using Lykke.Ico.Core.Queues;
 using Lykke.Ico.Core.Repositories.InvestorRefund;
-using System.Linq;
-using Newtonsoft.Json;
-using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
+using Lykke.Ico.Core.Repositories.PrivateInvestorAttribute;
+using Lykke.Ico.Core.Repositories.PrivateInvestor;
+using Lykke.Ico.Core.Services;
 
 namespace Lykke.Service.IcoApi.Services
 {
@@ -42,6 +45,9 @@ namespace Lykke.Service.IcoApi.Services
         private readonly ICampaignSettingsRepository _campaignSettingsRepository;
         private readonly IQueuePublisher<TransactionMessage> _transactionQueuePublisher;
         private readonly IQueuePublisher<InvestorKycReminderMessage> _investorKycReminderPublisher;
+        private readonly IPrivateInvestorRepository _privateInvestorRepository;
+        private readonly IPrivateInvestorAttributeRepository _privateInvestorAttributeRepository;
+        private readonly IReferralCodeService _referralCodeService;
         private readonly IcoApiSettings _icoApiSettings;
 
         public AdminService(ILog log,
@@ -57,6 +63,9 @@ namespace Lykke.Service.IcoApi.Services
             ICampaignSettingsRepository campaignSettingsRepository,
             IQueuePublisher<TransactionMessage> transactionQueuePublisher,
             IQueuePublisher<InvestorKycReminderMessage> investorKycReminderPublisher,
+            IPrivateInvestorRepository privateInvestorRepository,
+            IPrivateInvestorAttributeRepository privateInvestorAttributeRepository,
+            IReferralCodeService referralCodeService,
             IcoApiSettings icoApiSettings)
         {
             _log = log;
@@ -72,6 +81,9 @@ namespace Lykke.Service.IcoApi.Services
             _campaignSettingsRepository = campaignSettingsRepository;
             _transactionQueuePublisher = transactionQueuePublisher;
             _investorKycReminderPublisher = investorKycReminderPublisher;
+            _privateInvestorRepository = privateInvestorRepository;
+            _privateInvestorAttributeRepository = privateInvestorAttributeRepository;
+            _referralCodeService = referralCodeService;
             _icoApiSettings = icoApiSettings;
         }
 
@@ -573,6 +585,48 @@ namespace Lykke.Service.IcoApi.Services
 
                 return value;
             }
+        }
+
+        public async Task<IEnumerable<(string Email, string Code)>> GenerateReferralCodes()
+        {
+            var result = new List<(string Email, string Code)>();
+            var settings = await _campaignSettingsRepository.GetAsync();
+
+            if (!settings.ReferralCodeLength.HasValue)
+            {
+                throw new Exception("settings.ReferralCodeLength does not have value");
+            }
+
+            var investors = await _investorRepository.GetAllAsync();
+            foreach (var investor in investors)
+            {
+                if (string.IsNullOrEmpty(investor.ReferralCode) && 
+                    investor.AmountUsd >= settings.MinInvestAmountUsd)
+                {
+                    var code = await _referralCodeService.GetReferralCode(settings.ReferralCodeLength.Value);
+                    await _investorRepository.SaveReferralCode(investor.Email, code);
+                    await _investorAttributeRepository.SaveAsync(InvestorAttributeType.ReferralCode,
+                        investor.Email, code);
+
+                    result.Add((investor.Email, code));
+                }
+            }
+
+            var privateInvestors = await _privateInvestorRepository.GetAllAsync();
+            foreach (var privateInvestor in privateInvestors)
+            {
+                if (string.IsNullOrEmpty(privateInvestor.ReferralCode))
+                {
+                    var code = await _referralCodeService.GetReferralCode(settings.ReferralCodeLength.Value);
+                    await _privateInvestorRepository.SaveReferralCode(privateInvestor.Email, code);
+                    await _privateInvestorAttributeRepository.SaveAsync(PrivateInvestorAttributeType.ReferralCode,
+                        privateInvestor.Email, code);
+
+                    result.Add((privateInvestor.Email, code));
+                }
+            }
+
+            return result;
         }
     }
 }
