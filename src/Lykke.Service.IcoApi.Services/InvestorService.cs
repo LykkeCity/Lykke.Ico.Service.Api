@@ -155,7 +155,7 @@ namespace Lykke.Service.IcoApi.Services
             {
                 Address = payInBtcAddress,
                 CampaignId = _icoApiSettings.CampaignId,
-                Currency = IcoCommon.Client.Models.CurrencyType.BTC,
+                Currency = IcoCommon.Client.Models.CurrencyType.Btc,
                 Email = email
             });
 
@@ -163,7 +163,7 @@ namespace Lykke.Service.IcoApi.Services
             {
                 Address = payInEthAddress,
                 CampaignId = _icoApiSettings.CampaignId,
-                Currency = IcoCommon.Client.Models.CurrencyType.ETH,
+                Currency = IcoCommon.Client.Models.CurrencyType.Eth,
                 Email = email
             });
 
