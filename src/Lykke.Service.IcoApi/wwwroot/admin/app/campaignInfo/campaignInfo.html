@@ -1,7 +1,7 @@
 ﻿<md-list class="property-list" ng-if="$ctrl.info">
 
-    <md-subheader>Campaign</md-subheader>
-    <md-list-item ng-click="null">
+    <md-subheader class="md-no-sticky">Campaign</md-subheader>
+    <md-list-item>
         <p>Phase</p>
         <p class="md-secondary">{{$ctrl.info.phase}}</p>
     </md-list-item>
@@ -19,7 +19,7 @@
 
     <md-divider></md-divider>
 
-    <md-subheader>Investments</md-subheader>
+    <md-subheader class="md-no-sticky">Investments</md-subheader>
     <md-list-item>
         <p>BTC</p>
         <p class="md-secondary">{{$ctrl.info.amountInvestedBtc | number}}</p>
@@ -43,7 +43,7 @@
 
     <md-divider></md-divider>
 
-    <md-subheader>Investors</md-subheader>
+    <md-subheader class="md-no-sticky">Investors</md-subheader>
     <md-list-item>
         <p>Registered</p>
         <p class="md-secondary">{{$ctrl.info.investorsRegistered | number}}</p>
@@ -61,7 +61,9 @@
         <p class="md-secondary">{{$ctrl.info.investorsKycPassed | number}}</p>
     </md-list-item>
 
-    <md-subheader>Blockchain State</md-subheader>
+    <md-divider></md-divider>
+
+    <md-subheader class="md-no-sticky">Blockchain State</md-subheader>
     <md-list-item>
         <p>BTC network</p>
         <p class="md-secondary">{{$ctrl.info.bctNetwork}}</p>

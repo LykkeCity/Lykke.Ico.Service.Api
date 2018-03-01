@@ -1,8 +1,8 @@
 import { app, AppEvent, AppToastType } from "./app.js";
 const appRoutes = [
     { link: "campaign-info", icon: "info", name: "Info", template: "<campaign-info></campaign-info>" },
+    { link: "campaign-email-templates", icon: "email", name: "Email Templates", template: "<campaign-email-templates></campaign-email-templates>" },
     { link: "campaign-settings", icon: "settings", name: "Settings", template: "<campaign-settings></campaign-settings>" },
-    { link: "campaign-email-templates", icon: "email", name: "Email Templates", template: "<campaign-email-templates></campaign-email-templates>" }
 ];
 // define app routes
 app.constant("appRoutes", appRoutes);
@@ -45,9 +45,11 @@ app.config(($httpProvider) => {
         };
     });
 });
-// config Material Design theme
-app.config(($mdThemingProvider) => {
-    $mdThemingProvider
-        .theme("default");
-    //.dark();
+// config Material Design
+app.config(($mdThemingProvider, $mdAriaProvider) => {
+    $mdAriaProvider.disableWarnings();
+    // uncomment to turn off the light:
+    //$mdThemingProvider
+    //    .theme("default")
+    //    .dark();    
 });

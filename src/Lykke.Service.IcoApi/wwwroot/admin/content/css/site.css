@@ -4,7 +4,7 @@
 }
 
 #sidenav {
-    width: 20vw;
+    min-width: 20vw;
 }
 
 #email-template-editor {

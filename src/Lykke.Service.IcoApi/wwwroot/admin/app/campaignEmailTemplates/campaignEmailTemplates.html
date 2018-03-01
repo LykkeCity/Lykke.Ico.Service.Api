@@ -1,5 +1,5 @@
-﻿<md-list flex="20" md-whiteframe="4" ng-if="$ctrl.templates">
-    <md-list-item ng-repeat="t in $ctrl.templates | orderBy:'templateId'" ng-click="$ctrl.selectTemplate(t)" md-colors="$ctrl.listColors(t)">
+﻿<md-list flex="20" ng-if="$ctrl.templates" md-colors="$ctrl.listColors()">
+    <md-list-item ng-repeat="t in $ctrl.templates | orderBy:'templateId'" ng-click="$ctrl.selectTemplate(t)" md-colors="$ctrl.listItemColors(t)">
         {{t.templateId}}
     </md-list-item>
 </md-list>

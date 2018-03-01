@@ -1,4 +1,4 @@
-﻿<md-toolbar layout="row" class="md-toolbar-tools">
+﻿<md-toolbar layout="row" class="md-toolbar-tools" md-whiteframe="2">
     <md-button class="md-icon-button" ng-click="$ctrl.toggleSidenav()"><md-icon>menu</md-icon></md-button>
     <h6 class="flex md-truncate">{{$ctrl.title}}</h6>
     <md-button ng-repeat="c in $ctrl.customCommands" ng-click="c.action()">{{c.name}}</md-button>
@@ -19,7 +19,9 @@
         </md-list>
     </md-sidenav>
 
-    <ng-view flex layout-fill></ng-view>
+    <md-content flex layout-fill id="content">
+        <ng-view layout-fill></ng-view>
+    </md-content>
 
 </div>
 

@@ -66,11 +66,18 @@ class CampaignEmailTemplatesController {
             .post(this.templatesUrl, this.selectedTemplate)
             .then(_ => this.shell.toast({ message: "Changes saved", type: AppToastType.Success }));
     }
-    listColors(template) {
+    listColors() {
         // TODO: convert to directive
-        const hue = this.$mdTheming.THEMES.default.isDark ? "800" : "200";
+        const hue = this.$mdTheming.THEMES.default.isDark ? "800" : "100";
         return {
-            background: template == this.selectedTemplate ? `background-${hue}` : 'background'
+            background: `background-${hue}`
+        };
+    }
+    listItemColors(template) {
+        // TODO: convert to directive
+        const hue = this.$mdTheming.THEMES.default.isDark ? "700" : "300";
+        return {
+            background: template == this.selectedTemplate ? `background-${hue}` : `background-${this.listColors()}`,
         };
     }
 }

@@ -3,8 +3,8 @@ import { AuthService, AuthUtils  } from "./auth/auth.js";
 
 const appRoutes: IAppRoute[] = [
     { link: "campaign-info", icon: "info", name: "Info", template: "<campaign-info></campaign-info>" },
-    { link: "campaign-settings", icon: "settings", name: "Settings", template: "<campaign-settings></campaign-settings>" },
     { link: "campaign-email-templates", icon: "email", name: "Email Templates", template: "<campaign-email-templates></campaign-email-templates>" }
+    { link: "campaign-settings", icon: "settings", name: "Settings", template: "<campaign-settings></campaign-settings>" },
 ];
 
 // define app routes
@@ -51,9 +51,13 @@ app.config(($httpProvider: ng.IHttpProvider) => {
     });
 });
 
-// config Material Design theme
-app.config(($mdThemingProvider: ng.material.IThemingProvider) => {
-    $mdThemingProvider
-        .theme("default")
-    //.dark();
+// config Material Design
+app.config(($mdThemingProvider: ng.material.IThemingProvider, $mdAriaProvider: ng.material.IAriaProvider) => {
+    $mdAriaProvider.disableWarnings();
+
+    // uncomment to turn off the light:
+
+    //$mdThemingProvider
+    //    .theme("default")
+    //    .dark();    
 });

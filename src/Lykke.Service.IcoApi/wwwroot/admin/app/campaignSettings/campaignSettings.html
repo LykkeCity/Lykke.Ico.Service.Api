@@ -1,6 +1,6 @@
 ﻿<md-list class="property-list" ng-if="$ctrl.settings">
    
-    <md-subheader>Common</md-subheader>
+    <md-subheader class="md-no-sticky">Common</md-subheader>
     <md-list-item>
         <p>Token base price (USD)</p>
         <div class="md-secondary">
@@ -40,7 +40,7 @@
 
     <md-divider></md-divider>
 
-    <md-subheader>Pre-sale</md-subheader>
+    <md-subheader class="md-no-sticky">Pre-sale</md-subheader>
     <md-list-item>
         <p>Starts at</p>
         <md-datepicker class="md-secondary" ng-model="$ctrl.settings.preSaleStartDateTimeUtc"></md-datepicker>
@@ -60,7 +60,7 @@
 
     <md-divider></md-divider>
 
-    <md-subheader>Crowd-sale</md-subheader>
+    <md-subheader class="md-no-sticky">Crowd-sale</md-subheader>
     <md-list-item>
         <p>Starts at</p>
         <md-datepicker class="md-secondary" ng-model="$ctrl.settings.crowdSaleStartDateTimeUtc"></md-datepicker>
@@ -80,7 +80,7 @@
 
     <md-divider></md-divider>
 
-    <md-subheader>KYC</md-subheader>
+    <md-subheader class="md-no-sticky">KYC</md-subheader>
     <md-list-item>
         <p>Send Requests</p>
         <md-switch class="md-secondary" ng-model="$ctrl.settings.kycEnableRequestSending"></md-switch>
