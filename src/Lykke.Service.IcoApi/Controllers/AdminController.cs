@@ -620,6 +620,9 @@ namespace Lykke.Service.IcoApi.Controllers
                 return BadRequest($"The confirmation={confirmation} is not valid");
             }
 
+            await _log.WriteInfoAsync(nameof(AdminController), nameof(GenerateReferralCode),
+                $"Generate referral code for all investors");
+
             var result = await _adminService.GenerateReferralCodes();
 
             return Ok(result.Select(f => new { email = f.Email, code = f.Code }));
@@ -642,6 +645,9 @@ namespace Lykke.Service.IcoApi.Controllers
                 return BadRequest($"Investor with email={email} does not have referral code");
             }
 
+            await _log.WriteInfoAsync(nameof(AdminController), nameof(SendToAllInvestorsEmailWithReferralCode),
+                $"email={email}", "Send referral code to investor");
+
             await _adminService.SendEmailWithReferralCode(investor);
 
             return Ok();
@@ -658,6 +664,9 @@ namespace Lykke.Service.IcoApi.Controllers
             {
                 return BadRequest($"The confirmation={confirmation} is not valid");
             }
+
+            await _log.WriteInfoAsync(nameof(AdminController), nameof(SendToAllInvestorsEmailWithReferralCode),
+                $"Send referral codes wto all investors");
 
             var result = new List<string>();
             var investors = await _adminService.GetAllInvestors();
