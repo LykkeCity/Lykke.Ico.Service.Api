@@ -12,8 +12,8 @@
     <md-list-item>
         <p>Address pool</p>
         <p class="md-secondary">
-            {{$ctrl.info.addressPoolTotalSize || 0 - $ctrl.info.addressPoolCurrentSize || 0 | number}} of {{$ctrl.info.addressPoolTotalSize || 0 | number}} used,
-            {{$ctrl.info.addressPoolCurrentSize || 0}} remains
+            {{($ctrl.info.addressPoolTotalSize || 0) - ($ctrl.info.addressPoolCurrentSize || 0) | number}} of {{($ctrl.info.addressPoolTotalSize || 0) | number}} used,
+            {{($ctrl.info.addressPoolCurrentSize || 0) | number}} remains
         </p>
     </md-list-item>
 
