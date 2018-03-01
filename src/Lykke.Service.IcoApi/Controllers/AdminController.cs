@@ -425,8 +425,13 @@ namespace Lykke.Service.IcoApi.Controllers
         /// </summary>
         [AdminAuth]
         [HttpPost("investors/send/kycReminderEmails/{type}")]
-        public async Task<SendKycReminderEmailsResponse> SendKycReminderEmails([Required] KycReminderType type)
+        public async Task<IActionResult> SendKycReminderEmails([Required] string confirmation, [Required] KycReminderType type)
         {
+            if (confirmation != "confirm")
+            {
+                return BadRequest($"The confirmation={confirmation} is not valid");
+            }
+
             var investorsToSend = await GetKycReminderInvestors(type);
 
             await _log.WriteInfoAsync(nameof(AdminController), nameof(SendKycReminderEmails),
@@ -435,7 +440,7 @@ namespace Lykke.Service.IcoApi.Controllers
 
             await _adminService.SendKycReminderEmails(investorsToSend);
 
-            return SendKycReminderEmailsResponse.Create(investorsToSend);
+            return Ok(SendKycReminderEmailsResponse.Create(investorsToSend));
         }
 
         private async Task<IEnumerable<IInvestor>> GetKycReminderInvestors(KycReminderType type)
@@ -591,11 +596,11 @@ namespace Lykke.Service.IcoApi.Controllers
         /// </summary>
         [AdminAuth]
         [HttpPost("transactions/recalculate/20M")]
-        public async Task<IActionResult> PostKycReminderEmails([Required] string confirmationPhrase)
+        public async Task<IActionResult> PostKycReminderEmails([Required] string confirmation)
         {
-            if (confirmationPhrase != "confirm")
+            if (confirmation != "confirm")
             {
-                return BadRequest($"The confirmationPhrase={confirmationPhrase} is not valid");
+                return BadRequest($"The confirmation={confirmation} is not valid");
             }
 
             var report = await _adminService.Recalculate20MTxs(true);
@@ -608,11 +613,11 @@ namespace Lykke.Service.IcoApi.Controllers
         /// </summary>
         [AdminAuth]
         [HttpPost("referrals/generateCode")]
-        public async Task<IActionResult> GenerateReferralCode([Required] string confirmationPhrase)
+        public async Task<IActionResult> GenerateReferralCode([Required] string confirmation)
         {
-            if (confirmationPhrase != "confirm")
+            if (confirmation != "confirm")
             {
-                return BadRequest($"The confirmationPhrase={confirmationPhrase} is not valid");
+                return BadRequest($"The confirmation={confirmation} is not valid");
             }
 
             var result = await _adminService.GenerateReferralCodes();
