@@ -45,6 +45,7 @@ namespace Lykke.Service.IcoApi.Services
         private readonly ICampaignSettingsRepository _campaignSettingsRepository;
         private readonly IQueuePublisher<TransactionMessage> _transactionQueuePublisher;
         private readonly IQueuePublisher<InvestorKycReminderMessage> _investorKycReminderPublisher;
+        private readonly IQueuePublisher<InvestorReferralCodeMessage> _investorReferralCodePublisher;
         private readonly IPrivateInvestorRepository _privateInvestorRepository;
         private readonly IPrivateInvestorAttributeRepository _privateInvestorAttributeRepository;
         private readonly IReferralCodeService _referralCodeService;
@@ -63,6 +64,7 @@ namespace Lykke.Service.IcoApi.Services
             ICampaignSettingsRepository campaignSettingsRepository,
             IQueuePublisher<TransactionMessage> transactionQueuePublisher,
             IQueuePublisher<InvestorKycReminderMessage> investorKycReminderPublisher,
+            IQueuePublisher<InvestorReferralCodeMessage> investorReferralCodePublisher,
             IPrivateInvestorRepository privateInvestorRepository,
             IPrivateInvestorAttributeRepository privateInvestorAttributeRepository,
             IReferralCodeService referralCodeService,
@@ -81,6 +83,7 @@ namespace Lykke.Service.IcoApi.Services
             _campaignSettingsRepository = campaignSettingsRepository;
             _transactionQueuePublisher = transactionQueuePublisher;
             _investorKycReminderPublisher = investorKycReminderPublisher;
+            _investorReferralCodePublisher = investorReferralCodePublisher;
             _privateInvestorRepository = privateInvestorRepository;
             _privateInvestorAttributeRepository = privateInvestorAttributeRepository;
             _referralCodeService = referralCodeService;
@@ -120,6 +123,14 @@ namespace Lykke.Service.IcoApi.Services
                 if (!string.IsNullOrEmpty(inverstor.PayInEthAddress))
                 {
                     await _investorAttributeRepository.RemoveAsync(InvestorAttributeType.PayInEthAddress, inverstor.PayInEthPublicKey);
+                }
+                if (!string.IsNullOrEmpty(inverstor.KycRequestId))
+                {
+                    await _investorAttributeRepository.RemoveAsync(InvestorAttributeType.KycId, inverstor.KycRequestId);
+                }
+                if (!string.IsNullOrEmpty(inverstor.ReferralCode))
+                {
+                    await _investorAttributeRepository.RemoveAsync(InvestorAttributeType.ReferralCode, inverstor.ReferralCode);
                 }
 
                 await _investorRepository.RemoveAsync(email);
@@ -627,6 +638,16 @@ namespace Lykke.Service.IcoApi.Services
             }
 
             return result;
+        }
+
+        public async Task SendEmailWithReferralCode(IInvestor investor)
+        {
+            await _investorReferralCodePublisher.SendAsync(new InvestorReferralCodeMessage
+            {
+                EmailTo = investor.Email,
+                ReferralCode = investor.ReferralCode,
+                LinkToSummaryPage = _icoApiSettings.SiteSummaryPageUrl.Replace("{token}", investor.ConfirmationToken.Value.ToString())
+            });
         }
     }
 }

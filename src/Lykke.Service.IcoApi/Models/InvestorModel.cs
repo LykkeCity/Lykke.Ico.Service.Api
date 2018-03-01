@@ -79,6 +79,12 @@ namespace Lykke.Service.IcoApi.Models
 
         public decimal AmountToken { get; set; }
 
+        public string ReferralCode { get; set; }
+
+        public string ReferralCodeApplied { get; set; }
+
+        public int ReferralsNumber { get; set; }
+
         public static InvestorResponse Create(IInvestor investor, string kycLink)
         {
             var kycStatus = KycStatus.None;
@@ -105,7 +111,10 @@ namespace Lykke.Service.IcoApi.Models
                 AmountEth = investor.AmountEth,
                 AmountFiat = investor.AmountFiat,
                 AmountUsd = Decimal.Round(investor.AmountUsd, 2, MidpointRounding.AwayFromZero),
-                AmountToken = investor.AmountToken
+                AmountToken = investor.AmountToken,
+                ReferralCode = investor.ReferralCode,
+                ReferralCodeApplied = investor.ReferralCodeApplied,
+                ReferralsNumber = investor.ReferralsNumber
             };
         }
     }

@@ -624,5 +624,55 @@ namespace Lykke.Service.IcoApi.Controllers
 
             return Ok(result.Select(f => new { email = f.Email, code = f.Code }));
         }
+
+        /// <summary>
+        /// Send email with referral code to investor
+        /// </summary>
+        [AdminAuth]
+        [HttpPost("referrals/{email}/sendEmail")]
+        public async Task<IActionResult> SendInvestorEmailWithReferralCode([Required] string email)
+        {
+            var investor = await _investorService.GetAsync(email);
+            if (investor == null)
+            {
+                return NotFound($"Investor with email={email} was not found");
+            }
+            if (string.IsNullOrEmpty(investor.ReferralCode))
+            {
+                return BadRequest($"Investor with email={email} does not have referral code");
+            }
+
+            await _adminService.SendEmailWithReferralCode(investor);
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Send emails with referral code to all investors
+        /// </summary>
+        [AdminAuth]
+        [HttpPost("referrals/sendEmails")]
+        public async Task<IActionResult> SendToAllInvestorsEmailWithReferralCode([Required] string confirmation)
+        {
+            if (confirmation != "confirm")
+            {
+                return BadRequest($"The confirmation={confirmation} is not valid");
+            }
+
+            var result = new List<string>();
+            var investors = await _adminService.GetAllInvestors();
+
+            foreach (var investor in investors)
+            {
+                if (!string.IsNullOrEmpty(investor.ReferralCode))
+                {
+                    await _adminService.SendEmailWithReferralCode(investor);
+
+                    result.Add(investor.Email);
+                }
+            }
+
+            return Ok(result);
+        }
     }
 }

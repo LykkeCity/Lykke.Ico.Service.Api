@@ -175,9 +175,14 @@ namespace Lykke.Service.IcoApi.Modules
                 .SingleInstance();
 
             builder.RegisterType<QueuePublisher<InvestorKycReminderMessage>>()
-               .As<IQueuePublisher<InvestorKycReminderMessage>>()
-               .WithParameter(TypedParameter.From(connectionStringManager))
-               .SingleInstance();
+                .As<IQueuePublisher<InvestorKycReminderMessage>>()
+                .WithParameter(TypedParameter.From(connectionStringManager))
+                .SingleInstance();
+
+            builder.RegisterType<QueuePublisher<InvestorReferralCodeMessage>>()
+                .As<IQueuePublisher<InvestorReferralCodeMessage>>()
+                .WithParameter(TypedParameter.From(connectionStringManager))
+                .SingleInstance();
 
             builder.RegisterInstance(_settings.CurrentValue);
         }
