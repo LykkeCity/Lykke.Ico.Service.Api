@@ -1,0 +1,14 @@
+﻿<md-list flex="20" ng-if="$ctrl.templates" md-colors="$ctrl.listColors()">
+    <md-list-item ng-repeat="t in $ctrl.templates | orderBy:'templateId'" ng-click="$ctrl.selectTemplate(t)" md-colors="$ctrl.listItemColors(t)">
+        {{t.templateId}}
+    </md-list-item>
+</md-list>
+
+<form flex="20" layout="column" layout-padding name="templateForm" ng-if="$ctrl.templates">
+    <md-input-container>
+        <label>Subject</label>
+        <input type="text" ng-model="$ctrl.selectedTemplate.subject" />
+    </md-input-container>
+</form>
+
+<div flex="60" id="email-template-editor" ng-if="$ctrl.templates"></div>

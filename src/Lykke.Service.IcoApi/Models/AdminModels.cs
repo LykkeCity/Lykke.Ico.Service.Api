@@ -407,4 +407,13 @@ namespace Lykke.Service.IcoApi.Models
 
         public string EthPublicKey { get; set; }
     }
+
+    public class LoginRequest
+    {
+        [Required]
+        public string Username { get; set; }
+
+        [Required]
+        public string Password { get; set; }
+    }
 }

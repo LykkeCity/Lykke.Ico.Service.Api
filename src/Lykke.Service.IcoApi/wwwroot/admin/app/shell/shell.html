@@ -1,0 +1,27 @@
+﻿<md-toolbar layout="row" class="md-toolbar-tools" md-whiteframe="2">
+    <md-button class="md-icon-button" ng-click="$ctrl.toggleSidenav()"><md-icon>menu</md-icon></md-button>
+    <h6 class="flex md-truncate">{{$ctrl.title}}</h6>
+    <md-button ng-repeat="c in $ctrl.customCommands" ng-click="c.action()">{{c.name}}</md-button>
+</md-toolbar>
+
+<div flex layout="row">
+
+    <md-sidenav id="sidenav" md-component-id="sidenav" layout="column">
+        <md-toolbar layout="row" class="md-toolbar-tools">
+            <md-button class="md-icon-button" ng-click="$ctrl.toggleSidenav()"><md-icon md-svg-src="content/images/logo-lykke.svg"></md-icon></md-button>
+            <h6>{{$ctrl.title}}</h6>
+        </md-toolbar>
+        <md-list flex>
+            <md-list-item ng-repeat="r in $ctrl.appRoutes" ng-click="$ctrl.navigateTo(r)">
+                <md-icon>{{r.icon}}</md-icon>
+                <p class="md-caption">{{r.name}}</p>
+            </md-list-item>
+        </md-list>
+    </md-sidenav>
+
+    <md-content flex layout-fill id="content">
+        <ng-view layout-fill></ng-view>
+    </md-content>
+
+</div>
+

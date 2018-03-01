@@ -2,6 +2,7 @@
 using Common.Log;
 using Lykke.Job.IcoInvestment.AzureQueueHandlers;
 using Lykke.JobTriggers.Extenstions;
+using Lykke.Service.IcoApi.AzureRepositories.Auth;
 using Lykke.Service.IcoApi.Core.Queues;
 using Lykke.Service.IcoApi.Core.Queues.Messages;
 using Lykke.Service.IcoApi.Core.Repositories;
@@ -103,6 +104,14 @@ namespace Lykke.Service.IcoApi.Modules
                 .WithParameter(TypedParameter.From(connectionStringManager))
                 .SingleInstance();
 
+            builder.RegisterType<UserAuthTokenRepository>()
+                .As<IUserAuthTokenRepository>()
+                .WithParameter(TypedParameter.From(connectionStringManager));
+
+            builder.RegisterType<UserRepository>()
+                .As<IUserRepository>()
+                .WithParameter(TypedParameter.From(connectionStringManager));
+
             builder.RegisterType<InvestorService>()
                 .As<IInvestorService>()
                 .SingleInstance();
@@ -150,6 +159,9 @@ namespace Lykke.Service.IcoApi.Modules
             builder.RegisterType<TransactionService>()
                 .As<ITransactionService>()
                 .SingleInstance();
+
+            builder.RegisterType<AuthService>()
+                .As<IAuthService>();
 
             builder.RegisterType<QueuePublisher<TransactionMessage>>()
                 .As<IQueuePublisher<TransactionMessage>>()

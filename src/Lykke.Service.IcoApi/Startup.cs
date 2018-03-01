@@ -24,6 +24,8 @@ using Lykke.AzureStorage.Tables.Entity.Metamodel;
 using Lykke.AzureStorage.Tables.Entity.Metamodel.Providers;
 using Stripe;
 using Lykke.JobTriggers.Triggers;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Lykke.Service.IcoApi
 {
@@ -127,12 +129,17 @@ namespace Lykke.Service.IcoApi
                     x.RoutePrefix = "swagger/ui";
                     x.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
                 });
-                app.UseStaticFiles(new StaticFileOptions()
+                app.Use(async (context, next) =>
                 {
-                    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(
-                            System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), @"Html")),
-                    RequestPath = new Microsoft.AspNetCore.Http.PathString("/html")
+                    await next();
+                    if (context.Response.StatusCode == 404 && context.Request.Path.Value.StartsWith("/admin") && !Path.HasExtension(context.Request.Path.Value))
+                    {
+                        context.Request.Path = "/admin/index.html";
+                        await next();
+                    }
                 });
+                app.UseDefaultFiles(new DefaultFilesOptions { DefaultFileNames = new List<string> { "index.html" } });
+                app.UseStaticFiles();
 
                 appLifetime.ApplicationStarted.Register(() => StartApplication().Wait());
                 appLifetime.ApplicationStopping.Register(() => StopApplication().Wait());

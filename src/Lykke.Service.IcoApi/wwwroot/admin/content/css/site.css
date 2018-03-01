@@ -1,0 +1,45 @@
+﻿#dialogContent_auth-dialog {
+    height: 285px;
+    width: 300px;
+}
+
+#sidenav {
+    min-width: 20vw;
+}
+
+#email-template-editor {
+    overflow: hidden;
+}
+
+.property-list {
+    max-width: 1200px;
+    min-width: 50vw;
+}
+
+#settings-kyc-link-template {
+    min-width: 25vw;
+}
+
+md-toast.md-top {
+    top: 64px;
+}
+
+.md-toast-success .md-toast-content {
+    background-color: #087f23 !important;
+}
+
+.md-toast-error .md-toast-content {
+    background-color: #ba000d !important;
+}
+
+md-input-container.errors {
+    margin: 0;
+}
+
+.md-secondary-container md-input-container {
+    margin: 0;
+}
+
+.md-secondary-container md-input-container .md-errors-spacer {
+    min-height: 0px !important;
+}

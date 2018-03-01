@@ -1,6 +1,16 @@
-﻿using Common;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Text;
+using System.Threading.Tasks;
+using Common;
 using Common.Log;
 using CsvHelper;
+using Lykke.Common.ApiLibrary.Contract;
 using Lykke.Service.IcoApi.Core.Domain.Campaign;
 using Lykke.Service.IcoApi.Core.Domain.Investor;
 using Lykke.Service.IcoApi.Core.Domain.Token;
@@ -15,14 +25,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+using EmailTemplateModel = Lykke.Service.IcoCommon.Client.Models.EmailTemplateModel;
 
 namespace Lykke.Service.IcoApi.Controllers
 {
@@ -42,12 +45,13 @@ namespace Lykke.Service.IcoApi.Controllers
         private readonly IMemoryCache _cache;
         private readonly IcoApiSettings _settings;
         private readonly IIcoCommonServiceClient _icoCommonServiceClient;
+        private readonly IAuthService _authService;
 
         public AdminController(ILog log, IInvestorService investorService, IAdminService adminService, 
             IBtcService btcService, IEthService ethService, IIcoExRateClient icoExRateClient,
             IPrivateInvestorService privateInvestorService, IKycService kycService,
             ICampaignService campaignService, IMemoryCache cache, IcoApiSettings settings, 
-            IIcoCommonServiceClient icoCommonServiceClient)
+            IIcoCommonServiceClient icoCommonServiceClient, IAuthService authService)
         {
             _log = log;
             _investorService = investorService;
@@ -61,6 +65,7 @@ namespace Lykke.Service.IcoApi.Controllers
             _cache = cache;
             _settings = settings;
             _icoCommonServiceClient = icoCommonServiceClient;
+            _authService = authService;
         }
 
         /// <summary>
@@ -80,10 +85,10 @@ namespace Lykke.Service.IcoApi.Controllers
                 tokensSold = 0;
             }
 
-            var tokenInfo = settings.GetTokenInfo(tokensSold, DateTime.UtcNow);
+            var tokenInfo = settings?.GetTokenInfo(tokensSold, DateTime.UtcNow);
             if (tokenInfo != null)
             {
-                info.Add("TokenPriceUsd", tokenInfo.Price.ToString());
+                info.Add("TokenPriceUsd", tokenInfo.Price.ToString(CultureInfo.InvariantCulture));
                 info.Add("Phase", Enum.GetName(typeof(TokenPricePhase), tokenInfo.Phase));
             }
 
@@ -413,6 +418,62 @@ namespace Lykke.Service.IcoApi.Controllers
             using (var reader = new StreamReader(file.OpenReadStream()))
             {
                 await _adminService.ImportPublicKeys(reader);
+            }
+        }
+
+        /// <summary>
+        /// Returns campaign email templates content.
+        /// </summary>
+        /// <returns></returns>
+        [AdminAuth]
+        [HttpGet("campaign/email/templates")]
+        public async Task<IList<EmailTemplateModel>> GetCampaignEmailTemplates()
+        {
+            return await _icoCommonServiceClient.GetCampaignEmailTemplatesAsync(_settings.CampaignId);
+        }
+
+        /// <summary>
+        /// Returns campaign email templates content.
+        /// </summary>
+        /// <returns></returns>
+        [AdminAuth]
+        [HttpPost("campaign/email/templates")]
+        public async Task<IActionResult> AddOrUpdateCampaignEmailTemplate([FromBody] EmailTemplateModel emailTemplate)
+        {
+            if (string.IsNullOrEmpty(emailTemplate.TemplateId))
+            {
+                return BadRequest(ErrorResponse.Create("TemplateId is required"));
+            }
+
+            emailTemplate.CampaignId = _settings.CampaignId;
+
+            await _icoCommonServiceClient.AddOrUpdateEmailTemplateAsync(emailTemplate);
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Checks user name and password and returns authentication token.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ErrorResponseFactory.Create(ModelState));
+            }
+
+            var authToken = await _authService.Login(request.Username, request.Password);
+
+            if (string.IsNullOrEmpty(authToken))
+            {
+                return StatusCode(StatusCodes.Status403Forbidden);
+            }
+            else
+            {
+                return Ok(authToken);
             }
         }
     }

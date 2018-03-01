@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
@@ -6,6 +6,7 @@
     <Version>1.0.1</Version>
     <AssemblyName>Lykke.Service.IcoApi</AssemblyName>
     <RootNamespace>Lykke.Service.IcoApi</RootNamespace>
+    <TypeScriptToolsVersion>2.5</TypeScriptToolsVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -17,16 +18,21 @@
     <DocumentationFile>bin\Debug\netcoreapp2.0\Lykke.Service.IcoApi.xml</DocumentationFile>
     <NoWarn>1701;1702;1705;1591</NoWarn>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\admin\app\app.config.ts" />
+    <Content Remove="wwwroot\admin\app\app.ts" />
+    <Content Remove="wwwroot\admin\app\auth\auth.ts" />
+    <Content Remove="wwwroot\admin\app\campaignEmailTemplates\campaignEmailTemplates.ts" />
+    <Content Remove="wwwroot\admin\app\campaignInfo\campaignInfo.ts" />
+    <Content Remove="wwwroot\admin\app\campaignSettings\campaignSettings.ts" />
+    <Content Remove="wwwroot\admin\app\loginService.ts" />
+    <Content Remove="wwwroot\admin\app\shell.ts" />
+  </ItemGroup>
   
   <ItemGroup>
     <None Update="Dockerfile">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </None>
-    <None Update="Html\captcha.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Html\fiat.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
@@ -54,6 +60,98 @@
     <ProjectReference Include="..\Lykke.Service.IcoApi.Core\Lykke.Service.IcoApi.Core.csproj" />
     <ProjectReference Include="..\Lykke.Service.IcoApi.Services\Lykke.Service.IcoApi.Services.csproj" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\base\worker\workerMain.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\bat.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\coffee.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\cpp.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\csharp.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\css.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\dockerfile.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\fsharp.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\go.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\handlebars.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\html.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\ini.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\java.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\less.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\lua.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\markdown.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\msdax.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\objective-c.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\php.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\postiats.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\powershell.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\pug.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\python.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\r.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\razor.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\ruby.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\sb.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\scss.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\solidity.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\sql.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\swift.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\vb.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\xml.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\basic-languages\src\yaml.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\editor\contrib\suggest\browser\media\String_16x.svg" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\editor\contrib\suggest\browser\media\String_inverse_16x.svg" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\editor\editor.main.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\editor\editor.main.nls.de.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\editor\editor.main.nls.es.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\editor\editor.main.nls.fr.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\editor\editor.main.nls.hu.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\editor\editor.main.nls.it.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\editor\editor.main.nls.ja.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\editor\editor.main.nls.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\editor\editor.main.nls.ko.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\editor\editor.main.nls.pt-br.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\editor\editor.main.nls.ru.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\editor\editor.main.nls.tr.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\editor\editor.main.nls.zh-cn.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\editor\editor.main.nls.zh-tw.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\editor\standalone\browser\quickOpen\symbol-sprite.svg" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\language\css\cssMode.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\language\css\cssWorker.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\language\html\htmlMode.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\language\html\htmlWorker.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\language\json\jsonMode.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\language\json\jsonWorker.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\language\typescript\lib\typescriptServices.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\language\typescript\src\mode.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\language\typescript\src\worker.js" />
+    <None Include="wwwroot\admin\lib\monaco-editor\min\vs\loader.js" />
+    <None Include="wwwroot\captcha.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="wwwroot\fiat.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <TypeScriptCompile Include="wwwroot\admin\app\app.config.ts" />
+    <TypeScriptCompile Include="wwwroot\admin\app\campaignEmailTemplates\campaignEmailTemplates.ts" />
+    <TypeScriptCompile Include="wwwroot\admin\app\campaignInfo\campaignInfo.ts" />
+    <TypeScriptCompile Include="wwwroot\admin\app\campaignSettings\campaignSettings.ts" />
+    <TypeScriptCompile Include="wwwroot\admin\app\shell\shell.ts" />
+    <TypeScriptCompile Include="wwwroot\admin\app\auth\auth.ts" />
+    <TypeScriptCompile Include="wwwroot\admin\app\app.ts" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Content Update="wwwroot\admin\index_.js">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>index_.tt</DependentUpon>
+    </Content>
+  </ItemGroup>
 
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
     <ItemGroup>
@@ -61,5 +159,21 @@
     </ItemGroup>
     <Copy SourceFiles="@(DocFile)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="false" />
   </Target>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <TypeScriptTarget>ES2015</TypeScriptTarget>
+    <TypeScriptJSXEmit>None</TypeScriptJSXEmit>
+    <TypeScriptModuleKind>ES6</TypeScriptModuleKind>
+    <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
+    <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>
+    <TypeScriptRemoveComments>False</TypeScriptRemoveComments>
+    <TypeScriptOutFile />
+    <TypeScriptOutDir />
+    <TypeScriptGeneratesDeclarations>False</TypeScriptGeneratesDeclarations>
+    <TypeScriptNoEmitOnError>True</TypeScriptNoEmitOnError>
+    <TypeScriptSourceMap>True</TypeScriptSourceMap>
+    <TypeScriptMapRoot />
+    <TypeScriptSourceRoot />
+  </PropertyGroup>
 
 </Project>
