@@ -47,17 +47,20 @@ export class AuthUtils {
     }
 }
 export class AuthService {
-    constructor($mdDialog, $q, $http, authUtils) {
+    constructor($mdDialog, $q, $http, $timeout, authUtils) {
         this.$mdDialog = $mdDialog;
         this.$q = $q;
         this.$http = $http;
+        this.$timeout = $timeout;
         this.authUtils = authUtils;
     }
     authenticate() {
         if (this.authUtils.authToken) {
             return this.$q.resolve();
         }
-        return this.$mdDialog.show({
+        // use $timeout for login dialog because it's shown on very app start, when layout 
+        // can be not ready, so we give time for md-* directives to prepare layout
+        return this.$timeout(() => this.$mdDialog.show({
             bindToController: true,
             controller: AuthDialogController,
             controllerAs: "$ctrl",
@@ -65,7 +68,7 @@ export class AuthService {
             parent: angular.element(document.body),
             clickOutsideToClose: false,
             escapeToClose: false
-        });
+        }));
     }
     login(credentials) {
         return this.$http

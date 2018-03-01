@@ -60,7 +60,7 @@ export class AuthUtils {
 }
 
 export class AuthService {
-    constructor(private $mdDialog: ng.material.IDialogService, private $q: ng.IQService, private $http: ng.IHttpService, private authUtils: AuthUtils) {
+    constructor(private $mdDialog: ng.material.IDialogService, private $q: ng.IQService, private $http: ng.IHttpService, private $timeout: ng.ITimeoutService, private authUtils: AuthUtils) {
     }
 
     authenticate(): ng.IPromise<void> {
@@ -68,7 +68,9 @@ export class AuthService {
             return this.$q.resolve();
         } 
 
-        return this.$mdDialog.show({
+        // use $timeout for login dialog because it's shown on very app start, when layout 
+        // can be not ready, so we give time for md-* directives to prepare layout
+        return this.$timeout(() => this.$mdDialog.show({
             bindToController: true,
             controller: AuthDialogController,
             controllerAs: "$ctrl",
@@ -76,7 +78,7 @@ export class AuthService {
             parent: angular.element(document.body),
             clickOutsideToClose: false,
             escapeToClose: false
-        });
+        }));
     }
 
     login(credentials: Credentials): ng.IPromise<void> {
