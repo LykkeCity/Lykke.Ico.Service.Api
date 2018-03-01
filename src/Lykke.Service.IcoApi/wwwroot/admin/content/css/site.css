@@ -36,6 +36,10 @@ md-input-container.errors {
     margin: 0;
 }
 
+md-input-container input[type=time] {
+    font-size: 14px;
+}
+
 .md-secondary-container md-input-container {
     margin: 0;
 }
