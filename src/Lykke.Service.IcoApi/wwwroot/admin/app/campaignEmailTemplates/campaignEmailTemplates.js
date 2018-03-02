@@ -1,4 +1,4 @@
-/// <reference path="../../node_modules/monaco-editor/monaco.d.ts" />
+/// <reference path="../../../../node_modules/monaco-editor/monaco.d.ts" />
 import { app, AppToastType } from "../app.js";
 class CampaignEmailTemplate {
 }

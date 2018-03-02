@@ -1,4 +1,4 @@
-/// <reference path="../../node_modules/monaco-editor/monaco.d.ts" />
+/// <reference path="../../../../node_modules/monaco-editor/monaco.d.ts" />
 
 import { app, AppCommand, AppToast, AppToastType } from "../app.js";
 import { ShellController } from "../shell/shell.js";

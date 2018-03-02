@@ -429,7 +429,8 @@ namespace Lykke.Service.IcoApi.Controllers
         [HttpGet("campaign/email/templates")]
         public async Task<IList<EmailTemplateModel>> GetCampaignEmailTemplates()
         {
-            return await _icoCommonServiceClient.GetCampaignEmailTemplatesAsync(_settings.CampaignId);
+            var templates = await _icoCommonServiceClient.GetCampaignEmailTemplatesAsync(_settings.CampaignId);
+            return templates;
         }
 
         /// <summary>
