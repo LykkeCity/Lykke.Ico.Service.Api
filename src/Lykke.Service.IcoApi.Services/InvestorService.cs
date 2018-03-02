@@ -98,13 +98,6 @@ namespace Lykke.Service.IcoApi.Services
                 if (!string.IsNullOrEmpty(referralCode))
                 {
                     await _investorRepository.ApplyReferralCode(email, referralCode);
-
-                    var referralEmail = await _investorAttributeRepository.GetInvestorEmailAsync(
-                        InvestorAttributeType.ReferralCode, referralCode);
-                    if (referralEmail != null)
-                    {
-                        await _investorRepository.IncrementReferrals(referralEmail);
-                    }
                 }
 
                 await SendConfirmationEmail(email, token);

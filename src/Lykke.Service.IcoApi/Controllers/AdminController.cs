@@ -393,9 +393,16 @@ namespace Lykke.Service.IcoApi.Controllers
         /// </summary>
         [AdminAuth]
         [HttpPost("transactions/failed/resend")]
-        public async Task ResendFailedTransactions()
+        public async Task<IActionResult> ResendFailedTransactions([Required] string confirmation)
         {
+            if (confirmation != "confirm")
+            {
+                return BadRequest($"The confirmation={confirmation} is not valid");
+            }
+
             await _adminService.ResendRefunds();
+
+            return Ok();
         }
 
         /// <summary>
