@@ -4048,63 +4048,6 @@
 					"response": []
 				},
 				{
-					"name": "/api/admin/investors/{email} - recheck referral owner",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "a20e195a-17bb-4ef2-b5e4-cacc019c22e5",
-								"type": "text/javascript",
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"",
-									"pm.test(\"Recheck referral owner\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    var current = jsonData.referralsNumber;",
-									"    var expected = 1;",
-									"    ",
-									"    pm.expect(current).to.eql(expected);",
-									"});"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "adminAuthToken",
-								"value": "{{admin_auth_token}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
-						},
-						"url": {
-							"raw": "{{domain}}/api/admin/investors/{{email}}",
-							"host": [
-								"{{domain}}"
-							],
-							"path": [
-								"api",
-								"admin",
-								"investors",
-								"{{email}}"
-							]
-						},
-						"description": null
-					},
-					"response": []
-				},
-				{
 					"name": "/api/admin/investors/{email_2}/emails - wait confirmation email",
 					"event": [
 						{
@@ -4325,6 +4268,60 @@
 					"response": []
 				},
 				{
+					"name": "/api/admin/investors/{email_2}/emails - remember emails number",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Emails sent number\", function () {",
+									"    var jsonData = pm.response.json();",
+									"",
+									"    pm.environment.set(\"investor-emails-size\", (typeof jsonData.emails === 'undefined') ? 0 : jsonData.emails.count());",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "adminAuthToken",
+								"value": "{{admin_auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
+						},
+						"url": {
+							"raw": "{{domain}}/api/admin/investors/{{email_2}}/emails",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"investors",
+								"{{email_2}}",
+								"emails"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
 					"name": "/api/investor - update investor addresses",
 					"event": [
 						{
@@ -4363,6 +4360,67 @@
 							"path": [
 								"api",
 								"investor"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/admin/investors/{email_2}/emails - wait summary email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "dd69a507-9e05-4c81-95b0-684dba00e457",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"var current = Number(jsonData.emails.count());",
+									"var expected = Number(pm.environment.get(\"investor-emails-size\")) + 1;",
+									"",
+									"if(current == expected){",
+									"    console.info(\"Email recieved\");",
+									"} else {",
+									"    console.info(\"Wait 10 secs\");",
+									"    setTimeout(function(){}, 10000);",
+									"    postman.setNextRequest(\"/api/admin/investors/{email_2}/emails - wait summary email\");",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "adminAuthToken",
+								"value": "{{admin_auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
+						},
+						"url": {
+							"raw": "{{domain}}/api/admin/investors/{{email_2}}/emails",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"investors",
+								"{{email_2}}",
+								"emails"
 							]
 						},
 						"description": null
@@ -4535,7 +4593,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"{{email_2}}\",\r\n  \"amount\": 0.3\r\n}"
+							"raw": "{\r\n  \"email\": \"{{email_2}}\",\r\n  \"amount\": 0.1\r\n}"
 						},
 						"url": {
 							"raw": "{{domain}}/api/debug/eth/send/tx",
@@ -4560,7 +4618,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "d166262c-80f2-42fa-8c8e-b7b58f89ee7c",
+								"id": "9751933a-95b4-4225-bc2c-f0436a5bb6e5",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -4670,6 +4728,289 @@
 								"investors",
 								"{{email_2}}",
 								"transactions"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/admin/investors/{email} - recheck referral owner",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ccc69116-3537-4494-a599-046371999f8d",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Recheck referral owner - must be 0\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    var current = jsonData.referralsNumber;",
+									"    var expected = 0;",
+									"    ",
+									"    pm.expect(current).to.eql(expected);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "adminAuthToken",
+								"value": "{{admin_auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
+						},
+						"url": {
+							"raw": "{{domain}}/api/admin/investors/{{email}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"investors",
+								"{{email}}"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/admin/investors/{email_2}/emails - remember emails number",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Emails sent number\", function () {",
+									"    var jsonData = pm.response.json();",
+									"",
+									"    pm.environment.set(\"investor-emails-size\", (typeof jsonData.emails === 'undefined') ? 0 : jsonData.emails.count());",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "adminAuthToken",
+								"value": "{{admin_auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
+						},
+						"url": {
+							"raw": "{{domain}}/api/admin/investors/{{email_2}}/emails",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"investors",
+								"{{email_2}}",
+								"emails"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/debug/eth/send/tx - send 2-nd ether transaction to queue",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "adminAuthToken",
+								"value": "{{admin_auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"{{email_2}}\",\r\n  \"amount\": 0.9\r\n}"
+						},
+						"url": {
+							"raw": "{{domain}}/api/debug/eth/send/tx",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"debug",
+								"eth",
+								"send",
+								"tx"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/admin/investors/{email_2}/emails - wait 2-nd eth transaction emails",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0ec714df-0303-4ea6-82d7-5a51a5432669",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"var current = Number(jsonData.emails.count());",
+									"var expected = Number(pm.environment.get(\"investor-emails-size\")) + 1;",
+									"",
+									"console.info(\"current: \" + current);",
+									"console.info(\"expected: \" + expected);",
+									"",
+									"if(current == expected){",
+									"    console.info(\"1 email recieved (1 transaction)\");",
+									"} else {",
+									"    console.info(\"Wait 10 secs\");",
+									"    setTimeout(function(){}, 10000);",
+									"    postman.setNextRequest(\"/api/admin/investors/{email_2}/emails - wait 2-nd eth transaction emails\");",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "adminAuthToken",
+								"value": "{{admin_auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
+						},
+						"url": {
+							"raw": "{{domain}}/api/admin/investors/{{email_2}}/emails",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"investors",
+								"{{email_2}}",
+								"emails"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/admin/investors/{email} - recheck referral owner",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "02983fc3-c828-4fcb-9cb0-e769b9fca2fd",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Recheck referral owner - must be 1\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    var current = Number(jsonData.referralsNumber);",
+									"    var expected = Number(1);",
+									"    ",
+									"    console.info(\"current: \" + current);",
+									"    console.info(\"expected: \" + expected);",
+									"    ",
+									"    pm.expect(current).to.eql(expected);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "adminAuthToken",
+								"value": "{{admin_auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
+						},
+						"url": {
+							"raw": "{{domain}}/api/admin/investors/{{email}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"investors",
+								"{{email}}"
 							]
 						},
 						"description": null
@@ -4842,7 +5183,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"amount\": 0.1\r\n}"
+							"raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"amount\": 0.2\r\n}"
 						},
 						"url": {
 							"raw": "{{domain}}/api/debug/eth/send/tx",
