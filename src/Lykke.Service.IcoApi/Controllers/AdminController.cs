@@ -652,7 +652,7 @@ namespace Lykke.Service.IcoApi.Controllers
                 return BadRequest($"Investor with email={email} does not have referral code");
             }
 
-            await _log.WriteInfoAsync(nameof(AdminController), nameof(SendToAllInvestorsEmailWithReferralCode),
+            await _log.WriteInfoAsync(nameof(AdminController), nameof(SendInvestorEmailWithReferralCode),
                 $"email={email}", "Send referral code to investor");
 
             await _adminService.SendEmailWithReferralCode(investor);
