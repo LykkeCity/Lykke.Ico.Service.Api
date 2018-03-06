@@ -1,15 +1,22 @@
 ﻿using Lykke.Service.IcoApi.Core.Domain;
 using Lykke.Service.IcoApi.Core.Domain.Campaign;
-using Lykke.Service.IcoApi.Core.Domain.Token;
+using Lykke.Service.IcoApi.Core.Domain.Investor;
+using Lykke.Service.IcoApi.Core.Repositories;
 using System;
+using System.Threading.Tasks;
 
 namespace Lykke.Service.IcoApi.Services.Extensions
 {
     public static class CampaignSettingsExtenstions
     {
-        public static int GetTotalTokensAmount(this ICampaignSettings self)
+        public static decimal GetCrowdSaleSmarcAmount(this ICampaignSettings self)
         {
-            return self.PreSaleTotalTokensAmount + self.CrowdSaleTotalTokensAmount;
+            return self.CrowdSale1stTierSmarcAmount + self.CrowdSale2ndTierSmarcAmount + self.CrowdSale3rdTierSmarcAmount;
+        }
+
+        public static decimal GetCrowdSaleLogiAmount(this ICampaignSettings self)
+        {
+            return self.CrowdSale1stTierLogiAmount + self.CrowdSale2ndTierLogiAmount + self.CrowdSale3rdTierLogiAmount;
         }
 
         public static bool IsPreSale(this ICampaignSettings self, DateTime txCreatedUtc)
@@ -22,88 +29,198 @@ namespace Lykke.Service.IcoApi.Services.Extensions
             return txCreatedUtc >= self.CrowdSaleStartDateTimeUtc && txCreatedUtc <= self.CrowdSaleEndDateTimeUtc;
         }
 
-        public static decimal GetTokenPrice(this ICampaignSettings self, TokenPricePhase phase)
+        public static async Task<TokenInfo> GetSmarcTokenInfo(this ICampaignSettings self, 
+            ICampaignInfoRepository campaignInfoRepository, 
+            DateTime txDateTimeUtc)
         {
-            switch (phase)
+            if (self.IsPreSale(txDateTimeUtc))
             {
-                case TokenPricePhase.PreSale:
-                    return self.TokenBasePriceUsd * 0.75M;
-                case TokenPricePhase.CrowdSaleInitial:
-                    return self.TokenBasePriceUsd * 0.75M;
-                case TokenPricePhase.CrowdSaleFirstDay:
-                    return self.TokenBasePriceUsd * 0.80M;
-                case TokenPricePhase.CrowdSaleFirstWeek:
-                    return self.TokenBasePriceUsd * 0.85M;
-                case TokenPricePhase.CrowdSaleSecondWeek:
-                    return self.TokenBasePriceUsd * 0.90M;
-                case TokenPricePhase.CrowdSaleLastWeek:
-                    return self.TokenBasePriceUsd;
-                default:
-                    throw new ArgumentException($"Not supported phase={Enum.GetName(typeof(TokenPricePhase), phase)}");
-            }
-        }
+                var preSaleTokensAmountStr = await campaignInfoRepository.GetValueAsync(CampaignInfoType.AmountPreSaleInvestedSmarcToken);
+                if (!Decimal.TryParse(preSaleTokensAmountStr, out var preSaleTokensAmount))
+                {
+                    preSaleTokensAmount = 0;
+                }
 
-        public static TokenInfo GetTokenInfo(this ICampaignSettings self, decimal soldTokens, DateTime txDateTimeUtc)
-        {
-            var isPreSale = self.IsPreSale(txDateTimeUtc);
-            var isIsCrowdSale = self.IsCrowdSale(txDateTimeUtc);
+                if (preSaleTokensAmount < self.PreSaleSmarcAmount)
+                {
+                    return new TokenInfo
+                    {
+                        Name = Consts.SMARC,
+                        PriceUsd = self.PreSaleSmarcPriceUsd,
+                        Phase = CampaignPhase.PreSale,
+                        PhaseTokenAmount = preSaleTokensAmount,
+                        PhaseTokenAmountTotal = self.PreSaleSmarcAmount
+                    };
+                }
 
-            if (isPreSale)
-            {
                 return new TokenInfo
                 {
-                    Price = self.GetTokenPrice(TokenPricePhase.PreSale),
-                    Phase = TokenPricePhase.PreSale
+                    Name = Consts.SMARC,
+                    ErrorReason = InvestorRefundReason.PreSaleTokensSoldOut,
+                    Error = $"All presale SMARC tokens sold out. CurrentTokenAmount={preSaleTokensAmount}. " +
+                            $"AvailableTokenAmount={self.PreSaleSmarcAmount}"
                 };
             }
 
-            if (isIsCrowdSale)
+            if (self.IsCrowdSale(txDateTimeUtc))
             {
-                if (soldTokens < Consts.CrowdSale.InitialAmount)
+                var crowdSaleTokensAmountStr = await campaignInfoRepository.GetValueAsync(CampaignInfoType.AmountCrowdSaleInvestedSmarcToken);
+                if (!Decimal.TryParse(crowdSaleTokensAmountStr, out var crowdSaleTokensAmount))
+                {
+                    crowdSaleTokensAmount = 0;
+                }
+
+                if (crowdSaleTokensAmount < self.CrowdSale1stTierSmarcAmount)
                 {
                     return new TokenInfo
                     {
-                        Price = self.GetTokenPrice(TokenPricePhase.CrowdSaleInitial),
-                        Phase = TokenPricePhase.CrowdSaleInitial
+                        Name = Consts.SMARC,
+                        PriceUsd = self.CrowdSale1stTierSmarcPriceUsd,
+                        Phase = CampaignPhase.CrowdSale1stTier,
+                        PhaseTokenAmount = crowdSaleTokensAmount,
+                        PhaseTokenAmountTotal = self.CrowdSale1stTierSmarcAmount
                     };
                 }
 
-                var timeSpan = txDateTimeUtc - self.CrowdSaleStartDateTimeUtc;
-                if (timeSpan < TimeSpan.FromDays(1))
+                var crowdSale2ndTierAmountTotal = self.CrowdSale1stTierSmarcAmount + self.CrowdSale2ndTierSmarcAmount;
+                if (crowdSaleTokensAmount >= self.CrowdSale1stTierSmarcAmount &&
+                    crowdSaleTokensAmount < crowdSale2ndTierAmountTotal)
                 {
                     return new TokenInfo
                     {
-                        Price = self.GetTokenPrice(TokenPricePhase.CrowdSaleFirstDay),
-                        Phase = TokenPricePhase.CrowdSaleFirstDay
+                        Name = Consts.SMARC,
+                        PriceUsd = self.CrowdSale2ndTierSmarcPriceUsd,
+                        Phase = CampaignPhase.CrowdSale2ndTier,
+                        PhaseTokenAmount = crowdSaleTokensAmount - self.CrowdSale1stTierSmarcAmount,
+                        PhaseTokenAmountTotal = self.CrowdSale2ndTierSmarcAmount
                     };
                 }
-                else if (timeSpan < TimeSpan.FromDays(7))
+
+                if (crowdSaleTokensAmount >= crowdSale2ndTierAmountTotal &&
+                    crowdSaleTokensAmount < self.GetCrowdSaleSmarcAmount())
                 {
                     return new TokenInfo
                     {
-                        Price = self.GetTokenPrice(TokenPricePhase.CrowdSaleFirstWeek),
-                        Phase = TokenPricePhase.CrowdSaleFirstWeek
+                        Name = Consts.SMARC,
+                        PriceUsd = self.CrowdSale3rdTierSmarcPriceUsd,
+                        Phase = CampaignPhase.CrowdSale3ndTier,
+                        PhaseTokenAmount = crowdSaleTokensAmount - crowdSale2ndTierAmountTotal,
+                        PhaseTokenAmountTotal = self.CrowdSale3rdTierSmarcAmount
                     };
                 }
-                else if (timeSpan < TimeSpan.FromDays(7 * 2))
+
+                return new TokenInfo
                 {
-                    return new TokenInfo
-                    {
-                        Price = self.GetTokenPrice(TokenPricePhase.CrowdSaleSecondWeek),
-                        Phase = TokenPricePhase.CrowdSaleSecondWeek
-                    };
-                }
-                else
-                {
-                    return new TokenInfo
-                    {
-                        Price = self.GetTokenPrice(TokenPricePhase.CrowdSaleLastWeek),
-                        Phase = TokenPricePhase.CrowdSaleLastWeek
-                    };
-                }
+                    Name = Consts.SMARC,
+                    ErrorReason = InvestorRefundReason.CrowdSaleTokensSoldOut,
+                    Error = $"All crowdsale SMARC tokens sold out. CurrentTokenAmount={crowdSaleTokensAmount}. " +
+                            $"AvailableTokenAmount={self.GetCrowdSaleSmarcAmount()}"
+                };
             }
 
-            return null;
+            return new TokenInfo
+            {
+                Name = Consts.SMARC,
+                ErrorReason = InvestorRefundReason.OutOfDates,
+                Error = "Out of campaign dates"
+            };
+        }
+
+        public static async Task<TokenInfo> GetLogiTokenInfo(this ICampaignSettings self,
+            ICampaignInfoRepository campaignInfoRepository,
+            DateTime txDateTimeUtc)
+        {
+            if (self.IsPreSale(txDateTimeUtc))
+            {
+                var preSaleTokensAmountStr = await campaignInfoRepository.GetValueAsync(CampaignInfoType.AmountPreSaleInvestedLogiToken);
+                if (!Decimal.TryParse(preSaleTokensAmountStr, out var preSaleTokensAmount))
+                {
+                    preSaleTokensAmount = 0;
+                }
+
+                if (preSaleTokensAmount < self.PreSaleLogiAmount)
+                {
+                    return new TokenInfo
+                    {
+                        Name = Consts.LOGI,
+                        PriceUsd = self.PreSaleLogiPriceUsd,
+                        Phase = CampaignPhase.PreSale,
+                        PhaseTokenAmount = preSaleTokensAmount,
+                        PhaseTokenAmountTotal = self.PreSaleLogiAmount
+                    };
+                }
+
+                return new TokenInfo
+                {
+                    Name = Consts.LOGI,
+                    ErrorReason = InvestorRefundReason.PreSaleTokensSoldOut,
+                    Error = $"All presale LOGI tokens sold out. CurrentTokenAmount={preSaleTokensAmount}. " +
+                            $"AvailableTokenAmount={self.PreSaleLogiAmount}"
+                };
+            }
+
+            if (self.IsCrowdSale(txDateTimeUtc))
+            {
+                var crowdSaleTokensAmountStr = await campaignInfoRepository.GetValueAsync(CampaignInfoType.AmountCrowdSaleInvestedLogiToken);
+                if (!Decimal.TryParse(crowdSaleTokensAmountStr, out var crowdSaleTokensAmount))
+                {
+                    crowdSaleTokensAmount = 0;
+                }
+
+                if (crowdSaleTokensAmount < self.CrowdSale1stTierLogiAmount)
+                {
+                    return new TokenInfo
+                    {
+                        Name = Consts.LOGI,
+                        PriceUsd = self.CrowdSale1stTierLogiPriceUsd,
+                        Phase = CampaignPhase.CrowdSale1stTier,
+                        PhaseTokenAmount = crowdSaleTokensAmount,
+                        PhaseTokenAmountTotal = self.CrowdSale1stTierLogiAmount
+                    };
+                }
+
+                var crowdSale2ndTierAmountTotal = self.CrowdSale1stTierLogiAmount + self.CrowdSale2ndTierLogiAmount;
+                if (crowdSaleTokensAmount >= self.CrowdSale1stTierLogiAmount &&
+                    crowdSaleTokensAmount < crowdSale2ndTierAmountTotal)
+                {
+                    return new TokenInfo
+                    {
+                        Name = Consts.LOGI,
+                        PriceUsd = self.CrowdSale2ndTierLogiPriceUsd,
+                        Phase = CampaignPhase.CrowdSale2ndTier,
+                        PhaseTokenAmount = crowdSaleTokensAmount,
+                        PhaseTokenAmountTotal = self.CrowdSale2ndTierLogiAmount
+                    };
+                }
+
+                if (crowdSaleTokensAmount >= crowdSale2ndTierAmountTotal &&
+                    crowdSaleTokensAmount < self.GetCrowdSaleLogiAmount())
+                {
+                    return new TokenInfo
+                    {
+                        Name = Consts.LOGI,
+                        PriceUsd = self.CrowdSale3rdTierLogiPriceUsd,
+                        Phase = CampaignPhase.CrowdSale3ndTier,
+                        PhaseTokenAmount = crowdSaleTokensAmount,
+                        PhaseTokenAmountTotal = self.CrowdSale3rdTierLogiAmount
+                    };
+                }
+
+                return new TokenInfo
+                {
+                    Name = Consts.LOGI,
+                    ErrorReason = InvestorRefundReason.CrowdSaleTokensSoldOut,
+                    Error = $"All crowdsale LOGI tokens sold out. CurrentTokenAmount={crowdSaleTokensAmount}. " +
+                            $"AvailableTokenAmount={self.GetCrowdSaleLogiAmount()}"
+                };
+            }
+
+            return new TokenInfo
+            {
+                Name = Consts.LOGI,
+                ErrorReason = InvestorRefundReason.OutOfDates,
+                Error = "Out of campaign dates"
+            };
         }
     }
 }

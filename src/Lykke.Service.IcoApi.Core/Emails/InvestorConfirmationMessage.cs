@@ -2,6 +2,6 @@
 {
     public class InvestorConfirmationMessage
     {
-        public string ConfirmationLink { get; set; }
+        public string AuthToken { get; set; }
     }
 }

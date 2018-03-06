@@ -15,13 +15,13 @@ using Lykke.Service.IcoApi.Core.Domain.Campaign;
 using Lykke.Service.IcoApi.Core.Domain.Investor;
 using Lykke.Service.IcoApi.Core.Domain;
 using Lykke.Service.IcoApi.Core.Domain.AddressPool;
+using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
 
 namespace Lykke.Service.IcoApi.Services
 {
     public class AdminService : IAdminService
     {
-        private readonly string _btcNetwork;
-        private readonly string _ethNetwork;
+        private readonly IcoApiSettings _settings;
         private readonly ILog _log;
         private readonly IInvestorRepository _investorRepository;
         private readonly IInvestorTransactionRepository _investorTransactionRepository;
@@ -34,8 +34,7 @@ namespace Lykke.Service.IcoApi.Services
         private readonly ICampaignSettingsRepository _campaignSettingsRepository;
         private readonly IQueuePublisher<TransactionMessage> _transactionQueuePublisher;
 
-        public AdminService(string btcNetwork,
-            string ethNetwork,
+        public AdminService(IcoApiSettings settings,
             ILog log,
             IInvestorRepository investorRepository,
             IInvestorTransactionRepository investorTransactionRepository,
@@ -48,8 +47,7 @@ namespace Lykke.Service.IcoApi.Services
             ICampaignSettingsRepository campaignSettingsRepository,
             IQueuePublisher<TransactionMessage> transactionQueuePublisher)
         {
-            _btcNetwork = btcNetwork;
-            _ethNetwork = ethNetwork;
+            _settings = settings;
             _log = log;
             _investorRepository = investorRepository;
             _investorAttributeRepository = investorAttributeRepository;
@@ -72,8 +70,9 @@ namespace Lykke.Service.IcoApi.Services
                 dictionary.Remove(nameof(CampaignInfoType.LatestTransactions));
             }                
 
-            dictionary.Add("BctNetwork", _btcNetwork);
-            dictionary.Add("EthNetwork", _ethNetwork);
+            dictionary.Add("BctNetwork", _settings.BtcNetwork);
+            dictionary.Add("EthNetwork", _settings.EthNetwork);
+            dictionary.Add("CampaignId", Consts.CAMPAIGN_ID);
 
             return dictionary;
         }
@@ -85,18 +84,8 @@ namespace Lykke.Service.IcoApi.Services
             var inverstor = await _investorRepository.GetAsync(email);
             if (inverstor != null)
             {
-                if (inverstor.ConfirmationToken.HasValue)
-                {
-                    await _investorAttributeRepository.RemoveAsync(InvestorAttributeType.ConfirmationToken, inverstor.ConfirmationToken.ToString());
-                }
-                if (!string.IsNullOrEmpty(inverstor.PayInBtcAddress))
-                {
-                    await _investorAttributeRepository.RemoveAsync(InvestorAttributeType.PayInBtcAddress, inverstor.PayInBtcPublicKey);
-                }
-                if (!string.IsNullOrEmpty(inverstor.PayInEthAddress))
-                {
-                    await _investorAttributeRepository.RemoveAsync(InvestorAttributeType.PayInEthAddress, inverstor.PayInEthPublicKey);
-                }
+                await _investorAttributeRepository.RemoveAsync(InvestorAttributeType.ConfirmationToken, inverstor.ConfirmationToken.ToString());
+                await _investorAttributeRepository.RemoveAsync(InvestorAttributeType.KycId, inverstor.KycRequestId);
 
                 await _investorRepository.RemoveAsync(email);
             }
@@ -152,8 +141,8 @@ namespace Lykke.Service.IcoApi.Services
             return await _investorRefundRepository.GetAllAsync();
         }
 
-        public async Task<string> SendTransactionMessageAsync(string email, CurrencyType currency, 
-            DateTime? createdUtc, string uniqueId, decimal amount)
+        public async Task<string> SendTransactionMessageAsync(string email, string payInAddress, 
+            CurrencyType currency, DateTime? createdUtc, string uniqueId, decimal amount)
         {
             email = email.ToLowCase();
 
@@ -177,6 +166,7 @@ namespace Lykke.Service.IcoApi.Services
             {
                 Email = email,
                 Amount = amount,
+                PayInAddress = payInAddress,
                 CreatedUtc = createdUtc.Value.ToUniversalTime(),
                 Currency = currency,
                 Fee = fee,
@@ -187,14 +177,12 @@ namespace Lykke.Service.IcoApi.Services
             if (currency == CurrencyType.Bitcoin)
             {
                 message.BlockId = $"fake_btc_block_{Guid.NewGuid()}";
-                message.PayInAddress = investor.PayInBtcAddress;
                 message.Link = $"http://test.valid.global/btc/{message.TransactionId}";
             }
 
             if (currency == CurrencyType.Ether)
             {
                 message.BlockId = $"fake_eth_block_{Guid.NewGuid()}";
-                message.PayInAddress = investor.PayInEthAddress;
                 message.Link = $"http://test.valid.global/eth/{message.TransactionId}";
             }
 

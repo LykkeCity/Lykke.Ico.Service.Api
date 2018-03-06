@@ -42,8 +42,7 @@ namespace Lykke.Services.IcoApi.AzureRepositories
                 PartitionKey = GetPartitionKey(),
                 RowKey = GetRowKey(email),
                 ConfirmationToken = confirmationToken,
-                ConfirmationTokenCreatedUtc = DateTime.UtcNow,
-                UpdatedUtc = DateTime.UtcNow
+                ConfirmationTokenCreatedUtc = DateTime.UtcNow
             };
 
             await _table.InsertAsync(entity);
@@ -57,7 +56,6 @@ namespace Lykke.Services.IcoApi.AzureRepositories
             var entity = await _table.MergeAsync(GetPartitionKey(), GetRowKey(email), x =>
             {
                 x.ConfirmedUtc = DateTime.UtcNow;
-                x.UpdatedUtc = DateTime.UtcNow;
 
                 return x;
             });
@@ -65,19 +63,28 @@ namespace Lykke.Services.IcoApi.AzureRepositories
             await _investorHistoryRepository.SaveAsync(entity, InvestorHistoryAction.Confirm);
         }
 
-        public async Task SaveAddressesAsync(string email, string tokenAddress, string refundEthAddress, string refundBtcAddress,
-           string payInEthPublicKey, string payInEthAddress, string payInBtcPublicKey, string payInBtcAddress)
+        public async Task SaveAddressesAsync(string email, InvestorFillIn item)
         {
             var entity = await _table.MergeAsync(GetPartitionKey(), GetRowKey(email), x =>
             {
-                x.TokenAddress = tokenAddress;
-                x.RefundEthAddress = refundEthAddress;
-                x.RefundBtcAddress = refundBtcAddress;
-                x.PayInEthPublicKey = payInEthPublicKey;
-                x.PayInEthAddress = payInEthAddress;
-                x.PayInBtcPublicKey = payInBtcPublicKey;
-                x.PayInBtcAddress = payInBtcAddress;
-                x.UpdatedUtc = DateTime.UtcNow;
+                x.TokenAddress = item.TokenAddress;
+                x.RefundEthAddress = item.RefundEthAddress;
+                x.RefundBtcAddress = item.RefundBtcAddress;
+
+                x.PayInSmarcEthPublicKey = item.PayInSmarcEthPublicKey;
+                x.PayInSmarcEthAddress = item.PayInSmarcEthAddress;
+                x.PayInSmarcBtcPublicKey = item.PayInSmarcBtcPublicKey;
+                x.PayInSmarcBtcAddress = item.PayInSmarcBtcAddress;
+
+                x.PayInLogiEthPublicKey = item.PayInLogiEthPublicKey;
+                x.PayInLogiEthAddress = item.PayInLogiEthAddress;
+                x.PayInLogiBtcPublicKey = item.PayInLogiBtcPublicKey;
+                x.PayInLogiBtcAddress = item.PayInLogiBtcAddress;
+
+                x.PayInSmarc90Logi10EthPublicKey = item.PayInSmarc90Logi10EthPublicKey;
+                x.PayInSmarc90Logi10EthAddress = item.PayInSmarc90Logi10EthAddress;
+                x.PayInSmarc90Logi10BtcPublicKey = item.PayInSmarc90Logi10BtcPublicKey;
+                x.PayInSmarc90Logi10BtcAddress = item.PayInSmarc90Logi10BtcAddress;
 
                 return x;
             });
@@ -92,7 +99,6 @@ namespace Lykke.Services.IcoApi.AzureRepositories
                 x.TokenAddress = tokenAddress;
                 x.RefundEthAddress = refundEthAddress;
                 x.RefundBtcAddress = refundBtcAddress;
-                x.UpdatedUtc = DateTime.UtcNow;
 
                 return x;
             });
@@ -106,7 +112,6 @@ namespace Lykke.Services.IcoApi.AzureRepositories
             {
                 x.KycRequestId = kycRequestId;
                 x.KycRequestedUtc = DateTime.UtcNow;
-                x.UpdatedUtc = DateTime.UtcNow;
 
                 return x;
             });
@@ -120,7 +125,6 @@ namespace Lykke.Services.IcoApi.AzureRepositories
             {
                 x.KycPassed = kycPassed;
                 x.KycPassedUtc = DateTime.UtcNow;
-                x.UpdatedUtc = DateTime.UtcNow;
 
                 return x;
             });
@@ -128,7 +132,8 @@ namespace Lykke.Services.IcoApi.AzureRepositories
             await _investorHistoryRepository.SaveAsync(entity, InvestorHistoryAction.SaveKycResult);
         }
 
-        public async Task IncrementAmount(string email, CurrencyType type, decimal amount, decimal amountUsd, decimal amountToken)
+        public async Task IncrementAmount(string email, CurrencyType type, decimal amount, decimal amountUsd, 
+            decimal amountSmarcToken, decimal amountLogiToken)
         {
             var entity = await _table.MergeAsync(GetPartitionKey(), GetRowKey(email), x =>
             {
@@ -146,8 +151,8 @@ namespace Lykke.Services.IcoApi.AzureRepositories
                 }
 
                 x.AmountUsd += amountUsd;
-                x.AmountToken += amountToken;
-                x.UpdatedUtc = DateTime.UtcNow;
+                x.AmountSmarcToken += amountSmarcToken;
+                x.AmountLogiToken += amountLogiToken;
 
                 return x;
             });

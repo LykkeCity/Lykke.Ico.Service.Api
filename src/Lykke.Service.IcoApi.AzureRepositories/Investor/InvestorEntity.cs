@@ -17,43 +17,39 @@ namespace Lykke.Services.IcoApi.AzureRepositories
         }
 
         public string TokenAddress { get; set; }
-
-        public string PayInEthPublicKey { get; set; }
-
-        public string PayInEthAddress { get; set; }
-
-        public string PayInBtcPublicKey { get; set; }
-
-        public string PayInBtcAddress { get; set; }
-
         public string RefundEthAddress { get; set; }
-
         public string RefundBtcAddress { get; set; }
 
-        public DateTime UpdatedUtc { get; set; }
+        public string PayInSmarcEthPublicKey { get; set; }
+        public string PayInSmarcEthAddress { get; set; }
+        public string PayInSmarcBtcPublicKey { get; set; }
+        public string PayInSmarcBtcAddress { get; set; }
+
+        public string PayInLogiEthPublicKey { get; set; }
+        public string PayInLogiEthAddress { get; set; }
+        public string PayInLogiBtcPublicKey { get; set; }
+        public string PayInLogiBtcAddress { get; set; }
+
+        public string PayInSmarc90Logi10EthPublicKey { get; set; }
+        public string PayInSmarc90Logi10EthAddress { get; set; }
+        public string PayInSmarc90Logi10BtcPublicKey { get; set; }
+        public string PayInSmarc90Logi10BtcAddress { get; set; }
 
         public Guid? ConfirmationToken { get; set; }
-
         public DateTime? ConfirmationTokenCreatedUtc { get; set; }
-
         public DateTime? ConfirmedUtc { get; set; }
 
         public string KycRequestId { get; set; }
-
         public DateTime? KycRequestedUtc { get; set; }
-
         public bool? KycPassed { get; set; }
-
         public DateTime? KycPassedUtc { get; set; }
+        public DateTime? KycManuallyUpdatedUtc { get; set; }
 
         public decimal AmountBtc { get; set; }
-
         public decimal AmountEth { get; set; }
-
         public decimal AmountFiat { get; set; }
-
         public decimal AmountUsd { get; set; }
-
-        public decimal AmountToken { get; set; }
+        public decimal AmountSmarcToken { get; set; }
+        public decimal AmountLogiToken { get; set; }
     }
 }

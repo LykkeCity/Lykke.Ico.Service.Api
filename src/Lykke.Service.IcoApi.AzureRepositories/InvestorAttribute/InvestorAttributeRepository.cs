@@ -37,9 +37,12 @@ namespace Lykke.Services.IcoApi.AzureRepositories
             await _table.InsertOrMergeAsync(entity);
         }
 
-        public async Task RemoveAsync(InvestorAttributeType type, string email)
+        public async Task RemoveAsync(InvestorAttributeType type, string value)
         {
-            await _table.DeleteIfExistAsync(GetPartitionKey(type), GetRowKey(email));
+            if (!string.IsNullOrEmpty(value))
+            {
+                await _table.DeleteIfExistAsync(GetPartitionKey(type), GetRowKey(value));
+            }
         }
     }
 }

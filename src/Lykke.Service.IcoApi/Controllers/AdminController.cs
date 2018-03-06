@@ -13,19 +13,20 @@ using CsvHelper;
 using Lykke.Common.ApiLibrary.Contract;
 using Lykke.Service.IcoApi.Core.Domain.Campaign;
 using Lykke.Service.IcoApi.Core.Domain.Investor;
-using Lykke.Service.IcoApi.Core.Domain.Token;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
 using Lykke.Service.IcoApi.Infrastructure;
 using Lykke.Service.IcoApi.Models;
-using Lykke.Service.IcoApi.Services.Extensions;
 using Lykke.Service.IcoCommon.Client;
 using Lykke.Service.IcoExRate.Client;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
+using Lykke.Service.IcoApi.Services.Extensions;
+using Lykke.Service.IcoApi.Core.Repositories;
 using EmailTemplateModel = Lykke.Service.IcoCommon.Client.Models.EmailTemplateModel;
+using Lykke.Service.IcoApi.Core.Domain;
 
 namespace Lykke.Service.IcoApi.Controllers
 {
@@ -46,12 +47,14 @@ namespace Lykke.Service.IcoApi.Controllers
         private readonly IcoApiSettings _settings;
         private readonly IIcoCommonServiceClient _icoCommonServiceClient;
         private readonly IAuthService _authService;
+        private readonly ICampaignInfoRepository _campaignInfoRepository;
 
         public AdminController(ILog log, IInvestorService investorService, IAdminService adminService, 
             IBtcService btcService, IEthService ethService, IIcoExRateClient icoExRateClient,
             IPrivateInvestorService privateInvestorService, IKycService kycService,
             ICampaignService campaignService, IMemoryCache cache, IcoApiSettings settings, 
-            IIcoCommonServiceClient icoCommonServiceClient, IAuthService authService)
+            IIcoCommonServiceClient icoCommonServiceClient, IAuthService authService,
+            ICampaignInfoRepository campaignInfoRepository)
         {
             _log = log;
             _investorService = investorService;
@@ -66,6 +69,7 @@ namespace Lykke.Service.IcoApi.Controllers
             _settings = settings;
             _icoCommonServiceClient = icoCommonServiceClient;
             _authService = authService;
+            _campaignInfoRepository = campaignInfoRepository;
         }
 
         /// <summary>
@@ -78,18 +82,23 @@ namespace Lykke.Service.IcoApi.Controllers
             var info = await _adminService.GetCampaignInfo();
             var settings = await _campaignService.GetCampaignSettings();
 
-            var key = nameof(CampaignInfoType.AmountInvestedToken);
-            var tokensSoldStr = info.ContainsKey(key) ? info[key] : "";
-            if (!Decimal.TryParse(tokensSoldStr, out var tokensSold))
+            info.Add("CrowdSaleSmarcTotalAmount", settings.GetCrowdSaleSmarcAmount().ToString(CultureInfo.InvariantCulture));
+            info.Add("CrowdSaleLogiTotalAmount", settings.GetCrowdSaleLogiAmount().ToString(CultureInfo.InvariantCulture));
+
+            var smarc = await settings.GetSmarcTokenInfo(_campaignInfoRepository, DateTime.UtcNow);
+            if (string.IsNullOrEmpty(smarc.Error))
             {
-                tokensSold = 0;
+                info.Add("SmarcPhase", Enum.GetName(typeof(CampaignPhase), smarc.Phase));
+                info.Add("SmarcPhaseTokenPriceUsd", smarc.PriceUsd?.ToString(CultureInfo.InvariantCulture));
+                info.Add("SmarcPhaseTokenAmountAvailable", smarc.PhaseTokenAmountAvailable?.ToString(CultureInfo.InvariantCulture));
             }
 
-            var tokenInfo = settings?.GetTokenInfo(tokensSold, DateTime.UtcNow);
-            if (tokenInfo != null)
+            var logi = await settings.GetLogiTokenInfo(_campaignInfoRepository, DateTime.UtcNow);
+            if (string.IsNullOrEmpty(logi.Error))
             {
-                info.Add("TokenPriceUsd", tokenInfo.Price.ToString(CultureInfo.InvariantCulture));
-                info.Add("Phase", Enum.GetName(typeof(TokenPricePhase), tokenInfo.Phase));
+                info.Add("LogiPhase", Enum.GetName(typeof(CampaignPhase), logi.Phase));
+                info.Add("LogiPhaseTokenPriceUsd", logi.PriceUsd?.ToString(CultureInfo.InvariantCulture));
+                info.Add("LogiPhaseTokenAmountAvailable", logi.PhaseTokenAmountAvailable?.ToString(CultureInfo.InvariantCulture));
             }
 
             return info;
@@ -228,7 +237,7 @@ namespace Lykke.Service.IcoApi.Controllers
         {
             email = email.ToLowCase();
 
-            var emails = await _icoCommonServiceClient.GetSentEmailsAsync(email, _settings.CampaignId);
+            var emails = await _icoCommonServiceClient.GetSentEmailsAsync(email, Consts.CAMPAIGN_ID);
 
             return InvestorEmailsResponse.Create(emails);
         }
@@ -429,7 +438,7 @@ namespace Lykke.Service.IcoApi.Controllers
         [HttpGet("campaign/email/templates")]
         public async Task<IList<EmailTemplateModel>> GetCampaignEmailTemplates()
         {
-            var templates = await _icoCommonServiceClient.GetCampaignEmailTemplatesAsync(_settings.CampaignId);
+            var templates = await _icoCommonServiceClient.GetCampaignEmailTemplatesAsync(Consts.CAMPAIGN_ID);
             return templates;
         }
 
@@ -446,7 +455,7 @@ namespace Lykke.Service.IcoApi.Controllers
                 return BadRequest(ErrorResponse.Create("TemplateId is required"));
             }
 
-            emailTemplate.CampaignId = _settings.CampaignId;
+            emailTemplate.CampaignId = Consts.CAMPAIGN_ID;
 
             await _icoCommonServiceClient.AddOrUpdateEmailTemplateAsync(emailTemplate);
 

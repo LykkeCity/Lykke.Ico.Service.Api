@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Common.Log;
+using Lykke.JobTriggers.Extenstions;
 using Lykke.Service.IcoApi.AzureRepositories.Auth;
 using Lykke.Service.IcoApi.Core.Domain;
 using Lykke.Service.IcoApi.Core.Queues;
@@ -9,17 +10,18 @@ using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Services;
 using Lykke.Service.IcoCommon.Client;
 using Lykke.Service.IcoExRate.Client;
+using Lykke.Service.IcoJob.Settings;
 using Lykke.Services.IcoApi.AzureRepositories;
 using Lykke.SettingsReader;
 
-namespace Lykke.Service.IcoApi.Modules
+namespace Lykke.Service.IcoJob.Modules
 {
     public class ServiceModule : Module
     {
-        private readonly IReloadingManager<Core.Settings.ServiceSettings.IcoApiSettings> _settings;
+        private readonly IReloadingManager<IcoJobSettings> _settings;
         private readonly ILog _log;
 
-        public ServiceModule(IReloadingManager<Core.Settings.ServiceSettings.IcoApiSettings> settings, ILog log)
+        public ServiceModule(IReloadingManager<IcoJobSettings> settings, ILog log)
         {
             _settings = settings;
             _log = log;
@@ -91,69 +93,25 @@ namespace Lykke.Service.IcoApi.Modules
                 .WithParameter(TypedParameter.From(connectionStringManager))
                 .SingleInstance();
 
-            builder.RegisterType<PrivateInvestorRepository>()
-                .As<IPrivateInvestorRepository>()
-                .WithParameter(TypedParameter.From(connectionStringManager))
-                .SingleInstance();
-
-            builder.RegisterType<PrivateInvestorAttributeRepository>()
-                .As<IPrivateInvestorAttributeRepository>()
-                .WithParameter(TypedParameter.From(connectionStringManager))
-                .SingleInstance();
-
-            builder.RegisterType<UserAuthTokenRepository>()
-                .As<IUserAuthTokenRepository>()
-                .WithParameter(TypedParameter.From(connectionStringManager));
-
-            builder.RegisterType<UserRepository>()
-                .As<IUserRepository>()
-                .WithParameter(TypedParameter.From(connectionStringManager));
-
-            builder.RegisterType<InvestorService>()
-                .As<IInvestorService>()
-                .SingleInstance();
-
-            builder.RegisterType<AdminService>()
-                .As<IAdminService>()
-                .WithParameter("settings", _settings.CurrentValue)
-                .SingleInstance();
-
-            builder.RegisterType<BtcService>()
-                .As<IBtcService>()
-                .WithParameter("btcNetwork", _settings.CurrentValue.BtcNetwork)
-                .WithParameter("testSecretKey", _settings.CurrentValue.BtcTestSecretKey)
-                .SingleInstance();
-
-            builder.RegisterType<EthService>()
-                .As<IEthService>()
-                .WithParameter("ethNetworkUrl", _settings.CurrentValue.EthUrl)
-                .WithParameter("testSecretKey", _settings.CurrentValue.EthTestSecretKey)
-                .SingleInstance();
-
-            builder.RegisterType<FiatService>()
-                .As<IFiatService>()
-                .SingleInstance();
-
-            builder.RegisterType<CampaignService>()
-                .As<ICampaignService>()
-                .SingleInstance();
-
             builder.RegisterType<KycService>()
                 .As<IKycService>()
                 .SingleInstance();
 
-            builder.RegisterType<PrivateInvestorService>()
-                .As<IPrivateInvestorService>()
+            builder.RegisterType<TransactionService>()
+                .As<ITransactionService>()
                 .SingleInstance();
-
-            builder.RegisterType<AuthService>()
-                .As<IAuthService>();
 
             builder.RegisterType<QueuePublisher<TransactionMessage>>()
                 .As<IQueuePublisher<TransactionMessage>>()
                 .WithParameter("connectionStringManager", connectionStringManager)
                 .WithParameter("queueName", $"{Consts.CAMPAIGN_ID.ToLower()}-transaction")
                 .SingleInstance();
+
+            builder.AddTriggers(
+                pool =>
+                {
+                    pool.AddDefaultConnection(_settings.ConnectionString(x => x.AzureQueue.ConnectionString));
+                });
 
             builder.RegisterInstance(_settings.CurrentValue);
         }

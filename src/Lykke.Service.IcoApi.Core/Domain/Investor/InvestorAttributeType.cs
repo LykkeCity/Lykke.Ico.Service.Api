@@ -2,8 +2,6 @@
 {
     public enum InvestorAttributeType
     {
-        PayInEthAddress,
-        PayInBtcAddress,
         ConfirmationToken,
         KycId
     }

@@ -2,9 +2,8 @@
 {
     public class Consts
     {
-        public class CrowdSale
-        {
-            public const decimal InitialAmount = 20_000_000M;
-        }
+        public const string CAMPAIGN_ID = "smarc";
+        public const string SMARC = "SMARC";
+        public const string LOGI = "LOGI";
     }
 }

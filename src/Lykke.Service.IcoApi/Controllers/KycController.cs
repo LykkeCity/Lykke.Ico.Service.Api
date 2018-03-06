@@ -14,17 +14,19 @@ namespace Lykke.Service.IcoApi.Controllers
     public class KycController : Controller
     {
         private readonly ILog _log;
-        private readonly IUrlEncryptionService _urlEncryptionService;
         private readonly IInvestorService _investorService;
         private readonly IPrivateInvestorService _privateInvestorService;
+        private readonly IKycService _kycService;
 
-        public KycController(ILog log, IUrlEncryptionService urlEncryptionService, IInvestorService investorService,
-            IPrivateInvestorService privateInvestorService)
+        public KycController(ILog log, 
+            IInvestorService investorService,
+            IPrivateInvestorService privateInvestorService,
+            IKycService kycService)
         {
             _log = log;
-            _urlEncryptionService = urlEncryptionService;
             _investorService = investorService;
             _privateInvestorService = privateInvestorService;
+            _kycService = kycService;
         }
 
         /// <summary>
@@ -46,7 +48,7 @@ namespace Lykke.Service.IcoApi.Controllers
             var message = "";
             try
             {
-                message = _urlEncryptionService.Decrypt(request.Message);
+                message =  await _kycService.Decrypt(request.Message);
             }
             catch
             {
@@ -98,9 +100,9 @@ namespace Lykke.Service.IcoApi.Controllers
         /// </summary>
         [DisableDebugMethods]
         [HttpPost("debug/encrypt/{text}")]
-        public string EncryptKycMessage([Required] string text)
+        public async Task<string> EncryptKycMessage([Required] string text)
         {
-            return _urlEncryptionService.Encrypt(text);
+            return await _kycService.Encrypt(text);
         }
 
         /// <summary>
@@ -108,9 +110,9 @@ namespace Lykke.Service.IcoApi.Controllers
         /// </summary>
         [DisableDebugMethods]
         [HttpPost("debug/decrypt/{text}")]
-        public string DecryptKycMessage([Required] string text)
+        public async Task<string> DecryptKycMessage([Required] string text)
         {
-            return _urlEncryptionService.Decrypt(text);
+            return await _kycService.Decrypt(text);
         }
     }
 }

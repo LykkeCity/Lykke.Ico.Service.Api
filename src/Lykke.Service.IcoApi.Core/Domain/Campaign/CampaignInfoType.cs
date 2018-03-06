@@ -2,11 +2,18 @@
 {
     public enum CampaignInfoType
     {
-        AmountInvestedFiat,
-        AmountInvestedBtc,
-        AmountInvestedEth,
-        AmountInvestedUsd,
-        AmountInvestedToken,
+        AmountPreSaleInvestedFiat,
+        AmountPreSaleInvestedBtc,
+        AmountPreSaleInvestedEth,
+        AmountPreSaleInvestedUsd,
+        AmountPreSaleInvestedSmarcToken,
+        AmountPreSaleInvestedLogiToken,
+        AmountCrowdSaleInvestedFiat,
+        AmountCrowdSaleInvestedBtc,
+        AmountCrowdSaleInvestedEth,
+        AmountCrowdSaleInvestedUsd,
+        AmountCrowdSaleInvestedSmarcToken,
+        AmountCrowdSaleInvestedLogiToken,
         AddressPoolTotalSize,
         AddressPoolCurrentSize,
         LastProcessedBlockBtc,

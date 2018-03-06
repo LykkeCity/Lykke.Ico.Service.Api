@@ -8,25 +8,20 @@ using Lykke.Common.ApiLibrary.Middleware;
 using Lykke.Common.ApiLibrary.Swagger;
 using Lykke.Logs;
 using Lykke.Service.IcoApi.Core.Services;
-using Lykke.Service.IcoApi.Core.Settings;
-using Lykke.Service.IcoApi.Modules;
 using Lykke.SettingsReader;
 using Lykke.SlackNotification.AzureQueue;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Lykke.Service.IcoApi.Infrastructure;
-using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
-using Microsoft.AspNetCore.Http.Features;
 using Lykke.AzureStorage.Tables.Entity.Metamodel;
 using Lykke.AzureStorage.Tables.Entity.Metamodel.Providers;
-using Stripe;
-using System.Collections.Generic;
-using System.IO;
+using Lykke.JobTriggers.Triggers;
+using Lykke.Service.IcoJob.Modules;
+using Lykke.Service.IcoJob.Settings;
 
-namespace Lykke.Service.IcoApi
+namespace Lykke.Service.IcoJob
 {
     public class Startup
     {
@@ -34,6 +29,9 @@ namespace Lykke.Service.IcoApi
         public IContainer ApplicationContainer { get; private set; }
         public IConfigurationRoot Configuration { get; }
         public ILog Log { get; private set; }
+
+        private TriggerHost _triggerHost;
+        private Task _triggerHostTask;
 
         public Startup(IHostingEnvironment env)
         {
@@ -50,31 +48,16 @@ namespace Lykke.Service.IcoApi
             try
             {
                 services
-                    .AddMemoryCache()
                     .AddMvc()
                     .AddJsonOptions(options =>
                     {
-                        options.SerializerSettings.Converters.Add(new StringEnumConverter { CamelCaseText = true });
                         options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     });
 
-                services.Configure<FormOptions>(x =>
-                {
-                    x.ValueLengthLimit = int.MaxValue;
-                    x.MultipartBodyLengthLimit = int.MaxValue; // In case of multipart
-                });
-
                 services.AddSwaggerGen(options =>
                 {
-                    options.DefaultLykkeConfiguration("v1", "Ico API");
-                    options.DescribeAllEnumsAsStrings();
-                    options.DescribeStringEnumsInCamelCase();
-                    options.OperationFilter<AddSwaggerInvestorAuthHeaderParameter>();
-                    options.OperationFilter<AddSwaggerAdminAuthHeaderParameter>();
-                    options.OperationFilter<FormFileOperationFilter>();
+                    options.DefaultLykkeConfiguration("v1", "Ico Job");
                 });
-
-                services.AddCors();
 
                 EntityMetamodel.Configure(new AnnotationsBasedMetamodelProvider());
 
@@ -87,7 +70,7 @@ namespace Lykke.Service.IcoApi
                     .As<ILog>()
                     .SingleInstance();
 
-                builder.RegisterModule(new ServiceModule(appSettings.Nested(x => x.IcoApiService), Log));
+                builder.RegisterModule(new ServiceModule(appSettings.Nested(x => x.IcoJob), Log));
                 builder.Populate(services);
                 ApplicationContainer = builder.Build();
 
@@ -109,12 +92,7 @@ namespace Lykke.Service.IcoApi
                     app.UseDeveloperExceptionPage();
                 }
 
-                app.UseLykkeMiddleware("IcoApi", ex => new {Message = "Technical problem"});
-
-                app.UseCors(builder => builder
-                    .AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader());
+                app.UseLykkeMiddleware("IcoJob", ex => new {Message = "Technical problem"});
 
                 app.UseMvc();
                 app.UseSwagger();
@@ -123,16 +101,6 @@ namespace Lykke.Service.IcoApi
                     x.RoutePrefix = "swagger/ui";
                     x.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
                 });
-                app.Use(async (context, next) =>
-                {
-                    await next();
-                    if (context.Response.StatusCode == 404 && context.Request.Path.Value.StartsWith("/admin") && !Path.HasExtension(context.Request.Path.Value))
-                    {
-                        context.Request.Path = "/admin/index.html";
-                        await next();
-                    }
-                });
-                app.UseDefaultFiles(new DefaultFilesOptions { DefaultFileNames = new List<string> { "index.html" } });
                 app.UseStaticFiles();
 
                 appLifetime.ApplicationStarted.Register(() => StartApplication().Wait());
@@ -152,6 +120,9 @@ namespace Lykke.Service.IcoApi
             {
                 await ApplicationContainer.Resolve<IStartupManager>().StartAsync();
 
+                _triggerHost = new TriggerHost(new AutofacServiceProvider(ApplicationContainer));
+                _triggerHostTask = _triggerHost.Start();
+
                 await Log.WriteMonitorAsync("", "", "Started");
             }
             catch (Exception ex)
@@ -166,6 +137,9 @@ namespace Lykke.Service.IcoApi
             try
             {
                 await ApplicationContainer.Resolve<IShutdownManager>().StopAsync();
+
+                _triggerHost?.Cancel();
+                await _triggerHostTask;
             }
             catch (Exception ex)
             {
@@ -215,14 +189,14 @@ namespace Lykke.Service.IcoApi
                 QueueName = settings.CurrentValue.SlackNotifications.AzureQueue.QueueName
             }, aggregateLogger);
 
-            var dbLogConnectionStringManager = settings.Nested(x => x.IcoApiService.Db.LogsConnString);
+            var dbLogConnectionStringManager = settings.Nested(x => x.IcoJob.Db.LogsConnString);
             var dbLogConnectionString = dbLogConnectionStringManager.CurrentValue;
 
             // Creating azure storage logger, which logs own messages to concole log
             if (!string.IsNullOrEmpty(dbLogConnectionString) && !(dbLogConnectionString.StartsWith("${") && dbLogConnectionString.EndsWith("}")))
             {
                 var persistenceManager = new LykkeLogToAzureStoragePersistenceManager(
-                    AzureTableStorage<LogEntity>.Create(dbLogConnectionStringManager, "IcoApiLog", consoleLogger),
+                    AzureTableStorage<LogEntity>.Create(dbLogConnectionStringManager, "IcoJobLog", consoleLogger),
                     consoleLogger);
 
                 var slackNotificationsManager = new LykkeLogToAzureSlackNotificationsManager(slackService, consoleLogger);

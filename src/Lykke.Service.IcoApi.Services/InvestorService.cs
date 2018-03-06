@@ -128,47 +128,93 @@ namespace Lykke.Service.IcoApi.Services
         {
             email = email.ToLowCase();
 
-            var poolItem = await _addressPoolRepository.GetNextFree(email);
+            var poolItemSmarc = await GetPoolItem(email);
+            var poolItemLogi = await GetPoolItem(email);
+            var poolItemSmarc90Logi10 = await GetPoolItem(email);
 
-            await _log.WriteInfoAsync(nameof(InvestorService), nameof(UpdateAsync), 
-                $"poolItem={poolItem.ToJson()}", "Retrieved address pool item");
-            await _campaignInfoRepository.IncrementValue(CampaignInfoType.AddressPoolCurrentSize, -1);
+            var fillIn = new InvestorFillIn
+            {
+                TokenAddress = tokenAddress,
+                RefundEthAddress = refundEthAddress,
+                RefundBtcAddress = refundBtcAddress,
+                PayInSmarcEthPublicKey = poolItemSmarc.EthPublicKey,
+                PayInSmarcEthAddress = _ethService.GetAddressByPublicKey(poolItemSmarc.EthPublicKey),
+                PayInSmarcBtcPublicKey = poolItemSmarc.BtcPublicKey,
+                PayInSmarcBtcAddress = _btcService.GetAddressByPublicKey(poolItemSmarc.BtcPublicKey),
+                PayInLogiEthPublicKey = poolItemLogi.EthPublicKey,
+                PayInLogiEthAddress = _ethService.GetAddressByPublicKey(poolItemLogi.EthPublicKey),
+                PayInLogiBtcPublicKey = poolItemLogi.BtcPublicKey,
+                PayInLogiBtcAddress = _btcService.GetAddressByPublicKey(poolItemLogi.BtcPublicKey),
+                PayInSmarc90Logi10EthPublicKey = poolItemSmarc90Logi10.EthPublicKey,
+                PayInSmarc90Logi10EthAddress = _ethService.GetAddressByPublicKey(poolItemSmarc90Logi10.EthPublicKey),
+                PayInSmarc90Logi10BtcPublicKey = poolItemSmarc90Logi10.BtcPublicKey,
+                PayInSmarc90Logi10BtcAddress = _btcService.GetAddressByPublicKey(poolItemSmarc90Logi10.BtcPublicKey),
+            };
 
-            var payInEthPublicKey = poolItem.EthPublicKey;
-            var payInEthAddress = _ethService.GetAddressByPublicKey(poolItem.EthPublicKey);
-            var payInBtcPublicKey = poolItem.BtcPublicKey;
-            var payInBtcAddress = _btcService.GetAddressByPublicKey(poolItem.BtcPublicKey);
+            await _log.WriteInfoAsync(nameof(InvestorService), nameof(UpdateAsync),
+                $"email={email}, fillIn={fillIn.ToJson()}", "Update investor data");
 
-            await _log.WriteInfoAsync(nameof(InvestorService), nameof(UpdateAsync), 
-                $"email={email}, tokenAddress={tokenAddress}, refundEthAddress={refundEthAddress}, " +
-                $"refundBtcAddress={refundBtcAddress}, payInEthPublicKey={payInEthPublicKey}, payInEthAddress={payInEthAddress}, " +
-                $"payInBtcPublicKey={payInBtcPublicKey}, payInBtcAddress={payInBtcAddress}",
-                "Update investor data");
-            await _investorRepository.SaveAddressesAsync(email, tokenAddress, refundEthAddress, refundBtcAddress,
-                payInEthPublicKey, payInEthAddress, payInBtcPublicKey, payInBtcAddress);
+            await _investorRepository.SaveAddressesAsync(email, fillIn);
 
-            await _investorAttributeRepository.SaveAsync(InvestorAttributeType.PayInBtcAddress, email, payInBtcAddress);
-            await _investorAttributeRepository.SaveAsync(InvestorAttributeType.PayInEthAddress, email, payInEthAddress);
             await _campaignInfoRepository.IncrementValue(CampaignInfoType.InvestorsFilledIn, 1);
 
             await _icoCommonServiceClient.AddPayInAddressAsync(new PayInAddressModel
             {
-                Address = payInBtcAddress,
-                CampaignId = _icoApiSettings.CampaignId,
+                Address = fillIn.PayInSmarcEthAddress,
+                CampaignId = Consts.CAMPAIGN_ID,
+                Currency = IcoCommon.Client.Models.CurrencyType.Eth,
+                Email = email
+            });
+            await _icoCommonServiceClient.AddPayInAddressAsync(new PayInAddressModel
+            {
+                Address = fillIn.PayInSmarcBtcAddress,
+                CampaignId = Consts.CAMPAIGN_ID,
                 Currency = IcoCommon.Client.Models.CurrencyType.Btc,
                 Email = email
             });
 
             await _icoCommonServiceClient.AddPayInAddressAsync(new PayInAddressModel
             {
-                Address = payInEthAddress,
-                CampaignId = _icoApiSettings.CampaignId,
+                Address = fillIn.PayInLogiEthAddress,
+                CampaignId = Consts.CAMPAIGN_ID,
                 Currency = IcoCommon.Client.Models.CurrencyType.Eth,
+                Email = email
+            });
+            await _icoCommonServiceClient.AddPayInAddressAsync(new PayInAddressModel
+            {
+                Address = fillIn.PayInLogiBtcAddress,
+                CampaignId = Consts.CAMPAIGN_ID,
+                Currency = IcoCommon.Client.Models.CurrencyType.Btc,
+                Email = email
+            });
+
+            await _icoCommonServiceClient.AddPayInAddressAsync(new PayInAddressModel
+            {
+                Address = fillIn.PayInSmarc90Logi10EthAddress,
+                CampaignId = Consts.CAMPAIGN_ID,
+                Currency = IcoCommon.Client.Models.CurrencyType.Eth,
+                Email = email
+            });
+            await _icoCommonServiceClient.AddPayInAddressAsync(new PayInAddressModel
+            {
+                Address = fillIn.PayInSmarc90Logi10BtcAddress,
+                CampaignId = Consts.CAMPAIGN_ID,
+                Currency = IcoCommon.Client.Models.CurrencyType.Btc,
                 Email = email
             });
 
             var investor = await _investorRepository.GetAsync(email);
+
             await SendSummaryEmail(investor);
+        }
+
+        private async Task<Core.Domain.AddressPool.IAddressPoolItem> GetPoolItem(string email)
+        {
+            var poolItem = await _addressPoolRepository.GetNextFree(email);
+
+            await _campaignInfoRepository.IncrementValue(CampaignInfoType.AddressPoolCurrentSize, -1);
+
+            return poolItem;
         }
 
         public async Task SaveKycResultAsync(string email, string kycStatus)
@@ -189,7 +235,7 @@ namespace Lykke.Service.IcoApi.Services
         {
             var message = new InvestorConfirmationMessage
             {
-                ConfirmationLink = _icoApiSettings.SiteEmailConfirmationPageUrl.Replace("{token}", token.ToString())
+                AuthToken = token.ToString()
             };
 
             await _log.WriteInfoAsync(nameof(InvestorService), nameof(SendConfirmationEmail),
@@ -199,7 +245,7 @@ namespace Lykke.Service.IcoApi.Services
             {
                 To = email,
                 TemplateId = "confirmation",
-                CampaignId = _icoApiSettings.CampaignId,
+                CampaignId = Consts.CAMPAIGN_ID,
                 Data = message
             });
         }
@@ -208,12 +254,10 @@ namespace Lykke.Service.IcoApi.Services
         {
             var message = new InvestorSummaryMessage
             {
-                LinkToSummaryPage = _icoApiSettings.SiteSummaryPageUrl.Replace("{token}", investor.ConfirmationToken.Value.ToString()),
+                AuthToken = investor.ConfirmationToken.Value.ToString(),
                 TokenAddress = investor.TokenAddress,
                 RefundBtcAddress = investor.RefundBtcAddress,
-                RefundEthAddress = investor.RefundEthAddress,
-                LinkBtcAddress = $"{_icoApiSettings.BtcTrackerUrl}address",
-                LinkEthAddress = $"{_icoApiSettings.EthTrackerUrl}address"
+                RefundEthAddress = investor.RefundEthAddress
             };
 
             await _log.WriteInfoAsync(nameof(InvestorService), nameof(SendSummaryEmail),
@@ -223,7 +267,7 @@ namespace Lykke.Service.IcoApi.Services
             {
                 To = investor.Email,
                 TemplateId = "summary",
-                CampaignId = _icoApiSettings.CampaignId,
+                CampaignId = Consts.CAMPAIGN_ID,
                 Data = message
             });
         }

@@ -18,10 +18,9 @@ namespace Lykke.Service.IcoApi.Core.Repositories
 
         Task SaveAddressesAsync(string email, string tokenAddress, string refundEthAddress, string refundBtcAddress);
 
-        Task SaveAddressesAsync(string email, string tokenAddress, string refundEthAddress, string refundBtcAddress,
-           string payInEthPublicKey, string payInEthAddress, string payInBtcPublicKey, string payInBtcAddress);
+        Task SaveAddressesAsync(string email, InvestorFillIn item);
 
-        Task IncrementAmount(string email, CurrencyType type, decimal amount, decimal amountUsd, decimal amountToken);
+        Task IncrementAmount(string email, CurrencyType type, decimal amount, decimal amountUsd, decimal amountSmarcToken, decimal amountLogiToken);
 
         Task SaveKycAsync(string email, string kycRequestId);
 

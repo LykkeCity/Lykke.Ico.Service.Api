@@ -5,8 +5,9 @@ using Common.Log;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Core.Queues.Messages;
 using Lykke.JobTriggers.Triggers.Attributes;
+using Lykke.Service.IcoApi.Core.Domain;
 
-namespace Lykke.Job.IcoInvestment.AzureQueueHandlers
+namespace Lykke.Service.IcoJob.AzureQueueHandlers
 {
     public class TransactionQueueHandler
     {
@@ -29,8 +30,7 @@ namespace Lykke.Job.IcoInvestment.AzureQueueHandlers
             catch (Exception ex)
             {
                 await _log.WriteErrorAsync(nameof(HandleTransactionMessage),
-                    $"Message: {msg.ToJson()}",
-                    ex);
+                    $"Message: {msg.ToJson()}", ex);
 
                 throw;
             }
@@ -39,10 +39,8 @@ namespace Lykke.Job.IcoInvestment.AzureQueueHandlers
 
     public class TransactionQueueTriggerAttribute : QueueTriggerAttribute
     {
-        public static string CampaignId { set; get; }
-
         public TransactionQueueTriggerAttribute(int maxPoolingIntervalMs = -1)
-            : base($"{CampaignId}-transaction", maxPoolingIntervalMs)
+            : base($"{Consts.CAMPAIGN_ID.ToLower()}-transaction", maxPoolingIntervalMs)
         {
 
         }

@@ -41,7 +41,7 @@ namespace Lykke.Service.IcoApi.Controllers
                 campaignActive = true;
             }
             if (settings.IsCrowdSale(now) &&
-                !failedTxs.Any(f => f.Reason == InvestorRefundReason.TokensSoldOut))
+                !failedTxs.Any(f => f.Reason == InvestorRefundReason.CrowdSaleTokensSoldOut))
             {
                 campaignActive = true;
             }

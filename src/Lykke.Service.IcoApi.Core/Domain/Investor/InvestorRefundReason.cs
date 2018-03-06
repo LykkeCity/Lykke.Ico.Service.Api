@@ -4,6 +4,6 @@
     {
         OutOfDates,
         PreSaleTokensSoldOut,
-        TokensSoldOut
+        CrowdSaleTokensSoldOut
     }
 }

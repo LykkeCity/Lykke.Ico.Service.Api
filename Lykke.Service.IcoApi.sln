@@ -25,6 +25,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3. Tests", "3. Tests", "{28
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.IcoApi.Tests", "tests\Lykke.Service.IcoApi.Tests\Lykke.Service.IcoApi.Tests.csproj", "{A562D7E3-23C2-402D-8BCC-16A7E098D08E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lykke.Service.IcoJob", "src\Lykke.Service.IcoJob\Lykke.Service.IcoJob.csproj", "{FFC23B34-ED52-4FB0-A1DB-85E700BBD7DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{A562D7E3-23C2-402D-8BCC-16A7E098D08E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A562D7E3-23C2-402D-8BCC-16A7E098D08E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A562D7E3-23C2-402D-8BCC-16A7E098D08E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFC23B34-ED52-4FB0-A1DB-85E700BBD7DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFC23B34-ED52-4FB0-A1DB-85E700BBD7DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFC23B34-ED52-4FB0-A1DB-85E700BBD7DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFC23B34-ED52-4FB0-A1DB-85E700BBD7DE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

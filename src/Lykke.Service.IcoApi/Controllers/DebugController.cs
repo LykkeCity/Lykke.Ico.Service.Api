@@ -25,11 +25,11 @@ namespace Lykke.Service.IcoApi.Controllers
         private readonly IBtcService _btcService;
         private readonly IEthService _ethService;
         private readonly IIcoExRateClient _icoExRateClient;
-        private readonly IUrlEncryptionService _urlEncryptionService;
+        private readonly IKycService _kycService;
 
         public DebugController(ILog log, IInvestorService investorService, IAdminService adminService,
             IBtcService btcService, IEthService ethService, IIcoExRateClient icoExRateClient,
-            IUrlEncryptionService urlEncryptionService)
+            IKycService kycService)
         {
             _log = log;
             _investorService = investorService;
@@ -37,7 +37,7 @@ namespace Lykke.Service.IcoApi.Controllers
             _btcService = btcService;
             _ethService = ethService;
             _icoExRateClient = icoExRateClient;
-            _urlEncryptionService = urlEncryptionService;
+            _kycService = kycService;
         }
 
         /// <summary>
@@ -185,8 +185,8 @@ namespace Lykke.Service.IcoApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            await _adminService.SendTransactionMessageAsync(request.Email, CurrencyType.Ether,
-                request.CreatedUtc, request.UniqueId, request.Amount);
+            await _adminService.SendTransactionMessageAsync(request.Email, request.PayInAddress,
+                CurrencyType.Ether, request.CreatedUtc, request.UniqueId, request.Amount);
 
             return Ok();
         }
@@ -300,8 +300,8 @@ namespace Lykke.Service.IcoApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            await _adminService.SendTransactionMessageAsync(request.Email, CurrencyType.Bitcoin,
-                request.CreatedUtc, request.UniqueId, request.Amount);
+            await _adminService.SendTransactionMessageAsync(request.Email, request.PayInAddress, 
+                CurrencyType.Bitcoin, request.CreatedUtc, request.UniqueId, request.Amount);
 
             return Ok();
         }
@@ -320,8 +320,8 @@ namespace Lykke.Service.IcoApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            var result = await _adminService.SendTransactionMessageAsync(request.Email, CurrencyType.Fiat,
-                request.CreatedUtc, request.UniqueId, request.Amount);
+            var result = await _adminService.SendTransactionMessageAsync(request.Email, "", 
+                CurrencyType.Fiat, request.CreatedUtc, request.UniqueId, request.Amount);
 
             return Ok(result);
         }
@@ -340,7 +340,7 @@ namespace Lykke.Service.IcoApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            var result = _urlEncryptionService.Encrypt(request.Message);
+            var result = _kycService.Encrypt(request.Message);
 
             return Ok(result);
         }
@@ -359,7 +359,7 @@ namespace Lykke.Service.IcoApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            var result = _urlEncryptionService.Decrypt(request.Message);
+            var result = _kycService.Decrypt(request.Message);
 
             return Ok(result);
         }
