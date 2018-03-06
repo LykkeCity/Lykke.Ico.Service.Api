@@ -2,6 +2,11 @@
 {
     public class InvestorNewTransactionMessage
     {
+        public InvestorNewTransactionMessage()
+        {
+            LinkToSummaryPage = LinkTransactionDetails = KycLink = TransactionAsset = string.Empty;
+        }
+
         public string LinkToSummaryPage { get; set; }
         public string LinkTransactionDetails { get; set; }
         public bool KycRequired { get; set; }

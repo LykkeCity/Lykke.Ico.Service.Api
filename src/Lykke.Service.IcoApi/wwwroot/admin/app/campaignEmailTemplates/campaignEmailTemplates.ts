@@ -1,26 +1,30 @@
-/// <reference path="../../../../node_modules/monaco-editor/monaco.d.ts" />
-
 import { app, AppCommand, AppToast, AppToastType } from "../app.js";
 import { ShellController } from "../shell/shell.js";
+import * as utils from "../utils.js";
 
 class CampaignEmailTemplate {
     campaignId: string;
     templateId: string;
     subject: string;
     body: string;
+    data: object;
+    completionItems: monaco.languages.CompletionItem[]
 }
 
 class CampaignEmailTemplatesController implements ng.IComponentController {
 
+    private emailUrl = "/api/admin/campaign/email";
     private templatesUrl = "/api/admin/campaign/email/templates";
-    private editor: monaco.editor.IStandaloneCodeEditor;
+    private bodyEditor: monaco.editor.IStandaloneCodeEditor;
+    private dataEditor: monaco.editor.IStandaloneCodeEditor;
     private shell: ShellController;
-    private customCommands: AppCommand[] = [{
-        name: "Save",
-        action: () => this.save()
-    }];
+    private customCommands: AppCommand[] = [
+        { name: "Save", action: () => this.save() },
+        { name: "Send", action: () => this.send() }
+    ];
 
-    constructor(private $element: ng.IRootElementService, private $http: ng.IHttpService, private $timeout: ng.ITimeoutService, private $mdTheming: ng.material.IThemingService) {
+    constructor(private $element: ng.IRootElementService, private $http: ng.IHttpService,
+        private $timeout: ng.ITimeoutService, private $mdTheming: ng.material.IThemingService, private $mdDialog: ng.material.IDialogService) {
     }
 
     templates: CampaignEmailTemplate[];
@@ -30,11 +34,12 @@ class CampaignEmailTemplatesController implements ng.IComponentController {
         // init code editor through $timeout service in order 
         // to give time for md-* directives to prepare layout
         this.loadTemplates()
-            .then(() => this.$timeout(() => this.initEditor()))
-            .then(() => this.selectTemplate());
-
-        // append "save" command to the application toolbar
-        this.shell.appendCustomCommands(this.customCommands);
+            .then(() => this.$timeout(() => this.initEditors()))
+            .then(() => {
+                this.registerIntellisense();
+                this.selectTemplate();
+                this.shell.appendCustomCommands(this.customCommands);
+            });
     }
 
     $onDestroy() {
@@ -53,23 +58,56 @@ class CampaignEmailTemplatesController implements ng.IComponentController {
         return this.$http.get<CampaignEmailTemplate[]>(this.templatesUrl)
             .then(response => {
                 this.templates = response.data || [];
+                this.templates.forEach(t => {
+                    t.completionItems = Object.getOwnPropertyNames(t.data || {}).map(p => {
+                        return {
+                            label: p,
+                            kind: monaco.languages.CompletionItemKind.Property,
+                            insertText: p
+                        };
+                    });
+                });
             });
     }
 
-    initEditor() {
-        this.editor = monaco.editor.create(document.getElementById('email-template-editor'), {
-            language: 'razor',
-            minimap: { enabled: false },
-            renderIndentGuides: true,
-            theme: this.$mdTheming.THEMES.default.isDark
-                ? "vs-dark"
-                : "vs"
+    initEditors() {
+        this.bodyEditor = this.initStandaloneEditor("email-template-body-editor", "razor");
+        this.dataEditor = this.initStandaloneEditor("email-template-data-editor", "json");
+    }
+
+    initStandaloneEditor(elementId: string, language: string) {
+        return monaco.editor.create(document.getElementById(elementId), {
+            automaticLayout: true,
+            language: language,
+            minimap: {
+                enabled: false
+            },
+        });
+    }
+
+    registerIntellisense() {
+        monaco.languages.registerCompletionItemProvider('razor', {
+            provideCompletionItems: (model, position) => {
+                // check if text until current cursor position ends with "@Model." 
+                // or there are no html tags between "@" and "Model."
+                let text = model.getValueInRange({ startLineNumber: 0, startColumn: 1, endLineNumber: position.lineNumber, endColumn: position.column });
+                if (text.endsWith("@Model.") || (text.endsWith("Model.") && text.substring(text.lastIndexOf("@"), text.length - 6).match(/<(.|\n)*?>/g) == null)) {
+                    return this.selectedTemplate && this.selectedTemplate.completionItems;
+                }
+                return [];
+            },
+            triggerCharacters: ["."]
         });
     }
 
     selectTemplate(template?: CampaignEmailTemplate) {
         this.selectedTemplate = template || this.templates[0];
-        this.editor.setValue(this.selectedTemplate && this.selectedTemplate.body ? this.selectedTemplate.body : "");
+
+        let body = this.selectedTemplate && this.selectedTemplate.body ? this.selectedTemplate.body : "";
+        let data = this.selectedTemplate && this.selectedTemplate.data ? JSON.stringify(this.selectedTemplate.data, null, 4) : "{}";
+
+        this.bodyEditor.setValue(body);
+        this.dataEditor.setValue(`// Set values and press SEND to send a preview of e-mail\n\r${data}`);
     }
 
     save() {
@@ -77,7 +115,7 @@ class CampaignEmailTemplatesController implements ng.IComponentController {
             return;
         }
 
-        this.selectedTemplate.body = this.editor.getValue();
+        this.selectedTemplate.body = this.bodyEditor.getValue();
 
         if (!this.selectedTemplate.body) {
             alert("Body must not be null or empty");
@@ -87,6 +125,31 @@ class CampaignEmailTemplatesController implements ng.IComponentController {
         this.$http
             .post(this.templatesUrl, this.selectedTemplate)
             .then(_ => this.shell.toast({ message: "Changes saved", type: AppToastType.Success }));
+    }
+
+    send() {
+        if (!this.selectedTemplate) {
+            return;
+        }
+
+        let prompt = this.$mdDialog.prompt()
+            .title("SEND PREVIEW")
+            .textContent("Please, provide an email for sending message to:")
+            .placeholder("Email")
+            .required(true)
+            .ok("Ok")
+            .cancel("Cancel");
+
+        this.$mdDialog.show(prompt)
+            .then(value => {
+                this.$http
+                    .post(this.emailUrl, {
+                        templateId: this.selectedTemplate.templateId,
+                        data: JSON.parse(utils.stripJsonComments(this.dataEditor.getValue())),
+                        to: value
+                    })
+                    .then(_ => this.shell.toast({ message: "E-mail sent", type: AppToastType.Success }));
+            });
     }
 
     listColors() {
