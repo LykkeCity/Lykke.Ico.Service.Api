@@ -20,8 +20,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\admin\app\app.config.ts" />
+    <Content Remove="wwwroot\admin\appUtils.ts" />
     <Content Remove="wwwroot\admin\app\app.ts" />
+    <Content Remove="wwwroot\admin\app\appConfig.ts" />
     <Content Remove="wwwroot\admin\app\auth\auth.ts" />
     <Content Remove="wwwroot\admin\app\campaignEmailTemplates\campaignEmailTemplates.ts" />
     <Content Remove="wwwroot\admin\app\campaignInfo\campaignInfo.ts" />
@@ -131,7 +132,8 @@
   </ItemGroup>
   
   <ItemGroup>
-    <TypeScriptCompile Include="wwwroot\admin\app\app.config.ts" />
+    <TypeScriptCompile Include="wwwroot\admin\app\utils.ts" />
+    <TypeScriptCompile Include="wwwroot\admin\app\appConfig.ts" />
     <TypeScriptCompile Include="wwwroot\admin\app\campaignEmailTemplates\campaignEmailTemplates.ts" />
     <TypeScriptCompile Include="wwwroot\admin\app\campaignInfo\campaignInfo.ts" />
     <TypeScriptCompile Include="wwwroot\admin\app\campaignSettings\campaignSettings.ts" />
@@ -160,7 +162,7 @@
   </Target>
 
   <PropertyGroup>
-    <TypeScriptTarget>ESNext</TypeScriptTarget>
+    <TypeScriptTarget>ES2015</TypeScriptTarget>
     <TypeScriptJSXEmit>None</TypeScriptJSXEmit>
     <TypeScriptModuleKind>ES6</TypeScriptModuleKind>
     <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>

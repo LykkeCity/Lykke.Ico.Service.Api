@@ -2,6 +2,11 @@
 {
     public class InvestorNewTransactionMessage
     {
+        public InvestorNewTransactionMessage()
+        {
+            AuthToken = LinkTransactionDetails = KycLink = TransactionAsset = string.Empty;
+        }
+
         public string AuthToken { get; set; }
         public string LinkTransactionDetails { get; set; }
         public bool KycRequired { get; set; }

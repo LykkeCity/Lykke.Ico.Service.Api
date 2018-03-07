@@ -1,11 +1,12 @@
-﻿using Lykke.Service.IcoApi.Core.Domain;
-using Lykke.Service.IcoApi.Core.Domain.AddressPool;
-using Lykke.Service.IcoApi.Core.Domain.Campaign;
-using Lykke.Service.IcoApi.Core.Domain.Investor;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Lykke.Service.IcoApi.Core.Domain;
+using Lykke.Service.IcoApi.Core.Domain.AddressPool;
+using Lykke.Service.IcoApi.Core.Domain.Campaign;
+using Lykke.Service.IcoApi.Core.Domain.Investor;
+using EmailTemplateModel = Lykke.Service.IcoCommon.Client.Models.EmailTemplateModel;
 
 namespace Lykke.Service.IcoApi.Models
 {
@@ -464,5 +465,22 @@ namespace Lykke.Service.IcoApi.Models
 
         [Required]
         public string Password { get; set; }
+    }
+
+    public class EmailTemplateDataModel : EmailTemplateModel
+    {
+        public EmailTemplateDataModel()
+        {
+        }
+
+        public EmailTemplateDataModel(EmailTemplateModel emailTemplate)
+        {
+            CampaignId = emailTemplate.CampaignId;
+            TemplateId = emailTemplate.TemplateId;
+            Body = emailTemplate.Body;
+            Subject = emailTemplate.Subject;
+        }
+
+        public object Data { get; set; }
     }
 }

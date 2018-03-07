@@ -1,14 +1,28 @@
-﻿<md-list flex="20" ng-if="$ctrl.templates" md-colors="$ctrl.listColors()">
-    <md-list-item ng-repeat="t in $ctrl.templates | orderBy:'templateId'" ng-click="$ctrl.selectTemplate(t)" md-colors="$ctrl.listItemColors(t)">
-        {{t.templateId}}
-    </md-list-item>
-</md-list>
-
-<form flex="20" layout="column" layout-padding name="templateForm" ng-if="$ctrl.templates">
-    <md-input-container>
-        <label>Subject</label>
-        <input type="text" ng-model="$ctrl.selectedTemplate.subject" />
-    </md-input-container>
-</form>
-
-<div flex="60" id="email-template-editor" ng-if="$ctrl.templates"></div>
+﻿<div flex="20" ng-if="$ctrl.templates" md-colors="$ctrl.listColors()" layout="column">
+    <md-tabs md-border-bottom="true" md-center-tabs="true" md-no-ink-bar="true" md-selected="-1">
+        <md-tab label="Templates"></md-tab>
+    </md-tabs>
+    <md-list id="email-template-list">
+        <md-list-item ng-repeat="t in $ctrl.templates | orderBy:'templateId'" ng-click="$ctrl.selectTemplate(t)" md-colors="$ctrl.listItemColors(t)">
+            {{t.templateId}}
+        </md-list-item>
+    </md-list>
+</div>
+<md-tabs flex="80" ng-if="$ctrl.templates" md-border-bottom="true" md-center-tabs="true" md-no-ink-bar="true">
+    <md-tab label="Subject">
+        <div layout="column" layout-align="start center">
+            <form name="subjForm" layout="column" layout-padding class="property-list">
+                <md-input-container >
+                    <input type="text" name="subject" ng-model="$ctrl.selectedTemplate.subject" />
+                </md-input-container>
+            </form>
+        </div>
+                
+    </md-tab>
+    <md-tab label="Body">
+        <div id="email-template-body-editor" layout-fill></div>
+    </md-tab>
+    <md-tab label="Data Model">
+        <div id="email-template-data-editor" layout-fill></div>
+    </md-tab>
+</md-tabs>

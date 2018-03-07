@@ -13,6 +13,7 @@ using CsvHelper;
 using Lykke.Common.ApiLibrary.Contract;
 using Lykke.Service.IcoApi.Core.Domain.Campaign;
 using Lykke.Service.IcoApi.Core.Domain.Investor;
+using Lykke.Service.IcoApi.Core.Emails;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
 using Lykke.Service.IcoApi.Infrastructure;
@@ -23,9 +24,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Lykke.Service.IcoApi.Services.Extensions;
 using Lykke.Service.IcoApi.Core.Repositories;
 using EmailTemplateModel = Lykke.Service.IcoCommon.Client.Models.EmailTemplateModel;
+using EmailDataModel = Lykke.Service.IcoCommon.Client.Models.EmailDataModel;
 using Lykke.Service.IcoApi.Core.Domain;
 
 namespace Lykke.Service.IcoApi.Controllers
@@ -47,6 +50,12 @@ namespace Lykke.Service.IcoApi.Controllers
         private readonly IcoApiSettings _settings;
         private readonly IIcoCommonServiceClient _icoCommonServiceClient;
         private readonly IAuthService _authService;
+        private readonly Dictionary<string, object> _emailTemplateDataModels = new Dictionary<string, object>()
+        {
+            ["confirmation"] = new InvestorConfirmationMessage(),
+            ["new-transaction"] = new InvestorNewTransactionMessage(),
+            ["summary"] = new InvestorSummaryMessage()
+        };
         private readonly ICampaignInfoRepository _campaignInfoRepository;
 
         public AdminController(ILog log, IInvestorService investorService, IAdminService adminService, 
@@ -436,10 +445,16 @@ namespace Lykke.Service.IcoApi.Controllers
         /// <returns></returns>
         [AdminAuth]
         [HttpGet("campaign/email/templates")]
-        public async Task<IList<EmailTemplateModel>> GetCampaignEmailTemplates()
+        public async Task<IList<EmailTemplateDataModel>> GetCampaignEmailTemplates()
         {
-            var templates = await _icoCommonServiceClient.GetCampaignEmailTemplatesAsync(Consts.CAMPAIGN_ID);
-            return templates;
+            return (await _icoCommonServiceClient.GetCampaignEmailTemplatesAsync(Consts.CAMPAIGN_ID))
+                .Select(t => new EmailTemplateDataModel(t)
+                {
+                    Data = _emailTemplateDataModels.TryGetValue(t.TemplateId, out var data)
+                        ? JObject.FromObject(data) // use intermediary jsonification to keep properties Pascal cased
+                        : null
+                })
+                .ToList();
         }
 
         /// <summary>
@@ -458,6 +473,32 @@ namespace Lykke.Service.IcoApi.Controllers
             emailTemplate.CampaignId = Consts.CAMPAIGN_ID;
 
             await _icoCommonServiceClient.AddOrUpdateEmailTemplateAsync(emailTemplate);
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Sends an e-mail.
+        /// </summary>
+        /// <param name="emailData"></param>
+        /// <returns></returns>
+        [AdminAuth]
+        [HttpPost("campaign/email")]
+        public async Task<IActionResult> SendEmail([FromBody] EmailDataModel emailData)
+        {
+            if (string.IsNullOrEmpty(emailData.TemplateId))
+            {
+                return BadRequest(ErrorResponse.Create("TemplateId is required"));
+            }
+
+            if (string.IsNullOrEmpty(emailData.To))
+            {
+                return BadRequest(ErrorResponse.Create("To is required"));
+            }
+
+            emailData.CampaignId = Consts.CAMPAIGN_ID;
+
+            await _icoCommonServiceClient.SendEmailAsync(emailData);
 
             return Ok();
         }
