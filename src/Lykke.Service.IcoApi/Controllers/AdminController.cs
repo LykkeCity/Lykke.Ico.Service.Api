@@ -99,7 +99,9 @@ namespace Lykke.Service.IcoApi.Controllers
             {
                 info.Add("SmarcPhase", Enum.GetName(typeof(CampaignPhase), smarc.Phase));
                 info.Add("SmarcPhaseTokenPriceUsd", smarc.PriceUsd?.ToString(CultureInfo.InvariantCulture));
+                info.Add("SmarcPhaseTokenAmount", smarc.PhaseTokenAmount?.ToString(CultureInfo.InvariantCulture));
                 info.Add("SmarcPhaseTokenAmountAvailable", smarc.PhaseTokenAmountAvailable?.ToString(CultureInfo.InvariantCulture));
+                info.Add("SmarcPhaseTokenAmountTotal", smarc.PhaseTokenAmountTotal?.ToString(CultureInfo.InvariantCulture));
             }
 
             var logi = await settings.GetLogiTokenInfo(_campaignInfoRepository, DateTime.UtcNow);
@@ -107,7 +109,9 @@ namespace Lykke.Service.IcoApi.Controllers
             {
                 info.Add("LogiPhase", Enum.GetName(typeof(CampaignPhase), logi.Phase));
                 info.Add("LogiPhaseTokenPriceUsd", logi.PriceUsd?.ToString(CultureInfo.InvariantCulture));
+                info.Add("LogiPhaseTokenAmount", logi.PhaseTokenAmount?.ToString(CultureInfo.InvariantCulture));
                 info.Add("LogiPhaseTokenAmountAvailable", logi.PhaseTokenAmountAvailable?.ToString(CultureInfo.InvariantCulture));
+                info.Add("LogiPhaseTokenAmountTotal", logi.PhaseTokenAmountTotal?.ToString(CultureInfo.InvariantCulture));
             }
 
             return info;

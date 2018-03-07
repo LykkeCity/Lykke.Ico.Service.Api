@@ -1,25 +1,43 @@
 ﻿import { app } from "../app.js";
 
 class CampaignInfo {
-    addressPoolCurrentSize: number;
-    addressPoolTotalSize: number;
-    amountInvestedBtc: number;
-    amountInvestedEth: number;
-    amountInvestedFiat: number;
-    amountInvestedToken: number;
-    amountInvestedUsd: number;
-    investorsConfirmed: number;
-    investorsFilledIn: number;
-    investorsKycPassed: number;
-    investorsRegistered: number;
-    lastProcessedBlockBtc: number;
-    lastProcessedBlockEth: number;
-    lastProcessedBlockEthInfura: number;
+    addressPoolCurrentSize: string;
+    addressPoolTotalSize: string;
+
     bctNetwork: string;
     ethNetwork: string;
-    tokenPriceUsd: number;
-    phase: string;
-}    
+
+    investorsConfirmed: string;
+    investorsFilledIn: string;
+    investorsKycPassed: string;
+    investorsRegistered: string;
+
+    smarcPhase: string;
+    smarcPhaseTokenPriceUsd: string;
+    smarcPhaseTokenAmount: string;
+    smarcPhaseTokenAmountAvailable: string;
+    smarcPhaseTokenAmountTotal: string;
+
+    logiPhase: string;
+    logiPhaseTokenPriceUsd: string;
+    logiPhaseTokenAmount: string;
+    logiPhaseTokenAmountAvailable: string;
+    logiPhaseTokenAmountTotal: string;
+
+    amountPreSaleInvestedBtc: string;
+    amountPreSaleInvestedEth: string;
+    amountPreSaleInvestedFiat: string;
+    amountPreSaleInvestedUsd: string;
+    amountPreSaleInvestedSmarcToken: string;
+    amountPreSaleInvestedLogiToken: string;
+
+    amountCrowdSaleInvestedBtc: string;
+    amountCrowdSaleInvestedEth: string;
+    amountCrowdSaleInvestedFiat: string;
+    amountCrowdSaleInvestedUsd: string;
+    amountCrowdSaleInvestedSmarcToken: string;
+    amountCrowdSaleInvestedLogiToken: string;
+}
 
 class CampaignInfoController implements ng.IComponentController {
 

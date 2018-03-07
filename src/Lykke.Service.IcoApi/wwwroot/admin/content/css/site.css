@@ -70,3 +70,11 @@ md-input-container input[type=time] {
 .campaign-settings md-list-item md-switch {
     margin-left: 0px !important;
 }
+
+.campaign-info md-list-item p {
+    text-align: right !important;
+}
+.campaign-info md-list-item .md-secondary-container {
+    min-width: 50%;
+    padding-left: 15px;
+}
