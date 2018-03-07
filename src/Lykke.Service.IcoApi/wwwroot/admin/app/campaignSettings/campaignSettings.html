@@ -2,7 +2,7 @@
    
     <md-subheader class="md-no-sticky">Common</md-subheader>
     <md-list-item>
-        <p>Minimal investment amount (USD)</p>
+        <p>Minimal investment amount (USD):</p>
         <div class="md-secondary">
             <md-input-container>
                 <input ng-model="$ctrl.settings.minInvestAmountUsd" type="number" min="0">
@@ -10,7 +10,7 @@
         </div>
     </md-list-item>
     <md-list-item>
-        <p>Round down token decimals to</p>
+        <p>Round down token decimals to:</p>
         <div class="md-secondary">
             <md-input-container>
                 <input ng-model="$ctrl.settings.rowndDownTokenDecimals" type="number" min="0">
@@ -19,17 +19,17 @@
     </md-list-item>
 
     <md-list-item>
-        <p>Enable front-end</p>
+        <p>Enable front-end:</p>
         <md-switch class="md-secondary" ng-model="$ctrl.settings.enableFrontEnd"></md-switch>
     </md-list-item>
 
     <md-list-item>
-        <p>Use CAPTCHA</p>
+        <p>Use CAPTCHA:</p>
         <md-switch class="md-secondary" ng-model="$ctrl.settings.captchaEnable"></md-switch>
     </md-list-item>
 
     <md-list-item>
-        <p>CAPTCHA secret key</p>
+        <p>CAPTCHA secret key:</p>
         <div class="md-secondary">
             <md-input-container>
                 <input id="settings-kyc-link-template" ng-model="$ctrl.settings.captchaSecret" type="text">
@@ -41,7 +41,7 @@
 
     <md-subheader class="md-no-sticky">Pre-sale</md-subheader>
     <md-list-item>
-        <p>Starts</p>
+        <p>Starts:</p>
         <div class="md-secondary">
             <md-datepicker ng-model="$ctrl.settings.preSaleStartDateTimeUtc" md-hide-icons="triangle"></md-datepicker>
             <md-input-container>
@@ -50,7 +50,7 @@
         </div>
     </md-list-item>
     <md-list-item>
-        <p>Ends</p>
+        <p>Ends:</p>
         <div class="md-secondary">
             <md-datepicker ng-model="$ctrl.settings.preSaleEndDateTimeUtc" md-hide-icons="triangle"></md-datepicker>
             <md-input-container>
@@ -59,7 +59,7 @@
         </div>
     </md-list-item>
     <md-list-item>
-        <p>SMARC tokens amount</p>
+        <p>SMARC tokens amount:</p>
         <div class="md-secondary">
             <md-input-container>
                 <input ng-model="$ctrl.settings.preSaleSmarcAmount" type="number" min="0">
@@ -67,7 +67,7 @@
         </div>
     </md-list-item>
     <md-list-item>
-        <p>SMARC token price (USD)</p>
+        <p>SMARC token price (USD):</p>
         <div class="md-secondary">
             <md-input-container>
                 <input ng-model="$ctrl.settings.preSaleSmarcPriceUsd" type="number" min="0">
@@ -76,7 +76,7 @@
     </md-list-item>
 
     <md-list-item>
-        <p>LOGI tokens amount</p>
+        <p>LOGI tokens amount:</p>
         <div class="md-secondary">
             <md-input-container>
                 <input ng-model="$ctrl.settings.preSaleLogiAmount" type="number" min="0">
@@ -84,7 +84,7 @@
         </div>
     </md-list-item>
     <md-list-item>
-        <p>LOGI token price (USD)</p>
+        <p>LOGI token price (USD):</p>
         <div class="md-secondary">
             <md-input-container>
                 <input ng-model="$ctrl.settings.preSaleLogiPriceUsd" type="number" min="0">
@@ -96,7 +96,7 @@
 
     <md-subheader class="md-no-sticky">Crowd-sale</md-subheader>
     <md-list-item>
-        <p>Starts</p>
+        <p>Starts:</p>
         <div class="md-secondary">
             <md-datepicker ng-model="$ctrl.settings.crowdSaleStartDateTimeUtc" md-hide-icons="triangle"></md-datepicker>
             <md-input-container>
@@ -105,7 +105,7 @@
         </div>
     </md-list-item>
     <md-list-item>
-        <p>Ends</p>
+        <p>Ends:</p>
         <div class="md-secondary">
             <md-datepicker ng-model="$ctrl.settings.crowdSaleEndDateTimeUtc" md-hide-icons="triangle"></md-datepicker>
             <md-input-container>
@@ -115,7 +115,7 @@
     </md-list-item>
 
     <md-list-item>
-        <p>1st tier: SMARC tokens amount</p>
+        <p>1st tier - SMARC tokens amount:</p>
         <div class="md-secondary">
             <md-input-container>
                 <input ng-model="$ctrl.settings.crowdSale1stTierSmarcAmount" type="number" min="0">
@@ -123,7 +123,7 @@
         </div>
     </md-list-item>
     <md-list-item>
-        <p>1st tier: SMARC token price (USD)</p>
+        <p>1st tier - SMARC token price (USD):</p>
         <div class="md-secondary">
             <md-input-container>
                 <input ng-model="$ctrl.settings.crowdSale1stTierSmarcPriceUsd" type="number" min="0">
@@ -131,7 +131,7 @@
         </div>
     </md-list-item>
     <md-list-item>
-        <p>1st tier: LOGI tokens amount</p>
+        <p>1st tier - LOGI tokens amount:</p>
         <div class="md-secondary">
             <md-input-container>
                 <input ng-model="$ctrl.settings.crowdSale1stTierLogiAmount" type="number" min="0">
@@ -139,7 +139,7 @@
         </div>
     </md-list-item>
     <md-list-item>
-        <p>1st tier: LOGI token price (USD)</p>
+        <p>1st tier - LOGI token price (USD):</p>
         <div class="md-secondary">
             <md-input-container>
                 <input ng-model="$ctrl.settings.crowdSale1stTierLogiPriceUsd" type="number" min="0">
@@ -148,7 +148,7 @@
     </md-list-item>
 
     <md-list-item>
-        <p>2nd tier: SMARC tokens amount</p>
+        <p>2nd tier - SMARC tokens amount:</p>
         <div class="md-secondary">
             <md-input-container>
                 <input ng-model="$ctrl.settings.crowdSale2ndTierSmarcAmount" type="number" min="0">
@@ -156,7 +156,7 @@
         </div>
     </md-list-item>
     <md-list-item>
-        <p>2nd tier: SMARC token price (USD)</p>
+        <p>2nd tier - SMARC token price (USD):</p>
         <div class="md-secondary">
             <md-input-container>
                 <input ng-model="$ctrl.settings.crowdSale2ndTierSmarcPriceUsd" type="number" min="0">
@@ -164,7 +164,7 @@
         </div>
     </md-list-item>
     <md-list-item>
-        <p>2nd tier: LOGI tokens amount</p>
+        <p>2nd tier - LOGI tokens amount:</p>
         <div class="md-secondary">
             <md-input-container>
                 <input ng-model="$ctrl.settings.crowdSale2ndTierLogiAmount" type="number" min="0">
@@ -172,7 +172,7 @@
         </div>
     </md-list-item>
     <md-list-item>
-        <p>2nd tier: LOGI token price (USD)</p>
+        <p>2nd tier - LOGI token price (USD):</p>
         <div class="md-secondary">
             <md-input-container>
                 <input ng-model="$ctrl.settings.crowdSale2ndTierLogiPriceUsd" type="number" min="0">
@@ -181,7 +181,7 @@
     </md-list-item>
 
     <md-list-item>
-        <p>3rd tier: SMARC tokens amount</p>
+        <p>3rd tier - SMARC tokens amount:</p>
         <div class="md-secondary">
             <md-input-container>
                 <input ng-model="$ctrl.settings.crowdSale3rdTierSmarcAmount" type="number" min="0">
@@ -189,7 +189,7 @@
         </div>
     </md-list-item>
     <md-list-item>
-        <p>3rd tier: SMARC token price (USD)</p>
+        <p>3rd tier - SMARC token price (USD):</p>
         <div class="md-secondary">
             <md-input-container>
                 <input ng-model="$ctrl.settings.crowdSale3rdTierSmarcPriceUsd" type="number" min="0">
@@ -197,7 +197,7 @@
         </div>
     </md-list-item>
     <md-list-item>
-        <p>3rd tier: LOGI tokens amount</p>
+        <p>3rd tier - LOGI tokens amount:</p>
         <div class="md-secondary">
             <md-input-container>
                 <input ng-model="$ctrl.settings.crowdSale3rdTierLogiAmount" type="number" min="0">
@@ -205,7 +205,7 @@
         </div>
     </md-list-item>
     <md-list-item>
-        <p>3rd tier: LOGI token price (USD)</p>
+        <p>3rd tier - LOGI token price (USD):</p>
         <div class="md-secondary">
             <md-input-container>
                 <input ng-model="$ctrl.settings.crowdSale3rdTierLogiPriceUsd" type="number" min="0">
@@ -217,11 +217,11 @@
 
     <md-subheader class="md-no-sticky">KYC</md-subheader>
     <md-list-item>
-        <p>Send Requests</p>
+        <p>Send Requests:</p>
         <md-switch class="md-secondary" ng-model="$ctrl.settings.kycEnableRequestSending"></md-switch>
     </md-list-item>
     <md-list-item>
-        <p>Campaign ID</p>
+        <p>Campaign Id:</p>
         <div class="md-secondary">
             <md-input-container>
                 <input ng-model="$ctrl.settings.kycCampaignId" type="text">
@@ -229,7 +229,7 @@
         </div>
     </md-list-item>
     <md-list-item>
-        <p>Link Template</p>
+        <p>Link Template:</p>
         <div class="md-secondary">
             <md-input-container>
                 <input id="settings-kyc-link-template" ng-model="$ctrl.settings.kycLinkTemplate" type="text" >
@@ -237,7 +237,7 @@
         </div>
     </md-list-item>
     <md-list-item>
-        <p>Encryption Key (AES)</p>
+        <p>Encryption Key (AES):</p>
         <div class="md-secondary">
             <md-input-container>
                 <input id="settings-kyc-link-template" ng-model="$ctrl.settings.kycServiceEncriptionKey" type="text">
@@ -245,7 +245,7 @@
         </div>
     </md-list-item>
     <md-list-item>
-        <p>Encryption IV (AES)</p>
+        <p>Encryption IV (AES):</p>
         <div class="md-secondary">
             <md-input-container>
                 <input id="settings-kyc-link-template" ng-model="$ctrl.settings.kycServiceEncriptionIv" type="text">
