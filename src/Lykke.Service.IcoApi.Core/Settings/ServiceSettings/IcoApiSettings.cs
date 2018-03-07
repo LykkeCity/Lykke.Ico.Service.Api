@@ -15,6 +15,5 @@
         public string AdminAuthKey { get; set; }
         public bool DisableAdminMethods { get; set; }
         public bool DisableDebugMethods { get; set; }
-        public string CaptchaSecret { get; set; }
     }
 }

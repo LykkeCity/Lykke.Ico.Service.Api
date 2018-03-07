@@ -4,19 +4,38 @@ import { ShellController } from "../shell/shell.js";
 class CampaignSettings {
     preSaleStartDateTimeUtc: Date;
     preSaleEndDateTimeUtc: Date;
-    preSaleTotalTokensAmount: number;
+    preSaleSmarcAmount: number;
+    preSaleLogiAmount: number;
+    preSaleSmarcPriceUsd: number;
+    preSaleLogiPriceUsd: number;
+
     crowdSaleStartDateTimeUtc: Date;
     crowdSaleEndDateTimeUtc: Date;
-    crowdSaleTotalTokensAmount: number;
-    tokenBasePriceUsd: number;
-    tokenDecimals: number;
+    crowdSale1stTierSmarcPriceUsd: number;
+    crowdSale1stTierSmarcAmount: number;
+    crowdSale1stTierLogiPriceUsd: number;
+    crowdSale1stTierLogiAmount: number;
+    crowdSale2ndTierSmarcPriceUsd: number;
+    crowdSale2ndTierSmarcAmount: number;
+    crowdSale2ndTierLogiPriceUsd: number;
+    crowdSale2ndTierLogiAmount: number;
+    crowdSale3rdTierSmarcPriceUsd: number;
+    crowdSale3rdTierSmarcAmount: number;
+    crowdSale3rdTierLogiPriceUsd: number;
+    crowdSale3rdTierLogiAmount: number;
+
+    rowndDownTokenDecimals: number;
     minInvestAmountUsd: number;
-    hardCapUsd: number;
+    enableFrontEnd: boolean;
+
     kycEnableRequestSending: boolean;
     kycCampaignId: string;
     kycLinkTemplate: string;
+    kycServiceEncriptionKey: string;
+    kycServiceEncriptionIv: string;
+
     captchaEnable: boolean;
-    enableCampaignFrontEnd: boolean;
+    captchaSecret: string;    
 }
 
 class CampaignSettingsController implements ng.IComponentController {

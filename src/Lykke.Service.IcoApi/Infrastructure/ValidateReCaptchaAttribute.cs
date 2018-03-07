@@ -1,5 +1,5 @@
-﻿using Lykke.Service.IcoApi.Core.Services;
-using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
+﻿using Lykke.Service.IcoApi.Core.Domain.Campaign;
+using Lykke.Service.IcoApi.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Newtonsoft.Json;
@@ -21,13 +21,10 @@ namespace Lykke.Service.IcoApi.Infrastructure
             public const string _reCaptchaModelErrorKey = "ReCaptcha";
             private const string _recaptchaResponseTokenKey = "g-recaptcha-response";
             private const string _apiVerificationEndpoint = "https://www.google.com/recaptcha/api/siteverify";
-            private readonly IcoApiSettings _settings;
             private readonly ICampaignService _campaignService;
 
-            public ValidateReCaptchaAttributeImpl(IcoApiSettings settings,
-                ICampaignService campaignService)
+            public ValidateReCaptchaAttributeImpl(ICampaignService campaignService)
             {
-                _settings = settings;
                 _campaignService = campaignService;
             }
 
@@ -37,13 +34,13 @@ namespace Lykke.Service.IcoApi.Infrastructure
 
                 if (campaignSettings.CaptchaEnable)
                 {
-                    await DoReCaptchaValidation(context);
+                    await DoReCaptchaValidation(context, campaignSettings);
                 }
 
                 await base.OnActionExecutionAsync(context, next);
             }
 
-            private async Task DoReCaptchaValidation(ActionExecutingContext context)
+            private async Task DoReCaptchaValidation(ActionExecutingContext context, ICampaignSettings campaignSettings)
             {
                 if (!context.HttpContext.Request.Headers.ContainsKey(_recaptchaResponseTokenKey))
                 {
@@ -58,7 +55,7 @@ namespace Lykke.Service.IcoApi.Infrastructure
                 }
                 else
                 {
-                    await ValidateRecaptcha(context, token);
+                    await ValidateRecaptcha(context, token, campaignSettings);
                 }
             }
 
@@ -67,12 +64,12 @@ namespace Lykke.Service.IcoApi.Infrastructure
                 context.ModelState.AddModelError(_reCaptchaModelErrorKey, error.ToString());
             }
 
-            private async Task ValidateRecaptcha(ActionExecutingContext context, string token)
+            private async Task ValidateRecaptcha(ActionExecutingContext context, string token, ICampaignSettings campaignSettings)
             {
                 using (var webClient = new HttpClient())
                 {
                     var content = new FormUrlEncodedContent(new[] {
-                        new KeyValuePair<string, string>("secret", _settings.CaptchaSecret),
+                        new KeyValuePair<string, string>("secret", campaignSettings.CaptchaSecret),
                         new KeyValuePair<string, string>("response", token)
                     });
 

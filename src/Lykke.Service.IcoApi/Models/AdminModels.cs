@@ -286,17 +286,17 @@ namespace Lykke.Service.IcoApi.Models
         [Required]
         public int RowndDownTokenDecimals { get; set; }
         [Required]
+        public bool EnableFrontEnd { get; set; }
+
+        [Required]
         public bool CaptchaEnable { get; set; }
+        public string CaptchaSecret { get; set; }
 
         [Required]
         public bool KycEnableRequestSending { get; set; }
-        [Required]
         public string KycCampaignId { get; set; }
-        [Required]
         public string KycLinkTemplate { get; set; }
-        [Required]
         public string KycServiceEncriptionKey { get; set; }
-        [Required]
         public string KycServiceEncriptionIv { get; set; }
 
         public static CampaignSettingsModel Create(ICampaignSettings settings)
@@ -330,7 +330,9 @@ namespace Lykke.Service.IcoApi.Models
                 CrowdSale3rdTierLogiAmount = settings.CrowdSale3rdTierLogiAmount,
                 MinInvestAmountUsd = settings.MinInvestAmountUsd,
                 RowndDownTokenDecimals = settings.RowndDownTokenDecimals,
+                EnableFrontEnd = settings.EnableFrontEnd,
                 CaptchaEnable = settings.CaptchaEnable,
+                CaptchaSecret = settings.CaptchaSecret,
                 KycEnableRequestSending = settings.KycEnableRequestSending,
                 KycCampaignId = settings.KycCampaignId,
                 KycLinkTemplate = settings.KycLinkTemplate,

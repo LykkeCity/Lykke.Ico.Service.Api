@@ -26,7 +26,7 @@
 }
 
 #settings-kyc-link-template {
-    min-width: 25vw;
+    min-width: 23vw;
 }
 
 md-toast.md-top {
@@ -55,4 +55,18 @@ md-input-container input[type=time] {
 
 .md-secondary-container md-input-container .md-errors-spacer {
     min-height: 0px !important;
+}
+
+.campaign-settings md-list-item p {
+    text-align: right !important;
+}
+.campaign-settings md-list-item .md-list-item-inner > p {
+    text-align: right !important;
+}
+.campaign-settings md-list-item .md-secondary-container {
+    min-width: 50%;
+    padding-left: 15px;
+}
+.campaign-settings md-list-item md-switch {
+    margin-left: 0px !important;
 }

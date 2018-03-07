@@ -36,7 +36,10 @@ namespace Lykke.Services.IcoApi.AzureRepositories
 
         public decimal MinInvestAmountUsd { get; set; }
         public int RowndDownTokenDecimals { get; set; }
+        public bool EnableFrontEnd { get; set; }
+
         public bool CaptchaEnable { get; set; }
+        public string CaptchaSecret { get; set; }
 
         public bool KycEnableRequestSending { get; set; }
         public string KycCampaignId { get; set; }
