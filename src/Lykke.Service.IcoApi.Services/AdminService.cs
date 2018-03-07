@@ -16,6 +16,7 @@ using Lykke.Service.IcoApi.Core.Domain.Investor;
 using Lykke.Service.IcoApi.Core.Domain;
 using Lykke.Service.IcoApi.Core.Domain.AddressPool;
 using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
+using Lykke.Service.IcoCommon.Client;
 
 namespace Lykke.Service.IcoApi.Services
 {
@@ -33,6 +34,7 @@ namespace Lykke.Service.IcoApi.Services
         private readonly IAddressPoolRepository _addressPoolRepository;
         private readonly ICampaignSettingsRepository _campaignSettingsRepository;
         private readonly IQueuePublisher<TransactionMessage> _transactionQueuePublisher;
+        private readonly IIcoCommonServiceClient _icoCommonServiceClient;
 
         public AdminService(IcoApiSettings settings,
             ILog log,
@@ -45,7 +47,8 @@ namespace Lykke.Service.IcoApi.Services
             ICampaignInfoRepository campaignInfoRepository,
             IAddressPoolRepository addressPoolRepository,
             ICampaignSettingsRepository campaignSettingsRepository,
-            IQueuePublisher<TransactionMessage> transactionQueuePublisher)
+            IQueuePublisher<TransactionMessage> transactionQueuePublisher,
+            IIcoCommonServiceClient icoCommonServiceClient)
         {
             _settings = settings;
             _log = log;
@@ -59,6 +62,7 @@ namespace Lykke.Service.IcoApi.Services
             _investorRefundRepository = investorRefundRepository;
             _campaignSettingsRepository = campaignSettingsRepository;
             _transactionQueuePublisher = transactionQueuePublisher;
+            _icoCommonServiceClient = icoCommonServiceClient;
         }
 
         public async Task<Dictionary<string, string>> GetCampaignInfo()
@@ -120,6 +124,7 @@ namespace Lykke.Service.IcoApi.Services
             await _investorHistoryRepository.RemoveAsync(email);
             await _investorTransactionRepository.RemoveAsync(email);
             await _investorRefundRepository.RemoveAsync(email);
+            await _icoCommonServiceClient.DeleteSentEmailsAsync(email);
         }
 
         public async Task<IEnumerable<IInvestorTransaction>> GetInvestorTransactions(string email)
