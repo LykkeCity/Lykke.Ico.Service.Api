@@ -9,7 +9,7 @@ namespace Lykke.Service.IcoJob
     {
         public static void Main(string[] args)
         {
-            Console.WriteLine($"IcoApi version {Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion}");
+            Console.WriteLine($"IcoJob version {Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion}");
 #if DEBUG
             Console.WriteLine("Is DEBUG");
 #else
