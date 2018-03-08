@@ -30,6 +30,7 @@ using Lykke.Service.IcoApi.Core.Repositories;
 using EmailTemplateModel = Lykke.Service.IcoCommon.Client.Models.EmailTemplateModel;
 using EmailDataModel = Lykke.Service.IcoCommon.Client.Models.EmailDataModel;
 using Lykke.Service.IcoApi.Core.Domain;
+using System.Reflection;
 
 namespace Lykke.Service.IcoApi.Controllers
 {
@@ -50,12 +51,6 @@ namespace Lykke.Service.IcoApi.Controllers
         private readonly IcoApiSettings _settings;
         private readonly IIcoCommonServiceClient _icoCommonServiceClient;
         private readonly IAuthService _authService;
-        private readonly Dictionary<string, object> _emailTemplateDataModels = new Dictionary<string, object>()
-        {
-            ["confirmation"] = new InvestorConfirmationMessage(),
-            ["new-transaction"] = new InvestorNewTransactionMessage(),
-            ["summary"] = new InvestorSummaryMessage()
-        };
         private readonly ICampaignInfoRepository _campaignInfoRepository;
 
         public AdminController(ILog log, IInvestorService investorService, IAdminService adminService, 
@@ -99,9 +94,7 @@ namespace Lykke.Service.IcoApi.Controllers
             {
                 info.Add("SmarcPhase", Enum.GetName(typeof(CampaignPhase), smarc.Phase));
                 info.Add("SmarcPhaseTokenPriceUsd", smarc.PriceUsd?.ToString(CultureInfo.InvariantCulture));
-                info.Add("SmarcPhaseTokenAmount", smarc.PhaseTokenAmount?.ToString(CultureInfo.InvariantCulture));
                 info.Add("SmarcPhaseTokenAmountAvailable", smarc.PhaseTokenAmountAvailable?.ToString(CultureInfo.InvariantCulture));
-                info.Add("SmarcPhaseTokenAmountTotal", smarc.PhaseTokenAmountTotal?.ToString(CultureInfo.InvariantCulture));
             }
 
             var logi = await settings.GetLogiTokenInfo(_campaignInfoRepository, DateTime.UtcNow);
@@ -109,9 +102,7 @@ namespace Lykke.Service.IcoApi.Controllers
             {
                 info.Add("LogiPhase", Enum.GetName(typeof(CampaignPhase), logi.Phase));
                 info.Add("LogiPhaseTokenPriceUsd", logi.PriceUsd?.ToString(CultureInfo.InvariantCulture));
-                info.Add("LogiPhaseTokenAmount", logi.PhaseTokenAmount?.ToString(CultureInfo.InvariantCulture));
                 info.Add("LogiPhaseTokenAmountAvailable", logi.PhaseTokenAmountAvailable?.ToString(CultureInfo.InvariantCulture));
-                info.Add("LogiPhaseTokenAmountTotal", logi.PhaseTokenAmountTotal?.ToString(CultureInfo.InvariantCulture));
             }
 
             return info;
@@ -451,14 +442,44 @@ namespace Lykke.Service.IcoApi.Controllers
         [HttpGet("campaign/email/templates")]
         public async Task<IList<EmailTemplateDataModel>> GetCampaignEmailTemplates()
         {
-            return (await _icoCommonServiceClient.GetCampaignEmailTemplatesAsync(Consts.CAMPAIGN_ID))
+            var templates = await _icoCommonServiceClient.GetCampaignEmailTemplatesAsync(Consts.CAMPAIGN_ID);
+
+            // add data model to templates, if any exists 
+            var templateModels = templates
                 .Select(t => new EmailTemplateDataModel(t)
                 {
-                    Data = _emailTemplateDataModels.TryGetValue(t.TemplateId, out var data)
-                        ? JObject.FromObject(data) // use intermediary jsonification to keep properties Pascal cased
-                        : null
+                    Data = EmailDataAttribute.DataModels.TryGetValue(t.TemplateId, out var data) ?
+                        JObject.FromObject(data) :
+                        null
                 })
                 .ToList();
+
+            // add templates for new data models
+            foreach (var templateId in EmailDataAttribute.DataModels.Keys)
+            {
+                if (templateModels.All(t => t.TemplateId != templateId))
+                {
+                    templateModels.Add(new EmailTemplateDataModel()
+                    {
+                        CampaignId = Consts.CAMPAIGN_ID,
+                        TemplateId = templateId,
+                        Data = JObject.FromObject(EmailDataAttribute.DataModels[templateId])
+                    });
+                }
+            }
+
+            // add layout, if there is no any
+            if (templateModels.All(x => !x.IsLayout))
+            {
+                templateModels.Add(new EmailTemplateDataModel()
+                {
+                    CampaignId = Consts.CAMPAIGN_ID,
+                    TemplateId = "layout",
+                    IsLayout = true
+                });
+            }
+
+            return templateModels;
         }
 
         /// <summary>

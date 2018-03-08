@@ -233,7 +233,7 @@ namespace Lykke.Service.IcoApi.Services
 
         private async Task SendConfirmationEmail(string email, Guid token)
         {
-            var message = new InvestorConfirmationMessage
+            var message = new Confirmation
             {
                 AuthToken = token.ToString()
             };
@@ -252,7 +252,7 @@ namespace Lykke.Service.IcoApi.Services
 
         private async Task SendSummaryEmail(IInvestor investor)
         {
-            var message = new InvestorSummaryMessage
+            var message = new Summary
             {
                 AuthToken = investor.ConfirmationToken.Value.ToString(),
                 TokenAddress = investor.TokenAddress,

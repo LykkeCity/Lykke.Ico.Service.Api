@@ -1,8 +1,9 @@
 ﻿namespace Lykke.Service.IcoApi.Core.Emails
 {
-    public class InvestorNewTransactionMessage
+    [EmailData("new-transaction")]
+    public class NewTransaction
     {
-        public InvestorNewTransactionMessage()
+        public NewTransaction()
         {
             AuthToken = LinkTransactionDetails = KycLink = TransactionAsset = string.Empty;
         }

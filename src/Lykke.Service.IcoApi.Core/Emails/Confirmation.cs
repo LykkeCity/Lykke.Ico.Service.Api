@@ -2,9 +2,10 @@
 
 namespace Lykke.Service.IcoApi.Core.Emails
 {
-    public class InvestorConfirmationMessage
+    [EmailData("confirmation")]
+    public class Confirmation
     {
-        public InvestorConfirmationMessage() => AuthToken = string.Empty;
+        public Confirmation() => AuthToken = string.Empty;
 
         [Display(Description = "")]
         public string AuthToken { get; set; }

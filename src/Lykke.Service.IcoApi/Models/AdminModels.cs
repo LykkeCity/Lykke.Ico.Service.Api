@@ -481,6 +481,7 @@ namespace Lykke.Service.IcoApi.Models
             TemplateId = emailTemplate.TemplateId;
             Body = emailTemplate.Body;
             Subject = emailTemplate.Subject;
+            IsLayout = emailTemplate.IsLayout;
         }
 
         public object Data { get; set; }

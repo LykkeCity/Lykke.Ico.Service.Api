@@ -1,7 +1,7 @@
 ﻿<md-toolbar layout="row" class="md-toolbar-tools" md-whiteframe="2">
     <md-button class="md-icon-button" ng-click="$ctrl.toggleSidenav()"><md-icon>menu</md-icon></md-button>
     <h6 class="flex md-truncate">{{$ctrl.title}}</h6>
-    <md-button ng-repeat="c in $ctrl.customCommands" ng-click="c.action()">{{c.name}}</md-button>
+    <md-button ng-repeat="c in $ctrl.customCommands" ng-click="c.action()" ng-disabled="c.isDisabled()">{{c.name}}</md-button>
 </md-toolbar>
 
 <div flex layout="row">

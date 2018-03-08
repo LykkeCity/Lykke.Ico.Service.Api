@@ -16,10 +16,6 @@
     overflow: hidden;
 }
 
-#email-template-list {
-    padding: 0;
-}
-
 .property-list {
     max-width: 1200px;
     min-width: 50vw;
@@ -77,4 +73,13 @@ md-input-container input[type=time] {
 .campaign-info md-list-item .md-secondary-container {
     min-width: 50%;
     padding-left: 15px;
+}
+
+.no-padding {
+    padding: 0;
+}
+
+.inactive {
+    color: rgba(0,0,0,0.54);
+    cursor: default;
 }

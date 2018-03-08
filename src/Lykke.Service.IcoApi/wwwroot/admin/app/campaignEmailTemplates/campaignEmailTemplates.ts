@@ -8,11 +8,15 @@ class CampaignEmailTemplate {
     subject: string;
     body: string;
     data: object;
+    isLayout: boolean;
     completionItems: monaco.languages.CompletionItem[]
 }
 
 class CampaignEmailTemplatesController implements ng.IComponentController {
 
+    private emailRegex = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    private sendPreviewEmailKey = "send_preview_email";
+    private templateDataKey = "template_data";
     private emailUrl = "/api/admin/campaign/email";
     private templatesUrl = "/api/admin/campaign/email/templates";
     private bodyEditor: monaco.editor.IStandaloneCodeEditor;
@@ -20,14 +24,16 @@ class CampaignEmailTemplatesController implements ng.IComponentController {
     private shell: ShellController;
     private customCommands: AppCommand[] = [
         { name: "Save", action: () => this.save() },
-        { name: "Send", action: () => this.send() }
+        { name: "Send", action: () => this.send(), isDisabled: () => this.selectedTemplate && this.selectedTemplate.isLayout }
     ];
 
     constructor(private $element: ng.IRootElementService, private $http: ng.IHttpService,
-        private $timeout: ng.ITimeoutService, private $mdTheming: ng.material.IThemingService, private $mdDialog: ng.material.IDialogService) {
+        private $timeout: ng.ITimeoutService, private $mdTheming: ng.material.IThemingService, private $mdDialog: ng.material.IDialogService,
+        private $q: ng.IQService) {
     }
 
     templates: CampaignEmailTemplate[];
+    layouts: CampaignEmailTemplate[];
     selectedTemplate: CampaignEmailTemplate;
 
     $onInit() {
@@ -44,6 +50,8 @@ class CampaignEmailTemplatesController implements ng.IComponentController {
 
     $onDestroy() {
         this.shell.deleteCustomCommands(this.customCommands);
+        this.bodyEditor.dispose();
+        this.dataEditor.dispose();
     }
 
     $postLink() {
@@ -57,16 +65,37 @@ class CampaignEmailTemplatesController implements ng.IComponentController {
     loadTemplates(): ng.IPromise<void> {
         return this.$http.get<CampaignEmailTemplate[]>(this.templatesUrl)
             .then(response => {
-                this.templates = response.data || [];
-                this.templates.forEach(t => {
-                    t.completionItems = Object.getOwnPropertyNames(t.data || {}).map(p => {
-                        return {
-                            label: p,
-                            kind: monaco.languages.CompletionItemKind.Property,
-                            insertText: p
-                        };
+                let data = response.data || [];
+                this.layouts = data.filter(t => t.isLayout);
+                this.templates = data
+                    .filter(t => !t.isLayout)
+                    .map(t => {
+                        if (t.data) {
+                            t.completionItems = Object.getOwnPropertyNames(t.data).map(p => {
+                                return {
+                                    label: p,
+                                    kind: monaco.languages.CompletionItemKind.Property,
+                                    insertText: p
+                                };
+                            });
+
+                            let storedDataJson = localStorage.getItem(`${t.campaignId}_${t.templateId}_${this.templateDataKey}`);
+                            if (storedDataJson) {
+                                try {
+                                    let storedData = JSON.parse(storedDataJson);
+                                    if (storedData) {
+                                        Object.getOwnPropertyNames(t.data).forEach(p => {
+                                            t.data[p] = storedData[p];
+                                        });
+                                    }
+                                }
+                                catch {
+                                }
+                            }
+                        }
+
+                        return t;
                     });
-                });
             });
     }
 
@@ -110,45 +139,84 @@ class CampaignEmailTemplatesController implements ng.IComponentController {
         this.dataEditor.setValue(`// Set values and press SEND to send a preview of e-mail\n\r${data}`);
     }
 
+    validate(): ng.IPromise<void> { 
+        if (!this.selectedTemplate) {
+            return this.$q.reject();
+        }
+
+        let errors = monaco.editor.getModelMarkers({})
+            .filter(m => m.severity == monaco.Severity.Error)
+            .map(m => `${m.message} - ${m.owner == "razor" ? "Body" : "Data Model"}, Line ${m.startLineNumber}`);
+
+        if (!this.bodyEditor.getValue()) {
+            errors.push("Body must not be empty");
+        }
+
+        if (errors.length) {
+            errors.forEach(e => this.shell.toast({ message: e, type: AppToastType.Error }));
+            return this.$q.reject();
+        }
+
+        return this.$q.resolve();
+    }
+
+    cacheDataModel() {
+        if (!this.selectedTemplate) {
+            return;
+        }
+
+        let json = utils.stripJsonComments(this.dataEditor.getValue());
+        this.selectedTemplate.data = JSON.parse(json);
+        localStorage.setItem(`${this.selectedTemplate.campaignId}_${this.selectedTemplate.templateId}_${this.templateDataKey}`, json);
+    }
+
     save() {
         if (!this.selectedTemplate) {
             return;
         }
 
-        this.selectedTemplate.body = this.bodyEditor.getValue();
-
-        if (!this.selectedTemplate.body) {
-            alert("Body must not be null or empty");
-            return;
-        }
-
-        this.$http
-            .post(this.templatesUrl, this.selectedTemplate)
-            .then(_ => this.shell.toast({ message: "Changes saved", type: AppToastType.Success }));
+        this.validate()
+            .then(() => {
+                this.cacheDataModel();
+                this.selectedTemplate.body = this.bodyEditor.getValue();
+                this.$http
+                    .post(this.templatesUrl, this.selectedTemplate)
+                    .then(_ => this.shell.toast({ message: "Changes saved", type: AppToastType.Success }));
+            });
     }
 
     send() {
-        if (!this.selectedTemplate) {
+        if (!this.selectedTemplate || this.selectedTemplate.isLayout) {
             return;
         }
 
-        let prompt = this.$mdDialog.prompt()
-            .title("SEND PREVIEW")
-            .textContent("Please, provide an email for sending message to:")
-            .placeholder("Email")
-            .required(true)
-            .ok("Ok")
-            .cancel("Cancel");
-
-        this.$mdDialog.show(prompt)
-            .then(value => {
-                this.$http
-                    .post(this.emailUrl, {
-                        templateId: this.selectedTemplate.templateId,
-                        data: JSON.parse(utils.stripJsonComments(this.dataEditor.getValue())),
-                        to: value
-                    })
-                    .then(_ => this.shell.toast({ message: "E-mail sent", type: AppToastType.Success }));
+        this.validate()
+            .then(() => {
+                return this.$mdDialog.show(this.$mdDialog.prompt()
+                    .title("SEND PREVIEW")
+                    .textContent("Please, provide an email address to send message to:")
+                    .placeholder("Email")
+                    .initialValue(localStorage.getItem(this.sendPreviewEmailKey))
+                    .required(true)
+                    .ok("Ok")
+                    .cancel("Cancel"));
+            })
+            .then((value: string) => {
+                if (this.emailRegex.exec(value) == null) {
+                    this.shell.toast({ message: "Invalid email address", type: AppToastType.Error });
+                } else {
+                    this.cacheDataModel();
+                    this.$http
+                        .post(this.emailUrl, {
+                            templateId: this.selectedTemplate.templateId,
+                            data: this.selectedTemplate.data,
+                            to: value
+                        })
+                        .then(_ => {
+                            this.shell.toast({ message: "E-mail sent", type: AppToastType.Success });
+                            localStorage.setItem(this.sendPreviewEmailKey, value);
+                        });
+                }
             });
     }
 

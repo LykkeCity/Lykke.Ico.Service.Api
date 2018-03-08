@@ -336,7 +336,7 @@ namespace Lykke.Service.IcoApi.Services
             {
                 var investor = await _investorRepository.GetAsync(tx.Email);
 
-                var message = new InvestorNewTransactionMessage
+                var message = new NewTransaction
                 {
                     AuthToken = investor.ConfirmationToken.Value.ToString(),
                     InvestorAmountUsd = investor.AmountUsd.RoundDown(2),

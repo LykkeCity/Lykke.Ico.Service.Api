@@ -1,8 +1,9 @@
 ﻿namespace Lykke.Service.IcoApi.Core.Emails
 {
-    public class InvestorSummaryMessage
+    [EmailData("summary")]
+    public class Summary
     {
-        public InvestorSummaryMessage()
+        public Summary()
         {
             AuthToken = TokenAddress = RefundBtcAddress = RefundEthAddress = string.Empty;
         }

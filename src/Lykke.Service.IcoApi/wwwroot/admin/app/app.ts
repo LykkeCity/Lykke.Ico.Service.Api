@@ -38,4 +38,5 @@ export interface IAppRoute extends ng.route.IRoute {
 export class AppCommand {
     name: string;
     action: Function;
+    isDisabled?: Function;
 }
