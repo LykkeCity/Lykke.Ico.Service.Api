@@ -46,7 +46,6 @@ namespace Lykke.Service.IcoApi.Controllers
         [Route("register")]
         [ValidateReCaptcha]
         [ProducesResponseType(typeof(RegisterInvestorResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> RegisterInvestor([FromBody] RegisterInvestorRequest model)
         {
             if (!ModelState.IsValid)
@@ -71,7 +70,6 @@ namespace Lykke.Service.IcoApi.Controllers
         [HttpGet]
         [Route("confirmation/{token}")]
         [ProducesResponseType(typeof(ConfirmInvestorResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> ConfirmInvestor(Guid token)
         {
             await _log.WriteInfoAsync(nameof(InvestorController), nameof(ConfirmInvestor), 
@@ -95,20 +93,19 @@ namespace Lykke.Service.IcoApi.Controllers
         /// </summary>
         [HttpGet]
         [InvestorAuth]
-        [ProducesResponseType(typeof(InvestorResponse), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> Get()
+        public async Task<InvestorResponse> Get()
         {
             var email = GetAuthUserEmail();
 
             await _log.WriteInfoAsync(nameof(InvestorController), nameof(Get),
-                            $"email={email}, ip={GetRequestIP()}",
-                            "Get investor");
+                $"email={email}, ip={GetRequestIP()}",
+                "Get investor");
 
             var investor = await _investorService.GetAsync(email);
             var kycLink = await _kycService.GetKycLink(investor.Email, investor.KycRequestId);
             var response = InvestorResponse.Create(investor, kycLink);
 
-            return Ok(response);
+            return response;
         }
 
         /// <summary>
@@ -117,7 +114,6 @@ namespace Lykke.Service.IcoApi.Controllers
         [HttpPost]
         [InvestorAuth]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> Post([FromBody] InvestorRequest model)
         {
             if (!ModelState.IsValid)
@@ -161,7 +157,6 @@ namespace Lykke.Service.IcoApi.Controllers
         [InvestorAuth]
         [Route("charge")]
         [ProducesResponseType(typeof(ChargeInvestorResponse), (int)HttpStatusCode.OK)]
-        [ProducesResponseType(typeof(ErrorResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> ChargeInvestor([FromBody] ChargeInvestorRequest model)
         {
             if (!ModelState.IsValid)
