@@ -497,6 +497,9 @@ namespace Lykke.Service.IcoApi.Controllers
 
             emailTemplate.CampaignId = Consts.CAMPAIGN_ID;
 
+            await _log.WriteInfoAsync(nameof(AdminController), nameof(AddOrUpdateCampaignEmailTemplate),
+                $"emailTemplate={emailTemplate.ToJson()}", "Admin UI - Edit campaign email template");
+
             await _icoCommonServiceClient.AddOrUpdateEmailTemplateAsync(emailTemplate);
 
             return Ok();
@@ -522,6 +525,9 @@ namespace Lykke.Service.IcoApi.Controllers
             }
 
             emailData.CampaignId = Consts.CAMPAIGN_ID;
+
+            await _log.WriteInfoAsync(nameof(AdminController), nameof(SendEmail),
+                $"emailData={emailData.ToJson()}", "Admin UI - Send test email");
 
             await _icoCommonServiceClient.SendEmailAsync(emailData);
 
@@ -549,6 +555,9 @@ namespace Lykke.Service.IcoApi.Controllers
             }
             else
             {
+                await _log.WriteInfoAsync(nameof(AdminController), nameof(Login),
+                    $"request.Username={request.Username}", "Admin UI - login");
+
                 return Ok(authToken);
             }
         }

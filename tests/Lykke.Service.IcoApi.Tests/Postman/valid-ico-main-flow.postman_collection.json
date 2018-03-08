@@ -1,13 +1,14 @@
 {
 	"info": {
-		"name": "Valid ICO - Main Flow",
-		"_postman_id": "35bf57ee-de4b-8435-8e7c-ca3bee5744b2",
+		"name": "SmartContainers ICO - Main Flow",
+		"_postman_id": "ff81cae8-334c-426d-aeac-37374408c67d",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
 			"name": "Remove Investor",
+			"description": null,
 			"item": [
 				{
 					"name": "/api/debug/investors/{email} - delete investor",
@@ -51,7 +52,8 @@
 								"investors",
 								"{{email}}"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -98,7 +100,8 @@
 								"{{email}}",
 								"all"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				}
@@ -106,6 +109,7 @@
 		},
 		{
 			"name": "Check Rates Service",
+			"description": null,
 			"item": [
 				{
 					"name": "/api/debug/rates/latest - recheck rates availability",
@@ -155,7 +159,8 @@
 								"rates",
 								"latest"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				}
@@ -163,6 +168,7 @@
 		},
 		{
 			"name": "Register Investor",
+			"description": null,
 			"item": [
 				{
 					"name": "/api/admin/campaign/info - remember campaign data",
@@ -213,7 +219,8 @@
 								"campaign",
 								"info"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -267,7 +274,8 @@
 								"{{email}}",
 								"history"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -320,7 +328,8 @@
 								"{{email}}",
 								"emails"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -367,7 +376,8 @@
 								"investor",
 								"register"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -427,7 +437,8 @@
 								"{{email}}",
 								"emails"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -479,7 +490,8 @@
 								"campaign",
 								"info"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -545,6 +557,7 @@
 		},
 		{
 			"name": "Confirm Investor",
+			"description": null,
 			"item": [
 				{
 					"name": "/api/admin/campaign/info - remember campaign data",
@@ -595,7 +608,8 @@
 								"campaign",
 								"info"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -649,7 +663,8 @@
 								"{{email}}",
 								"history"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -704,7 +719,8 @@
 								"investors",
 								"{{email}}"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -752,7 +768,8 @@
 								"confirmation",
 								"{{confirmation_token}}"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -805,7 +822,8 @@
 								"investors",
 								"{{email}}"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -857,7 +875,8 @@
 								"campaign",
 								"info"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -923,6 +942,7 @@
 		},
 		{
 			"name": "Update Addresses",
+			"description": null,
 			"item": [
 				{
 					"name": "/api/admin/campaign/info - remember campaign data",
@@ -974,7 +994,8 @@
 								"campaign",
 								"info"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -1028,7 +1049,8 @@
 								"{{email}}",
 								"history"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -1081,7 +1103,8 @@
 								"{{email}}",
 								"emails"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -1133,7 +1156,8 @@
 								"address",
 								"random"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -1185,7 +1209,8 @@
 								"address",
 								"random"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -1237,7 +1262,8 @@
 								"address",
 								"random"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -1281,7 +1307,8 @@
 								"api",
 								"investor"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -1341,7 +1368,8 @@
 								"{{email}}",
 								"emails"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -1410,7 +1438,8 @@
 								"api",
 								"investor"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -1420,16 +1449,16 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "60297161-b487-4e63-9c1a-1de5bb4d77ac",
+								"id": "a52fde76-eefb-43e4-b7c1-7c9c0d157cf9",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function() {",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"addressPoolCurrentSize is descreased to 1\", function() {",
+									"pm.test(\"addressPoolCurrentSize is descreased to 3\", function() {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(Number(jsonData.addressPoolCurrentSize)).to.eql(Number(pm.environment.get(\"addressPoolCurrentSize\")) - 1);",
+									"    pm.expect(Number(jsonData.addressPoolCurrentSize)).to.eql(Number(pm.environment.get(\"addressPoolCurrentSize\")) - 3);",
 									"});",
 									"",
 									"pm.test(\"investorsFilledIn is increased to 1\", function() {",
@@ -1467,7 +1496,8 @@
 								"campaign",
 								"info"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -1532,7 +1562,8 @@
 			]
 		},
 		{
-			"name": "Send BTC Transaction",
+			"name": "Send BTC Transaction - Presale & Smarc",
+			"description": null,
 			"item": [
 				{
 					"name": "/api/admin/campaign/info - remember campaign data",
@@ -1540,7 +1571,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "8551cb7c-9379-4ac6-967e-766dd0014232",
+								"id": "b78318e9-ccc9-4b9a-aefd-d580e0f4ef16",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function() {",
@@ -1550,9 +1581,9 @@
 									"pm.test(\"Remember campaign data\", function() {",
 									"    var jsonData = pm.response.json();",
 									"",
-									"    pm.environment.set(\"amountInvestedBtc\", (typeof jsonData.amountInvestedBtc === 'undefined') ? 0 : jsonData.amountInvestedBtc);",
-									"    pm.environment.set(\"amountInvestedToken\", (typeof jsonData.amountInvestedToken === 'undefined') ? 0 : jsonData.amountInvestedToken);",
-									"    pm.environment.set(\"amountInvestedUsd\", (typeof jsonData.amountInvestedUsd === 'undefined') ? 0 : jsonData.amountInvestedUsd);",
+									"    pm.environment.set(\"amountPreSaleInvestedBtc\", (typeof jsonData.amountPreSaleInvestedBtc === 'undefined') ? 0 : jsonData.amountPreSaleInvestedBtc);",
+									"    pm.environment.set(\"amountPreSaleInvestedSmarcToken\", (typeof jsonData.amountPreSaleInvestedSmarcToken === 'undefined') ? 0 : jsonData.amountPreSaleInvestedSmarcToken);",
+									"    pm.environment.set(\"amountPreSaleInvestedUsd\", (typeof jsonData.amountPreSaleInvestedUsd === 'undefined') ? 0 : jsonData.amountPreSaleInvestedUsd);",
 									"});"
 								]
 							}
@@ -1585,7 +1616,8 @@
 								"campaign",
 								"info"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -1639,7 +1671,8 @@
 								"{{email}}",
 								"history"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -1692,7 +1725,8 @@
 								"{{email}}",
 								"emails"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -1746,7 +1780,8 @@
 								"{{email}}",
 								"transactions"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -1756,6 +1791,7 @@
 						{
 							"listen": "test",
 							"script": {
+								"id": "4b850e2d-bdb3-4dd4-bc6c-694d9123fcaa",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -1766,10 +1802,10 @@
 									"pm.test(\"Get data\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    ",
-									"    pm.environment.set(\"payInBtcAddress\", jsonData.payInBtcAddress);",
+									"    pm.environment.set(\"payInSmarcBtcAddress\", jsonData.payInSmarcBtcAddress);",
 									"    pm.environment.set(\"amountBtc\", jsonData.amountBtc);",
 									"    pm.environment.set(\"amountUsd\", jsonData.amountUsd);",
-									"    pm.environment.set(\"amountToken\", jsonData.amountToken);",
+									"    pm.environment.set(\"amountSmarcToken\", jsonData.amountSmarcToken);",
 									"});"
 								]
 							}
@@ -1802,7 +1838,8 @@
 								"investors",
 								"{{email}}"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -1835,7 +1872,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"amount\": 0.012\r\n}"
+							"raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"payInAddress\": \"{{payInSmarcBtcAddress}}\",\r\n  \"amount\": 0.012\r\n}"
 						},
 						"url": {
 							"raw": "{{domain}}/api/debug/btc/send/tx",
@@ -1849,7 +1886,8 @@
 								"send",
 								"tx"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -1909,7 +1947,8 @@
 								"{{email}}",
 								"emails"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -1919,33 +1958,33 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ec2f8c57-db4d-40db-9976-c6677c928b84",
+								"id": "478b1484-aa0d-4265-a415-097a1938d64f",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function() {",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"amountInvestedBtc is valid\", function() {",
+									"pm.test(\"amountPreSaleInvestedBtc is valid\", function() {",
 									"    var jsonData = pm.response.json();",
 									"    ",
-									"    console.info(\"jsonData.amountInvestedBtc: \" + jsonData.amountInvestedBtc);",
-									"    var current = Number.parseFloat(jsonData.amountInvestedBtc).toFixed(5);",
+									"    console.info(\"jsonData.amountPreSaleInvestedBtc: \" + jsonData.amountPreSaleInvestedBtc);",
+									"    var current = Number.parseFloat(jsonData.amountPreSaleInvestedBtc).toFixed(5);",
 									"    ",
-									"    console.info(\"environment.amountInvestedBtc: \" + pm.environment.get(\"amountInvestedBtc\"));",
-									"    var expected = (Number.parseFloat(pm.environment.get(\"amountInvestedBtc\")) + 0.012).toFixed(5);",
+									"    console.info(\"environment.amountPreSaleInvestedBtc: \" + pm.environment.get(\"amountPreSaleInvestedBtc\"));",
+									"    var expected = (Number.parseFloat(pm.environment.get(\"amountPreSaleInvestedBtc\")) + 0.012).toFixed(5);",
 									"    ",
 									"    pm.expect(expected).to.eql(current);",
 									"});",
 									"",
-									"pm.test(\"amountInvestedToken was increased\", function() {",
+									"pm.test(\"amountPreSaleInvestedSmarcToken was increased\", function() {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(Number(jsonData.amountInvestedToken) > Number(pm.environment.get(\"amountInvestedToken\"))).to.be.true;",
+									"    pm.expect(Number(jsonData.amountPreSaleInvestedSmarcToken) > Number(pm.environment.get(\"amountPreSaleInvestedSmarcToken\"))).to.be.true;",
 									"});",
 									"",
 									"pm.test(\"amountInvestedUsd was increased\", function() {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(Number(jsonData.amountInvestedUsd) > Number(pm.environment.get(\"amountInvestedUsd\"))).to.be.true;",
+									"    pm.expect(Number(jsonData.amountPreSaleInvestedUsd) > Number(pm.environment.get(\"amountPreSaleInvestedUsd\"))).to.be.true;",
 									"});"
 								]
 							}
@@ -1978,7 +2017,8 @@
 								"campaign",
 								"info"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -1988,7 +2028,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "6210c51a-f9f3-41b3-a93a-3376ebb8aebf",
+								"id": "da526b47-d17a-4a57-9955-cd910f1b5f40",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -2008,9 +2048,9 @@
 									"    pm.expect(Number(jsonData.amountUsd) > Number(pm.environment.get(\"amountUsd\"))).to.be.true;",
 									"});",
 									"",
-									"pm.test(\"amountToken was increased\", function () {",
+									"pm.test(\"amountSmarcToken was increased\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(Number(jsonData.amountToken) > Number(pm.environment.get(\"amountToken\"))).to.be.true;",
+									"    pm.expect(Number(jsonData.amountSmarcToken) > Number(pm.environment.get(\"amountSmarcToken\"))).to.be.true;",
 									"});"
 								]
 							}
@@ -2043,7 +2083,8 @@
 								"investors",
 								"{{email}}"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -2099,7 +2140,8 @@
 								"{{email}}",
 								"transactions"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -2160,10 +2202,33 @@
 					},
 					"response": []
 				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "a4216102-ad13-4d4c-8302-cee1952ca5f0",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "089d1180-6a9e-47f7-aea1-ad18ee429fc2",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
 			]
 		},
 		{
-			"name": "Send ETH Transaction",
+			"name": "Send ETH Transaction - Presale & Logi",
+			"description": null,
 			"item": [
 				{
 					"name": "/api/admin/campaign/info - remember campaign data",
@@ -2171,7 +2236,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "9c3cd228-1711-48b3-a364-812111606026",
+								"id": "f4ada41e-617c-4be6-89cd-473f5b88ff9f",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function() {",
@@ -2180,10 +2245,10 @@
 									"",
 									"pm.test(\"Remember campaign data\", function() {",
 									"    var jsonData = pm.response.json();",
-									"",
-									"    pm.environment.set(\"amountInvestedEth\", (typeof jsonData.amountInvestedEth === 'undefined') ? 0 : jsonData.amountInvestedEth);",
-									"    pm.environment.set(\"amountInvestedToken\", (typeof jsonData.amountInvestedToken === 'undefined') ? 0 : jsonData.amountInvestedToken);",
-									"    pm.environment.set(\"amountInvestedUsd\", (typeof jsonData.amountInvestedUsd === 'undefined') ? 0 : jsonData.amountInvestedUsd);",
+									"    ",
+									"    pm.environment.set(\"amountPreSaleInvestedEth\", (typeof jsonData.amountPreSaleInvestedEth === 'undefined') ? 0 : jsonData.amountPreSaleInvestedEth);",
+									"    pm.environment.set(\"amountPreSaleInvestedLogiToken\", (typeof jsonData.amountPreSaleInvestedLogiToken === 'undefined') ? 0 : jsonData.amountPreSaleInvestedLogiToken);",
+									"    pm.environment.set(\"amountPreSaleInvestedUsd\", (typeof jsonData.amountPreSaleInvestedUsd === 'undefined') ? 0 : jsonData.amountPreSaleInvestedUsd);",
 									"});"
 								]
 							}
@@ -2216,7 +2281,68 @@
 								"campaign",
 								"info"
 							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/admin/campaign/settings - remember crowd sale dates",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b229a271-6174-4a07-8bad-630e02331ddd",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Remember campaign data\", function() {",
+									"    var jsonData = pm.response.json();",
+									"    ",
+									"    var crowdSaleStartDateTimeUtc = new Date(jsonData.crowdSaleStartDateTimeUtc);",
+									"    console.info(\"crowdSaleStartDateTimeUtc: \" + crowdSaleStartDateTimeUtc);",
+									"    ",
+									"    var crowdSaleDateTimeUtc = crowdSaleStartDateTimeUtc.setDate(crowdSaleStartDateTimeUtc.getDate() + 1);",
+									"    console.info(\"crowdSaleDateTimeUtc: \" + (new Date()).toISOString());",
+									"",
+									"    pm.environment.set(\"crowdSaleDateTimeUtc\", (new Date(crowdSaleDateTimeUtc)).toISOString());",
+									"});"
+								]
+							}
 						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "adminAuthToken",
+								"value": "{{admin_auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
+						},
+						"url": {
+							"raw": "{{domain}}/api/admin/campaign/settings",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"campaign",
+								"settings"
+							]
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -2270,7 +2396,8 @@
 								"{{email}}",
 								"history"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -2323,7 +2450,8 @@
 								"{{email}}",
 								"emails"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -2377,7 +2505,8 @@
 								"{{email}}",
 								"transactions"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -2387,6 +2516,7 @@
 						{
 							"listen": "test",
 							"script": {
+								"id": "daf69f1b-f7cf-436f-b0fd-11f2aee047cf",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -2397,10 +2527,10 @@
 									"pm.test(\"Get data\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    ",
-									"    pm.environment.set(\"payInEthAddress\", jsonData.payInEthAddress);",
+									"    pm.environment.set(\"payInLogiEthAddress\", jsonData.payInLogiEthAddress);",
 									"    pm.environment.set(\"amountEth\", jsonData.amountEth);",
 									"    pm.environment.set(\"amountUsd\", jsonData.amountUsd);",
-									"    pm.environment.set(\"amountToken\", jsonData.amountToken);",
+									"    pm.environment.set(\"amountLogiToken\", jsonData.amountLogiToken);",
 									"});"
 								]
 							}
@@ -2433,7 +2563,8 @@
 								"investors",
 								"{{email}}"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -2466,7 +2597,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"amount\": 0.8\r\n}"
+							"raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"payInAddress\": \"{{payInLogiEthAddress}}\",\r\n  \"amount\": 0.8\r\n}"
 						},
 						"url": {
 							"raw": "{{domain}}/api/debug/eth/send/tx",
@@ -2480,7 +2611,8 @@
 								"send",
 								"tx"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -2540,7 +2672,8 @@
 								"{{email}}",
 								"emails"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -2550,33 +2683,33 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "7da2a351-0b03-447e-b359-fe414c5ed6a3",
+								"id": "9fdc4122-f032-4658-90c1-ff60fa2ab293",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function() {",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"amountInvestedEth is valid\", function() {",
+									"pm.test(\"amountPreSaleInvestedEth is valid\", function() {",
 									"    var jsonData = pm.response.json();",
 									"    ",
-									"    console.info(\"jsonData.amountInvestedEth: \" + jsonData.amountInvestedEth);",
-									"    var current = Number.parseFloat(jsonData.amountInvestedEth).toFixed(5);",
+									"    console.info(\"jsonData.amountPreSaleInvestedEth: \" + jsonData.amountPreSaleInvestedEth);",
+									"    var current = Number.parseFloat(jsonData.amountPreSaleInvestedEth).toFixed(5);",
 									"    ",
-									"    console.info(\"environment.amountInvestedEth: \" + pm.environment.get(\"amountInvestedEth\"));",
-									"    var expected = (Number.parseFloat(pm.environment.get(\"amountInvestedEth\")) + 0.8).toFixed(5);",
+									"    console.info(\"environment.amountPreSaleInvestedEth: \" + pm.environment.get(\"amountPreSaleInvestedEth\"));",
+									"    var expected = (Number.parseFloat(pm.environment.get(\"amountPreSaleInvestedEth\")) + 0.8).toFixed(5);",
 									"    ",
 									"    pm.expect(expected).to.eql(current);",
 									"});",
 									"",
-									"pm.test(\"amountInvestedToken was increased\", function() {",
+									"pm.test(\"amountPreSaleInvestedLogiToken was increased\", function() {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(Number(jsonData.amountInvestedToken) > Number(pm.environment.get(\"amountInvestedToken\"))).to.be.true;",
+									"    pm.expect(Number(jsonData.amountPreSaleInvestedLogiToken) > Number(pm.environment.get(\"amountPreSaleInvestedLogiToken\"))).to.be.true;",
 									"});",
 									"",
-									"pm.test(\"amountInvestedUsd was increased\", function() {",
+									"pm.test(\"amountPreSaleInvestedUsd was increased\", function() {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(Number(jsonData.amountInvestedUsd) > Number(pm.environment.get(\"amountInvestedUsd\"))).to.be.true;",
+									"    pm.expect(Number(jsonData.amountPreSaleInvestedUsd) > Number(pm.environment.get(\"amountPreSaleInvestedUsd\"))).to.be.true;",
 									"});"
 								]
 							}
@@ -2609,7 +2742,8 @@
 								"campaign",
 								"info"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -2619,7 +2753,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "d7a48b0c-c1ab-41a9-a458-a7d178f3441c",
+								"id": "c4672395-195e-409f-9e8a-1392d7e26e34",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -2639,9 +2773,9 @@
 									"    pm.expect(Number(jsonData.amountUsd) > Number(pm.environment.get(\"amountUsd\"))).to.be.true;",
 									"});",
 									"",
-									"pm.test(\"amountToken was increased\", function () {",
+									"pm.test(\"amountLogiToken was increased\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(Number(jsonData.amountToken) > Number(pm.environment.get(\"amountToken\"))).to.be.true;",
+									"    pm.expect(Number(jsonData.amountLogiToken) > Number(pm.environment.get(\"amountLogiToken\"))).to.be.true;",
 									"});"
 								]
 							}
@@ -2674,7 +2808,8 @@
 								"investors",
 								"{{email}}"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -2730,7 +2865,8 @@
 								"{{email}}",
 								"transactions"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -2740,7 +2876,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "bf1bf177-2cbc-47f9-a258-18fda08e208c",
+								"id": "a2d51683-9eff-440a-a69c-d1a5f0c9d1bc",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -2791,10 +2927,33 @@
 					},
 					"response": []
 				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "10663ccb-4ab7-4e65-a15a-7f9bf7ab8d6a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "af927d6d-b87c-4ffc-8a17-0b7121813a7a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
 			]
 		},
 		{
-			"name": "Send Fiat Transaction",
+			"name": "Send ETH Transaction - Presale & Smarc90Logi10",
+			"description": null,
 			"item": [
 				{
 					"name": "/api/admin/campaign/info - remember campaign data",
@@ -2802,7 +2961,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b605dd9c-236e-4ed8-99cc-fbc250a80077",
+								"id": "5316ab4b-ec8f-4d34-8af3-9b553e72ddd4",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function() {",
@@ -2811,10 +2970,12 @@
 									"",
 									"pm.test(\"Remember campaign data\", function() {",
 									"    var jsonData = pm.response.json();",
-									"",
-									"    pm.environment.set(\"amountInvestedFiat\", (typeof jsonData.amountInvestedFiat === 'undefined') ? 0 : jsonData.amountInvestedFiat);",
-									"    pm.environment.set(\"amountInvestedToken\", (typeof jsonData.amountInvestedToken === 'undefined') ? 0 : jsonData.amountInvestedToken);",
-									"    pm.environment.set(\"amountInvestedUsd\", (typeof jsonData.amountInvestedUsd === 'undefined') ? 0 : jsonData.amountInvestedUsd);",
+									"    ",
+									"    pm.environment.set(\"amountPreSaleInvestedBtc\", (typeof jsonData.amountPreSaleInvestedBtc === 'undefined') ? 0 : jsonData.amountPreSaleInvestedBtc);",
+									"    pm.environment.set(\"amountPreSaleInvestedEth\", (typeof jsonData.amountPreSaleInvestedEth === 'undefined') ? 0 : jsonData.amountPreSaleInvestedEth);",
+									"    pm.environment.set(\"amountPreSaleInvestedSmarcToken\", (typeof jsonData.amountPreSaleInvestedSmarcToken === 'undefined') ? 0 : jsonData.amountPreSaleInvestedSmarcToken);",
+									"    pm.environment.set(\"amountPreSaleInvestedLogiToken\", (typeof jsonData.amountPreSaleInvestedLogiToken === 'undefined') ? 0 : jsonData.amountPreSaleInvestedLogiToken);",
+									"    pm.environment.set(\"amountPreSaleInvestedUsd\", (typeof jsonData.amountPreSaleInvestedUsd === 'undefined') ? 0 : jsonData.amountPreSaleInvestedUsd);",
 									"});"
 								]
 							}
@@ -2847,61 +3008,8 @@
 								"campaign",
 								"info"
 							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "/api/admin/investors/{email}/history - remember history",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "35756984-8233-45cd-9159-9d2456d6274b",
-								"type": "text/javascript",
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Remember investor history\", function () {",
-									"    var jsonData = pm.response.json();",
-									"",
-									"    pm.environment.set(\"investor-history-size\", (typeof jsonData.items === 'undefined') ? 0 : jsonData.items.count());",
-									"});"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "adminAuthToken",
-								"value": "{{admin_auth_token}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
 						},
-						"url": {
-							"raw": "{{domain}}/api/admin/investors/{{email}}/history",
-							"host": [
-								"{{domain}}"
-							],
-							"path": [
-								"api",
-								"admin",
-								"investors",
-								"{{email}}",
-								"history"
-							]
-						}
+						"description": null
 					},
 					"response": []
 				},
@@ -2954,7 +3062,8 @@
 								"{{email}}",
 								"emails"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -3008,7 +3117,8 @@
 								"{{email}}",
 								"transactions"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -3018,18 +3128,22 @@
 						{
 							"listen": "test",
 							"script": {
+								"id": "3ff8729c-9204-4605-a78c-efed7a29dc87",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
+									"",
 									"pm.test(\"Get data\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    ",
-									"    pm.environment.set(\"amountFiat\", jsonData.amountFiat);",
+									"    pm.environment.set(\"payInSmarc90Logi10EthAddress\", jsonData.payInSmarc90Logi10EthAddress);",
+									"    pm.environment.set(\"amountEth\", jsonData.amountEth);",
 									"    pm.environment.set(\"amountUsd\", jsonData.amountUsd);",
-									"    pm.environment.set(\"amountToken\", jsonData.amountToken);",
+									"    pm.environment.set(\"amountLogiToken\", jsonData.amountLogiToken);",
+									"    pm.environment.set(\"amountSmarcToken\", jsonData.amountSmarcToken);",
 									"});"
 								]
 							}
@@ -3062,12 +3176,13 @@
 								"investors",
 								"{{email}}"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
 				{
-					"name": "/api/debug/fiat/send/tx - send fiat transaction to queue",
+					"name": "/api/debug/eth/send/tx - send ether transaction to queue",
 					"event": [
 						{
 							"listen": "test",
@@ -3095,31 +3210,32 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"amount\": 300\r\n}"
+							"raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"payInAddress\": \"{{payInSmarc90Logi10EthAddress}}\",\r\n  \"amount\": 1\r\n}"
 						},
 						"url": {
-							"raw": "{{domain}}/api/debug/fiat/send/tx",
+							"raw": "{{domain}}/api/debug/eth/send/tx",
 							"host": [
 								"{{domain}}"
 							],
 							"path": [
 								"api",
 								"debug",
-								"fiat",
+								"eth",
 								"send",
 								"tx"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
 				{
-					"name": "/api/admin/investors/{email}/emails - wait fiat transaction email",
+					"name": "/api/admin/investors/{email}/emails - wait eth transaction email 2",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "4b29497b-7799-4e25-befd-d3c2b05c3cf4",
+								"id": "5458ba0b-61a5-4f3f-aa01-8561667c1fd6",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -3135,7 +3251,7 @@
 									"} else {",
 									"    console.info(\"Wait 10 secs\");",
 									"    setTimeout(function(){}, 10000);",
-									"    postman.setNextRequest(\"/api/admin/investors/{email}/emails - wait fiat transaction email\");",
+									"    postman.setNextRequest(\"/api/admin/investors/{email}/emails - wait eth transaction email 2\");",
 									"}"
 								]
 							}
@@ -3169,7 +3285,8 @@
 								"{{email}}",
 								"emails"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -3179,33 +3296,45 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f2452cf2-5637-4076-9a7e-47f8967899c6",
+								"id": "f335aedd-63df-4cf8-a17b-a747ced65462",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function() {",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"amountInvestedFiat is valid\", function() {",
+									"pm.test(\"amountPreSaleInvestedEth is valid\", function() {",
 									"    var jsonData = pm.response.json();",
 									"    ",
-									"    console.info(\"jsonData.amountInvestedFiat: \" + jsonData.amountInvestedFiat);",
-									"    var current = Number.parseFloat(jsonData.amountInvestedFiat).toFixed(5);",
+									"    console.info(\"jsonData.amountPreSaleInvestedEth: \" + jsonData.amountPreSaleInvestedEth);",
+									"    var current = Number.parseFloat(jsonData.amountPreSaleInvestedEth).toFixed(5);",
 									"    ",
-									"    console.info(\"environment.amountInvestedFiat: \" + pm.environment.get(\"amountInvestedFiat\"));",
-									"    var expected = (Number.parseFloat(pm.environment.get(\"amountInvestedFiat\")) + (300 - 300*0.039)).toFixed(5);",
+									"    console.info(\"environment.amountPreSaleInvestedEth: \" + pm.environment.get(\"amountPreSaleInvestedEth\"));",
+									"    var expected = (Number.parseFloat(pm.environment.get(\"amountPreSaleInvestedEth\")) + 1).toFixed(5);",
 									"    ",
 									"    pm.expect(expected).to.eql(current);",
 									"});",
 									"",
-									"pm.test(\"amountInvestedToken was increased\", function() {",
+									"pm.test(\"amountPreSaleInvestedSmarcToken was increased\", function() {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(Number(jsonData.amountInvestedToken) > Number(pm.environment.get(\"amountInvestedToken\"))).to.be.true;",
+									"    ",
+									"    var old = pm.environment.get(\"amountPreSaleInvestedSmarcToken\");",
+									"    console.info(\"old: \" + old);",
+									"    ",
+									"    var current = jsonData.amountPreSaleInvestedSmarcToken;",
+									"    console.info(\"current: \" + current);",
+									"    ",
+									"    pm.expect(Number(current) > Number(old)).to.be.true;",
 									"});",
 									"",
-									"pm.test(\"amountInvestedUsd was increased\", function() {",
+									"pm.test(\"amountPreSaleInvestedLogiToken was increased\", function() {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(Number(jsonData.amountInvestedUsd) > Number(pm.environment.get(\"amountInvestedUsd\"))).to.be.true;",
+									"    pm.expect(Number(jsonData.amountPreSaleInvestedLogiToken) > Number(pm.environment.get(\"amountPreSaleInvestedLogiToken\"))).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"amountPreSaleInvestedUsd was increased\", function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(Number(jsonData.amountPreSaleInvestedUsd) > Number(pm.environment.get(\"amountPreSaleInvestedUsd\"))).to.be.true;",
 									"});"
 								]
 							}
@@ -3238,27 +3367,28 @@
 								"campaign",
 								"info"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
 				{
-					"name": "/api/admin/investors/{email} - recheck investor amounts",
+					"name": "/api/admin/investors/{email} - check investor amounts",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "47c4613c-ce75-427e-a981-1f602975083d",
+								"id": "65d1b4c3-e5b1-4d6f-b205-bbf79f03840f",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"amountFiat was increased\", function () {",
+									"pm.test(\"amountEth is valid\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    var current = Number.parseFloat(jsonData.amountFiat).toFixed(5);",
-									"    var expected = (Number.parseFloat(pm.environment.get(\"amountFiat\")) + (300 - 300*0.039)).toFixed(5);",
+									"    var current = Number.parseFloat(jsonData.amountEth).toFixed(5);",
+									"    var expected = (Number.parseFloat(pm.environment.get(\"amountEth\")) + 1).toFixed(5);",
 									"    ",
 									"    pm.expect(expected).to.eql(current);",
 									"});",
@@ -3268,9 +3398,14 @@
 									"    pm.expect(Number(jsonData.amountUsd) > Number(pm.environment.get(\"amountUsd\"))).to.be.true;",
 									"});",
 									"",
-									"pm.test(\"amountToken was increased\", function () {",
+									"pm.test(\"amountSmarcToken was increased\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(Number(jsonData.amountToken) > Number(pm.environment.get(\"amountToken\"))).to.be.true;",
+									"    pm.expect(Number(jsonData.amountSmarcToken) > Number(pm.environment.get(\"amountSmarcToken\"))).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"amountLogiToken was increased\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(Number(jsonData.amountLogiToken) > Number(pm.environment.get(\"amountLogiToken\"))).to.be.true;",
 									"});"
 								]
 							}
@@ -3303,7 +3438,8 @@
 								"investors",
 								"{{email}}"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -3313,7 +3449,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "ed75df2a-f69c-4b61-98db-85e4fdb7174b",
+								"id": "bf1c6384-97d8-40ee-86af-18402996a5f2",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -3359,66 +3495,32 @@
 								"{{email}}",
 								"transactions"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "10663ccb-4ab7-4e65-a15a-7f9bf7ab8d6a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
 				},
 				{
-					"name": "/api/admin/investors/{email}/history - check investor history",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "b7083c39-59b4-4d48-ba23-cbf4b7164ee4",
-								"type": "text/javascript",
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"1 new records in profile history (increment amounts)\", function () {",
-									"    var jsonData = pm.response.json();",
-									"    var current = Number(jsonData.items.count());",
-									"    var expected = Number(pm.environment.get(\"investor-history-size\") + 1);",
-									"    ",
-									"    pm.expect(expected).to.eql(current);",
-									"});"
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "adminAuthToken",
-								"value": "{{admin_auth_token}}"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
-						},
-						"url": {
-							"raw": "{{domain}}/api/admin/investors/{{email}}/history",
-							"host": [
-								"{{domain}}"
-							],
-							"path": [
-								"api",
-								"admin",
-								"investors",
-								"{{email}}",
-								"history"
-							]
-						},
-						"description": "recheck investor changes history"
-					},
-					"response": []
+					"listen": "test",
+					"script": {
+						"id": "af927d6d-b87c-4ffc-8a17-0b7121813a7a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
 				}
 			]
 		},
@@ -3477,17 +3579,18 @@
 								"transactions",
 								"failed"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
 				{
-					"name": "/api/admin/investors/{email} - get pay-in address and amounts",
+					"name": "/api/admin/investors/{email} - get pay-in address",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "b608757d-c416-4a93-8cb4-5c1d014676fe",
+								"id": "718f6b1a-d314-4dbf-9642-b2a314fb6583",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -3498,7 +3601,7 @@
 									"pm.test(\"Get data\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    ",
-									"    pm.environment.set(\"payInEthAddress\", jsonData.payInEthAddress);",
+									"    pm.environment.set(\"payInLogiEthAddress\", jsonData.payInLogiEthAddress);",
 									"});"
 								]
 							}
@@ -3531,7 +3634,8 @@
 								"investors",
 								"{{email}}"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -3564,7 +3668,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"amount\": 0.2,\r\n  \"createdUtc\": \"2017-11-19T11:00:00.000Z\"\r\n}"
+							"raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"payInAddress\": \"{{payInLogiEthAddress}}\",\r\n  \"amount\": 0.2,\r\n  \"createdUtc\": \"2017-11-19T11:00:00.000Z\"\r\n}"
 						},
 						"url": {
 							"raw": "{{domain}}/api/debug/eth/send/tx",
@@ -3578,7 +3682,8 @@
 								"send",
 								"tx"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				},
@@ -3639,7 +3744,8 @@
 								"transactions",
 								"failed"
 							]
-						}
+						},
+						"description": null
 					},
 					"response": []
 				}
@@ -3666,6 +3772,28 @@
 					}
 				}
 			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "096f7031-ac52-48ad-b23f-384a1a566cf0",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "bf833421-a4b3-45aa-aace-e263827c69f2",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }
