@@ -50,8 +50,12 @@ class CampaignEmailTemplatesController implements ng.IComponentController {
 
     $onDestroy() {
         this.shell.deleteCustomCommands(this.customCommands);
-        this.bodyEditor.dispose();
-        this.dataEditor.dispose();
+        if (this.bodyEditor) {
+            this.bodyEditor.dispose();
+        }
+        if (this.dataEditor) {
+            this.dataEditor.dispose();
+        }
     }
 
     $postLink() {

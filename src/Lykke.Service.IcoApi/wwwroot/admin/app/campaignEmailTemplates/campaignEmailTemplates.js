@@ -33,8 +33,12 @@ class CampaignEmailTemplatesController {
     }
     $onDestroy() {
         this.shell.deleteCustomCommands(this.customCommands);
-        this.bodyEditor.dispose();
-        this.dataEditor.dispose();
+        if (this.bodyEditor) {
+            this.bodyEditor.dispose();
+        }
+        if (this.dataEditor) {
+            this.dataEditor.dispose();
+        }
     }
     $postLink() {
         // there is no :host class for angular 1.x.x,
