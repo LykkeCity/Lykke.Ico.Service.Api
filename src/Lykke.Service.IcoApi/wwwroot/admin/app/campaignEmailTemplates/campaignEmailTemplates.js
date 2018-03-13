@@ -10,7 +10,7 @@ class CampaignEmailTemplatesController {
         this.$mdTheming = $mdTheming;
         this.$mdDialog = $mdDialog;
         this.$q = $q;
-        this.emailRegex = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+        this.emailRegex = /^[a-zA-Z0-9.!#$%&�*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
         this.sendPreviewEmailKey = "send_preview_email";
         this.templateDataKey = "template_data";
         this.emailUrl = "/api/admin/campaign/email";
