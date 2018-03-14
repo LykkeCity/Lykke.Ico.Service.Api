@@ -90,15 +90,7 @@ namespace Lykke.Services.IcoApi.AzureRepositories
                     KycServiceEncriptionIv = settings.KycServiceEncriptionIv
                 });
 
-                var now = DateTime.UtcNow;
-
-                await _history.InsertAsync(new CampaignSettingsHistoryItemEntity()
-                {
-                    PartitionKey = now.ToIsoDate(),
-                    RowKey = now.ToTimeString(),
-                    Username = username,
-                    Settings = settings.ToJson(ignoreNulls: true)
-                });
+                await _history.InsertAsync(new CampaignSettingsHistoryItemEntity(username, settings));
             }
         }
     }
