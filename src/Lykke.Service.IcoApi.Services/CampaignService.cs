@@ -48,9 +48,9 @@ namespace Lykke.Service.IcoApi.Services
             return campaignSettings;
         }
 
-        public async Task SaveCampaignSettings(ICampaignSettings settings)
+        public async Task SaveCampaignSettings(ICampaignSettings settings, string username)
         {
-            await _campaignSettingsRepository.SaveAsync(settings);
+            await _campaignSettingsRepository.SaveAsync(settings, username);
 
             _cache.Remove(_cachKey);
         }
@@ -58,6 +58,11 @@ namespace Lykke.Service.IcoApi.Services
         public async Task<IEnumerable<IInvestorRefund>> GetRefunds()
         {
             return await _investorRefundRepository.GetAllAsync();
+        }
+
+        public async Task<IEnumerable<ICampaignSettingsHistoryItem>> GetCampaignSettingsHistory()
+        {
+            return await _campaignSettingsRepository.GetHistoryAsync();
         }
     }
 }

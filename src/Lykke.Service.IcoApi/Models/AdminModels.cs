@@ -342,7 +342,29 @@ namespace Lykke.Service.IcoApi.Models
         }
     }
 
-    public class TransactionMessageRequest
+    public class CampaignSettingsHistoryItemModel : ICampaignSettingsHistoryItem
+    {
+        public string Username { get; set; }
+        public string Settings { get; set; }
+        public DateTime ChangedUtc { get; set; }
+
+        public static CampaignSettingsHistoryItemModel Create(ICampaignSettingsHistoryItem historyItem)
+        {
+            if (historyItem == null)
+            {
+                return null;
+            }
+
+            return new CampaignSettingsHistoryItemModel
+            {
+                Username = historyItem.Username,
+                Settings = historyItem.Settings,
+                ChangedUtc = historyItem.ChangedUtc
+            };
+        }
+    }
+
+        public class TransactionMessageRequest
     {
         [Required]
         public string Email { get; set; }

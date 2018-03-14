@@ -32,11 +32,12 @@ namespace Lykke.Service.IcoApi.Services
             return null;
         }
 
-        public async Task<bool> IsValid(string authToken)
+        public async Task<string> Authenticate(string authToken)
         {
-            return
-                !string.IsNullOrEmpty(authToken) &&
-                !string.IsNullOrEmpty(await _userAuthTokenRepository.GetUsername(authToken));
+            if (string.IsNullOrEmpty(authToken))
+                return null;
+            else
+                return await _userAuthTokenRepository.GetUsername(authToken);
         }
     }
 }

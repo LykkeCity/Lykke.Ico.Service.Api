@@ -4,6 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
 using Lykke.Service.IcoApi.Core.Services;
 using System.Threading.Tasks;
+using System.Security.Claims;
+using System.Security.Principal;
 
 namespace Lykke.Service.IcoApi.Infrastructure
 {
@@ -33,9 +35,18 @@ namespace Lykke.Service.IcoApi.Infrastructure
                 key = forms[0];
             }
 
-            if (!apiSettings.AdminAuthKey.Equals(key) && !(await authService.IsValid(key)))
+            if (!apiSettings.AdminAuthKey.Equals(key))
             {
-                context.Result = new UnauthorizedResult();
+                var username = await authService.Authenticate(key);
+
+                if (string.IsNullOrEmpty(username))
+                {
+                    context.Result = new UnauthorizedResult();
+                }
+                else
+                {
+                    context.HttpContext.User = new ClaimsPrincipal(new GenericIdentity(username));
+                }
             }
 
             await base.OnActionExecutionAsync(context, next);

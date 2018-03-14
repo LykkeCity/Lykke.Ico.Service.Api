@@ -11,8 +11,10 @@ namespace Lykke.Service.IcoApi.Core.Services
 
         Task<ICampaignSettings> GetCampaignSettings();
 
-        Task SaveCampaignSettings(ICampaignSettings settings);
+        Task SaveCampaignSettings(ICampaignSettings settings, string username);
 
         Task<IEnumerable<IInvestorRefund>> GetRefunds();
+
+        Task<IEnumerable<ICampaignSettingsHistoryItem>> GetCampaignSettingsHistory();
     }
 }

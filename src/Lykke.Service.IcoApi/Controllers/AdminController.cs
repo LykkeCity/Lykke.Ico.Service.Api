@@ -121,6 +121,20 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
+        /// Returns campaign settings history
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("campaign/settings/history")]
+        public async Task<CampaignSettingsHistoryItemModel[]> GetCampaignSettingsHistory()
+        {
+            var history = await _campaignService.GetCampaignSettingsHistory();
+
+            return history
+                .Select(item => CampaignSettingsHistoryItemModel.Create(item))
+                .ToArray();
+        }
+
+        /// <summary>
         /// Save campaign settings
         /// </summary>
         [AdminAuth]
@@ -136,7 +150,7 @@ namespace Lykke.Service.IcoApi.Controllers
             await _log.WriteInfoAsync(nameof(AdminController), nameof(SaveCampaignSettings),
                $"settings={settings.ToJson()}", "Save campaign settings");
 
-            await _campaignService.SaveCampaignSettings(settings);
+            await _campaignService.SaveCampaignSettings(settings, User.Identity.Name);
 
             return Ok();
         }
