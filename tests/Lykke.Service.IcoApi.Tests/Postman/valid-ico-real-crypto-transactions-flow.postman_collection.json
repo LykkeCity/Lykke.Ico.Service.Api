@@ -1,7 +1,7 @@
 {
 	"info": {
-		"name": "Valid ICO - Real Crypto Transactions Flow",
-		"_postman_id": "8a8f4c21-499a-142c-5cdf-2ffd842fc8d7",
+		"name": "SmartContainers ICO - Real Crypto Transactions Flow",
+		"_postman_id": "b33886d7-9663-4161-ac38-3109e7935359",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -472,7 +472,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "84f176b5-c338-4b3f-bb29-504ad7b60842",
+								"id": "05f04783-2580-49ac-8fa5-1ff2e64469d0",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -483,7 +483,7 @@
 									"pm.test(\"Get data\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    ",
-									"    pm.environment.set(\"payInBtcAddress\", jsonData.payInBtcAddress);",
+									"    pm.environment.set(\"payInSmarcBtcAddress\", jsonData.payInSmarcBtcAddress);",
 									"});"
 								]
 							}
@@ -553,7 +553,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"address\": \"{{payInBtcAddress}}\",\r\n  \"amount\": 0.01\r\n}"
+							"raw": "{\r\n  \"address\": \"{{payInSmarcBtcAddress}}\",\r\n  \"amount\": 0.01\r\n}"
 						},
 						"url": {
 							"raw": "{{domain}}/api/debug/btc/send",
@@ -721,7 +721,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "db005c8d-6eec-4c39-ac80-762e0dd484d1",
+								"id": "7982fd9a-23fa-4e2d-b33e-273a8b5cea30",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -732,7 +732,7 @@
 									"pm.test(\"Get data\", function () {",
 									"    var jsonData = pm.response.json();",
 									"    ",
-									"    pm.environment.set(\"payInEthAddress\", jsonData.payInEthAddress);",
+									"    pm.environment.set(\"payInLogiEthAddress\", jsonData.payInLogiEthAddress);",
 									"});"
 								]
 							}
@@ -802,7 +802,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"address\": \"{{payInEthAddress}}\",\r\n  \"amount\": 0.01\r\n}"
+							"raw": "{\r\n  \"address\": \"{{payInLogiEthAddress}}\",\r\n  \"amount\": 0.01\r\n}"
 						},
 						"url": {
 							"raw": "{{domain}}/api/debug/eth/send",
@@ -905,6 +905,28 @@
 					}
 				}
 			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "e4828d0e-950b-4ee1-acb3-88c9b5bbe04a",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "a0b8ed54-ed16-41a5-8f27-20ce6a4f6335",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }
