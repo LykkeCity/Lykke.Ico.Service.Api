@@ -11,13 +11,16 @@ using Common;
 using Common.Log;
 using CsvHelper;
 using Lykke.Common.ApiLibrary.Contract;
+using Lykke.Service.IcoApi.Core.Domain;
 using Lykke.Service.IcoApi.Core.Domain.Campaign;
 using Lykke.Service.IcoApi.Core.Domain.Investor;
 using Lykke.Service.IcoApi.Core.Emails;
+using Lykke.Service.IcoApi.Core.Repositories;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
 using Lykke.Service.IcoApi.Infrastructure;
 using Lykke.Service.IcoApi.Models;
+using Lykke.Service.IcoApi.Services.Extensions;
 using Lykke.Service.IcoCommon.Client;
 using Lykke.Service.IcoExRate.Client;
 using Microsoft.AspNetCore.Http;
@@ -25,12 +28,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Lykke.Service.IcoApi.Services.Extensions;
-using Lykke.Service.IcoApi.Core.Repositories;
-using EmailTemplateModel = Lykke.Service.IcoCommon.Client.Models.EmailTemplateModel;
 using EmailDataModel = Lykke.Service.IcoCommon.Client.Models.EmailDataModel;
-using Lykke.Service.IcoApi.Core.Domain;
-using System.Reflection;
+using EmailTemplateAddOrUpdateRequest = Lykke.Service.IcoCommon.Client.Models.EmailTemplateAddOrUpdateRequest;
+using EmailTemplateHistoryItemModel = Lykke.Service.IcoCommon.Client.Models.EmailTemplateHistoryItemModel;
+using EmailTemplateModel = Lykke.Service.IcoCommon.Client.Models.EmailTemplateModel;
 
 namespace Lykke.Service.IcoApi.Controllers
 {
@@ -497,6 +498,17 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
+        /// Returns email template history.
+        /// </summary>
+        /// <returns></returns>
+        [AdminAuth]
+        [HttpGet("campaign/email/templates/{templateId}/history")]
+        public async Task<IList<EmailTemplateHistoryItemModel>> GetEmailTemplateHistory([FromRoute] string templateId)
+        {
+            return await _icoCommonServiceClient.GetEmailTemplateHistoryAsync(Consts.CAMPAIGN_ID, templateId);
+        }
+
+        /// <summary>
         /// Returns campaign email templates content.
         /// </summary>
         /// <returns></returns>
@@ -514,7 +526,7 @@ namespace Lykke.Service.IcoApi.Controllers
             await _log.WriteInfoAsync(nameof(AdminController), nameof(AddOrUpdateCampaignEmailTemplate),
                 $"emailTemplate={emailTemplate.ToJson()}", "Admin UI - Edit campaign email template");
 
-            await _icoCommonServiceClient.AddOrUpdateEmailTemplateAsync(emailTemplate);
+            await _icoCommonServiceClient.AddOrUpdateEmailTemplateAsync(new EmailTemplateAddOrUpdateRequest(emailTemplate, User.Identity.Name));
 
             return Ok();
         }
