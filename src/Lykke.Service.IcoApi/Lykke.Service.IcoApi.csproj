@@ -24,6 +24,7 @@
     <Content Remove="wwwroot\admin\app\app.ts" />
     <Content Remove="wwwroot\admin\app\appConfig.ts" />
     <Content Remove="wwwroot\admin\app\auth\auth.ts" />
+    <Content Remove="wwwroot\admin\app\campaignEmailTemplates\campaignEmailTemplateHistory.ts" />
     <Content Remove="wwwroot\admin\app\campaignEmailTemplates\campaignEmailTemplates.ts" />
     <Content Remove="wwwroot\admin\app\campaignInfo\campaignInfo.ts" />
     <Content Remove="wwwroot\admin\app\campaignSettings\campaignSettings.ts" />
@@ -132,6 +133,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <TypeScriptCompile Include="wwwroot\admin\app\campaignEmailTemplates\campaignEmailTemplateHistory.ts" />
     <TypeScriptCompile Include="wwwroot\admin\app\utils.ts" />
     <TypeScriptCompile Include="wwwroot\admin\app\appConfig.ts" />
     <TypeScriptCompile Include="wwwroot\admin\app\campaignEmailTemplates\campaignEmailTemplates.ts" />

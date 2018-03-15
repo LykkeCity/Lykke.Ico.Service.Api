@@ -1,0 +1,25 @@
+﻿<md-dialog id="email-template-history" layout="column">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h6>History of {{$ctrl.templateId}} changes</h6>
+            <div flex></div>
+            <md-button class="md-icon-button" ng-click="$ctrl.close()">
+                <md-icon>close</md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+    <md-dialog-content flex layout="row">
+        <md-content flex="20" layout="column">
+            <md-list class="no-padding">
+                <md-list-item ng-repeat="h in $ctrl.history | orderBy:'-changedUtc'" ng-click="$ctrl.selectHistoryItem(h)" class="md-2-line">
+                    <div class="md-list-item-text" layout="column">
+                        <h3>{{h.changedUtc | date}}</h3>
+                        <h4>{{h.username}}</h4>
+                        <p>{{h.subject}}</p>
+                    </div>
+                </md-list-item>
+            </md-list>
+        </md-content>
+        <div id="history-item-body-editor" flex="80"></div>
+    </md-dialog-content>
+</md-dialog>

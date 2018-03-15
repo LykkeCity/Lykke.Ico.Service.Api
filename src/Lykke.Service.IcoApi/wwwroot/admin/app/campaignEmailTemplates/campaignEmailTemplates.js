@@ -1,4 +1,5 @@
 import { app, AppToastType } from "../app.js";
+import { CampaignEmailTemplateHistoryController } from "./campaignEmailTemplateHistory.js";
 import * as utils from "../utils.js";
 class CampaignEmailTemplate {
 }
@@ -10,14 +11,15 @@ class CampaignEmailTemplatesController {
         this.$mdTheming = $mdTheming;
         this.$mdDialog = $mdDialog;
         this.$q = $q;
-        this.emailRegex = /^[a-zA-Z0-9.!#$%&�*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+        this.emailRegex = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
         this.sendPreviewEmailKey = "send_preview_email";
         this.templateDataKey = "template_data";
         this.emailUrl = "/api/admin/campaign/email";
         this.templatesUrl = "/api/admin/campaign/email/templates";
         this.customCommands = [
             { name: "Save", action: () => this.save() },
-            { name: "Send", action: () => this.send(), isDisabled: () => this.selectedTemplate && this.selectedTemplate.isLayout }
+            { name: "Send", action: () => this.send(), isDisabled: () => this.selectedTemplate && this.selectedTemplate.isLayout },
+            { name: "History", action: () => this.showHistory() }
         ];
     }
     $onInit() {
@@ -117,7 +119,7 @@ class CampaignEmailTemplatesController {
     }
     validate() {
         if (!this.selectedTemplate) {
-            return this.$q.reject();
+            return undefined;
         }
         let errors = monaco.editor.getModelMarkers({})
             .filter(m => m.severity == monaco.Severity.Error)
@@ -127,9 +129,8 @@ class CampaignEmailTemplatesController {
         }
         if (errors.length) {
             errors.forEach(e => this.shell.toast({ message: e, type: AppToastType.Error }));
-            return this.$q.reject();
         }
-        return this.$q.resolve();
+        return !errors.length;
     }
     cacheDataModel() {
         if (!this.selectedTemplate) {
@@ -140,46 +141,40 @@ class CampaignEmailTemplatesController {
         localStorage.setItem(`${this.selectedTemplate.campaignId}_${this.selectedTemplate.templateId}_${this.templateDataKey}`, json);
     }
     save() {
-        if (!this.selectedTemplate) {
+        if (!this.selectedTemplate ||
+            !this.validate()) {
             return;
         }
-        this.validate()
-            .then(() => {
-            this.cacheDataModel();
-            this.selectedTemplate.body = this.bodyEditor.getValue();
-            this.$http
-                .post(this.templatesUrl, this.selectedTemplate)
-                .then(_ => this.shell.toast({ message: "Changes saved", type: AppToastType.Success }));
-        });
+        this.cacheDataModel();
+        this.selectedTemplate.body = this.bodyEditor.getValue();
+        return this.$http
+            .post(this.templatesUrl, this.selectedTemplate)
+            .then(() => this.shell.toast({ message: "Changes saved", type: AppToastType.Success }));
     }
     send() {
-        if (!this.selectedTemplate || this.selectedTemplate.isLayout) {
+        if (!this.selectedTemplate || this.selectedTemplate.isLayout ||
+            !this.validate()) {
             return;
         }
-        this.validate()
-            .then(() => {
-            return this.$mdDialog.show(this.$mdDialog.prompt()
-                .title("SEND PREVIEW")
-                .textContent("Please, provide an email address to send message to:")
-                .placeholder("Email")
-                .initialValue(localStorage.getItem(this.sendPreviewEmailKey))
-                .required(true)
-                .ok("Ok")
-                .cancel("Cancel"));
-        })
+        let prompt = this.$mdDialog.prompt()
+            .title("SEND PREVIEW")
+            .textContent("Please, provide an email address to send message to:")
+            .placeholder("Email")
+            .initialValue(localStorage.getItem(this.sendPreviewEmailKey))
+            .required(true)
+            .ok("Ok")
+            .cancel("Cancel");
+        return this.$mdDialog
+            .show(prompt)
             .then((value) => {
             if (this.emailRegex.exec(value) == null) {
-                this.shell.toast({ message: "Invalid email address", type: AppToastType.Error });
+                return this.shell.toast({ message: "Invalid email address", type: AppToastType.Error });
             }
             else {
                 this.cacheDataModel();
-                this.$http
-                    .post(this.emailUrl, {
-                    templateId: this.selectedTemplate.templateId,
-                    data: this.selectedTemplate.data,
-                    to: value
-                })
-                    .then(_ => {
+                return this.$http
+                    .post(this.emailUrl, { templateId: this.selectedTemplate.templateId, data: this.selectedTemplate.data, to: value })
+                    .then(() => {
                     this.shell.toast({ message: "E-mail sent", type: AppToastType.Success });
                     localStorage.setItem(this.sendPreviewEmailKey, value);
                 });
@@ -200,6 +195,24 @@ class CampaignEmailTemplatesController {
         return {
             background: `background-${hue}`
         };
+    }
+    showHistory() {
+        if (!this.selectedTemplate) {
+            return;
+        }
+        this.$mdDialog.show({
+            bindToController: true,
+            controller: CampaignEmailTemplateHistoryController,
+            controllerAs: "$ctrl",
+            templateUrl: "app/campaignEmailTemplates/campaignEmailTemplateHistory.html",
+            parent: angular.element(document.body),
+            clickOutsideToClose: true,
+            resolve: {
+                templateId: () => this.$q.when(this.selectedTemplate.templateId),
+                history: () => this.$http.get(`${this.templatesUrl}/${this.selectedTemplate.templateId}/history`)
+                    .then(res => res.data)
+            }
+        });
     }
 }
 app.component("campaignEmailTemplates", {

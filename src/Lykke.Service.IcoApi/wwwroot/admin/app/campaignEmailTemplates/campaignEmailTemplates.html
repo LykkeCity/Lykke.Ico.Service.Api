@@ -4,7 +4,7 @@
     </div>
     <md-list class="no-padding">
         <md-list-item ng-repeat="t in $ctrl.templates | orderBy:'templateId'" ng-click="$ctrl.selectTemplate(t)" md-colors="$ctrl.listItemColors(t)">
-            {{t.templateId}}
+            <p>{{t.templateId}}</p>
         </md-list-item>
     </md-list>
     <div class="md-tab inactive">
@@ -20,7 +20,7 @@
     <md-tab label="Subject" ng-disabled="$ctrl.selectedTemplate.isLayout">
         <div layout="column" layout-align="start center">
             <form name="subjForm" layout="column" layout-padding class="property-list">
-                <md-input-container >
+                <md-input-container>
                     <input type="text" name="subject" ng-model="$ctrl.selectedTemplate.subject" />
                 </md-input-container>
             </form>

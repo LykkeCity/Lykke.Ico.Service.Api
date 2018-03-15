@@ -9,7 +9,7 @@
             <div layout="column" layout-padding>
                 <md-input-container>
                     <label>Username</label>
-                    <input type="text" name="username" ng-model="$ctrl.credentials.username" ng-required="true" />
+                    <input type="text" name="username" ng-model="$ctrl.credentials.username" ng-required="true" md-autofocus/>
                     <div ng-messages="loginForm.username.$error">
                         <div ng-message="required">Username is required</div>
                     </div>

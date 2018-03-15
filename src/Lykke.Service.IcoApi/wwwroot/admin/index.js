@@ -3,6 +3,7 @@
 import "./app/app.js";
 import "./app/appConfig.js";
 import "./app/auth/auth.js";
+import "./app/campaignEmailTemplates/campaignEmailTemplateHistory.js";
 import "./app/campaignEmailTemplates/campaignEmailTemplates.js";
 import "./app/campaignInfo/campaignInfo.js";
 import "./app/campaignSettings/campaignSettings.js";
