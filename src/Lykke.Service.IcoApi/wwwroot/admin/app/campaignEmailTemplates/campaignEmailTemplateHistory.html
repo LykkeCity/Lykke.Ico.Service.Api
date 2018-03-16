@@ -1,4 +1,4 @@
-﻿<md-dialog id="email-template-history" layout="column">
+﻿<md-dialog id="email-template-history-dialog" layout="column">
     <md-toolbar>
         <div class="md-toolbar-tools">
             <h6>History of {{$ctrl.templateId}} changes</h6>
@@ -9,17 +9,19 @@
         </div>
     </md-toolbar>
     <md-dialog-content flex layout="row">
-        <md-content flex="20" layout="column">
+        <md-content flex="25" md-colors="$ctrl.appColors.sidepanelColors()">
             <md-list class="no-padding">
-                <md-list-item ng-repeat="h in $ctrl.history | orderBy:'-changedUtc'" ng-click="$ctrl.selectHistoryItem(h)" class="md-2-line">
+                <md-list-item class="md-2-line"
+                              ng-repeat="h in $ctrl.history | orderBy:'-changedUtc'" 
+                              ng-click="$ctrl.selectHistoryItem(h)"
+                              md-colors="$ctrl.appColors.selectionColors(h == $ctrl.selectedItem)">
                     <div class="md-list-item-text" layout="column">
-                        <h3>{{h.changedUtc | date}}</h3>
-                        <h4>{{h.username}}</h4>
-                        <p>{{h.subject}}</p>
+                        <h4>{{h.changedUtc | date : 'yyyy-MM-dd HH:mm'}}<span ng-if="h.username"> by {{h.username}}</span></h4>
+                        <p class="light">{{h.subject}}</p>
                     </div>
                 </md-list-item>
             </md-list>
         </md-content>
-        <div id="history-item-body-editor" flex="80"></div>
+        <div id="email-template-history-body-editor" flex="75"></div>
     </md-dialog-content>
 </md-dialog>

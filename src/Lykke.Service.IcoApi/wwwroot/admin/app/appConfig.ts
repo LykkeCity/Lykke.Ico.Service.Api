@@ -52,15 +52,6 @@ function interceptAuthTokensAndHttpErrors($q: ng.IQService, $rootScope: ng.IRoot
     };
 }
 
-const appRoutes: IAppRoute[] = [
-    { link: "campaign-info", icon: "info", name: "Info", template: "<campaign-info></campaign-info>" },
-    { link: "campaign-email-templates", icon: "email", name: "Email Templates", template: "<campaign-email-templates></campaign-email-templates>" },
-    { link: "campaign-settings", icon: "settings", name: "Settings", template: "<campaign-settings></campaign-settings>" }
-];
-
-// define app routes
-app.constant("appRoutes", appRoutes);
-
 // config app routes
 app.config(($routeProvider: ng.route.IRouteProvider, $locationProvider: ng.ILocationProvider, appRoutes: IAppRoute[]) => {
     $locationProvider.html5Mode(true);

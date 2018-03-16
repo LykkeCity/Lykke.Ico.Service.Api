@@ -4,7 +4,7 @@ export class ShellController implements ng.IComponentController {
 
     constructor(private $element: ng.IRootElementService, private $rootScope: ng.IRootScopeService,
         private $location: ng.ILocationService, private $mdSidenav: ng.material.ISidenavService, private $mdToast: ng.material.IToastService,
-        private $route: ng.route.IRouteService, readonly appRoutes: IAppRoute[]) {
+        private $route: ng.route.IRouteService, public appRoutes: IAppRoute[]) {
 
         $rootScope.$on(AppEvent.Toast, (e: ng.IAngularEvent, toast: AppToast) => {
             this.toast(toast);

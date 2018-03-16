@@ -44,13 +44,6 @@ function interceptAuthTokensAndHttpErrors($q, $rootScope, authUtils) {
         }
     };
 }
-const appRoutes = [
-    { link: "campaign-info", icon: "info", name: "Info", template: "<campaign-info></campaign-info>" },
-    { link: "campaign-email-templates", icon: "email", name: "Email Templates", template: "<campaign-email-templates></campaign-email-templates>" },
-    { link: "campaign-settings", icon: "settings", name: "Settings", template: "<campaign-settings></campaign-settings>" }
-];
-// define app routes
-app.constant("appRoutes", appRoutes);
 // config app routes
 app.config(($routeProvider, $locationProvider, appRoutes) => {
     $locationProvider.html5Mode(true);

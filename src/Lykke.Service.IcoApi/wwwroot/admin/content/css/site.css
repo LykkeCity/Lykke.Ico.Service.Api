@@ -12,11 +12,12 @@
 }
 
 #email-template-body-editor,
-#email-template-data-editor {
+#email-template-data-editor,
+#email-template-history-body-editor {
     overflow: hidden;
 }
 
-#email-template-history {
+#email-template-history-dialog {
     min-height: 80%;
     min-width: 80%;
 }
@@ -40,10 +41,6 @@ md-toast.md-top {
 
 .md-toast-error .md-toast-content {
     background-color: #ba000d !important;
-}
-
-md-input-container.errors {
-    margin: 0;
 }
 
 md-input-container input[type=time] {
@@ -84,7 +81,19 @@ md-input-container input[type=time] {
     padding: 0;
 }
 
+.no-margin {
+    margin: 0;
+}
+
 .inactive {
     color: rgba(0,0,0,0.54);
     cursor: default;
+}
+
+.light {
+    font-weight: 300 !important;
+}
+
+md-content {
+    -ms-overflow-style: -ms-autohiding-scrollbar;
 }

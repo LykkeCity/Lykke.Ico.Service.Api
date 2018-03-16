@@ -4,13 +4,14 @@ import * as utils from "../utils.js";
 class CampaignEmailTemplate {
 }
 class CampaignEmailTemplatesController {
-    constructor($element, $http, $timeout, $mdTheming, $mdDialog, $q) {
+    constructor($element, $http, $timeout, $mdTheming, $mdDialog, $q, appColors) {
         this.$element = $element;
         this.$http = $http;
         this.$timeout = $timeout;
         this.$mdTheming = $mdTheming;
         this.$mdDialog = $mdDialog;
         this.$q = $q;
+        this.appColors = appColors;
         this.emailRegex = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
         this.sendPreviewEmailKey = "send_preview_email";
         this.templateDataKey = "template_data";
@@ -180,21 +181,6 @@ class CampaignEmailTemplatesController {
                 });
             }
         });
-    }
-    listColors() {
-        const hue = this.$mdTheming.THEMES.default.isDark ? "800" : "100";
-        return {
-            background: `background-${hue}`
-        };
-    }
-    listItemColors(template) {
-        if (template != this.selectedTemplate) {
-            return this.listColors();
-        }
-        const hue = this.$mdTheming.THEMES.default.isDark ? "700" : "300";
-        return {
-            background: `background-${hue}`
-        };
     }
     showHistory() {
         if (!this.selectedTemplate) {

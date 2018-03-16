@@ -1,4 +1,4 @@
-import { app, AppCommand, AppToast, AppToastType } from "../app.js";
+import { app, AppCommand, AppToast, AppToastType, AppColorsService } from "../app.js";
 import { ShellController } from "../shell/shell.js";
 import { CampaignEmailTemplateHistoryItem, CampaignEmailTemplateHistoryController } from "./campaignEmailTemplateHistory.js";
 import * as utils from "../utils.js";
@@ -31,7 +31,7 @@ class CampaignEmailTemplatesController implements ng.IComponentController {
 
     constructor(private $element: ng.IRootElementService, private $http: ng.IHttpService,
         private $timeout: ng.ITimeoutService, private $mdTheming: ng.material.IThemingService, private $mdDialog: ng.material.IDialogService,
-        private $q: ng.IQService) {
+        private $q: ng.IQService, public appColors: AppColorsService) {
     }
 
     templates: CampaignEmailTemplate[];
@@ -220,23 +220,6 @@ class CampaignEmailTemplatesController implements ng.IComponentController {
                         });
                 }
             });
-    }
-
-    listColors() {
-        const hue = this.$mdTheming.THEMES.default.isDark ? "800" : "100";
-        return {
-            background: `background-${hue}`
-        };
-    }
-
-    listItemColors(template?: CampaignEmailTemplate) {
-        if (template != this.selectedTemplate) {
-            return this.listColors();
-        }
-        const hue = this.$mdTheming.THEMES.default.isDark ? "700" : "300";
-        return {
-            background: `background-${hue}`
-        };
     }
 
     showHistory() {

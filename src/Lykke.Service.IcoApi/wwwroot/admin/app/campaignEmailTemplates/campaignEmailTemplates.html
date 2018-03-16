@@ -1,22 +1,18 @@
-﻿<div flex="20" ng-if="$ctrl.templates" md-colors="$ctrl.listColors()" layout="column">
-    <div class="md-tab inactive">
-        Templates
-    </div>
+﻿<md-content flex="20" ng-if="$ctrl.templates" md-colors="$ctrl.appColors.sidepanelColors()" layout="column">
+    <div class="md-tab inactive">Templates</div>
     <md-list class="no-padding">
-        <md-list-item ng-repeat="t in $ctrl.templates | orderBy:'templateId'" ng-click="$ctrl.selectTemplate(t)" md-colors="$ctrl.listItemColors(t)">
+        <md-list-item ng-repeat="t in $ctrl.templates | orderBy:'templateId'" ng-click="$ctrl.selectTemplate(t)" md-colors="$ctrl.appColors.selectionColors(t == $ctrl.selectedTemplate)">
             <p>{{t.templateId}}</p>
         </md-list-item>
     </md-list>
-    <div class="md-tab inactive">
-        Layouts
-    </div>
+    <div class="md-tab inactive">Layouts</div>
     <md-list class="no-padding">
-        <md-list-item ng-repeat="t in $ctrl.layouts | orderBy:'templateId'" ng-click="$ctrl.selectTemplate(t)" md-colors="$ctrl.listItemColors(t)">
+        <md-list-item ng-repeat="t in $ctrl.layouts | orderBy:'templateId'" ng-click="$ctrl.selectTemplate(t)" md-colors="$ctrl.appColors.selectionColors(t == $ctrl.selectedTemplate)">
             {{t.templateId}}
         </md-list-item>
     </md-list>
-</div>
-<md-tabs flex="80" ng-if="$ctrl.templates" md-border-bottom="true" md-center-tabs="true" md-no-ink-bar="true">
+</md-content>
+<md-tabs flex="80" ng-if="$ctrl.templates" md-center-tabs="true" md-no-ink-bar="true">
     <md-tab label="Subject" ng-disabled="$ctrl.selectedTemplate.isLayout">
         <div layout="column" layout-align="start center">
             <form name="subjForm" layout="column" layout-padding class="property-list">
