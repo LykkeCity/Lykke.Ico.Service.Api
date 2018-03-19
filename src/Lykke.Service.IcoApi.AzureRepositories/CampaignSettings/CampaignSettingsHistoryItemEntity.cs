@@ -6,6 +6,7 @@ using Lykke.AzureStorage.Tables.Entity.Annotation;
 using Lykke.AzureStorage.Tables.Entity.ValueTypesMerging;
 using Lykke.Service.IcoApi.Core.Domain.Campaign;
 using Microsoft.WindowsAzure.Storage.Table;
+using Newtonsoft.Json;
 
 namespace Lykke.Services.IcoApi.AzureRepositories
 {
@@ -20,7 +21,12 @@ namespace Lykke.Services.IcoApi.AzureRepositories
         {
             ChangedUtc = DateTime.UtcNow;
             Username = username;
-            Settings = settings.ToJson(ignoreNulls: true);
+            Settings = JsonConvert.SerializeObject(settings,
+                Formatting.Indented,
+                new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Ignore
+                });
         }
 
         [IgnoreProperty]

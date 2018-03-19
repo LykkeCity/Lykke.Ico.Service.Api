@@ -1,5 +1,6 @@
 ﻿import { app, AppCommand, AppToast, AppToastType } from "../app.js";
 import { ShellController } from "../shell/shell.js";
+import { CampaignSettingsHistoryController, CampaignSettingsHistoryItem } from "./campaignSettingsHistory.js";
 
 class CampaignSettings {
     preSaleStartDateTimeUtc: Date;
@@ -42,12 +43,12 @@ class CampaignSettingsController implements ng.IComponentController {
 
     private settingsUrl = "/api/admin/campaign/settings";
     private shell: ShellController;
-    private customCommands: AppCommand[] = [{
-        name: "Save",
-        action: () => this.save()
-    }];
+    private customCommands: AppCommand[] = [
+        { name: "Save", action: () => this.save() },
+        { name: "History", action: () => this.showHistory() }
+    ];
 
-    constructor(private $element: ng.IRootElementService, private $http: ng.IHttpService) {
+    constructor(private $element: ng.IRootElementService, private $http: ng.IHttpService, private $mdDialog: ng.material.IDialogService) {
     }
 
     settings: CampaignSettings;
@@ -79,6 +80,22 @@ class CampaignSettingsController implements ng.IComponentController {
                 .post(this.settingsUrl, this.settings)
                 .then(_ => this.shell.toast({ message: "Changes saved", type: AppToastType.Success }));
         }
+    }
+
+    showHistory() {
+        this.$mdDialog.show({
+            bindToController: true,
+            controller: CampaignSettingsHistoryController,
+            controllerAs: "$ctrl",
+            templateUrl: "app/campaignSettings/campaignSettingsHistory.html",
+            parent: angular.element(document.body),
+            clickOutsideToClose: true,
+            resolve: {
+                history: () =>
+                    this.$http.get<CampaignSettingsHistoryItem[]>(`${this.settingsUrl}/history`)
+                        .then(res => res.data)
+            }
+        });
     }
 }
 

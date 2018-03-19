@@ -1,5 +1,5 @@
 import { app, AppEvent, AppToastType } from "./app.js";
-const regexIso8601 = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/;
+const regexIso8601 = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})/;
 function transformDateStringsToDates(input) {
     if (typeof input !== "object") {
         return input;
@@ -10,8 +10,8 @@ function transformDateStringsToDates(input) {
         }
         var value = input[key];
         var match;
-        if (typeof value === "string" && (match = value.match(regexIso8601))) {
-            var milliseconds = Date.parse(match[0]);
+        if (typeof value === "string" && regexIso8601.test(value)) {
+            var milliseconds = Date.parse(value);
             if (!isNaN(milliseconds)) {
                 input[key] = new Date(milliseconds);
             }

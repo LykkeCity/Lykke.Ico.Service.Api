@@ -116,7 +116,7 @@ class CampaignEmailTemplatesController implements ng.IComponentController {
             language: language,
             minimap: {
                 enabled: false
-            },
+            }
         });
     }
 

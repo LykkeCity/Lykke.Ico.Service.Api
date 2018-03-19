@@ -1,7 +1,7 @@
 ﻿<md-dialog id="email-template-history-dialog" layout="column">
     <md-toolbar>
         <div class="md-toolbar-tools">
-            <h6>History of {{$ctrl.templateId}} changes</h6>
+            <h6>History of settings changes</h6>
             <div flex></div>
             <md-button class="md-icon-button" ng-click="$ctrl.close()">
                 <md-icon>close</md-icon>
@@ -17,7 +17,6 @@
                               md-colors="$ctrl.appColors.selectionColors(h == $ctrl.selectedItem)">
                     <div class="md-list-item-text" layout="column">
                         <h4>{{h.changedUtc | date : 'yyyy-MM-dd HH:mm'}}<span ng-if="h.username"> <span class="light">/</span> {{h.username}}</span></h4>
-                        <p class="light">{{h.subject}}</p>
                     </div>
                 </md-list-item>
             </md-list>

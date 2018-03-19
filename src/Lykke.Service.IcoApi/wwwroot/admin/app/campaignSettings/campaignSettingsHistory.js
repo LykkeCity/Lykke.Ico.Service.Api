@@ -1,8 +1,7 @@
-export class CampaignEmailTemplateHistoryItem {
+export class CampaignSettingsHistoryItem {
 }
-export class CampaignEmailTemplateHistoryController {
-    constructor(templateId, history, appColors, $mdDialog, $timeout) {
-        this.templateId = templateId;
+export class CampaignSettingsHistoryController {
+    constructor(history, appColors, $mdDialog, $timeout) {
         this.history = history;
         this.appColors = appColors;
         this.$mdDialog = $mdDialog;
@@ -14,28 +13,29 @@ export class CampaignEmailTemplateHistoryController {
         this.$timeout(() => this.initEditor()).then(() => this.selectHistoryItem());
     }
     $onDestroy() {
-        if (this.bodyEditor) {
-            this.bodyEditor.dispose();
+        if (this.editor) {
+            this.editor.dispose();
         }
     }
     close() {
         this.$mdDialog.hide();
     }
     initEditor() {
-        this.bodyEditor = monaco.editor.create(document.getElementById("email-template-history-body-editor"), {
+        this.editor = monaco.editor.create(document.getElementById("email-template-history-body-editor"), {
             automaticLayout: true,
-            language: "razor",
+            language: "json",
             minimap: {
                 enabled: false
             },
             readOnly: true,
+            renderIndentGuides: false,
             renderLineHighlight: "none",
-            hideCursorInOverviewRuler: true,
+            hideCursorInOverviewRuler: true
         });
     }
     selectHistoryItem(item) {
         this.selectedItem = item || this.history[0];
-        let body = this.selectedItem && this.selectedItem.body ? this.selectedItem.body : "";
-        this.bodyEditor.setValue(body);
+        let value = JSON.stringify(JSON.parse((this.selectedItem && this.selectedItem.settings) || ""), null, 4);
+        this.editor.setValue(value);
     }
 }
