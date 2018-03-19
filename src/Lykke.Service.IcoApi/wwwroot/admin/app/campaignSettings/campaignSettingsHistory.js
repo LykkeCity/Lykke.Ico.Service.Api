@@ -10,7 +10,9 @@ export class CampaignSettingsHistoryController {
         history.sort((a, b) => b.changedUtc.getTime() - a.changedUtc.getTime());
     }
     $onInit() {
-        this.$timeout(() => this.initEditor()).then(() => this.selectHistoryItem());
+        if (this.history && this.history.length) {
+            this.$timeout(() => this.initEditor()).then(() => this.selectHistoryItem());
+        }
     }
     $onDestroy() {
         if (this.editor) {
@@ -35,7 +37,7 @@ export class CampaignSettingsHistoryController {
     }
     selectHistoryItem(item) {
         this.selectedItem = item || this.history[0];
-        let value = JSON.stringify(JSON.parse((this.selectedItem && this.selectedItem.settings) || ""), null, 4);
+        let value = JSON.stringify(JSON.parse((this.selectedItem && this.selectedItem.settings) || "{}"), null, 4);
         this.editor.setValue(value);
     }
 }

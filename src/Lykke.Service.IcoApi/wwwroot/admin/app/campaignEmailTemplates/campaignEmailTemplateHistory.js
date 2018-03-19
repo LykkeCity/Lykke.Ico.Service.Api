@@ -11,7 +11,9 @@ export class CampaignEmailTemplateHistoryController {
         history.sort((a, b) => b.changedUtc.getTime() - a.changedUtc.getTime());
     }
     $onInit() {
-        this.$timeout(() => this.initEditor()).then(() => this.selectHistoryItem());
+        if (this.history && this.history.length) {
+            this.$timeout(() => this.initEditor()).then(() => this.selectHistoryItem());
+        }
     }
     $onDestroy() {
         if (this.bodyEditor) {

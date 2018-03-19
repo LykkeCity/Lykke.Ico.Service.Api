@@ -8,7 +8,7 @@
             </md-button>
         </div>
     </md-toolbar>
-    <md-dialog-content flex layout="row">
+    <md-dialog-content ng-if="$ctrl.history.length" flex layout="row">
         <md-content flex="25" md-colors="$ctrl.appColors.sidepanelColors()">
             <md-list class="no-padding">
                 <md-list-item class="md-2-line"
@@ -22,5 +22,8 @@
             </md-list>
         </md-content>
         <div id="email-template-history-body-editor" flex="75"></div>
+    </md-dialog-content>
+    <md-dialog-content ng-if="!$ctrl.history.length" flex layout="row" layout-align="center center">
+        <h1 class="md-display-2 light" md-colors="$ctrl.appColors.watermarkColors()">Empty</h1>
     </md-dialog-content>
 </md-dialog>

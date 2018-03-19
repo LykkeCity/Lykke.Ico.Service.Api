@@ -38,6 +38,12 @@ export class AppColorsService {
             background: `default-background-${hue}`
         };
     }
+    watermarkColors() {
+        const hue = this.$mdTheming.THEMES.default.isDark ? "700" : "200";
+        return {
+            color: `default-background-${hue}`
+        };
+    }
 }
 const appRoutes = [
     { link: "campaign-info", icon: "info", name: "Info", template: "<campaign-info></campaign-info>" },

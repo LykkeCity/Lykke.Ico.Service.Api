@@ -23,7 +23,9 @@ export class CampaignEmailTemplateHistoryController implements ng.IController {
     selectedItem: CampaignEmailTemplateHistoryItem;
 
     $onInit() {
-        this.$timeout(() => this.initEditor()).then(() => this.selectHistoryItem());
+        if (this.history && this.history.length) {
+            this.$timeout(() => this.initEditor()).then(() => this.selectHistoryItem());
+        }
     }
 
     $onDestroy() {

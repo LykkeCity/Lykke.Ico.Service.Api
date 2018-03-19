@@ -20,7 +20,9 @@ export class CampaignSettingsHistoryController implements ng.IController {
     selectedItem: CampaignSettingsHistoryItem;
 
     $onInit() {
-        this.$timeout(() => this.initEditor()).then(() => this.selectHistoryItem());
+        if (this.history && this.history.length) {
+            this.$timeout(() => this.initEditor()).then(() => this.selectHistoryItem());
+        }
     }
 
     $onDestroy() {
@@ -49,7 +51,7 @@ export class CampaignSettingsHistoryController implements ng.IController {
 
     selectHistoryItem(item?: CampaignSettingsHistoryItem) {
         this.selectedItem = item || this.history[0];
-        let value = JSON.stringify(JSON.parse((this.selectedItem && this.selectedItem.settings) || ""), null, 4);
+        let value = JSON.stringify(JSON.parse((this.selectedItem && this.selectedItem.settings) || "{}"), null, 4);
         this.editor.setValue(value);
     }
 }
