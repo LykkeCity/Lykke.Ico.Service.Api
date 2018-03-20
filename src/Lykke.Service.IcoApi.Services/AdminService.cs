@@ -312,6 +312,11 @@ namespace Lykke.Service.IcoApi.Services
             return counter;
         }
 
+        public string GenerateTransactionQueueSasUrl(DateTime? expiryTime = null)
+        {
+            return _transactionQueuePublisher.GenerateSasUrl(expiryTime);
+        }
+
         private class PublicKeysRow
         {
             public string btcPublic { get; set; }

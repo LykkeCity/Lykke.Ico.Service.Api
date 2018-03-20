@@ -453,4 +453,9 @@ namespace Lykke.Service.IcoApi.Models
 
         public object Data { get; set; }
     }
+
+    public class GenerateTransactionQueueSasUrlRequest
+    {
+        public DateTime? ExpiryTime { get; set; }
+    }
 }

@@ -578,5 +578,16 @@ namespace Lykke.Service.IcoApi.Controllers
                 return Ok(authToken);
             }
         }
+
+        /// <summary>
+        /// Generates Shared Access Signature URL for adding transaction messages to queue.
+        /// </summary>
+        /// <returns></returns>
+        [AdminAuth]
+        [HttpPost("transactions/sas")]
+        public string GenerateTransactionQueueSasUrl([FromBody] GenerateTransactionQueueSasUrlRequest request)
+        {
+            return _adminService.GenerateTransactionQueueSasUrl(request?.ExpiryTime);
+        }
     }
 }

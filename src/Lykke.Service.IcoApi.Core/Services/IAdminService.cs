@@ -25,5 +25,6 @@ namespace Lykke.Service.IcoApi.Core.Services
         Task<IEnumerable<(int Id, string BtcPublicKey, string EthPublicKey)>> GetPublicKeys(int[] ids);
         Task<IEnumerable<IInvestorTransaction>> GetLatestTransactions();
         Task UpdateInvestorAsync(string email, string tokenAddress, string refundEthAddress, string refundBtcAddress);
+        string GenerateTransactionQueueSasUrl(DateTime? expiryTime = null);
     }
 }

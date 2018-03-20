@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Threading.Tasks;
 using AzureStorage.Queue;
-using System.Linq;
 using Common;
-using Lykke.SettingsReader;
-using System.Text.RegularExpressions;
-using System.Diagnostics;
 using Lykke.Service.IcoApi.Core.Queues;
+using Lykke.SettingsReader;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Queue;
 
 namespace Lykke.Service.IcoApi.Services
 {
     public class QueuePublisher<TMessage> : IQueuePublisher<TMessage>
     {
+        private readonly IReloadingManager<string> _connectionStringManager;
         private readonly IQueueExt _queue;
 
         public QueuePublisher(IReloadingManager<string> connectionStringManager, string queueName)
         {
+            _connectionStringManager = connectionStringManager;
             _queue = AzureQueueExt.Create(connectionStringManager, queueName);
         }
 
@@ -28,5 +29,23 @@ namespace Lykke.Service.IcoApi.Services
 
             await _queue.PutRawMessageAsync(message.ToJson());
         }            
+
+        public string GenerateSasUrl(DateTime? expiryTime = null)
+        {
+            var storageAccount = CloudStorageAccount.Parse(_connectionStringManager.CurrentValue);
+
+            var policy = new SharedAccessQueuePolicy()
+            {
+                Permissions = SharedAccessQueuePermissions.Add,
+                SharedAccessExpiryTime = expiryTime ?? DateTime.UtcNow.AddYears(1)
+            };
+
+            var cloudQueue = storageAccount.CreateCloudQueueClient()
+                .GetQueueReference(_queue.Name);
+
+            return 
+                cloudQueue.Uri + 
+                cloudQueue.GetSharedAccessSignature(policy);
+        }
     }
 }
