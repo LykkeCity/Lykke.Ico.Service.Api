@@ -3,6 +3,6 @@
     public class Consts
     {
         public const string CAMPAIGN_ID = "lykkedemo";
-        public const string DEMO = "LYKKEDEMO";
+        public const string DEMO = "DEMO";
     }
 }

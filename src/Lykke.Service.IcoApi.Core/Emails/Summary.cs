@@ -5,9 +5,10 @@
     {
         public Summary()
         {
-            AuthToken = TokenAddress = RefundBtcAddress = RefundEthAddress = string.Empty;
+            TokenName = AuthToken = TokenAddress = RefundBtcAddress = RefundEthAddress = string.Empty;
         }
 
+        public string TokenName { get; set; }
         public string AuthToken { get; set; }
         public string TokenAddress { get; set; }
         public string RefundBtcAddress { get; set; }
