@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using AzureStorage;
 using AzureStorage.Tables;
-using Common;
 using Common.Log;
 using Lykke.Service.IcoApi.Core.Domain.Campaign;
 using Lykke.Service.IcoApi.Core.Repositories;
@@ -43,7 +41,7 @@ namespace Lykke.Services.IcoApi.AzureRepositories
             return await _table.GetDataAsync(GetPartitionKey(), GetRowKey());
         }
 
-        public async Task<IEnumerable<ICampaignSettingsHistoryItem>> GetHistoryAsync()
+        public async Task<IEnumerable<ICampaignSettingsHistoryItem>> GetHistoryAsync() 
         {
             return await _history.GetDataAsync();
         }
