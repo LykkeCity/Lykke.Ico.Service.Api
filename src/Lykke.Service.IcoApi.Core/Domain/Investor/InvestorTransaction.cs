@@ -17,15 +17,9 @@ namespace Lykke.Service.IcoApi.Core.Domain.Investor
         public decimal AmountUsd { get; set; }
         public decimal Fee { get; set; }
 
-        public decimal SmarcAmountToken { get; set; }
-        public decimal SmarcAmountUsd { get; set; }
-        public decimal SmarcTokenPriceUsd { get; set; }
-        public string SmarcTokenPriceContext { get; set; }
-
-        public decimal LogiAmountToken { get; set; }
-        public decimal LogiAmountUsd { get; set; }
-        public decimal LogiTokenPriceUsd { get; set; }
-        public string LogiTokenPriceContext { get; set; }
+        public decimal AmountToken { get; set; }
+        public decimal TokenPriceUsd { get; set; }
+        public string TokenPriceContext { get; set; }
 
         public decimal ExchangeRate { get; set; }
         public string ExchangeRateContext { get; set; }

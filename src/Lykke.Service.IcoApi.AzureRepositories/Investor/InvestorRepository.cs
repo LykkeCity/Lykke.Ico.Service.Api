@@ -71,20 +71,10 @@ namespace Lykke.Services.IcoApi.AzureRepositories
                 x.RefundEthAddress = item.RefundEthAddress;
                 x.RefundBtcAddress = item.RefundBtcAddress;
 
-                x.PayInSmarcEthPublicKey = item.PayInSmarcEthPublicKey;
-                x.PayInSmarcEthAddress = item.PayInSmarcEthAddress;
-                x.PayInSmarcBtcPublicKey = item.PayInSmarcBtcPublicKey;
-                x.PayInSmarcBtcAddress = item.PayInSmarcBtcAddress;
-
-                x.PayInLogiEthPublicKey = item.PayInLogiEthPublicKey;
-                x.PayInLogiEthAddress = item.PayInLogiEthAddress;
-                x.PayInLogiBtcPublicKey = item.PayInLogiBtcPublicKey;
-                x.PayInLogiBtcAddress = item.PayInLogiBtcAddress;
-
-                x.PayInSmarc90Logi10EthPublicKey = item.PayInSmarc90Logi10EthPublicKey;
-                x.PayInSmarc90Logi10EthAddress = item.PayInSmarc90Logi10EthAddress;
-                x.PayInSmarc90Logi10BtcPublicKey = item.PayInSmarc90Logi10BtcPublicKey;
-                x.PayInSmarc90Logi10BtcAddress = item.PayInSmarc90Logi10BtcAddress;
+                x.PayInEthPublicKey = item.PayInEthPublicKey;
+                x.PayInEthAddress = item.PayInEthAddress;
+                x.PayInBtcPublicKey = item.PayInBtcPublicKey;
+                x.PayInBtcAddress = item.PayInBtcAddress;
 
                 return x;
             });
@@ -133,7 +123,7 @@ namespace Lykke.Services.IcoApi.AzureRepositories
         }
 
         public async Task IncrementAmount(string email, CurrencyType type, decimal amount, decimal amountUsd, 
-            decimal amountSmarcToken, decimal amountLogiToken)
+            decimal amountToken)
         {
             var entity = await _table.MergeAsync(GetPartitionKey(), GetRowKey(email), x =>
             {
@@ -151,8 +141,7 @@ namespace Lykke.Services.IcoApi.AzureRepositories
                 }
 
                 x.AmountUsd += amountUsd;
-                x.AmountSmarcToken += amountSmarcToken;
-                x.AmountLogiToken += amountLogiToken;
+                x.AmountToken += amountToken;
 
                 return x;
             });

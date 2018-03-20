@@ -58,12 +58,8 @@
         <p class="md-secondary">{{$ctrl.info.amountPreSaleInvestedUsd | number:4}}</p>
     </md-list-item>
     <md-list-item>
-        <p>Total (SMARC):</p>
-        <p class="md-secondary">{{$ctrl.info.amountPreSaleInvestedSmarcToken | number:4}}</p>
-    </md-list-item>
-    <md-list-item>
-        <p>Total (LOGI):</p>
-        <p class="md-secondary">{{$ctrl.info.amountPreSaleInvestedLogiToken | number:4}}</p>
+        <p>Total (LYKKEDEMO):</p>
+        <p class="md-secondary">{{$ctrl.info.amountPreSaleInvestedToken | number:4}}</p>
     </md-list-item>
 
     <md-divider></md-divider>
@@ -85,59 +81,32 @@
         <p class="md-secondary">{{$ctrl.info.amountCrowdSaleInvestedUsd | number:4}}</p>
     </md-list-item>
     <md-list-item>
-        <p>Total (SMARC):</p>
-        <p class="md-secondary">{{$ctrl.info.amountCrowdSaleInvestedSmarcToken | number:4}}</p>
-    </md-list-item>
-    <md-list-item>
-        <p>Total (LOGI):</p>
-        <p class="md-secondary">{{$ctrl.info.amountCrowdSaleInvestedLogiToken | number:4}}</p>
+        <p>Total (LYKKEDEMO):</p>
+        <p class="md-secondary">{{$ctrl.info.amountCrowdSaleInvestedToken | number:4}}</p>
     </md-list-item>
 
     <md-divider></md-divider>
 
-    <md-subheader class="md-no-sticky">SMARC (current phase/tier info)</md-subheader>
+    <md-subheader class="md-no-sticky">Current phase/tier info</md-subheader>
     <md-list-item>
         <p>Phase:</p>
-        <p class="md-secondary">{{$ctrl.info.smarcPhase}}</p>
+        <p class="md-secondary">{{$ctrl.info.phase}}</p>
     </md-list-item>
     <md-list-item>
         <p>Phase token price:</p>
-        <p class="md-secondary">{{$ctrl.info.smarcPhaseTokenPriceUsd | number:4}}</p>
+        <p class="md-secondary">{{$ctrl.info.phaseTokenPriceUsd | number:4}}</p>
     </md-list-item>
     <md-list-item>
         <p>Total tokens in current phase:</p>
-        <p class="md-secondary">{{$ctrl.info.smarcPhaseTokenAmountTotal | number:4}}</p>
+        <p class="md-secondary">{{$ctrl.info.phaseTokenAmountTotal | number:4}}</p>
     </md-list-item>
     <md-list-item>
         <p>Free tokens in current phase:</p>
-        <p class="md-secondary">{{$ctrl.info.smarcPhaseTokenAmountAvailable | number:4}}</p>
+        <p class="md-secondary">{{$ctrl.info.phaseTokenAmountAvailable | number:4}}</p>
     </md-list-item>
     <md-list-item>
         <p>Sold tokens in current phase:</p>
-        <p class="md-secondary">{{$ctrl.info.smarcPhaseTokenAmount | number:4}}</p>
+        <p class="md-secondary">{{$ctrl.info.phaseTokenAmount | number:4}}</p>
     </md-list-item>
 
-    <md-divider></md-divider>
-
-    <md-subheader class="md-no-sticky">LOGI (current phase/tier info)</md-subheader>
-    <md-list-item>
-        <p>Phase:</p>
-        <p class="md-secondary">{{$ctrl.info.logiPhase}}</p>
-    </md-list-item>
-    <md-list-item>
-        <p>Phase Token price:</p>
-        <p class="md-secondary">{{$ctrl.info.logiPhaseTokenPriceUsd | number:4}}</p>
-    </md-list-item>
-    <md-list-item>
-        <p>Total tokens in current phase:</p>
-        <p class="md-secondary">{{$ctrl.info.logiPhaseTokenAmountTotal | number:4}}</p>
-    </md-list-item>
-    <md-list-item>
-        <p>Free tokens in current phase:</p>
-        <p class="md-secondary">{{$ctrl.info.logiPhaseTokenAmountAvailable | number:4}}</p>
-    </md-list-item>
-    <md-list-item>
-        <p>Sold tokens in current phase:</p>
-        <p class="md-secondary">{{$ctrl.info.logiPhaseTokenAmount | number:4}}</p>
-    </md-list-item>
 </md-list>

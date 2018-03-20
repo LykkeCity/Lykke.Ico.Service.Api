@@ -20,20 +20,10 @@ namespace Lykke.Services.IcoApi.AzureRepositories
         public string RefundEthAddress { get; set; }
         public string RefundBtcAddress { get; set; }
 
-        public string PayInSmarcEthPublicKey { get; set; }
-        public string PayInSmarcEthAddress { get; set; }
-        public string PayInSmarcBtcPublicKey { get; set; }
-        public string PayInSmarcBtcAddress { get; set; }
-
-        public string PayInLogiEthPublicKey { get; set; }
-        public string PayInLogiEthAddress { get; set; }
-        public string PayInLogiBtcPublicKey { get; set; }
-        public string PayInLogiBtcAddress { get; set; }
-
-        public string PayInSmarc90Logi10EthPublicKey { get; set; }
-        public string PayInSmarc90Logi10EthAddress { get; set; }
-        public string PayInSmarc90Logi10BtcPublicKey { get; set; }
-        public string PayInSmarc90Logi10BtcAddress { get; set; }
+        public string PayInEthPublicKey { get; set; }
+        public string PayInEthAddress { get; set; }
+        public string PayInBtcPublicKey { get; set; }
+        public string PayInBtcAddress { get; set; }
 
         public Guid? ConfirmationToken { get; set; }
         public DateTime? ConfirmationTokenCreatedUtc { get; set; }
@@ -49,7 +39,6 @@ namespace Lykke.Services.IcoApi.AzureRepositories
         public decimal AmountEth { get; set; }
         public decimal AmountFiat { get; set; }
         public decimal AmountUsd { get; set; }
-        public decimal AmountSmarcToken { get; set; }
-        public decimal AmountLogiToken { get; set; }
+        public decimal AmountToken { get; set; }
     }
 }

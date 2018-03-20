@@ -54,14 +54,9 @@ namespace Lykke.Services.IcoApi.AzureRepositories
                 Amount = tx.Amount,
                 AmountUsd = tx.AmountUsd,
                 Fee = tx.Fee,
-                SmarcAmountUsd = tx.SmarcAmountUsd,
-                SmarcAmountToken = tx.SmarcAmountToken,
-                SmarcTokenPriceUsd = tx.SmarcTokenPriceUsd,
-                SmarcTokenPriceContext = tx.SmarcTokenPriceContext,
-                LogiAmountUsd = tx.LogiAmountUsd,
-                LogiAmountToken = tx.LogiAmountToken,
-                LogiTokenPriceUsd = tx.LogiTokenPriceUsd,
-                LogiTokenPriceContext = tx.LogiTokenPriceContext,
+                AmountToken = tx.AmountToken,
+                TokenPriceUsd = tx.TokenPriceUsd,
+                TokenPriceContext = tx.TokenPriceContext,
                 ExchangeRate = tx.ExchangeRate,
                 ExchangeRateContext = tx.ExchangeRateContext
             });

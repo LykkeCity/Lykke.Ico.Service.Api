@@ -87,23 +87,14 @@ namespace Lykke.Service.IcoApi.Controllers
             var info = await _adminService.GetCampaignInfo();
             var settings = await _campaignService.GetCampaignSettings();
 
-            info.Add("CrowdSaleSmarcTotalAmount", settings.GetCrowdSaleSmarcAmount().ToString(CultureInfo.InvariantCulture));
-            info.Add("CrowdSaleLogiTotalAmount", settings.GetCrowdSaleLogiAmount().ToString(CultureInfo.InvariantCulture));
+            info.Add("CrowdSaleTotalAmount", settings.GetCrowdSaleAmount().ToString(CultureInfo.InvariantCulture));
 
-            var smarc = await settings.GetSmarcTokenInfo(_campaignInfoRepository, DateTime.UtcNow);
-            if (string.IsNullOrEmpty(smarc.Error))
+            var tokenInfo = await settings.GetTokenInfo(_campaignInfoRepository, DateTime.UtcNow);
+            if (string.IsNullOrEmpty(tokenInfo.Error))
             {
-                info.Add("SmarcPhase", Enum.GetName(typeof(CampaignPhase), smarc.Phase));
-                info.Add("SmarcPhaseTokenPriceUsd", smarc.PriceUsd?.ToString(CultureInfo.InvariantCulture));
-                info.Add("SmarcPhaseTokenAmountAvailable", smarc.PhaseTokenAmountAvailable?.ToString(CultureInfo.InvariantCulture));
-            }
-
-            var logi = await settings.GetLogiTokenInfo(_campaignInfoRepository, DateTime.UtcNow);
-            if (string.IsNullOrEmpty(logi.Error))
-            {
-                info.Add("LogiPhase", Enum.GetName(typeof(CampaignPhase), logi.Phase));
-                info.Add("LogiPhaseTokenPriceUsd", logi.PriceUsd?.ToString(CultureInfo.InvariantCulture));
-                info.Add("LogiPhaseTokenAmountAvailable", logi.PhaseTokenAmountAvailable?.ToString(CultureInfo.InvariantCulture));
+                info.Add("Phase", Enum.GetName(typeof(CampaignPhase), tokenInfo.Phase));
+                info.Add("PhaseTokenPriceUsd", tokenInfo.PriceUsd?.ToString(CultureInfo.InvariantCulture));
+                info.Add("PhaseTokenAmountAvailable", tokenInfo.PhaseTokenAmountAvailable?.ToString(CultureInfo.InvariantCulture));
             }
 
             return info;

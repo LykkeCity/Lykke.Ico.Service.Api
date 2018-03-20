@@ -12,31 +12,23 @@ class CampaignInfo {
     investorsKycPassed: string;
     investorsRegistered: string;
 
-    smarcPhase: string;
-    smarcPhaseTokenPriceUsd: string;
-    smarcPhaseTokenAmount: string;
-    smarcPhaseTokenAmountAvailable: string;
-    smarcPhaseTokenAmountTotal: string;
-
-    logiPhase: string;
-    logiPhaseTokenPriceUsd: string;
-    logiPhaseTokenAmount: string;
-    logiPhaseTokenAmountAvailable: string;
-    logiPhaseTokenAmountTotal: string;
+    phase: string;
+    phaseTokenPriceUsd: string;
+    phaseTokenAmount: string;
+    phaseTokenAmountAvailable: string;
+    phaseTokenAmountTotal: string;
 
     amountPreSaleInvestedBtc: string;
     amountPreSaleInvestedEth: string;
     amountPreSaleInvestedFiat: string;
     amountPreSaleInvestedUsd: string;
-    amountPreSaleInvestedSmarcToken: string;
-    amountPreSaleInvestedLogiToken: string;
+    amountPreSaleInvestedToken: string;
 
     amountCrowdSaleInvestedBtc: string;
     amountCrowdSaleInvestedEth: string;
     amountCrowdSaleInvestedFiat: string;
     amountCrowdSaleInvestedUsd: string;
-    amountCrowdSaleInvestedSmarcToken: string;
-    amountCrowdSaleInvestedLogiToken: string;
+    amountCrowdSaleInvestedToken: string;
 }
 
 class CampaignInfoController implements ng.IComponentController {

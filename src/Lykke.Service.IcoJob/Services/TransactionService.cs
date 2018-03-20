@@ -16,7 +16,6 @@ using Lykke.Service.IcoApi.Core.Domain.Investor;
 using Lykke.Service.IcoApi.Core.Domain;
 using Lykke.Service.IcoExRate.Client.AutorestClient.Models;
 using Lykke.Service.IcoCommon.Client;
-using Lykke.Service.IcoJob.Helpers;
 
 namespace Lykke.Service.IcoApi.Services
 {
@@ -89,14 +88,12 @@ namespace Lykke.Service.IcoApi.Services
                 throw new InvalidOperationException($"Campaign settings was not found");
             }
 
-            var txType = msg.GetTxType(investor);
-            var smarcTokenInfo = await settings.GetSmarcTokenInfo(_campaignInfoRepository, msg.CreatedUtc);
-            var logiTokenInfo = await settings.GetLogiTokenInfo(_campaignInfoRepository, msg.CreatedUtc);
+            var tokenInfo = await settings.GetTokenInfo(_campaignInfoRepository, msg.CreatedUtc);
 
-            var validTx = await IsTxValid(msg, smarcTokenInfo, logiTokenInfo, txType);
+            var validTx = await IsTxValid(msg, tokenInfo);
             if (validTx)
             {
-                var transaction = await SaveTransaction(msg, settings, smarcTokenInfo, logiTokenInfo, txType);
+                var transaction = await SaveTransaction(msg, settings, tokenInfo);
 
                 await UpdateCampaignAmounts(transaction, settings);
                 await UpdateInvestorAmounts(transaction);
@@ -120,80 +117,30 @@ namespace Lykke.Service.IcoApi.Services
             return false;
         }
 
-        private async Task<bool> IsTxValid(TransactionMessage msg, 
-            TokenInfo smarcTokenInfo, 
-            TokenInfo logiTokenInfo, 
-            TxType txType)
+        private async Task<bool> IsTxValid(TransactionMessage msg, TokenInfo tokenInfo)
         {
-            if (txType == TxType.Smarc)
+            if (!string.IsNullOrEmpty(tokenInfo.Error))
             {
-                if (!string.IsNullOrEmpty(smarcTokenInfo.Error))
-                {
-                    await _log.WriteInfoAsync(nameof(Process),
-                        $"msg: {msg}", smarcTokenInfo.Error);
+                await _log.WriteInfoAsync(nameof(Process),
+                    $"msg: {msg}", tokenInfo.Error);
 
-                    await _investorRefundRepository.SaveAsync(msg.Email,
-                        smarcTokenInfo.ErrorReason.Value,
-                        msg.ToJson());
+                await _investorRefundRepository.SaveAsync(msg.Email,
+                    tokenInfo.ErrorReason.Value,
+                    msg.ToJson());
 
-                    return false;
-                }
-            }
-
-            if (txType == TxType.Logi)
-            {
-                if (!string.IsNullOrEmpty(logiTokenInfo.Error))
-                {
-                    await _log.WriteInfoAsync(nameof(Process),
-                        $"msg: {msg}", logiTokenInfo.Error);
-
-                    await _investorRefundRepository.SaveAsync(msg.Email,
-                        logiTokenInfo.ErrorReason.Value,
-                        msg.ToJson());
-
-                    return false;
-                }
-            }
-
-            if (txType == TxType.Smarc90Logi10)
-            {
-                if (!string.IsNullOrEmpty(smarcTokenInfo.Error))
-                {
-                    await _log.WriteInfoAsync(nameof(Process),
-                        $"msg: {msg}", smarcTokenInfo.Error);
-
-                    await _investorRefundRepository.SaveAsync(msg.Email,
-                        smarcTokenInfo.ErrorReason.Value,
-                        msg.ToJson());
-
-                    return false;
-                }
-
-                if (!string.IsNullOrEmpty(logiTokenInfo.Error))
-                {
-                    await _log.WriteInfoAsync(nameof(Process),
-                        $"msg: {msg}", logiTokenInfo.Error);
-
-                    await _investorRefundRepository.SaveAsync(msg.Email,
-                        logiTokenInfo.ErrorReason.Value,
-                        msg.ToJson());
-
-                    return false;
-                }
+                return false;
             }
 
             return true;
         }
 
         private async Task<InvestorTransaction> SaveTransaction(TransactionMessage msg, ICampaignSettings settings,
-            TokenInfo smarcTokenInfo, TokenInfo logiTokenInfo, TxType txType)
+            TokenInfo tokenInfo)
         {
             var exchangeRate = await GetExchangeRate(msg);
             var avgExchangeRate = Convert.ToDecimal(exchangeRate.AverageRate);
             var amountUsd = msg.Amount * avgExchangeRate;
-
-            var smartTokenContext = GetTokenContext(msg, settings, smarcTokenInfo, txType, amountUsd);
-            var logiTokenContext = GetTokenContext(msg, settings, logiTokenInfo, txType, amountUsd);
+            var tokenContext = GetTokenContext(msg, settings, tokenInfo, amountUsd);
 
             var tx = new InvestorTransaction
             {
@@ -207,14 +154,9 @@ namespace Lykke.Service.IcoApi.Services
                 Amount = msg.Amount,
                 AmountUsd = amountUsd,
                 Fee = msg.Fee,
-                SmarcAmountToken = smartTokenContext.TokenAmount,
-                SmarcAmountUsd = smartTokenContext.UsdAmount,
-                SmarcTokenPriceUsd = smartTokenContext.TokenPriceUsd,
-                SmarcTokenPriceContext = smartTokenContext.TxTokens.ToJson(),
-                LogiAmountToken = logiTokenContext.TokenAmount,
-                LogiAmountUsd = logiTokenContext.UsdAmount,
-                LogiTokenPriceUsd = logiTokenContext.TokenPriceUsd,
-                LogiTokenPriceContext = logiTokenContext.TxTokens.ToJson(),
+                AmountToken = tokenContext.TokenAmount,
+                TokenPriceUsd = tokenContext.TokenPriceUsd,
+                TokenPriceContext = tokenContext.TxTokens.ToJson(),
                 ExchangeRate = avgExchangeRate,
                 ExchangeRateContext = exchangeRate.Rates.ToJson()
             };
@@ -230,21 +172,9 @@ namespace Lykke.Service.IcoApi.Services
         private TxTokenContext GetTokenContext(TransactionMessage msg,
             ICampaignSettings settings,
             TokenInfo tokenInfo,
-            TxType txType,
             decimal amountUsd)
         {
             var txTokens = new List<TxToken>();
-
-            if ((txType == TxType.Logi && tokenInfo.Name == Consts.SMARC) ||
-                (txType == TxType.Smarc && tokenInfo.Name == Consts.LOGI))
-            {
-                return TxTokenContext.Create(txTokens);
-            }
-
-            if (txType == TxType.Smarc90Logi10)
-            {
-                amountUsd = amountUsd * 0.9M;
-            }
 
             var tokenAmount = (amountUsd / tokenInfo.PriceUsd.Value).RoundDown(settings.RowndDownTokenDecimals);
 
@@ -294,13 +224,13 @@ namespace Lykke.Service.IcoApi.Services
             if (tokenInfo.Phase == CampaignPhase.CrowdSale1stTier)
             {
                 phase = nameof(CampaignPhase.CrowdSale1stTier);
-                priceUsd = tokenInfo.Name == Consts.SMARC ? settings.CrowdSale2ndTierSmarcPriceUsd : settings.CrowdSale2ndTierLogiPriceUsd;
+                priceUsd = settings.CrowdSale2ndTierTokenPriceUsd;
             }
 
             if (tokenInfo.Phase == CampaignPhase.CrowdSale2ndTier)
             {
                 phase = nameof(CampaignPhase.CrowdSale2ndTier);
-                priceUsd = tokenInfo.Name == Consts.SMARC ? settings.CrowdSale3rdTierSmarcAmount : settings.CrowdSale3rdTierLogiAmount;
+                priceUsd = settings.CrowdSale3rdTierTokenPriceUsd;
             }
 
             var amount = ((amountUsd - tokenInfo.PhaseAmountUsdAvailable.Value) / priceUsd).RoundDown(settings.RowndDownTokenDecimals);
@@ -340,12 +270,10 @@ namespace Lykke.Service.IcoApi.Services
                 {
                     AuthToken = investor.ConfirmationToken.Value.ToString(),
                     InvestorAmountUsd = investor.AmountUsd.RoundDown(2),
-                    InvestorAmountSmarcToken = investor.AmountSmarcToken.RoundDown(4),
-                    InvestorAmountLogiToken = investor.AmountLogiToken.RoundDown(4),
+                    InvestorAmountToken = investor.AmountToken.RoundDown(4),
                     TransactionAmount = tx.Amount,
                     TransactionAmountUsd = tx.AmountUsd.RoundDown(2),
-                    TransactionAmountSmarcToken = tx.SmarcAmountToken.RoundDown(4),
-                    TransactionAmountLogiToken = tx.LogiAmountToken.RoundDown(4),
+                    TransactionAmountToken = tx.AmountToken.RoundDown(4),
                     TransactionFee = tx.Fee,
                     TransactionAsset = tx.Currency.ToAssetName(),
                     LinkTransactionDetails = link,
@@ -401,8 +329,7 @@ namespace Lykke.Service.IcoApi.Services
                     await IncrementCampaignInfoParam(CampaignInfoType.AmountPreSaleInvestedFiat, tx.Amount);
                 }
 
-                await IncrementCampaignInfoParam(CampaignInfoType.AmountPreSaleInvestedSmarcToken, tx.SmarcAmountToken);
-                await IncrementCampaignInfoParam(CampaignInfoType.AmountPreSaleInvestedLogiToken, tx.LogiAmountToken);
+                await IncrementCampaignInfoParam(CampaignInfoType.AmountPreSaleInvestedToken, tx.AmountToken);
                 await IncrementCampaignInfoParam(CampaignInfoType.AmountPreSaleInvestedUsd, tx.AmountUsd);
             }
 
@@ -421,8 +348,7 @@ namespace Lykke.Service.IcoApi.Services
                     await IncrementCampaignInfoParam(CampaignInfoType.AmountCrowdSaleInvestedFiat, tx.Amount);
                 }
 
-                await IncrementCampaignInfoParam(CampaignInfoType.AmountCrowdSaleInvestedSmarcToken, tx.SmarcAmountToken);
-                await IncrementCampaignInfoParam(CampaignInfoType.AmountCrowdSaleInvestedLogiToken, tx.LogiAmountToken);
+                await IncrementCampaignInfoParam(CampaignInfoType.AmountCrowdSaleInvestedToken, tx.AmountToken);
                 await IncrementCampaignInfoParam(CampaignInfoType.AmountCrowdSaleInvestedUsd, tx.AmountUsd);
             }
         }
@@ -446,7 +372,7 @@ namespace Lykke.Service.IcoApi.Services
             try
             {
                 await _investorRepository.IncrementAmount(tx.Email, tx.Currency, tx.Amount, tx.AmountUsd, 
-                    tx.SmarcAmountToken, tx.LogiAmountToken);
+                    tx.AmountToken);
             }
             catch (Exception ex)
             {

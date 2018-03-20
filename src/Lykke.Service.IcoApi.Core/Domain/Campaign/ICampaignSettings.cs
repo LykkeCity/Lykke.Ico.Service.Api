@@ -6,25 +6,17 @@ namespace Lykke.Service.IcoApi.Core.Domain.Campaign
     {
         DateTime PreSaleStartDateTimeUtc { get; set; }
         DateTime PreSaleEndDateTimeUtc { get; set; }
-        decimal PreSaleSmarcAmount { get; set; }
-        decimal PreSaleLogiAmount { get; set; }
-        decimal PreSaleSmarcPriceUsd { get; set; }
-        decimal PreSaleLogiPriceUsd { get; set; }
+        decimal PreSaleTokenAmount { get; set; }
+        decimal PreSaleTokenPriceUsd { get; set; }
 
         DateTime CrowdSaleStartDateTimeUtc { get; set; }
         DateTime CrowdSaleEndDateTimeUtc { get; set; }
-        decimal CrowdSale1stTierSmarcPriceUsd { get; set; }
-        decimal CrowdSale1stTierSmarcAmount { get; set; }
-        decimal CrowdSale1stTierLogiPriceUsd { get; set; }
-        decimal CrowdSale1stTierLogiAmount { get; set; }
-        decimal CrowdSale2ndTierSmarcPriceUsd { get; set; }
-        decimal CrowdSale2ndTierSmarcAmount { get; set; }
-        decimal CrowdSale2ndTierLogiPriceUsd { get; set; }
-        decimal CrowdSale2ndTierLogiAmount { get; set; }
-        decimal CrowdSale3rdTierSmarcPriceUsd { get; set; }
-        decimal CrowdSale3rdTierSmarcAmount { get; set; }
-        decimal CrowdSale3rdTierLogiPriceUsd { get; set; }
-        decimal CrowdSale3rdTierLogiAmount { get; set; }
+        decimal CrowdSale1stTierTokenPriceUsd { get; set; }
+        decimal CrowdSale1stTierTokenAmount { get; set; }
+        decimal CrowdSale2ndTierTokenPriceUsd { get; set; }
+        decimal CrowdSale2ndTierTokenAmount { get; set; }
+        decimal CrowdSale3rdTierTokenPriceUsd { get; set; }
+        decimal CrowdSale3rdTierTokenAmount { get; set; }
 
         int RowndDownTokenDecimals { get; set; }
         decimal MinInvestAmountUsd { get; set; }

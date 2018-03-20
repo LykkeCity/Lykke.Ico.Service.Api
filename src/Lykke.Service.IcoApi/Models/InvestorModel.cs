@@ -51,14 +51,8 @@ namespace Lykke.Service.IcoApi.Models
         public string RefundEthAddress { get; set; }
         public string RefundBtcAddress { get; set; }
 
-        public string PayInSmarcEthAddress { get; set; }
-        public string PayInSmarcBtcAddress { get; set; }
-
-        public string PayInLogiEthAddress { get; set; }
-        public string PayInLogiBtcAddress { get; set; }
-
-        public string PayInSmarc90Logi10EthAddress { get; set; }
-        public string PayInSmarc90Logi10BtcAddress { get; set; }
+        public string PayInEthAddress { get; set; }
+        public string PayInBtcAddress { get; set; }
 
         public KycStatus KycStatus { get; set; }
         public string KycLink { get; set; }
@@ -67,8 +61,7 @@ namespace Lykke.Service.IcoApi.Models
         public decimal AmountEth { get; set; }
         public decimal AmountFiat { get; set; }
         public decimal AmountUsd { get; set; }
-        public decimal AmountSmarcToken { get; set; }
-        public decimal AmountLogiToken { get; set; }
+        public decimal AmountToken { get; set; }
 
         public static InvestorResponse Create(IInvestor investor, string kycLink)
         {
@@ -88,20 +81,15 @@ namespace Lykke.Service.IcoApi.Models
                 TokenAddress = investor.TokenAddress,
                 RefundEthAddress = investor.RefundEthAddress,
                 RefundBtcAddress = investor.RefundBtcAddress,
-                PayInSmarcEthAddress = investor.PayInSmarcEthAddress,
-                PayInSmarcBtcAddress = investor.PayInSmarcBtcAddress,
-                PayInLogiEthAddress = investor.PayInLogiEthAddress,
-                PayInLogiBtcAddress = investor.PayInLogiBtcAddress,
-                PayInSmarc90Logi10EthAddress = investor.PayInSmarc90Logi10EthAddress,
-                PayInSmarc90Logi10BtcAddress = investor.PayInSmarc90Logi10BtcAddress,
+                PayInEthAddress = investor.PayInEthAddress,
+                PayInBtcAddress = investor.PayInBtcAddress,
                 KycStatus = kycStatus,
                 KycLink = kycLink,
                 AmountBtc = investor.AmountBtc,
                 AmountEth = investor.AmountEth,
                 AmountFiat = investor.AmountFiat,
                 AmountUsd = Decimal.Round(investor.AmountUsd, 2, MidpointRounding.AwayFromZero),
-                AmountSmarcToken = investor.AmountSmarcToken,
-                AmountLogiToken = investor.AmountLogiToken
+                AmountToken = investor.AmountToken,
             };
         }
     }

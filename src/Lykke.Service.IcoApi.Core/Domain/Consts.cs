@@ -2,8 +2,7 @@
 {
     public class Consts
     {
-        public const string CAMPAIGN_ID = "smarc";
-        public const string SMARC = "SMARC";
-        public const string LOGI = "LOGI";
+        public const string CAMPAIGN_ID = "lykkedemo";
+        public const string DEMO = "LYKKEDEMO";
     }
 }

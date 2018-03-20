@@ -127,28 +127,18 @@ namespace Lykke.Service.IcoApi.Services
         public async Task UpdateAsync(string email, string tokenAddress, string refundEthAddress, string refundBtcAddress)
         {
             email = email.ToLowCase();
-
+            
             var poolItemSmarc = await GetPoolItem(email);
-            var poolItemLogi = await GetPoolItem(email);
-            var poolItemSmarc90Logi10 = await GetPoolItem(email);
 
             var fillIn = new InvestorFillIn
             {
                 TokenAddress = tokenAddress,
                 RefundEthAddress = refundEthAddress,
                 RefundBtcAddress = refundBtcAddress,
-                PayInSmarcEthPublicKey = poolItemSmarc.EthPublicKey,
-                PayInSmarcEthAddress = _ethService.GetAddressByPublicKey(poolItemSmarc.EthPublicKey),
-                PayInSmarcBtcPublicKey = poolItemSmarc.BtcPublicKey,
-                PayInSmarcBtcAddress = _btcService.GetAddressByPublicKey(poolItemSmarc.BtcPublicKey),
-                PayInLogiEthPublicKey = poolItemLogi.EthPublicKey,
-                PayInLogiEthAddress = _ethService.GetAddressByPublicKey(poolItemLogi.EthPublicKey),
-                PayInLogiBtcPublicKey = poolItemLogi.BtcPublicKey,
-                PayInLogiBtcAddress = _btcService.GetAddressByPublicKey(poolItemLogi.BtcPublicKey),
-                PayInSmarc90Logi10EthPublicKey = poolItemSmarc90Logi10.EthPublicKey,
-                PayInSmarc90Logi10EthAddress = _ethService.GetAddressByPublicKey(poolItemSmarc90Logi10.EthPublicKey),
-                PayInSmarc90Logi10BtcPublicKey = poolItemSmarc90Logi10.BtcPublicKey,
-                PayInSmarc90Logi10BtcAddress = _btcService.GetAddressByPublicKey(poolItemSmarc90Logi10.BtcPublicKey),
+                PayInEthPublicKey = poolItemSmarc.EthPublicKey,
+                PayInEthAddress = _ethService.GetAddressByPublicKey(poolItemSmarc.EthPublicKey),
+                PayInBtcPublicKey = poolItemSmarc.BtcPublicKey,
+                PayInBtcAddress = _btcService.GetAddressByPublicKey(poolItemSmarc.BtcPublicKey),
             };
 
             await _log.WriteInfoAsync(nameof(InvestorService), nameof(UpdateAsync),
@@ -160,44 +150,14 @@ namespace Lykke.Service.IcoApi.Services
 
             await _icoCommonServiceClient.AddPayInAddressAsync(new PayInAddressModel
             {
-                Address = fillIn.PayInSmarcEthAddress,
+                Address = fillIn.PayInEthAddress,
                 CampaignId = Consts.CAMPAIGN_ID,
                 Currency = IcoCommon.Client.Models.CurrencyType.Eth,
                 Email = email
             });
             await _icoCommonServiceClient.AddPayInAddressAsync(new PayInAddressModel
             {
-                Address = fillIn.PayInSmarcBtcAddress,
-                CampaignId = Consts.CAMPAIGN_ID,
-                Currency = IcoCommon.Client.Models.CurrencyType.Btc,
-                Email = email
-            });
-
-            await _icoCommonServiceClient.AddPayInAddressAsync(new PayInAddressModel
-            {
-                Address = fillIn.PayInLogiEthAddress,
-                CampaignId = Consts.CAMPAIGN_ID,
-                Currency = IcoCommon.Client.Models.CurrencyType.Eth,
-                Email = email
-            });
-            await _icoCommonServiceClient.AddPayInAddressAsync(new PayInAddressModel
-            {
-                Address = fillIn.PayInLogiBtcAddress,
-                CampaignId = Consts.CAMPAIGN_ID,
-                Currency = IcoCommon.Client.Models.CurrencyType.Btc,
-                Email = email
-            });
-
-            await _icoCommonServiceClient.AddPayInAddressAsync(new PayInAddressModel
-            {
-                Address = fillIn.PayInSmarc90Logi10EthAddress,
-                CampaignId = Consts.CAMPAIGN_ID,
-                Currency = IcoCommon.Client.Models.CurrencyType.Eth,
-                Email = email
-            });
-            await _icoCommonServiceClient.AddPayInAddressAsync(new PayInAddressModel
-            {
-                Address = fillIn.PayInSmarc90Logi10BtcAddress,
+                Address = fillIn.PayInBtcAddress,
                 CampaignId = Consts.CAMPAIGN_ID,
                 Currency = IcoCommon.Client.Models.CurrencyType.Btc,
                 Email = email

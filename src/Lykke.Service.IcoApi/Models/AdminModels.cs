@@ -18,20 +18,10 @@ namespace Lykke.Service.IcoApi.Models
         public string RefundEthAddress { get; set; }
         public string RefundBtcAddress { get; set; }
 
-        public string PayInSmarcEthPublicKey { get; set; }
-        public string PayInSmarcEthAddress { get; set; }
-        public string PayInSmarcBtcPublicKey { get; set; }
-        public string PayInSmarcBtcAddress { get; set; }
-
-        public string PayInLogiEthPublicKey { get; set; }
-        public string PayInLogiEthAddress { get; set; }
-        public string PayInLogiBtcPublicKey { get; set; }
-        public string PayInLogiBtcAddress { get; set; }
-
-        public string PayInSmarc90Logi10EthPublicKey { get; set; }
-        public string PayInSmarc90Logi10EthAddress { get; set; }
-        public string PayInSmarc90Logi10BtcPublicKey { get; set; }
-        public string PayInSmarc90Logi10BtcAddress { get; set; }
+        public string PayInEthPublicKey { get; set; }
+        public string PayInEthAddress { get; set; }
+        public string PayInBtcPublicKey { get; set; }
+        public string PayInBtcAddress { get; set; }
 
         public Guid? ConfirmationToken { get; set; }
         public DateTime? ConfirmationTokenCreatedUtc { get; set; }
@@ -47,8 +37,7 @@ namespace Lykke.Service.IcoApi.Models
         public decimal AmountEth { get; set; }
         public decimal AmountFiat { get; set; }
         public decimal AmountUsd { get; set; }
-        public decimal AmountSmarcToken { get; set; }
-        public decimal AmountLogiToken { get; set; }
+        public decimal AmountToken { get; set; }
 
         public static FullInvestorResponse Create(IInvestor investor)
         {
@@ -58,18 +47,10 @@ namespace Lykke.Service.IcoApi.Models
                 TokenAddress = investor.TokenAddress,
                 RefundEthAddress = investor.RefundEthAddress,
                 RefundBtcAddress = investor.RefundBtcAddress,
-                PayInSmarcEthPublicKey = investor.PayInSmarcEthPublicKey,
-                PayInSmarcEthAddress = investor.PayInSmarcEthAddress,
-                PayInSmarcBtcPublicKey = investor.PayInSmarcBtcPublicKey,
-                PayInSmarcBtcAddress = investor.PayInSmarcBtcAddress,
-                PayInLogiEthPublicKey = investor.PayInLogiEthPublicKey,
-                PayInLogiEthAddress = investor.PayInLogiEthAddress,
-                PayInLogiBtcPublicKey = investor.PayInLogiBtcPublicKey,
-                PayInLogiBtcAddress = investor.PayInLogiBtcAddress,
-                PayInSmarc90Logi10EthPublicKey = investor.PayInSmarc90Logi10EthPublicKey,
-                PayInSmarc90Logi10EthAddress = investor.PayInSmarc90Logi10EthAddress,
-                PayInSmarc90Logi10BtcPublicKey = investor.PayInSmarc90Logi10BtcPublicKey,
-                PayInSmarc90Logi10BtcAddress = investor.PayInSmarc90Logi10BtcAddress,
+                PayInEthPublicKey = investor.PayInEthPublicKey,
+                PayInEthAddress = investor.PayInEthAddress,
+                PayInBtcPublicKey = investor.PayInBtcPublicKey,
+                PayInBtcAddress = investor.PayInBtcAddress,
                 ConfirmationToken = investor.ConfirmationToken,
                 ConfirmationTokenCreatedUtc = investor.ConfirmationTokenCreatedUtc,
                 ConfirmedUtc = investor.ConfirmedUtc,
@@ -82,8 +63,7 @@ namespace Lykke.Service.IcoApi.Models
                 AmountEth = investor.AmountEth,
                 AmountFiat = investor.AmountFiat,
                 AmountUsd = investor.AmountUsd,
-                AmountSmarcToken = investor.AmountSmarcToken,
-                AmountLogiToken = investor.AmountLogiToken
+                AmountToken = investor.AmountToken,
             };
         }
     }
@@ -180,15 +160,9 @@ namespace Lykke.Service.IcoApi.Models
         public decimal AmountUsd { get; set; }
         public decimal Fee { get; set; }
 
-        public decimal SmarcAmountUsd { get; set; }
-        public decimal SmarcAmountToken { get; set; }
-        public decimal SmarcTokenPrice { get; set; }
-        public string SmarcTokenPriceContext { get; set; }
-
-        public decimal LogiAmountUsd { get; set; }
-        public decimal LogiAmountToken { get; set; }
-        public decimal LogiTokenPrice { get; set; }
-        public string LogiTokenPriceContext { get; set; }
+        public decimal AmountToken { get; set; }
+        public decimal TokenPrice { get; set; }
+        public string TokenPriceContext { get; set; }
 
         public decimal ExchangeRate { get; set; }
         public string ExchangeRateContext { get; set; }
@@ -205,14 +179,9 @@ namespace Lykke.Service.IcoApi.Models
                 Amount = item.Amount,
                 AmountUsd = item.AmountUsd,
                 Fee = item.Fee,
-                SmarcAmountUsd = item.SmarcAmountUsd,
-                SmarcAmountToken = item.SmarcAmountToken,
-                SmarcTokenPrice = item.SmarcTokenPriceUsd,
-                SmarcTokenPriceContext = item.SmarcTokenPriceContext,
-                LogiAmountUsd = item.LogiAmountUsd,
-                LogiAmountToken = item.LogiAmountToken,
-                LogiTokenPrice = item.LogiTokenPriceUsd,
-                LogiTokenPriceContext = item.LogiTokenPriceContext,
+                AmountToken = item.AmountToken,
+                TokenPrice = item.TokenPriceUsd,
+                TokenPriceContext = item.TokenPriceContext,
                 ExchangeRate = item.ExchangeRate,
                 ExchangeRateContext = item.ExchangeRateContext
             };
@@ -241,13 +210,9 @@ namespace Lykke.Service.IcoApi.Models
         [Required]
         public DateTime PreSaleEndDateTimeUtc { get; set; }
         [Required]
-        public decimal PreSaleSmarcAmount { get; set; }
+        public decimal PreSaleTokenAmount { get; set; }
         [Required]
-        public decimal PreSaleLogiAmount { get; set; }
-        [Required]
-        public decimal PreSaleSmarcPriceUsd { get; set; }
-        [Required]
-        public decimal PreSaleLogiPriceUsd { get; set; }
+        public decimal PreSaleTokenPriceUsd { get; set; }
 
         [Required]
         public DateTime CrowdSaleStartDateTimeUtc { get; set; }
@@ -255,31 +220,19 @@ namespace Lykke.Service.IcoApi.Models
         public DateTime CrowdSaleEndDateTimeUtc { get; set; }
 
         [Required]
-        public decimal CrowdSale1stTierSmarcPriceUsd { get; set; }
+        public decimal CrowdSale1stTierTokenPriceUsd { get; set; }
         [Required]
-        public decimal CrowdSale1stTierSmarcAmount { get; set; }
-        [Required]
-        public decimal CrowdSale1stTierLogiPriceUsd { get; set; }
-        [Required]
-        public decimal CrowdSale1stTierLogiAmount { get; set; }
+        public decimal CrowdSale1stTierTokenAmount { get; set; }
 
         [Required]
-        public decimal CrowdSale2ndTierSmarcPriceUsd { get; set; }
+        public decimal CrowdSale2ndTierTokenPriceUsd { get; set; }
         [Required]
-        public decimal CrowdSale2ndTierSmarcAmount { get; set; }
-        [Required]
-        public decimal CrowdSale2ndTierLogiPriceUsd { get; set; }
-        [Required]
-        public decimal CrowdSale2ndTierLogiAmount { get; set; }
+        public decimal CrowdSale2ndTierTokenAmount { get; set; }
 
         [Required]
-        public decimal CrowdSale3rdTierSmarcPriceUsd { get; set; }
+        public decimal CrowdSale3rdTierTokenPriceUsd { get; set; }
         [Required]
-        public decimal CrowdSale3rdTierSmarcAmount { get; set; }
-        [Required]
-        public decimal CrowdSale3rdTierLogiPriceUsd { get; set; }
-        [Required]
-        public decimal CrowdSale3rdTierLogiAmount { get; set; }
+        public decimal CrowdSale3rdTierTokenAmount { get; set; }
 
         [Required]
         public decimal MinInvestAmountUsd { get; set; }
@@ -310,24 +263,16 @@ namespace Lykke.Service.IcoApi.Models
             {
                 PreSaleStartDateTimeUtc = settings.PreSaleStartDateTimeUtc,
                 PreSaleEndDateTimeUtc = settings.PreSaleEndDateTimeUtc,
-                PreSaleSmarcAmount = settings.PreSaleSmarcAmount,
-                PreSaleLogiAmount = settings.PreSaleLogiAmount,
-                PreSaleSmarcPriceUsd = settings.PreSaleSmarcPriceUsd,
-                PreSaleLogiPriceUsd = settings.PreSaleLogiPriceUsd,
+                PreSaleTokenAmount = settings.PreSaleTokenAmount,
+                PreSaleTokenPriceUsd = settings.PreSaleTokenPriceUsd,
                 CrowdSaleStartDateTimeUtc = settings.CrowdSaleStartDateTimeUtc,
                 CrowdSaleEndDateTimeUtc = settings.CrowdSaleEndDateTimeUtc,
-                CrowdSale1stTierSmarcPriceUsd = settings.CrowdSale1stTierSmarcPriceUsd,
-                CrowdSale1stTierSmarcAmount = settings.CrowdSale1stTierSmarcAmount,
-                CrowdSale1stTierLogiPriceUsd = settings.CrowdSale1stTierLogiPriceUsd,
-                CrowdSale1stTierLogiAmount = settings.CrowdSale1stTierLogiAmount,
-                CrowdSale2ndTierSmarcPriceUsd = settings.CrowdSale2ndTierSmarcPriceUsd,
-                CrowdSale2ndTierSmarcAmount = settings.CrowdSale2ndTierSmarcAmount,
-                CrowdSale2ndTierLogiPriceUsd = settings.CrowdSale2ndTierLogiPriceUsd,
-                CrowdSale2ndTierLogiAmount = settings.CrowdSale2ndTierLogiAmount,
-                CrowdSale3rdTierSmarcPriceUsd = settings.CrowdSale3rdTierSmarcPriceUsd,
-                CrowdSale3rdTierSmarcAmount = settings.CrowdSale3rdTierSmarcAmount,
-                CrowdSale3rdTierLogiPriceUsd = settings.CrowdSale3rdTierLogiPriceUsd,
-                CrowdSale3rdTierLogiAmount = settings.CrowdSale3rdTierLogiAmount,
+                CrowdSale1stTierTokenPriceUsd = settings.CrowdSale1stTierTokenPriceUsd,
+                CrowdSale1stTierTokenAmount = settings.CrowdSale1stTierTokenAmount,
+                CrowdSale2ndTierTokenPriceUsd = settings.CrowdSale2ndTierTokenPriceUsd,
+                CrowdSale2ndTierTokenAmount = settings.CrowdSale2ndTierTokenAmount,
+                CrowdSale3rdTierTokenPriceUsd = settings.CrowdSale3rdTierTokenPriceUsd,
+                CrowdSale3rdTierTokenAmount = settings.CrowdSale3rdTierTokenAmount,
                 MinInvestAmountUsd = settings.MinInvestAmountUsd,
                 RowndDownTokenDecimals = settings.RowndDownTokenDecimals,
                 EnableFrontEnd = settings.EnableFrontEnd,

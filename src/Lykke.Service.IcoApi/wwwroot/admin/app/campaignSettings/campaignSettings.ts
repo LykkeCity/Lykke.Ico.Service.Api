@@ -5,25 +5,17 @@ import { CampaignSettingsHistoryController, CampaignSettingsHistoryItem } from "
 class CampaignSettings {
     preSaleStartDateTimeUtc: Date;
     preSaleEndDateTimeUtc: Date;
-    preSaleSmarcAmount: number;
-    preSaleLogiAmount: number;
-    preSaleSmarcPriceUsd: number;
-    preSaleLogiPriceUsd: number;
+    preSaleTokenAmount: number;
+    preSaleTokenPriceUsd: number;
 
     crowdSaleStartDateTimeUtc: Date;
     crowdSaleEndDateTimeUtc: Date;
-    crowdSale1stTierSmarcPriceUsd: number;
-    crowdSale1stTierSmarcAmount: number;
-    crowdSale1stTierLogiPriceUsd: number;
-    crowdSale1stTierLogiAmount: number;
-    crowdSale2ndTierSmarcPriceUsd: number;
-    crowdSale2ndTierSmarcAmount: number;
-    crowdSale2ndTierLogiPriceUsd: number;
-    crowdSale2ndTierLogiAmount: number;
-    crowdSale3rdTierSmarcPriceUsd: number;
-    crowdSale3rdTierSmarcAmount: number;
-    crowdSale3rdTierLogiPriceUsd: number;
-    crowdSale3rdTierLogiAmount: number;
+    crowdSale1stTierTokenPriceUsd: number;
+    crowdSale1stTierTokenAmount: number;
+    crowdSale2ndTierTokenPriceUsd: number;
+    crowdSale2ndTierTokenAmount: number;
+    crowdSale3rdTierTokenPriceUsd: number;
+    crowdSale3rdTierTokenAmount: number;
 
     rowndDownTokenDecimals: number;
     minInvestAmountUsd: number;

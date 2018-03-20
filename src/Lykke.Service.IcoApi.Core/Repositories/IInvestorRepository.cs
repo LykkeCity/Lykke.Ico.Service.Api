@@ -20,7 +20,7 @@ namespace Lykke.Service.IcoApi.Core.Repositories
 
         Task SaveAddressesAsync(string email, InvestorFillIn item);
 
-        Task IncrementAmount(string email, CurrencyType type, decimal amount, decimal amountUsd, decimal amountSmarcToken, decimal amountLogiToken);
+        Task IncrementAmount(string email, CurrencyType type, decimal amount, decimal amountUsd, decimal amountToken);
 
         Task SaveKycAsync(string email, string kycRequestId);
 
