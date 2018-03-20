@@ -5,9 +5,9 @@ namespace Lykke.Service.IcoApi.Core.Emails
     [EmailData("confirmation")]
     public class Confirmation
     {
-        public Confirmation() => AuthToken = string.Empty;
+        public Confirmation() => AuthToken = TokenName = string.Empty;
 
-        [Display(Description = "")]
         public string AuthToken { get; set; }
+        public string TokenName { get; set; }
     }
 }
