@@ -77,7 +77,7 @@ namespace Lykke.Service.IcoApi.Services
 
             dictionary.Add("BctNetwork", _settings.BtcNetwork);
             dictionary.Add("EthNetwork", _settings.EthNetwork);
-            dictionary.Add("CampaignId", Consts.CAMPAIGN_ID);
+            dictionary.Add("CampaignId", Consts.CampaignId);
 
             return dictionary;
         }
@@ -340,7 +340,7 @@ namespace Lykke.Service.IcoApi.Services
                 {
                     To = investor.Email,
                     TemplateId = Consts.Emails.KycReminder,
-                    CampaignId = Consts.CAMPAIGN_ID,
+                    CampaignId = Consts.CampaignId,
                     Data = message
                 });
             }

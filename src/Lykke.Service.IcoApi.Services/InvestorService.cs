@@ -151,14 +151,14 @@ namespace Lykke.Service.IcoApi.Services
             await _icoCommonServiceClient.AddPayInAddressAsync(new PayInAddressModel
             {
                 Address = fillIn.PayInEthAddress,
-                CampaignId = Consts.CAMPAIGN_ID,
+                CampaignId = Consts.CampaignId,
                 Currency = IcoCommon.Client.Models.CurrencyType.Eth,
                 Email = email
             });
             await _icoCommonServiceClient.AddPayInAddressAsync(new PayInAddressModel
             {
                 Address = fillIn.PayInBtcAddress,
-                CampaignId = Consts.CAMPAIGN_ID,
+                CampaignId = Consts.CampaignId,
                 Currency = IcoCommon.Client.Models.CurrencyType.Btc,
                 Email = email
             });
@@ -205,7 +205,7 @@ namespace Lykke.Service.IcoApi.Services
             {
                 To = email,
                 TemplateId = Consts.Emails.Confirmation,
-                CampaignId = Consts.CAMPAIGN_ID,
+                CampaignId = Consts.CampaignId,
                 Data = message
             });
         }
@@ -227,7 +227,7 @@ namespace Lykke.Service.IcoApi.Services
             {
                 To = investor.Email,
                 TemplateId = Consts.Emails.Summary,
-                CampaignId = Consts.CAMPAIGN_ID,
+                CampaignId = Consts.CampaignId,
                 Data = message
             });
         }

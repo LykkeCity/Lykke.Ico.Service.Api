@@ -247,7 +247,7 @@ namespace Lykke.Service.IcoApi.Controllers
         {
             email = email.ToLowCase();
 
-            var emails = await _icoCommonServiceClient.GetSentEmailsAsync(email, Consts.CAMPAIGN_ID);
+            var emails = await _icoCommonServiceClient.GetSentEmailsAsync(email, Consts.CampaignId);
 
             return InvestorEmailsResponse.Create(emails);
         }
@@ -448,7 +448,7 @@ namespace Lykke.Service.IcoApi.Controllers
         [HttpGet("campaign/email/templates")]
         public async Task<IList<EmailTemplateDataModel>> GetCampaignEmailTemplates()
         {
-            var templates = await _icoCommonServiceClient.GetCampaignEmailTemplatesAsync(Consts.CAMPAIGN_ID);
+            var templates = await _icoCommonServiceClient.GetCampaignEmailTemplatesAsync(Consts.CampaignId);
 
             // add data model to templates, if any exists 
             var templateModels = templates
@@ -467,7 +467,7 @@ namespace Lykke.Service.IcoApi.Controllers
                 {
                     templateModels.Add(new EmailTemplateDataModel()
                     {
-                        CampaignId = Consts.CAMPAIGN_ID,
+                        CampaignId = Consts.CampaignId,
                         TemplateId = templateId,
                         Data = JObject.FromObject(EmailDataAttribute.DataModels[templateId])
                     });
@@ -479,7 +479,7 @@ namespace Lykke.Service.IcoApi.Controllers
             {
                 templateModels.Add(new EmailTemplateDataModel()
                 {
-                    CampaignId = Consts.CAMPAIGN_ID,
+                    CampaignId = Consts.CampaignId,
                     TemplateId = "layout",
                     IsLayout = true
                 });
@@ -496,7 +496,7 @@ namespace Lykke.Service.IcoApi.Controllers
         [HttpGet("campaign/email/templates/{templateId}/history")]
         public async Task<IList<EmailTemplateHistoryItemModel>> GetEmailTemplateHistory([FromRoute] string templateId)
         {
-            return await _icoCommonServiceClient.GetEmailTemplateHistoryAsync(Consts.CAMPAIGN_ID, templateId);
+            return await _icoCommonServiceClient.GetEmailTemplateHistoryAsync(Consts.CampaignId, templateId);
         }
 
         /// <summary>
@@ -512,7 +512,7 @@ namespace Lykke.Service.IcoApi.Controllers
                 return BadRequest(ErrorResponse.Create("TemplateId is required"));
             }
 
-            emailTemplate.CampaignId = Consts.CAMPAIGN_ID;
+            emailTemplate.CampaignId = Consts.CampaignId;
 
             await _log.WriteInfoAsync(nameof(AdminController), nameof(AddOrUpdateCampaignEmailTemplate),
                 $"emailTemplate={emailTemplate.ToJson()}", "Admin UI - Edit campaign email template");
@@ -541,7 +541,7 @@ namespace Lykke.Service.IcoApi.Controllers
                 return BadRequest(ErrorResponse.Create("To is required"));
             }
 
-            emailData.CampaignId = Consts.CAMPAIGN_ID;
+            emailData.CampaignId = Consts.CampaignId;
 
             await _log.WriteInfoAsync(nameof(AdminController), nameof(SendEmail),
                 $"emailData={emailData.ToJson()}", "Admin UI - Send test email");

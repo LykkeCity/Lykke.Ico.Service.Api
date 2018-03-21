@@ -300,7 +300,7 @@ namespace Lykke.Service.IcoApi.Services
                 {
                     To = tx.Email,
                     TemplateId = Consts.Emails.NewTransaction,
-                    CampaignId = Consts.CAMPAIGN_ID,
+                    CampaignId = Consts.CampaignId,
                     Data = message
                 });
             }

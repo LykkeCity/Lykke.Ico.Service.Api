@@ -40,7 +40,7 @@ namespace Lykke.Service.IcoJob.AzureQueueHandlers
     public class TransactionQueueTriggerAttribute : QueueTriggerAttribute
     {
         public TransactionQueueTriggerAttribute(int maxPoolingIntervalMs = -1)
-            : base($"{Consts.CAMPAIGN_ID.ToLower()}-transaction", maxPoolingIntervalMs)
+            : base($"{Consts.CampaignId.ToLower()}-transaction", maxPoolingIntervalMs)
         {
 
         }

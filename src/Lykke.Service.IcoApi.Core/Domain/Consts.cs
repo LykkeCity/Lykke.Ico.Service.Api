@@ -2,8 +2,8 @@
 {
     public class Consts
     {
-        public const string CAMPAIGN_ID = "lykkedemo";
-        public const string DEMO = "DEMO";
+        public const string CampaignId = "lykkedemo";
+        public const string TokenName = "DEMO";
 
         public class Emails
         {
