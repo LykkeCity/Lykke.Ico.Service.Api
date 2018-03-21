@@ -204,7 +204,7 @@ namespace Lykke.Service.IcoApi.Services
             await _icoCommonServiceClient.SendEmailAsync(new EmailDataModel
             {
                 To = email,
-                TemplateId = "confirmation",
+                TemplateId = Consts.Emails.Confirmation,
                 CampaignId = Consts.CAMPAIGN_ID,
                 Data = message
             });
@@ -226,7 +226,7 @@ namespace Lykke.Service.IcoApi.Services
             await _icoCommonServiceClient.SendEmailAsync(new EmailDataModel
             {
                 To = investor.Email,
-                TemplateId = "summary",
+                TemplateId = Consts.Emails.Summary,
                 CampaignId = Consts.CAMPAIGN_ID,
                 Data = message
             });

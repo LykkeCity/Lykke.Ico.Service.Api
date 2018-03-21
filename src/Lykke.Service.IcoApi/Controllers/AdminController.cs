@@ -589,5 +589,56 @@ namespace Lykke.Service.IcoApi.Controllers
         {
             return _adminService.GenerateTransactionQueueSasUrl(request?.ExpiryTime);
         }
+
+        /// <summary>
+        /// Get investors list to whom KYC reminder will be sent
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("investors/send/kycReminderEmails/{type}")]
+        public async Task<SendKycReminderEmailsResponse> GetKycReminders([Required] KycReminderType type)
+        {
+            var investorsToSend = await GetKycReminderInvestors(type);
+
+            return SendKycReminderEmailsResponse.Create(investorsToSend);
+        }
+
+        /// <summary>
+        /// Sends KYC reminder emails
+        /// </summary>
+        [AdminAuth]
+        [HttpPost("investors/send/kycReminderEmails/{type}")]
+        public async Task<IActionResult> SendKycReminderEmails([Required] string confirmation, [Required] KycReminderType type)
+        {
+            if (confirmation != "confirm")
+            {
+                return BadRequest($"The confirmation={confirmation} is not valid");
+            }
+
+            var investorsToSend = await GetKycReminderInvestors(type);
+
+            await _log.WriteInfoAsync(nameof(AdminController), nameof(SendKycReminderEmails),
+                $"type={Enum.GetName(typeof(KycReminderType), type)}",
+                $"Send kyc reminder emails to {investorsToSend.Count()} investors");
+
+            await _adminService.SendKycReminderEmails(investorsToSend);
+
+            return Ok(SendKycReminderEmailsResponse.Create(investorsToSend));
+        }
+
+        private async Task<IEnumerable<IInvestor>> GetKycReminderInvestors(KycReminderType type)
+        {
+            var investors = await _adminService.GetAllInvestors();
+
+            switch (type)
+            {
+                case KycReminderType.NotCompletedKyc:
+                    return investors.Where(f => !string.IsNullOrEmpty(f.KycRequestId) && !f.KycPassed.HasValue);
+                case KycReminderType.FailedKyc:
+                    return investors.Where(f => !string.IsNullOrEmpty(f.KycRequestId) &&
+                        f.KycPassed.HasValue && !f.KycPassed.Value);
+                default:
+                    throw new Exception("Not supported KycReminderType");
+            }
+        }
     }
 }

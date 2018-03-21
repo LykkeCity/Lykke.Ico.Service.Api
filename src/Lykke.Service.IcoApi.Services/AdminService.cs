@@ -17,6 +17,7 @@ using Lykke.Service.IcoApi.Core.Domain;
 using Lykke.Service.IcoApi.Core.Domain.AddressPool;
 using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
 using Lykke.Service.IcoCommon.Client;
+using Lykke.Service.IcoApi.Core.Emails;
 
 namespace Lykke.Service.IcoApi.Services
 {
@@ -312,15 +313,37 @@ namespace Lykke.Service.IcoApi.Services
             return counter;
         }
 
+        class PublicKeysRow
+        {
+            public string btcPublic { get; set; }
+            public string ethPublic { get; set; }
+        }
+
         public string GenerateTransactionQueueSasUrl(DateTime? expiryTime = null)
         {
             return _transactionQueuePublisher.GenerateSasUrl(expiryTime);
         }
 
-        private class PublicKeysRow
+        public async Task SendKycReminderEmails(IEnumerable<IInvestor> investors)
         {
-            public string btcPublic { get; set; }
-            public string ethPublic { get; set; }
+            foreach (var investor in investors)
+            {
+                var message = new KycReminder
+                {
+                    AuthToken = investor.ConfirmationToken.Value.ToString()
+                };
+
+                await _log.WriteInfoAsync(nameof(AdminService), nameof(SendKycReminderEmails),
+                    $"message={message.ToJson()}", "Send kyc reminder message to queue");
+
+                await _icoCommonServiceClient.SendEmailAsync(new IcoCommon.Client.Models.EmailDataModel
+                {
+                    To = investor.Email,
+                    TemplateId = Consts.Emails.KycReminder,
+                    CampaignId = Consts.CAMPAIGN_ID,
+                    Data = message
+                });
+            }
         }
     }
 }
