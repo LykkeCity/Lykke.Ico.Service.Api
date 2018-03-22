@@ -12,7 +12,7 @@
         </md-list-item>
     </md-list>
 </md-content>
-<md-tabs flex="80" ng-if="$ctrl.templates" md-center-tabs="true" md-no-ink-bar="true">
+<md-tabs flex="80" ng-if="$ctrl.templates" md-center-tabs="true" md-no-ink-bar="true" ng-keypress="$ctrl.onKeyPress($event)"> 
     <md-tab label="Subject" ng-disabled="$ctrl.selectedTemplate.isLayout">
         <div layout="column" layout-align="start center">
             <form name="subjForm" layout="column" layout-padding class="property-list">

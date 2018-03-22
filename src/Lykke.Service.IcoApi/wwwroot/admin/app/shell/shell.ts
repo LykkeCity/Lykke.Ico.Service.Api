@@ -40,14 +40,14 @@ export class ShellController implements ng.IComponentController {
         this.$mdSidenav('sidenav').toggle();
     }
 
-    toast(toast: AppToast): ng.IPromise<void> {
+    toast(toast: AppToast) {
         let model = this.$mdToast.simple().textContent(toast.message).position("top right").toastClass(`md-toast-${toast.type}`);
 
         if (toast.type == AppToastType.Error) {
             model = model.hideDelay(false).action("Close");
         }
 
-        return this.$mdToast.show(model);
+        this.$mdToast.show(model);
     }
 
     appendCustomCommands(commands: AppCommand[]) {

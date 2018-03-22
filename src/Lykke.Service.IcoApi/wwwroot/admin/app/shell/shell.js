@@ -39,7 +39,7 @@ export class ShellController {
         if (toast.type == AppToastType.Error) {
             model = model.hideDelay(false).action("Close");
         }
-        return this.$mdToast.show(model);
+        this.$mdToast.show(model);
     }
     appendCustomCommands(commands) {
         commands.forEach(command => {

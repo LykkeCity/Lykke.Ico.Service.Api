@@ -129,7 +129,7 @@ class CampaignEmailTemplatesController {
             errors.push("Body must not be empty");
         }
         if (errors.length) {
-            errors.forEach(e => this.shell.toast({ message: e, type: AppToastType.Error }));
+            this.shell.toast({ message: errors.join("/r/n"), type: AppToastType.Error });
         }
         return !errors.length;
     }
@@ -142,20 +142,20 @@ class CampaignEmailTemplatesController {
         localStorage.setItem(`${this.selectedTemplate.campaignId}_${this.selectedTemplate.templateId}_${this.templateDataKey}`, json);
     }
     save() {
-        if (!this.selectedTemplate ||
-            !this.validate()) {
-            return;
+        if (!this.selectedTemplate || !this.validate()) {
+            return this.$q.reject();
         }
         this.cacheDataModel();
         this.selectedTemplate.body = this.bodyEditor.getValue();
         return this.$http
             .post(this.templatesUrl, this.selectedTemplate)
-            .then(() => this.shell.toast({ message: "Changes saved", type: AppToastType.Success }));
+            .then(() => {
+            this.shell.toast({ message: "Changes saved", type: AppToastType.Success });
+        });
     }
     send() {
-        if (!this.selectedTemplate || this.selectedTemplate.isLayout ||
-            !this.validate()) {
-            return;
+        if (!this.selectedTemplate || this.selectedTemplate.isLayout || !this.validate()) {
+            return this.$q.reject();
         }
         let prompt = this.$mdDialog.prompt()
             .title("SEND PREVIEW")
@@ -165,18 +165,17 @@ class CampaignEmailTemplatesController {
             .required(true)
             .ok("Ok")
             .cancel("Cancel");
-        return this.$mdDialog
-            .show(prompt)
+        return this.save()
+            .then(() => this.$mdDialog.show(prompt))
             .then((value) => {
             if (this.emailRegex.exec(value) == null) {
-                return this.shell.toast({ message: "Invalid email address", type: AppToastType.Error });
+                this.shell.toast({ message: "Invalid email address", type: AppToastType.Error });
             }
             else {
-                this.cacheDataModel();
                 return this.$http
                     .post(this.emailUrl, { templateId: this.selectedTemplate.templateId, data: this.selectedTemplate.data, to: value })
                     .then(() => {
-                    this.shell.toast({ message: "E-mail sent", type: AppToastType.Success });
+                    this.shell.toast({ message: "Email sent", type: AppToastType.Success });
                     localStorage.setItem(this.sendPreviewEmailKey, value);
                 });
             }
@@ -199,6 +198,11 @@ class CampaignEmailTemplatesController {
                     .then(res => res.data)
             }
         });
+    }
+    onKeyPress($event) {
+        if ($event.ctrlKey && $event.key == "s" && this.selectedTemplate) {
+            this.save();
+        }
     }
 }
 app.component("campaignEmailTemplates", {
