@@ -1,22 +1,42 @@
 import { app, AppToastType } from "../app.js";
 import { CampaignSettingsHistoryController } from "./campaignSettingsHistory.js";
 class CampaignSettings {
+    constructor() {
+        this.commonSettings = new CommonCampaignSettings();
+    }
+}
+class CommonCampaignSettings {
+}
+class SmtpSettings {
 }
 class CampaignSettingsController {
     constructor($element, $http, $mdDialog) {
         this.$element = $element;
         this.$http = $http;
         this.$mdDialog = $mdDialog;
+        this.transactionQueueSasGenerationUrl = "/api/admin/transactions/sas";
         this.settingsUrl = "/api/admin/campaign/settings";
         this.customCommands = [
             { name: "Save", action: () => this.save() },
             { name: "History", action: () => this.showHistory() }
         ];
     }
+    extractDateFromSas() {
+        try {
+            this.transactionQueueSasExpiryTime =
+                new Date(decodeURIComponent(/se=(.*)&/g.exec(this.settings.commonSettings.transactionQueueSasUrl)[1]));
+        }
+        catch (_a) {
+            this.transactionQueueSasExpiryTime = null;
+        }
+    }
     $onInit() {
         this.$http
             .get(this.settingsUrl)
-            .then(response => this.settings = response.data || new CampaignSettings());
+            .then(response => {
+            this.settings = response.data || new CampaignSettings();
+            this.extractDateFromSas();
+        });
         this.shell.appendCustomCommands(this.customCommands);
     }
     $onDestroy() {
@@ -50,6 +70,17 @@ class CampaignSettingsController {
                     .then(res => res.data)
             }
         });
+    }
+    generateTransactionQueueSasUrl() {
+        this.$http
+            .post(this.transactionQueueSasGenerationUrl, { expiryTime: this.transactionQueueSasExpiryTime })
+            .then(resp => {
+            this.settings.commonSettings.transactionQueueSasUrl = resp.data;
+            this.extractDateFromSas();
+        });
+    }
+    overrideSmtp() {
+        this.settings.commonSettings.smtp = new SmtpSettings();
     }
 }
 app.component("campaignSettings", {

@@ -32,6 +32,7 @@ using EmailDataModel = Lykke.Service.IcoCommon.Client.Models.EmailDataModel;
 using EmailTemplateAddOrUpdateRequest = Lykke.Service.IcoCommon.Client.Models.EmailTemplateAddOrUpdateRequest;
 using EmailTemplateHistoryItemModel = Lykke.Service.IcoCommon.Client.Models.EmailTemplateHistoryItemModel;
 using EmailTemplateModel = Lykke.Service.IcoCommon.Client.Models.EmailTemplateModel;
+using CommonCampaignSettingsModel = Lykke.Service.IcoCommon.Client.Models.CampaignSettingsModel;
 
 namespace Lykke.Service.IcoApi.Controllers
 {
@@ -87,14 +88,17 @@ namespace Lykke.Service.IcoApi.Controllers
             var info = await _adminService.GetCampaignInfo();
             var settings = await _campaignService.GetCampaignSettings();
 
-            info.Add("CrowdSaleTotalAmount", settings.GetCrowdSaleAmount().ToString(CultureInfo.InvariantCulture));
-
-            var tokenInfo = await settings.GetTokenInfo(_campaignInfoRepository, DateTime.UtcNow);
-            if (string.IsNullOrEmpty(tokenInfo.Error))
+            if (settings != null)
             {
-                info.Add("Phase", Enum.GetName(typeof(CampaignPhase), tokenInfo.Phase));
-                info.Add("PhaseTokenPriceUsd", tokenInfo.PriceUsd?.ToString(CultureInfo.InvariantCulture));
-                info.Add("PhaseTokenAmountAvailable", tokenInfo.PhaseTokenAmountAvailable?.ToString(CultureInfo.InvariantCulture));
+                info.Add("CrowdSaleTotalAmount", settings.GetCrowdSaleAmount().ToString(CultureInfo.InvariantCulture));
+
+                var tokenInfo = await settings.GetTokenInfo(_campaignInfoRepository, DateTime.UtcNow);
+                if (string.IsNullOrEmpty(tokenInfo.Error))
+                {
+                    info.Add("Phase", Enum.GetName(typeof(CampaignPhase), tokenInfo.Phase));
+                    info.Add("PhaseTokenPriceUsd", tokenInfo.PriceUsd?.ToString(CultureInfo.InvariantCulture));
+                    info.Add("PhaseTokenAmountAvailable", tokenInfo.PhaseTokenAmountAvailable?.ToString(CultureInfo.InvariantCulture));
+                }
             }
 
             return info;
@@ -108,8 +112,9 @@ namespace Lykke.Service.IcoApi.Controllers
         public async Task<CampaignSettingsModel> GetCampaignSettings()
         {
             var settings = await _campaignService.GetCampaignSettings();
+            var commonSettings = await _icoCommonServiceClient.GetCampaignSettingsAsync(Consts.CampaignId);
 
-            return CampaignSettingsModel.Create(settings);
+            return CampaignSettingsModel.Create(settings, commonSettings);
         }
 
         /// <summary>
@@ -143,6 +148,11 @@ namespace Lykke.Service.IcoApi.Controllers
                $"settings={settings.ToJson()}", "Save campaign settings");
 
             await _campaignService.SaveCampaignSettings(settings, User.Identity.Name);
+
+            if (settings.CommonSettings != null)
+            {
+                await _icoCommonServiceClient.CreateOrUpdateCampaignSettingsAsync(Consts.CampaignId, settings.CommonSettings);
+            }
 
             return Ok();
         }

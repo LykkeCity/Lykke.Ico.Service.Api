@@ -1,6 +1,5 @@
-﻿<md-list class="property-list campaign-settings" ng-if="$ctrl.settings">
-   
-    <md-subheader class="md-no-sticky">Common</md-subheader>
+﻿<md-list class="property-list" ng-if="$ctrl.settings">
+    <md-subheader class="md-no-sticky">General</md-subheader>
     <md-list-item>
         <p>Minimal investment amount (USD):</p>
         <div class="md-secondary">
@@ -17,28 +16,23 @@
             </md-input-container>
         </div>
     </md-list-item>
-
     <md-list-item>
         <p>Enable front-end:</p>
         <md-switch class="md-secondary" ng-model="$ctrl.settings.enableFrontEnd"></md-switch>
     </md-list-item>
-
     <md-list-item>
         <p>Use CAPTCHA:</p>
         <md-switch class="md-secondary" ng-model="$ctrl.settings.captchaEnable"></md-switch>
     </md-list-item>
-
     <md-list-item>
         <p>CAPTCHA secret key:</p>
         <div class="md-secondary">
             <md-input-container>
-                <input id="settings-kyc-link-template" ng-model="$ctrl.settings.captchaSecret" type="text">
+                <input class="wide" ng-model="$ctrl.settings.captchaSecret" type="text">
             </md-input-container>
         </div>
     </md-list-item>
-
     <md-divider></md-divider>
-
     <md-subheader class="md-no-sticky">Pre-sale</md-subheader>
     <md-list-item>
         <p>Starts:</p>
@@ -74,9 +68,7 @@
             </md-input-container>
         </div>
     </md-list-item>
-
     <md-divider></md-divider>
-
     <md-subheader class="md-no-sticky">Crowd-sale</md-subheader>
     <md-list-item>
         <p>Starts:</p>
@@ -96,7 +88,6 @@
             </md-input-container>
         </div>
     </md-list-item>
-
     <md-list-item>
         <p>1st tier - tokens amount:</p>
         <div class="md-secondary">
@@ -113,7 +104,6 @@
             </md-input-container>
         </div>
     </md-list-item>
-
     <md-list-item>
         <p>2nd tier - tokens amount:</p>
         <div class="md-secondary">
@@ -130,7 +120,6 @@
             </md-input-container>
         </div>
     </md-list-item>
-
     <md-list-item>
         <p>3rd tier - tokens amount:</p>
         <div class="md-secondary">
@@ -147,9 +136,7 @@
             </md-input-container>
         </div>
     </md-list-item>
-
     <md-divider></md-divider>
-
     <md-subheader class="md-no-sticky">KYC</md-subheader>
     <md-list-item>
         <p>Send Requests:</p>
@@ -167,7 +154,7 @@
         <p>Link Template:</p>
         <div class="md-secondary">
             <md-input-container>
-                <input id="settings-kyc-link-template" ng-model="$ctrl.settings.kycLinkTemplate" type="text" >
+                <input class="wide" ng-model="$ctrl.settings.kycLinkTemplate" type="text">
             </md-input-container>
         </div>
     </md-list-item>
@@ -175,7 +162,7 @@
         <p>Encryption Key (AES):</p>
         <div class="md-secondary">
             <md-input-container>
-                <input id="settings-kyc-link-template" ng-model="$ctrl.settings.kycServiceEncriptionKey" type="text">
+                <input class="wide" ng-model="$ctrl.settings.kycServiceEncriptionKey" type="text">
             </md-input-container>
         </div>
     </md-list-item>
@@ -183,9 +170,88 @@
         <p>Encryption IV (AES):</p>
         <div class="md-secondary">
             <md-input-container>
-                <input id="settings-kyc-link-template" ng-model="$ctrl.settings.kycServiceEncriptionIv" type="text">
+                <input class="wide" ng-model="$ctrl.settings.kycServiceEncriptionIv" type="text">
             </md-input-container>
         </div>
     </md-list-item>
-
+    <md-divider></md-divider>
+    <md-subheader class="md-no-sticky">Transaction Queue SAS URL</md-subheader>
+    <div layout="row" layout-align="center center" layout-padding ng-if="$ctrl.settings.commonSettings.transactionQueueSasUrl">
+        <p class="md-caption">{{$ctrl.settings.commonSettings.transactionQueueSasUrl}}</p>
+    </div>
+    <md-list-item>
+        <p>Expiry Time:</p>
+        <div class="md-secondary">
+            <md-datepicker ng-model="$ctrl.transactionQueueSasExpiryTime" md-hide-icons="triangle"></md-datepicker>
+            <md-input-container>
+                <input ng-model="$ctrl.transactionQueueSasExpiryTime" type="time">
+            </md-input-container>
+            <md-button class="md-primary" ng-click="$ctrl.generateTransactionQueueSasUrl()">Generate</md-button>
+        </div>
+    </md-list-item>
+    <md-divider></md-divider>
+    <md-subheader class="md-no-sticky">SMTP</md-subheader>
+    <div ng-if="$ctrl.settings && !$ctrl.settings.commonSettings.smtp">
+        <div layout="row" layout-align="center center">
+            <md-button class="md-primary" ng-click="$ctrl.overrideSmtp()">Override Default SMTP Settings</md-button>
+        </div>
+    </div>
+    <div ng-if="$ctrl.settings && $ctrl.settings.commonSettings.smtp">
+        <md-list-item>
+            <p>Host:</p>
+            <div class="md-secondary">
+                <md-input-container>
+                    <input ng-model="$ctrl.settings.commonSettings.smtp.host" type="text">
+                </md-input-container>
+            </div>
+        </md-list-item>
+        <md-list-item>
+            <p>Port:</p>
+            <div class="md-secondary">
+                <md-input-container>
+                    <input ng-model="$ctrl.settings.commonSettings.smtp.port" type="number">
+                </md-input-container>
+            </div>
+        </md-list-item>
+        <md-list-item>
+            <p>Local Domain:</p>
+            <div class="md-secondary">
+                <md-input-container>
+                    <input ng-model="$ctrl.settings.commonSettings.smtp.localDomain" type="text">
+                </md-input-container>
+            </div>
+        </md-list-item>
+        <md-list-item>
+            <p>Login:</p>
+            <div class="md-secondary">
+                <md-input-container>
+                    <input ng-model="$ctrl.settings.commonSettings.smtp.login" type="text">
+                </md-input-container>
+            </div>
+        </md-list-item>
+        <md-list-item>
+            <p>Password:</p>
+            <div class="md-secondary">
+                <md-input-container>
+                    <input ng-model="$ctrl.settings.commonSettings.smtp.password" type="password">
+                </md-input-container>
+            </div>
+        </md-list-item>
+        <md-list-item>
+            <p>Display Name:</p>
+            <div class="md-secondary">
+                <md-input-container>
+                    <input ng-model="$ctrl.settings.commonSettings.smtp.displayName" type="text">
+                </md-input-container>
+            </div>
+        </md-list-item>
+        <md-list-item>
+            <p>From:</p>
+            <div class="md-secondary">
+                <md-input-container>
+                    <input ng-model="$ctrl.settings.commonSettings.smtp.from" type="text">
+                </md-input-container>
+            </div>
+        </md-list-item>
+    </div>
 </md-list>

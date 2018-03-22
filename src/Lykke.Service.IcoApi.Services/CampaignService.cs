@@ -41,8 +41,10 @@ namespace Lykke.Service.IcoApi.Services
             if (!_cache.TryGetValue(_cachKey, out ICampaignSettings campaignSettings))
             {
                 campaignSettings = await _campaignSettingsRepository.GetAsync();
-
-                _cache.Set(_cachKey, campaignSettings);
+                if (campaignSettings != null)
+                {
+                    _cache.Set(_cachKey, campaignSettings);
+                }
             }
 
             return campaignSettings;

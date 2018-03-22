@@ -23,12 +23,29 @@
 }
 
 .property-list {
-    max-width: 1200px;
-    min-width: 50vw;
+    max-width: 960px;
+    min-width: 50%;
 }
 
-#settings-kyc-link-template {
-    min-width: 23vw;
+.property-list md-list-item p {
+    text-align: right !important;
+}
+
+.property-list md-list-item .md-list-item-inner > p {
+    text-align: right !important;
+}
+
+.property-list md-list-item .md-secondary-container {
+    min-width: 50%;
+    padding-left: 15px;
+}
+
+.property-list md-list-item md-switch {
+    margin-left: 0px !important;
+}
+
+.property-list input.wide {
+    min-width: 24vw;
 }
 
 md-toast.md-top {
@@ -55,27 +72,8 @@ md-input-container input[type=time] {
     min-height: 0px !important;
 }
 
-.campaign-settings md-list-item p {
-    text-align: right !important;
-}
-.campaign-settings md-list-item .md-list-item-inner > p {
-    text-align: right !important;
-}
-.campaign-settings md-list-item .md-secondary-container {
-    min-width: 50%;
-    padding-left: 15px;
-}
-.campaign-settings md-list-item md-switch {
-    margin-left: 0px !important;
-}
 
-.campaign-info md-list-item p {
-    text-align: right !important;
-}
-.campaign-info md-list-item .md-secondary-container {
-    min-width: 50%;
-    padding-left: 15px;
-}
+
 
 .no-padding {
     padding: 0;

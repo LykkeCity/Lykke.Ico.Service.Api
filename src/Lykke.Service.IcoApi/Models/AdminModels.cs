@@ -7,6 +7,7 @@ using Lykke.Service.IcoApi.Core.Domain.AddressPool;
 using Lykke.Service.IcoApi.Core.Domain.Campaign;
 using Lykke.Service.IcoApi.Core.Domain.Investor;
 using EmailTemplateModel = Lykke.Service.IcoCommon.Client.Models.EmailTemplateModel;
+using CommonCampaignSettingsModel = Lykke.Service.IcoCommon.Client.Models.CampaignSettingsModel;
 
 namespace Lykke.Service.IcoApi.Models
 {
@@ -252,7 +253,9 @@ namespace Lykke.Service.IcoApi.Models
         public string KycServiceEncriptionKey { get; set; }
         public string KycServiceEncriptionIv { get; set; }
 
-        public static CampaignSettingsModel Create(ICampaignSettings settings)
+        public CommonCampaignSettingsModel CommonSettings { get; set; }
+
+        public static CampaignSettingsModel Create(ICampaignSettings settings, CommonCampaignSettingsModel commonSettings = null)
         {
             if (settings == null)
             {
@@ -282,7 +285,8 @@ namespace Lykke.Service.IcoApi.Models
                 KycCampaignId = settings.KycCampaignId,
                 KycLinkTemplate = settings.KycLinkTemplate,
                 KycServiceEncriptionKey = settings.KycServiceEncriptionKey,
-                KycServiceEncriptionIv = settings.KycServiceEncriptionIv
+                KycServiceEncriptionIv = settings.KycServiceEncriptionIv,
+                CommonSettings = commonSettings ?? new CommonCampaignSettingsModel()
             };
         }
     }

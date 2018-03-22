@@ -38,7 +38,7 @@ namespace Lykke.Services.IcoApi.AzureRepositories
 
         public async Task<ICampaignSettings> GetAsync()
         {
-            return (await _table.GetDataAsync(GetPartitionKey(), GetRowKey())) ?? new CampaignSettingsEntity();
+            return await _table.GetDataAsync(GetPartitionKey(), GetRowKey());
         }
 
         public async Task<IEnumerable<ICampaignSettingsHistoryItem>> GetHistoryAsync() 

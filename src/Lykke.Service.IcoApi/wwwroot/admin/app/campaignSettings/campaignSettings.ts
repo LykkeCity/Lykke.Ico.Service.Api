@@ -3,6 +3,10 @@ import { ShellController } from "../shell/shell.js";
 import { CampaignSettingsHistoryController, CampaignSettingsHistoryItem } from "./campaignSettingsHistory.js";
 
 class CampaignSettings {
+    constructor() {
+        this.commonSettings = new CommonCampaignSettings();
+    }
+
     preSaleStartDateTimeUtc: Date;
     preSaleEndDateTimeUtc: Date;
     preSaleTokenAmount: number;
@@ -28,11 +32,29 @@ class CampaignSettings {
     kycServiceEncriptionIv: string;
 
     captchaEnable: boolean;
-    captchaSecret: string;    
+    captchaSecret: string;
+
+    commonSettings: CommonCampaignSettings;
+}
+
+class CommonCampaignSettings {
+    transactionQueueSasUrl: string;
+    smtp: SmtpSettings;
+}
+
+class SmtpSettings {
+    host: string;
+    port: number;
+    localDomain: string;
+    login: string;
+    password: string;
+    displayName: string
+    from: string;
 }
 
 class CampaignSettingsController implements ng.IComponentController {
 
+    private transactionQueueSasGenerationUrl = "/api/admin/transactions/sas";
     private settingsUrl = "/api/admin/campaign/settings";
     private shell: ShellController;
     private customCommands: AppCommand[] = [
@@ -40,15 +62,29 @@ class CampaignSettingsController implements ng.IComponentController {
         { name: "History", action: () => this.showHistory() }
     ];
 
+    private extractDateFromSas() {
+        try {
+            this.transactionQueueSasExpiryTime =
+                new Date(decodeURIComponent(/se=(.*)&/g.exec(this.settings.commonSettings.transactionQueueSasUrl)[1]));
+        } catch {
+            this.transactionQueueSasExpiryTime = null;
+        }
+    }
+
     constructor(private $element: ng.IRootElementService, private $http: ng.IHttpService, private $mdDialog: ng.material.IDialogService) {
     }
+
+    transactionQueueSasExpiryTime: Date;
 
     settings: CampaignSettings;
 
     $onInit() {
         this.$http
             .get<CampaignSettings>(this.settingsUrl)
-            .then(response => this.settings = response.data || new CampaignSettings());
+            .then(response => {
+                this.settings = response.data || new CampaignSettings();
+                this.extractDateFromSas();
+            });
 
         this.shell.appendCustomCommands(this.customCommands);
     }
@@ -88,6 +124,19 @@ class CampaignSettingsController implements ng.IComponentController {
                         .then(res => res.data)
             }
         });
+    }
+
+    generateTransactionQueueSasUrl() {
+        this.$http
+            .post<string>(this.transactionQueueSasGenerationUrl, { expiryTime: this.transactionQueueSasExpiryTime })
+            .then(resp => {
+                this.settings.commonSettings.transactionQueueSasUrl = resp.data;
+                this.extractDateFromSas();
+            });
+    }
+
+    overrideSmtp() {
+        this.settings.commonSettings.smtp = new SmtpSettings();
     }
 }
 
