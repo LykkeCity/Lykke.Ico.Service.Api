@@ -40,7 +40,7 @@ namespace Lykke.Service.IcoApi.Services.Extensions
                 {
                     return new TokenInfo
                     {
-                        Name = Consts.DEMO,
+                        Name = Consts.TokenName,
                         PriceUsd = self.PreSaleTokenPriceUsd,
                         Phase = CampaignPhase.PreSale,
                         PhaseTokenAmount = preSaleTokensAmount,
@@ -50,9 +50,9 @@ namespace Lykke.Service.IcoApi.Services.Extensions
 
                 return new TokenInfo
                 {
-                    Name = Consts.DEMO,
+                    Name = Consts.TokenName,
                     ErrorReason = InvestorRefundReason.PreSaleTokensSoldOut,
-                    Error = $"All presale {Consts.DEMO} tokens sold out. CurrentTokenAmount={preSaleTokensAmount}. " +
+                    Error = $"All presale {Consts.TokenName} tokens sold out. CurrentTokenAmount={preSaleTokensAmount}. " +
                             $"AvailableTokenAmount={self.PreSaleTokenAmount}"
                 };
             }
@@ -69,7 +69,7 @@ namespace Lykke.Service.IcoApi.Services.Extensions
                 {
                     return new TokenInfo
                     {
-                        Name = Consts.DEMO,
+                        Name = Consts.TokenName,
                         PriceUsd = self.CrowdSale1stTierTokenPriceUsd,
                         Phase = CampaignPhase.CrowdSale1stTier,
                         PhaseTokenAmount = crowdSaleTokensAmount,
@@ -83,7 +83,7 @@ namespace Lykke.Service.IcoApi.Services.Extensions
                 {
                     return new TokenInfo
                     {
-                        Name = Consts.DEMO,
+                        Name = Consts.TokenName,
                         PriceUsd = self.CrowdSale2ndTierTokenPriceUsd,
                         Phase = CampaignPhase.CrowdSale2ndTier,
                         PhaseTokenAmount = crowdSaleTokensAmount - self.CrowdSale1stTierTokenAmount,
@@ -96,7 +96,7 @@ namespace Lykke.Service.IcoApi.Services.Extensions
                 {
                     return new TokenInfo
                     {
-                        Name = Consts.DEMO,
+                        Name = Consts.TokenName,
                         PriceUsd = self.CrowdSale3rdTierTokenPriceUsd,
                         Phase = CampaignPhase.CrowdSale3ndTier,
                         PhaseTokenAmount = crowdSaleTokensAmount - crowdSale2ndTierAmountTotal,
@@ -106,16 +106,16 @@ namespace Lykke.Service.IcoApi.Services.Extensions
 
                 return new TokenInfo
                 {
-                    Name = Consts.DEMO,
+                    Name = Consts.TokenName,
                     ErrorReason = InvestorRefundReason.CrowdSaleTokensSoldOut,
-                    Error = $"All crowdsale {Consts.DEMO} tokens sold out. CurrentTokenAmount={crowdSaleTokensAmount}. " +
+                    Error = $"All crowdsale {Consts.TokenName} tokens sold out. CurrentTokenAmount={crowdSaleTokensAmount}. " +
                             $"AvailableTokenAmount={self.GetCrowdSaleAmount()}"
                 };
             }
 
             return new TokenInfo
             {
-                Name = Consts.DEMO,
+                Name = Consts.TokenName,
                 ErrorReason = InvestorRefundReason.OutOfDates,
                 Error = "Out of campaign dates"
             };

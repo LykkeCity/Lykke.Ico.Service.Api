@@ -299,8 +299,8 @@ namespace Lykke.Service.IcoApi.Services
                 await _icoCommonServiceClient.SendEmailAsync(new IcoCommon.Client.Models.EmailDataModel
                 {
                     To = tx.Email,
-                    TemplateId = "new-transaction",
-                    CampaignId = Consts.CAMPAIGN_ID,
+                    TemplateId = Consts.Emails.NewTransaction,
+                    CampaignId = Consts.CampaignId,
                     Data = message
                 });
             }

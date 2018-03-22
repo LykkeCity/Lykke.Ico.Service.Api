@@ -1,8 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Lykke.Service.IcoApi.Core.Domain;
 
 namespace Lykke.Service.IcoApi.Core.Emails
 {
-    [EmailData("confirmation")]
+    [EmailData(Consts.Emails.Confirmation)]
     public class Confirmation
     {
         public Confirmation() => AuthToken = TokenName = string.Empty;

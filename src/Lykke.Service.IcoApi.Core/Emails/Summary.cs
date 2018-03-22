@@ -1,6 +1,8 @@
-﻿namespace Lykke.Service.IcoApi.Core.Emails
+﻿using Lykke.Service.IcoApi.Core.Domain;
+
+namespace Lykke.Service.IcoApi.Core.Emails
 {
-    [EmailData("summary")]
+    [EmailData(Consts.Emails.Summary)]
     public class Summary
     {
         public Summary()

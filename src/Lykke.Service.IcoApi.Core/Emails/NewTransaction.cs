@@ -1,6 +1,8 @@
-﻿namespace Lykke.Service.IcoApi.Core.Emails
+﻿using Lykke.Service.IcoApi.Core.Domain;
+
+namespace Lykke.Service.IcoApi.Core.Emails
 {
-    [EmailData("new-transaction")]
+    [EmailData(Consts.Emails.NewTransaction)]
     public class NewTransaction
     {
         public NewTransaction()

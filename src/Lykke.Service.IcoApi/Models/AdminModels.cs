@@ -458,4 +458,26 @@ namespace Lykke.Service.IcoApi.Models
     {
         public DateTime? ExpiryTime { get; set; }
     }
+
+    public class SendKycReminderEmailsResponse
+    {
+        public int InvestorsNumber { get; set; }
+
+        public string[] Investors { get; set; }
+
+        public static SendKycReminderEmailsResponse Create(IEnumerable<IInvestor> investors)
+        {
+            return new SendKycReminderEmailsResponse
+            {
+                InvestorsNumber = investors.Count(),
+                Investors = investors.Select(f => f.Email).ToArray()
+            };
+        }
+    }
+
+    public enum KycReminderType
+    {
+        NotCompletedKyc,
+        FailedKyc
+    }
 }

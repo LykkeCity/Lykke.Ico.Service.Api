@@ -152,7 +152,7 @@ namespace Lykke.Service.IcoApi.Modules
             builder.RegisterType<QueuePublisher<TransactionMessage>>()
                 .As<IQueuePublisher<TransactionMessage>>()
                 .WithParameter("connectionStringManager", connectionStringManager)
-                .WithParameter("queueName", $"{Consts.CAMPAIGN_ID.ToLower()}-transaction")
+                .WithParameter("queueName", $"{Consts.CampaignId.ToLower()}-transaction")
                 .SingleInstance();
 
             builder.RegisterInstance(_settings.CurrentValue);

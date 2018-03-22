@@ -247,7 +247,7 @@ namespace Lykke.Service.IcoApi.Controllers
         {
             email = email.ToLowCase();
 
-            var emails = await _icoCommonServiceClient.GetSentEmailsAsync(email, Consts.CAMPAIGN_ID);
+            var emails = await _icoCommonServiceClient.GetSentEmailsAsync(email, Consts.CampaignId);
 
             return InvestorEmailsResponse.Create(emails);
         }
@@ -448,7 +448,7 @@ namespace Lykke.Service.IcoApi.Controllers
         [HttpGet("campaign/email/templates")]
         public async Task<IList<EmailTemplateDataModel>> GetCampaignEmailTemplates()
         {
-            var templates = await _icoCommonServiceClient.GetCampaignEmailTemplatesAsync(Consts.CAMPAIGN_ID);
+            var templates = await _icoCommonServiceClient.GetCampaignEmailTemplatesAsync(Consts.CampaignId);
 
             // add data model to templates, if any exists 
             var templateModels = templates
@@ -467,7 +467,7 @@ namespace Lykke.Service.IcoApi.Controllers
                 {
                     templateModels.Add(new EmailTemplateDataModel()
                     {
-                        CampaignId = Consts.CAMPAIGN_ID,
+                        CampaignId = Consts.CampaignId,
                         TemplateId = templateId,
                         Data = JObject.FromObject(EmailDataAttribute.DataModels[templateId])
                     });
@@ -479,7 +479,7 @@ namespace Lykke.Service.IcoApi.Controllers
             {
                 templateModels.Add(new EmailTemplateDataModel()
                 {
-                    CampaignId = Consts.CAMPAIGN_ID,
+                    CampaignId = Consts.CampaignId,
                     TemplateId = "layout",
                     IsLayout = true
                 });
@@ -496,7 +496,7 @@ namespace Lykke.Service.IcoApi.Controllers
         [HttpGet("campaign/email/templates/{templateId}/history")]
         public async Task<IList<EmailTemplateHistoryItemModel>> GetEmailTemplateHistory([FromRoute] string templateId)
         {
-            return await _icoCommonServiceClient.GetEmailTemplateHistoryAsync(Consts.CAMPAIGN_ID, templateId);
+            return await _icoCommonServiceClient.GetEmailTemplateHistoryAsync(Consts.CampaignId, templateId);
         }
 
         /// <summary>
@@ -512,7 +512,7 @@ namespace Lykke.Service.IcoApi.Controllers
                 return BadRequest(ErrorResponse.Create("TemplateId is required"));
             }
 
-            emailTemplate.CampaignId = Consts.CAMPAIGN_ID;
+            emailTemplate.CampaignId = Consts.CampaignId;
 
             await _log.WriteInfoAsync(nameof(AdminController), nameof(AddOrUpdateCampaignEmailTemplate),
                 $"emailTemplate={emailTemplate.ToJson()}", "Admin UI - Edit campaign email template");
@@ -541,7 +541,7 @@ namespace Lykke.Service.IcoApi.Controllers
                 return BadRequest(ErrorResponse.Create("To is required"));
             }
 
-            emailData.CampaignId = Consts.CAMPAIGN_ID;
+            emailData.CampaignId = Consts.CampaignId;
 
             await _log.WriteInfoAsync(nameof(AdminController), nameof(SendEmail),
                 $"emailData={emailData.ToJson()}", "Admin UI - Send test email");
@@ -588,6 +588,57 @@ namespace Lykke.Service.IcoApi.Controllers
         public string GenerateTransactionQueueSasUrl([FromBody] GenerateTransactionQueueSasUrlRequest request)
         {
             return _adminService.GenerateTransactionQueueSasUrl(request?.ExpiryTime);
+        }
+
+        /// <summary>
+        /// Get investors list to whom KYC reminder will be sent
+        /// </summary>
+        [AdminAuth]
+        [HttpGet("investors/send/kycReminderEmails/{type}")]
+        public async Task<SendKycReminderEmailsResponse> GetKycReminders([Required] KycReminderType type)
+        {
+            var investorsToSend = await GetKycReminderInvestors(type);
+
+            return SendKycReminderEmailsResponse.Create(investorsToSend);
+        }
+
+        /// <summary>
+        /// Sends KYC reminder emails
+        /// </summary>
+        [AdminAuth]
+        [HttpPost("investors/send/kycReminderEmails/{type}")]
+        public async Task<IActionResult> SendKycReminderEmails([Required] string confirmation, [Required] KycReminderType type)
+        {
+            if (confirmation != "confirm")
+            {
+                return BadRequest($"The confirmation={confirmation} is not valid");
+            }
+
+            var investorsToSend = await GetKycReminderInvestors(type);
+
+            await _log.WriteInfoAsync(nameof(AdminController), nameof(SendKycReminderEmails),
+                $"type={Enum.GetName(typeof(KycReminderType), type)}",
+                $"Send kyc reminder emails to {investorsToSend.Count()} investors");
+
+            await _adminService.SendKycReminderEmails(investorsToSend);
+
+            return Ok(SendKycReminderEmailsResponse.Create(investorsToSend));
+        }
+
+        private async Task<IEnumerable<IInvestor>> GetKycReminderInvestors(KycReminderType type)
+        {
+            var investors = await _adminService.GetAllInvestors();
+
+            switch (type)
+            {
+                case KycReminderType.NotCompletedKyc:
+                    return investors.Where(f => !string.IsNullOrEmpty(f.KycRequestId) && !f.KycPassed.HasValue);
+                case KycReminderType.FailedKyc:
+                    return investors.Where(f => !string.IsNullOrEmpty(f.KycRequestId) &&
+                        f.KycPassed.HasValue && !f.KycPassed.Value);
+                default:
+                    throw new Exception("Not supported KycReminderType");
+            }
         }
     }
 }
