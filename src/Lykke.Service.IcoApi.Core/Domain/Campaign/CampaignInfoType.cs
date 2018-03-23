@@ -16,7 +16,7 @@
         AmountCrowdSaleInvestedLogiToken,
         AddressPoolTotalSize,
         AddressPoolCurrentSize,
-        AddressPoolLatestId,
+        AddressPoolNextId,
         LastProcessedBlockBtc,
         LastProcessedBlockEth,
         LastProcessedBlockEthInfura,

@@ -136,7 +136,7 @@ namespace Lykke.Service.IcoJob.Services
 
         private async Task<IAddressPoolItem> GetNextPoolItem(string email)
         {
-            var addressPoolLatestIdStr = await _campaignInfoRepository.GetValueAsync(CampaignInfoType.AddressPoolLatestId);
+            var addressPoolLatestIdStr = await _campaignInfoRepository.GetValueAsync(CampaignInfoType.AddressPoolNextId);
             if (Int32.TryParse(addressPoolLatestIdStr, out var addressPoolLatestId))
             {
                 addressPoolLatestId = 1;
@@ -148,7 +148,7 @@ namespace Lykke.Service.IcoJob.Services
                 throw new Exception("There are no free addresses in address pool");
             }
 
-            await _campaignInfoRepository.IncrementValue(CampaignInfoType.AddressPoolLatestId, 1);
+            await _campaignInfoRepository.IncrementValue(CampaignInfoType.AddressPoolNextId, 1);
             await _campaignInfoRepository.IncrementValue(CampaignInfoType.AddressPoolCurrentSize, -1);
             await _addressPoolHistoryRepository.SaveAsync(poolItem, email);
 
