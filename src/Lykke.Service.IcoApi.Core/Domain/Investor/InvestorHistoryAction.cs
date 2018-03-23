@@ -5,7 +5,7 @@
         Add,
         Confirm,
         SaveAddresses,
-        SaveAddressesBySupport,
+        SavePayInAddresses,
         IncrementAmount,
         SaveKyc,
         SaveKycResult

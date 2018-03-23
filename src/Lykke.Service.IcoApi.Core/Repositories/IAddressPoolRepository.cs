@@ -9,7 +9,5 @@ namespace Lykke.Service.IcoApi.Core.Repositories
         Task AddBatchAsync(List<IAddressPoolItem> keys);
 
         Task<IAddressPoolItem> Get(int id);
-
-        Task<IAddressPoolItem> GetNextFree(string email);
     }
 }

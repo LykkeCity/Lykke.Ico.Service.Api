@@ -18,6 +18,8 @@ namespace Lykke.Service.IcoApi.Models
         public string RefundEthAddress { get; set; }
         public string RefundBtcAddress { get; set; }
 
+        public bool PayInAssigned { get; set; }
+
         public string PayInSmarcEthPublicKey { get; set; }
         public string PayInSmarcEthAddress { get; set; }
         public string PayInSmarcBtcPublicKey { get; set; }
@@ -58,6 +60,7 @@ namespace Lykke.Service.IcoApi.Models
                 TokenAddress = investor.TokenAddress,
                 RefundEthAddress = investor.RefundEthAddress,
                 RefundBtcAddress = investor.RefundBtcAddress,
+                PayInAssigned = investor.PayInAssigned,
                 PayInSmarcEthPublicKey = investor.PayInSmarcEthPublicKey,
                 PayInSmarcEthAddress = investor.PayInSmarcEthAddress,
                 PayInSmarcBtcPublicKey = investor.PayInSmarcBtcPublicKey,

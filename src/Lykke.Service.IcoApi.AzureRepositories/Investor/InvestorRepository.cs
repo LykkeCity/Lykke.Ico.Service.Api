@@ -63,13 +63,11 @@ namespace Lykke.Services.IcoApi.AzureRepositories
             await _investorHistoryRepository.SaveAsync(entity, InvestorHistoryAction.Confirm);
         }
 
-        public async Task SaveAddressesAsync(string email, InvestorFillIn item)
+        public async Task SavePayInAddressesAsync(string email, InvestorPayInAddresses item)
         {
             var entity = await _table.MergeAsync(GetPartitionKey(), GetRowKey(email), x =>
             {
-                x.TokenAddress = item.TokenAddress;
-                x.RefundEthAddress = item.RefundEthAddress;
-                x.RefundBtcAddress = item.RefundBtcAddress;
+                x.PayInAssigned = true;
 
                 x.PayInSmarcEthPublicKey = item.PayInSmarcEthPublicKey;
                 x.PayInSmarcEthAddress = item.PayInSmarcEthAddress;
@@ -89,7 +87,7 @@ namespace Lykke.Services.IcoApi.AzureRepositories
                 return x;
             });
 
-            await _investorHistoryRepository.SaveAsync(entity, InvestorHistoryAction.SaveAddresses);
+            await _investorHistoryRepository.SaveAsync(entity, InvestorHistoryAction.SavePayInAddresses);
         }
 
         public async Task SaveAddressesAsync(string email, string tokenAddress, string refundEthAddress, string refundBtcAddress)
@@ -103,7 +101,7 @@ namespace Lykke.Services.IcoApi.AzureRepositories
                 return x;
             });
 
-            await _investorHistoryRepository.SaveAsync(entity, InvestorHistoryAction.SaveAddressesBySupport);
+            await _investorHistoryRepository.SaveAsync(entity, InvestorHistoryAction.SaveAddresses);
         }
 
         public async Task SaveKycAsync(string email, string kycRequestId)

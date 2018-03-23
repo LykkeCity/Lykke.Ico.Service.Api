@@ -8,5 +8,6 @@ namespace Lykke.Service.IcoJob.Settings
         public DbSettings Db { get; set; }
         public string IcoExRateServiceUrl { get; set; }
         public string IcoCommonServiceUrl { get; set; }
+        public string BtcNetwork { get; set; }
     }
 }

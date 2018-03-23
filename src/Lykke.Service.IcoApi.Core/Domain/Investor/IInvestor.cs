@@ -10,6 +10,8 @@ namespace Lykke.Service.IcoApi.Core.Domain.Investor
         string RefundEthAddress { get; set; }
         string RefundBtcAddress { get; set; }
 
+        bool PayInAssigned { get; set; }
+
         string PayInSmarcEthPublicKey { get; set; }
         string PayInSmarcEthAddress { get; set; }
         string PayInSmarcBtcPublicKey { get; set; }

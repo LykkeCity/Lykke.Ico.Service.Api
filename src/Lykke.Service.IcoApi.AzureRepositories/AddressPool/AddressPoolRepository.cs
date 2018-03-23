@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.Linq;
 using System;
 using System.Collections.Generic;
-using Microsoft.WindowsAzure.Storage.Table;
 using Lykke.Service.IcoApi.Core.Repositories;
 using Lykke.Service.IcoApi.Core.Domain.AddressPool;
 
@@ -16,42 +15,17 @@ namespace Lykke.Services.IcoApi.AzureRepositories
     {
         private static readonly Object _lock = new Object();
         private readonly INoSQLTableStorage<AddressPoolEntity> _table;
-        private readonly IAddressPoolHistoryRepository _addressPoolHistoryRepository;
         private static string GetPartitionKey() => "";
         private static string GetRowKey(int id) => id.ToString().PadLeft(9, '0');
 
         public AddressPoolRepository(IReloadingManager<string> connectionStringManager, ILog log)
         {
             _table = AzureTableStorage<AddressPoolEntity>.Create(connectionStringManager, "AddressPool", log);
-            _addressPoolHistoryRepository = new AddressPoolHistoryRepository(connectionStringManager, log);
         }
 
         public async Task<IAddressPoolItem> Get(int id)
         {
             return await _table.GetDataAsync(GetPartitionKey() ,GetRowKey(id));
-        }
-
-        public async Task<IAddressPoolItem> GetNextFree(string email)
-        {
-            await Task.Yield();
-
-            lock (_lock)
-            {
-                var query = new TableQuery<AddressPoolEntity>().Take(1);
-                var page = new AzureStorage.Tables.Paging.PagingInfo { ElementCount = 1 };
-                var result = _table.ExecuteQueryWithPaginationAsync(query, page).Result;
-
-                var entity = result.FirstOrDefault();
-                if (entity == null)
-                {
-                    throw new Exception("There are no free addresses in address pool");
-                }
-
-                _addressPoolHistoryRepository.SaveAsync(entity, email).Wait();
-                _table.DeleteAsync(entity).Wait();
-
-                return entity;
-            }            
         }
 
         public async Task AddBatchAsync(List<IAddressPoolItem> keys)

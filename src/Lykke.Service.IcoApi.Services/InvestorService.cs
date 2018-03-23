@@ -17,8 +17,6 @@ namespace Lykke.Service.IcoApi.Services
     public class InvestorService : IInvestorService
     {
         private readonly ILog _log;
-        private readonly IBtcService _btcService;
-        private readonly IEthService _ethService;
         private readonly IInvestorRepository _investorRepository;
         private readonly IInvestorAttributeRepository _investorAttributeRepository;
         private readonly IAddressPoolRepository _addressPoolRepository;
@@ -32,13 +30,12 @@ namespace Lykke.Service.IcoApi.Services
             IInvestorRepository investorRepository,
             IInvestorAttributeRepository investorAttributeRepository,
             IAddressPoolRepository addressPoolRepository,
+            IAddressPoolHistoryRepository addressPoolHistoryRepository,
             ICampaignInfoRepository campaignInfoRepository,
             IIcoCommonServiceClient icoCommonServiceClient,
             IcoApiSettings icoApiSettings)
         {
             _log = log;
-            _btcService = btcService;
-            _ethService = ethService;
             _investorRepository = investorRepository;
             _investorAttributeRepository = investorAttributeRepository;
             _addressPoolRepository = addressPoolRepository;
@@ -128,93 +125,7 @@ namespace Lykke.Service.IcoApi.Services
         {
             email = email.ToLowCase();
 
-            var poolItemSmarc = await GetPoolItem(email);
-            var poolItemLogi = await GetPoolItem(email);
-            var poolItemSmarc90Logi10 = await GetPoolItem(email);
-
-            var fillIn = new InvestorFillIn
-            {
-                TokenAddress = tokenAddress,
-                RefundEthAddress = refundEthAddress,
-                RefundBtcAddress = refundBtcAddress,
-                PayInSmarcEthPublicKey = poolItemSmarc.EthPublicKey,
-                PayInSmarcEthAddress = _ethService.GetAddressByPublicKey(poolItemSmarc.EthPublicKey),
-                PayInSmarcBtcPublicKey = poolItemSmarc.BtcPublicKey,
-                PayInSmarcBtcAddress = _btcService.GetAddressByPublicKey(poolItemSmarc.BtcPublicKey),
-                PayInLogiEthPublicKey = poolItemLogi.EthPublicKey,
-                PayInLogiEthAddress = _ethService.GetAddressByPublicKey(poolItemLogi.EthPublicKey),
-                PayInLogiBtcPublicKey = poolItemLogi.BtcPublicKey,
-                PayInLogiBtcAddress = _btcService.GetAddressByPublicKey(poolItemLogi.BtcPublicKey),
-                PayInSmarc90Logi10EthPublicKey = poolItemSmarc90Logi10.EthPublicKey,
-                PayInSmarc90Logi10EthAddress = _ethService.GetAddressByPublicKey(poolItemSmarc90Logi10.EthPublicKey),
-                PayInSmarc90Logi10BtcPublicKey = poolItemSmarc90Logi10.BtcPublicKey,
-                PayInSmarc90Logi10BtcAddress = _btcService.GetAddressByPublicKey(poolItemSmarc90Logi10.BtcPublicKey),
-            };
-
-            await _log.WriteInfoAsync(nameof(InvestorService), nameof(UpdateAsync),
-                $"email={email}, fillIn={fillIn.ToJson()}", "Update investor data");
-
-            await _investorRepository.SaveAddressesAsync(email, fillIn);
-
-            await _campaignInfoRepository.IncrementValue(CampaignInfoType.InvestorsFilledIn, 1);
-
-            await _icoCommonServiceClient.AddPayInAddressAsync(new PayInAddressModel
-            {
-                Address = fillIn.PayInSmarcEthAddress,
-                CampaignId = Consts.CAMPAIGN_ID,
-                Currency = IcoCommon.Client.Models.CurrencyType.Eth,
-                Email = email
-            });
-            await _icoCommonServiceClient.AddPayInAddressAsync(new PayInAddressModel
-            {
-                Address = fillIn.PayInSmarcBtcAddress,
-                CampaignId = Consts.CAMPAIGN_ID,
-                Currency = IcoCommon.Client.Models.CurrencyType.Btc,
-                Email = email
-            });
-
-            await _icoCommonServiceClient.AddPayInAddressAsync(new PayInAddressModel
-            {
-                Address = fillIn.PayInLogiEthAddress,
-                CampaignId = Consts.CAMPAIGN_ID,
-                Currency = IcoCommon.Client.Models.CurrencyType.Eth,
-                Email = email
-            });
-            await _icoCommonServiceClient.AddPayInAddressAsync(new PayInAddressModel
-            {
-                Address = fillIn.PayInLogiBtcAddress,
-                CampaignId = Consts.CAMPAIGN_ID,
-                Currency = IcoCommon.Client.Models.CurrencyType.Btc,
-                Email = email
-            });
-
-            await _icoCommonServiceClient.AddPayInAddressAsync(new PayInAddressModel
-            {
-                Address = fillIn.PayInSmarc90Logi10EthAddress,
-                CampaignId = Consts.CAMPAIGN_ID,
-                Currency = IcoCommon.Client.Models.CurrencyType.Eth,
-                Email = email
-            });
-            await _icoCommonServiceClient.AddPayInAddressAsync(new PayInAddressModel
-            {
-                Address = fillIn.PayInSmarc90Logi10BtcAddress,
-                CampaignId = Consts.CAMPAIGN_ID,
-                Currency = IcoCommon.Client.Models.CurrencyType.Btc,
-                Email = email
-            });
-
-            var investor = await _investorRepository.GetAsync(email);
-
-            await SendSummaryEmail(investor);
-        }
-
-        private async Task<Core.Domain.AddressPool.IAddressPoolItem> GetPoolItem(string email)
-        {
-            var poolItem = await _addressPoolRepository.GetNextFree(email);
-
-            await _campaignInfoRepository.IncrementValue(CampaignInfoType.AddressPoolCurrentSize, -1);
-
-            return poolItem;
+            await _investorRepository.SaveAddressesAsync(email, tokenAddress, refundEthAddress, refundBtcAddress);
         }
 
         public async Task SaveKycResultAsync(string email, string kycStatus)
@@ -238,9 +149,6 @@ namespace Lykke.Service.IcoApi.Services
                 AuthToken = token.ToString()
             };
 
-            await _log.WriteInfoAsync(nameof(InvestorService), nameof(SendConfirmationEmail),
-                $"message={message.ToJson()}", "Send investor confirmation message");
-
             await _icoCommonServiceClient.SendEmailAsync(new EmailDataModel
             {
                 To = email,
@@ -259,9 +167,6 @@ namespace Lykke.Service.IcoApi.Services
                 RefundBtcAddress = investor.RefundBtcAddress,
                 RefundEthAddress = investor.RefundEthAddress
             };
-
-            await _log.WriteInfoAsync(nameof(InvestorService), nameof(SendSummaryEmail),
-                $"message={message.ToJson()}", "Send investor summary message");
 
             await _icoCommonServiceClient.SendEmailAsync(new EmailDataModel
             {

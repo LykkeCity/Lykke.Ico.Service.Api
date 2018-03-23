@@ -12,6 +12,11 @@ namespace Lykke.Service.IcoApi.Services
         private readonly string _ethNetworkUrl;
         private readonly string _testSecretKey;
 
+        public EthService()
+        {
+
+        }
+
         public EthService(string ethNetworkUrl, string testSecretKey)
         {
             _testSecretKey = testSecretKey;

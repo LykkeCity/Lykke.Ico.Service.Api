@@ -1,11 +1,7 @@
 ﻿namespace Lykke.Service.IcoApi.Core.Domain.Investor
 {
-    public class InvestorFillIn
+    public class InvestorPayInAddresses
     {
-        public string TokenAddress { get; set; }
-        public string RefundEthAddress { get; set; }
-        public string RefundBtcAddress { get; set; }
-
         public string PayInSmarcEthPublicKey { get; set; }
         public string PayInSmarcEthAddress { get; set; }
         public string PayInSmarcBtcPublicKey { get; set; }

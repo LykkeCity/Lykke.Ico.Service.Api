@@ -12,6 +12,11 @@ namespace Lykke.Service.IcoApi.Services
         private readonly Network _btcNetwork;
         private readonly string _testSecretKey;
 
+        public BtcService(string btcNetwork)
+        {
+            _btcNetwork = Network.GetNetwork(btcNetwork);
+        }
+
         public BtcService(string btcNetwork, string testSecretKey)
         {
             _btcNetwork = Network.GetNetwork(btcNetwork);

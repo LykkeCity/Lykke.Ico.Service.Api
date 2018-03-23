@@ -93,8 +93,21 @@ namespace Lykke.Service.IcoJob.Modules
                 .WithParameter(TypedParameter.From(connectionStringManager))
                 .SingleInstance();
 
+            builder.RegisterType<BtcService>()
+                .As<IBtcService>()
+                .WithParameter("btcNetwork", _settings.CurrentValue.BtcNetwork)
+                .SingleInstance();
+
+            builder.RegisterType<EthService>()
+                .As<IEthService>()
+                .SingleInstance();
+
             builder.RegisterType<KycService>()
                 .As<IKycService>()
+                .SingleInstance();
+
+            builder.RegisterType<InvestorService>()
+                .As<IInvestorService>()
                 .SingleInstance();
 
             builder.RegisterType<TransactionService>()
