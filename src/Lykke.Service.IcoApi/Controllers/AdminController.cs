@@ -32,7 +32,7 @@ using EmailDataModel = Lykke.Service.IcoCommon.Client.Models.EmailDataModel;
 using EmailTemplateAddOrUpdateRequest = Lykke.Service.IcoCommon.Client.Models.EmailTemplateAddOrUpdateRequest;
 using EmailTemplateHistoryItemModel = Lykke.Service.IcoCommon.Client.Models.EmailTemplateHistoryItemModel;
 using EmailTemplateModel = Lykke.Service.IcoCommon.Client.Models.EmailTemplateModel;
-using CommonCampaignSettingsModel = Lykke.Service.IcoCommon.Client.Models.CampaignSettingsModel;
+using CampaignSettingsCreateOrUpdateRequest = Lykke.Service.IcoCommon.Client.Models.CampaignSettingsCreateOrUpdateRequest;
 
 namespace Lykke.Service.IcoApi.Controllers
 {
@@ -151,7 +151,12 @@ namespace Lykke.Service.IcoApi.Controllers
 
             if (settings.CommonSettings != null)
             {
-                await _icoCommonServiceClient.CreateOrUpdateCampaignSettingsAsync(Consts.CampaignId, settings.CommonSettings);
+                await _icoCommonServiceClient.CreateOrUpdateCampaignSettingsAsync(Consts.CampaignId, 
+                    new CampaignSettingsCreateOrUpdateRequest
+                    {
+                        CampaignSettings = settings.CommonSettings,
+                        Username = User.Identity.Name
+                    });
             }
 
             return Ok();

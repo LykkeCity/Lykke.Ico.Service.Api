@@ -29,10 +29,7 @@ export class CampaignSettingsHistoryController {
             minimap: {
                 enabled: false
             },
-            readOnly: true,
-            renderIndentGuides: false,
-            renderLineHighlight: "none",
-            hideCursorInOverviewRuler: true
+            readOnly: true
         });
     }
     selectHistoryItem(item) {

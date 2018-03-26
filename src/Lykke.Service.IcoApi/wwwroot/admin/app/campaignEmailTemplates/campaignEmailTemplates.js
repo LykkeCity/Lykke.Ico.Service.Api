@@ -12,14 +12,14 @@ class CampaignEmailTemplatesController {
         this.$mdDialog = $mdDialog;
         this.$q = $q;
         this.appColors = appColors;
-        this.emailRegex = /^[a-zA-Z0-9.!#$%&�*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+        this.emailRegex = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
         this.sendPreviewEmailKey = "send_preview_email";
         this.templateDataKey = "template_data";
         this.emailUrl = "/api/admin/campaign/email";
         this.templatesUrl = "/api/admin/campaign/email/templates";
         this.customCommands = [
             { name: "Save", action: () => this.save() },
-            { name: "Send", action: () => this.send(), isDisabled: () => this.selectedTemplate && this.selectedTemplate.isLayout },
+            { name: "Send", action: () => this.send() },
             { name: "History", action: () => this.showHistory() }
         ];
     }
@@ -113,6 +113,7 @@ class CampaignEmailTemplatesController {
     }
     selectTemplate(template) {
         this.selectedTemplate = template || this.templates[0];
+        this.selectedTemplateOriginal = angular.copy(this.selectedTemplate);
         let body = this.selectedTemplate && this.selectedTemplate.body ? this.selectedTemplate.body : "";
         let data = this.selectedTemplate && this.selectedTemplate.data ? JSON.stringify(this.selectedTemplate.data, null, 4) : "{}";
         this.bodyEditor.setValue(body);
@@ -145,16 +146,25 @@ class CampaignEmailTemplatesController {
         if (!this.selectedTemplate || !this.validate()) {
             return this.$q.reject();
         }
-        this.cacheDataModel();
         this.selectedTemplate.body = this.bodyEditor.getValue();
+        this.cacheDataModel();
+        if (angular.equals(this.selectedTemplate, this.selectedTemplateOriginal)) {
+            this.shell.toast({ message: "There are no changes to save", type: AppToastType.Info });
+            return this.$q.reject();
+        }
         return this.$http
             .post(this.templatesUrl, this.selectedTemplate)
             .then(() => {
             this.shell.toast({ message: "Changes saved", type: AppToastType.Success });
+            this.selectedTemplateOriginal = angular.copy(this.selectedTemplate);
         });
     }
     send() {
-        if (!this.selectedTemplate || this.selectedTemplate.isLayout || !this.validate()) {
+        if (!this.selectedTemplate || !this.validate()) {
+            return this.$q.reject();
+        }
+        if (this.selectedTemplate.isLayout) {
+            this.shell.toast({ message: "Can not send preview of layout. Please, choose final template to send", type: AppToastType.Info });
             return this.$q.reject();
         }
         let prompt = this.$mdDialog.prompt()

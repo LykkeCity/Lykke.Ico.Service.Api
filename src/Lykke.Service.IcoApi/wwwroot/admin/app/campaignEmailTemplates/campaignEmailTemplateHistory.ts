@@ -45,9 +45,7 @@ export class CampaignEmailTemplateHistoryController implements ng.IController {
             minimap: {
                 enabled: false
             },
-            readOnly: true,
-            renderLineHighlight: "none",
-            hideCursorInOverviewRuler: true,
+            readOnly: true
         });
     }
 

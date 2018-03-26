@@ -41,7 +41,7 @@
 
   <ItemGroup>
     <PackageReference Include="Lykke.Common.ApiLibrary" Version="1.4.0" />
-    <PackageReference Include="Lykke.Logs" Version="3.6.0" />
+    <PackageReference Include="Lykke.Logs" Version="3.6.2" />
     <PackageReference Include="Lykke.Service.IcoExRate.Client" Version="1.0.6" />
     <PackageReference Include="Lykke.Service.Session" Version="1.0.33" />
     <PackageReference Include="Lykke.SettingsReader" Version="2.2.0" />

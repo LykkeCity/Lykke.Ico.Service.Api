@@ -30,9 +30,7 @@ export class CampaignEmailTemplateHistoryController {
             minimap: {
                 enabled: false
             },
-            readOnly: true,
-            renderLineHighlight: "none",
-            hideCursorInOverviewRuler: true,
+            readOnly: true
         });
     }
     selectHistoryItem(item) {

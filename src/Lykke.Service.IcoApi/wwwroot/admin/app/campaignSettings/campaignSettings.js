@@ -2,6 +2,10 @@ import { app, AppToastType } from "../app.js";
 import { CampaignSettingsHistoryController } from "./campaignSettingsHistory.js";
 class CampaignSettings {
     constructor() {
+        this.preSaleStartDateTimeUtc = new Date();
+        this.preSaleEndDateTimeUtc = new Date();
+        this.crowdSaleStartDateTimeUtc = new Date();
+        this.crowdSaleEndDateTimeUtc = new Date();
         this.commonSettings = new CommonCampaignSettings();
     }
 }
@@ -35,6 +39,7 @@ class CampaignSettingsController {
             .get(this.settingsUrl)
             .then(response => {
             this.settings = response.data || new CampaignSettings();
+            this.settingsOriginal = angular.copy(this.settings);
             this.extractDateFromSas();
         });
         this.shell.appendCustomCommands(this.customCommands);
@@ -51,10 +56,20 @@ class CampaignSettingsController {
             .addClass("layout-align-start-center"); // center children horizontally
     }
     save() {
+        if (!this.settings) {
+            return;
+        }
+        if (angular.equals(this.settings, this.settingsOriginal)) {
+            this.shell.toast({ message: "There are no changes to save", type: AppToastType.Info });
+            return;
+        }
         if (this.settings) {
             this.$http
                 .post(this.settingsUrl, this.settings)
-                .then(_ => this.shell.toast({ message: "Changes saved", type: AppToastType.Success }));
+                .then(_ => {
+                this.shell.toast({ message: "Changes saved", type: AppToastType.Success });
+                this.settingsOriginal = angular.copy(this.settings);
+            });
         }
     }
     showHistory() {

@@ -18,17 +18,6 @@ namespace Lykke.Services.IcoApi.AzureRepositories
 
         private static string GetPartitionKey() => "";
         private static string GetRowKey() => "Settings";
-        private static PropertyInfo[] _properties = typeof(ICampaignSettings).GetProperties();
-
-        private static bool AreDifferent(ICampaignSettings a, ICampaignSettings b)
-        {
-            return _properties.Any(p =>
-            {
-                var va = p.GetValue(a, null);
-                var vb = p.GetValue(b, null);
-                return (va != null && !va.Equals(vb)) || (vb != null && !vb.Equals(va));
-            });
-        }
 
         public CampaignSettingsRepository(IReloadingManager<string> connectionStringManager, ILog log)
         {
@@ -48,40 +37,35 @@ namespace Lykke.Services.IcoApi.AzureRepositories
 
         public async Task SaveAsync(ICampaignSettings settings, string username)
         {
-            var old = await _table.GetDataAsync(GetPartitionKey(), GetRowKey());
-            
-            if (old == null || AreDifferent(old, settings))
+            await _table.InsertOrMergeAsync(new CampaignSettingsEntity
             {
-                await _table.InsertOrMergeAsync(new CampaignSettingsEntity
-                {
-                    PartitionKey = GetPartitionKey(),
-                    RowKey = GetRowKey(),
-                    PreSaleStartDateTimeUtc = settings.PreSaleStartDateTimeUtc,
-                    PreSaleEndDateTimeUtc = settings.PreSaleEndDateTimeUtc,
-                    PreSaleTokenAmount = settings.PreSaleTokenAmount,
-                    PreSaleTokenPriceUsd = settings.PreSaleTokenPriceUsd,
-                    CrowdSaleStartDateTimeUtc = settings.CrowdSaleStartDateTimeUtc,
-                    CrowdSaleEndDateTimeUtc = settings.CrowdSaleEndDateTimeUtc,
-                    CrowdSale1stTierTokenPriceUsd = settings.CrowdSale1stTierTokenPriceUsd,
-                    CrowdSale1stTierTokenAmount = settings.CrowdSale1stTierTokenAmount,
-                    CrowdSale2ndTierTokenPriceUsd = settings.CrowdSale2ndTierTokenPriceUsd,
-                    CrowdSale2ndTierTokenAmount = settings.CrowdSale2ndTierTokenAmount,
-                    CrowdSale3rdTierTokenPriceUsd = settings.CrowdSale3rdTierTokenPriceUsd,
-                    CrowdSale3rdTierTokenAmount = settings.CrowdSale3rdTierTokenAmount,
-                    MinInvestAmountUsd = settings.MinInvestAmountUsd,
-                    RowndDownTokenDecimals = settings.RowndDownTokenDecimals,
-                    EnableFrontEnd = settings.EnableFrontEnd,
-                    CaptchaEnable = settings.CaptchaEnable,
-                    CaptchaSecret = settings.CaptchaSecret,
-                    KycEnableRequestSending = settings.KycEnableRequestSending,
-                    KycCampaignId = settings.KycCampaignId,
-                    KycLinkTemplate = settings.KycLinkTemplate,
-                    KycServiceEncriptionKey = settings.KycServiceEncriptionKey,
-                    KycServiceEncriptionIv = settings.KycServiceEncriptionIv
-                });
+                PartitionKey = GetPartitionKey(),
+                RowKey = GetRowKey(),
+                PreSaleStartDateTimeUtc = settings.PreSaleStartDateTimeUtc,
+                PreSaleEndDateTimeUtc = settings.PreSaleEndDateTimeUtc,
+                PreSaleTokenAmount = settings.PreSaleTokenAmount,
+                PreSaleTokenPriceUsd = settings.PreSaleTokenPriceUsd,
+                CrowdSaleStartDateTimeUtc = settings.CrowdSaleStartDateTimeUtc,
+                CrowdSaleEndDateTimeUtc = settings.CrowdSaleEndDateTimeUtc,
+                CrowdSale1stTierTokenPriceUsd = settings.CrowdSale1stTierTokenPriceUsd,
+                CrowdSale1stTierTokenAmount = settings.CrowdSale1stTierTokenAmount,
+                CrowdSale2ndTierTokenPriceUsd = settings.CrowdSale2ndTierTokenPriceUsd,
+                CrowdSale2ndTierTokenAmount = settings.CrowdSale2ndTierTokenAmount,
+                CrowdSale3rdTierTokenPriceUsd = settings.CrowdSale3rdTierTokenPriceUsd,
+                CrowdSale3rdTierTokenAmount = settings.CrowdSale3rdTierTokenAmount,
+                MinInvestAmountUsd = settings.MinInvestAmountUsd,
+                RowndDownTokenDecimals = settings.RowndDownTokenDecimals,
+                EnableFrontEnd = settings.EnableFrontEnd,
+                CaptchaEnable = settings.CaptchaEnable,
+                CaptchaSecret = settings.CaptchaSecret,
+                KycEnableRequestSending = settings.KycEnableRequestSending,
+                KycCampaignId = settings.KycCampaignId,
+                KycLinkTemplate = settings.KycLinkTemplate,
+                KycServiceEncriptionKey = settings.KycServiceEncriptionKey,
+                KycServiceEncriptionIv = settings.KycServiceEncriptionIv
+            });
 
-                await _history.InsertAsync(new CampaignSettingsHistoryItemEntity(username, settings));
-            }
+            await _history.InsertAsync(new CampaignSettingsHistoryItemEntity(username, settings));
         }
     }
 }

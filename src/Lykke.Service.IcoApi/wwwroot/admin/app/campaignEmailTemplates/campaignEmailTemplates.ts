@@ -21,11 +21,12 @@ class CampaignEmailTemplatesController implements ng.IComponentController {
     private emailUrl = "/api/admin/campaign/email";
     private templatesUrl = "/api/admin/campaign/email/templates";
     private bodyEditor: monaco.editor.IStandaloneCodeEditor;
-    private dataEditor: monaco.editor.IStandaloneCodeEditor;
+    private dataEditor: monaco.editor.IStandaloneCodeEditor; 
     private shell: ShellController;
+    private selectedTemplateOriginal: CampaignEmailTemplate;
     private customCommands: AppCommand[] = [
         { name: "Save", action: () => this.save() },
-        { name: "Send", action: () => this.send(), isDisabled: () => this.selectedTemplate && this.selectedTemplate.isLayout },
+        { name: "Send", action: () => this.send() },
         { name: "History", action: () => this.showHistory() }
     ];
 
@@ -137,6 +138,7 @@ class CampaignEmailTemplatesController implements ng.IComponentController {
 
     selectTemplate(template?: CampaignEmailTemplate) {
         this.selectedTemplate = template || this.templates[0];
+        this.selectedTemplateOriginal = angular.copy(this.selectedTemplate);
 
         let body = this.selectedTemplate && this.selectedTemplate.body ? this.selectedTemplate.body : "";
         let data = this.selectedTemplate && this.selectedTemplate.data ? JSON.stringify(this.selectedTemplate.data, null, 4) : "{}";
@@ -180,19 +182,29 @@ class CampaignEmailTemplatesController implements ng.IComponentController {
             return this.$q.reject();
         }
 
+        this.selectedTemplate.body = this.bodyEditor.getValue();
         this.cacheDataModel();
 
-        this.selectedTemplate.body = this.bodyEditor.getValue();
+        if (angular.equals(this.selectedTemplate, this.selectedTemplateOriginal)) {
+            this.shell.toast({ message: "There are no changes to save", type: AppToastType.Info });
+            return this.$q.reject();
+        }
 
         return this.$http
             .post(this.templatesUrl, this.selectedTemplate)
             .then(() => {
                 this.shell.toast({ message: "Changes saved", type: AppToastType.Success });
+                this.selectedTemplateOriginal = angular.copy(this.selectedTemplate);
             });
     }
 
     send(): ng.IPromise<void> {
-        if (!this.selectedTemplate || this.selectedTemplate.isLayout || !this.validate()) {
+        if (!this.selectedTemplate || !this.validate()) {
+            return this.$q.reject();
+        }
+
+        if (this.selectedTemplate.isLayout) {
+            this.shell.toast({ message: "Can not send preview of layout. Please, choose final template to send", type: AppToastType.Info });
             return this.$q.reject();
         }
 

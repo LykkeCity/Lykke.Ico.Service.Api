@@ -42,10 +42,7 @@ export class CampaignSettingsHistoryController implements ng.IController {
             minimap: {
                 enabled: false
             },
-            readOnly: true,
-            renderIndentGuides: false,
-            renderLineHighlight: "none",
-            hideCursorInOverviewRuler: true
+            readOnly: true
         });
     }
 

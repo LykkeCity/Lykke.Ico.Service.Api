@@ -7,6 +7,7 @@ using Lykke.AzureStorage.Tables.Entity.ValueTypesMerging;
 using Lykke.Service.IcoApi.Core.Domain.Campaign;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Lykke.Services.IcoApi.AzureRepositories
 {
@@ -25,7 +26,8 @@ namespace Lykke.Services.IcoApi.AzureRepositories
                 Formatting.Indented,
                 new JsonSerializerSettings
                 {
-                    NullValueHandling = NullValueHandling.Ignore
+                    NullValueHandling = NullValueHandling.Ignore,
+                    ContractResolver = new CamelCasePropertyNamesContractResolver()
                 });
         }
 

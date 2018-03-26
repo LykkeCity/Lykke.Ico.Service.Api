@@ -3,17 +3,13 @@ import { ShellController } from "../shell/shell.js";
 import { CampaignSettingsHistoryController, CampaignSettingsHistoryItem } from "./campaignSettingsHistory.js";
 
 class CampaignSettings {
-    constructor() {
-        this.commonSettings = new CommonCampaignSettings();
-    }
-
-    preSaleStartDateTimeUtc: Date;
-    preSaleEndDateTimeUtc: Date;
+    preSaleStartDateTimeUtc: Date = new Date();
+    preSaleEndDateTimeUtc: Date = new Date();
     preSaleTokenAmount: number;
     preSaleTokenPriceUsd: number;
 
-    crowdSaleStartDateTimeUtc: Date;
-    crowdSaleEndDateTimeUtc: Date;
+    crowdSaleStartDateTimeUtc: Date = new Date();
+    crowdSaleEndDateTimeUtc: Date = new Date();
     crowdSale1stTierTokenPriceUsd: number;
     crowdSale1stTierTokenAmount: number;
     crowdSale2ndTierTokenPriceUsd: number;
@@ -34,7 +30,7 @@ class CampaignSettings {
     captchaEnable: boolean;
     captchaSecret: string;
 
-    commonSettings: CommonCampaignSettings;
+    commonSettings: CommonCampaignSettings = new CommonCampaignSettings();
 }
 
 class CommonCampaignSettings {
@@ -57,6 +53,7 @@ class CampaignSettingsController implements ng.IComponentController {
     private transactionQueueSasGenerationUrl = "/api/admin/transactions/sas";
     private settingsUrl = "/api/admin/campaign/settings";
     private shell: ShellController;
+    private settingsOriginal: CampaignSettings;
     private customCommands: AppCommand[] = [
         { name: "Save", action: () => this.save() },
         { name: "History", action: () => this.showHistory() }
@@ -83,6 +80,7 @@ class CampaignSettingsController implements ng.IComponentController {
             .get<CampaignSettings>(this.settingsUrl)
             .then(response => {
                 this.settings = response.data || new CampaignSettings();
+                this.settingsOriginal = angular.copy(this.settings);
                 this.extractDateFromSas();
             });
 
@@ -103,10 +101,22 @@ class CampaignSettingsController implements ng.IComponentController {
     }
 
     save() {
+        if (!this.settings) {
+            return;
+        }
+
+        if (angular.equals(this.settings, this.settingsOriginal)) {
+            this.shell.toast({ message: "There are no changes to save", type: AppToastType.Info });
+            return;
+        }
+
         if (this.settings) {
             this.$http
                 .post(this.settingsUrl, this.settings)
-                .then(_ => this.shell.toast({ message: "Changes saved", type: AppToastType.Success }));
+                .then(_ => {
+                    this.shell.toast({ message: "Changes saved", type: AppToastType.Success });
+                    this.settingsOriginal = angular.copy(this.settings);
+                });
         }
     }
 
