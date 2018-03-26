@@ -136,16 +136,16 @@ namespace Lykke.Service.IcoJob.Services
 
         private async Task<IAddressPoolItem> GetNextPoolItem(string email)
         {
-            var addressPoolLatestIdStr = await _campaignInfoRepository.GetValueAsync(CampaignInfoType.AddressPoolNextId);
-            if (Int32.TryParse(addressPoolLatestIdStr, out var addressPoolLatestId))
+            var addressPoolNextIdStr = await _campaignInfoRepository.GetValueAsync(CampaignInfoType.AddressPoolNextId);
+            if (Int32.TryParse(addressPoolNextIdStr, out var addressPoolNextId))
             {
-                addressPoolLatestId = 1;
+                addressPoolNextId = 1;
             }
 
-            var poolItem = await _addressPoolRepository.Get(addressPoolLatestId);
+            var poolItem = await _addressPoolRepository.Get(addressPoolNextId);
             if (poolItem == null)
             {
-                throw new Exception("There are no free addresses in address pool");
+                throw new Exception($"There are no free addresses in address pool. addressPoolNextId={addressPoolNextId}");
             }
 
             await _campaignInfoRepository.IncrementValue(CampaignInfoType.AddressPoolNextId, 1);
