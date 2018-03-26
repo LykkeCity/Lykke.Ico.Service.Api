@@ -12,6 +12,7 @@ using Lykke.Service.IcoApi.Core.Emails;
 using Lykke.Service.IcoApi.Core.Domain.Investor;
 using Lykke.Service.IcoApi.Core.Domain.Campaign;
 using Lykke.Service.IcoApi.Core.Queues.Messages;
+using Lykke.Service.IcoApi.Core.Queues;
 
 namespace Lykke.Service.IcoApi.Services
 {
@@ -23,7 +24,7 @@ namespace Lykke.Service.IcoApi.Services
         private readonly IAddressPoolRepository _addressPoolRepository;
         private readonly ICampaignInfoRepository _campaignInfoRepository;
         private readonly IIcoCommonServiceClient _icoCommonServiceClient;
-        private readonly QueuePublisher<InvestorMessage> _investorPublisher;
+        private readonly IQueuePublisher<InvestorMessage> _investorPublisher;
         private readonly IcoApiSettings _icoApiSettings;
 
         public InvestorService(ILog log,
@@ -35,7 +36,7 @@ namespace Lykke.Service.IcoApi.Services
             IAddressPoolHistoryRepository addressPoolHistoryRepository,
             ICampaignInfoRepository campaignInfoRepository,
             IIcoCommonServiceClient icoCommonServiceClient,
-            QueuePublisher<InvestorMessage> investorPublisher,
+            IQueuePublisher<InvestorMessage> investorPublisher,
             IcoApiSettings icoApiSettings)
         {
             _log = log;
