@@ -177,7 +177,7 @@ class CampaignEmailTemplatesController implements ng.IComponentController {
         localStorage.setItem(`${this.selectedTemplate.campaignId}_${this.selectedTemplate.templateId}_${this.templateDataKey}`, json);
     }
 
-    save(): ng.IPromise<void> {
+    save(silent?: boolean): ng.IPromise<void> {
         if (!this.selectedTemplate || !this.validate()) {
             return this.$q.reject();
         }
@@ -186,16 +186,18 @@ class CampaignEmailTemplatesController implements ng.IComponentController {
         this.cacheDataModel();
 
         if (angular.equals(this.selectedTemplate, this.selectedTemplateOriginal)) {
-            this.shell.toast({ message: "There are no changes to save", type: AppToastType.Info });
-            return this.$q.reject();
+            if (!silent) {
+                this.shell.toast({ message: "There are no changes to save", type: AppToastType.Info });
+            }
+            return this.$q.resolve();
+        } else {
+            return this.$http
+                .post(this.templatesUrl, this.selectedTemplate)
+                .then(() => {
+                    this.shell.toast({ message: "Changes saved", type: AppToastType.Success });
+                    this.selectedTemplateOriginal = angular.copy(this.selectedTemplate);
+                });
         }
-
-        return this.$http
-            .post(this.templatesUrl, this.selectedTemplate)
-            .then(() => {
-                this.shell.toast({ message: "Changes saved", type: AppToastType.Success });
-                this.selectedTemplateOriginal = angular.copy(this.selectedTemplate);
-            });
     }
 
     send(): ng.IPromise<void> {
@@ -217,7 +219,7 @@ class CampaignEmailTemplatesController implements ng.IComponentController {
             .ok("Ok")
             .cancel("Cancel");
 
-        return this.save()
+        return this.save(true)
             .then(() => this.$mdDialog.show(prompt))
             .then((value: string) => {
                 if (this.emailRegex.exec(value) == null) {

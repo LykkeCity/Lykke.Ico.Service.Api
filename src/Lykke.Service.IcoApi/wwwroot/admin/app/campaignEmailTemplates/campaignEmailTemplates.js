@@ -142,22 +142,26 @@ class CampaignEmailTemplatesController {
         this.selectedTemplate.data = JSON.parse(json);
         localStorage.setItem(`${this.selectedTemplate.campaignId}_${this.selectedTemplate.templateId}_${this.templateDataKey}`, json);
     }
-    save() {
+    save(silent) {
         if (!this.selectedTemplate || !this.validate()) {
             return this.$q.reject();
         }
         this.selectedTemplate.body = this.bodyEditor.getValue();
         this.cacheDataModel();
         if (angular.equals(this.selectedTemplate, this.selectedTemplateOriginal)) {
-            this.shell.toast({ message: "There are no changes to save", type: AppToastType.Info });
-            return this.$q.reject();
+            if (!silent) {
+                this.shell.toast({ message: "There are no changes to save", type: AppToastType.Info });
+            }
+            return this.$q.resolve();
         }
-        return this.$http
-            .post(this.templatesUrl, this.selectedTemplate)
-            .then(() => {
-            this.shell.toast({ message: "Changes saved", type: AppToastType.Success });
-            this.selectedTemplateOriginal = angular.copy(this.selectedTemplate);
-        });
+        else {
+            return this.$http
+                .post(this.templatesUrl, this.selectedTemplate)
+                .then(() => {
+                this.shell.toast({ message: "Changes saved", type: AppToastType.Success });
+                this.selectedTemplateOriginal = angular.copy(this.selectedTemplate);
+            });
+        }
     }
     send() {
         if (!this.selectedTemplate || !this.validate()) {
@@ -175,7 +179,7 @@ class CampaignEmailTemplatesController {
             .required(true)
             .ok("Ok")
             .cancel("Cancel");
-        return this.save()
+        return this.save(true)
             .then(() => this.$mdDialog.show(prompt))
             .then((value) => {
             if (this.emailRegex.exec(value) == null) {
