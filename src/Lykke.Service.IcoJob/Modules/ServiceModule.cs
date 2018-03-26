@@ -1,7 +1,6 @@
 ﻿using Autofac;
 using Common.Log;
 using Lykke.JobTriggers.Extenstions;
-using Lykke.Service.IcoApi.AzureRepositories.Auth;
 using Lykke.Service.IcoApi.Core.Domain;
 using Lykke.Service.IcoApi.Core.Queues;
 using Lykke.Service.IcoApi.Core.Queues.Messages;
@@ -10,6 +9,7 @@ using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Services;
 using Lykke.Service.IcoCommon.Client;
 using Lykke.Service.IcoExRate.Client;
+using Lykke.Service.IcoJob.Services;
 using Lykke.Service.IcoJob.Settings;
 using Lykke.Services.IcoApi.AzureRepositories;
 using Lykke.SettingsReader;
@@ -106,8 +106,8 @@ namespace Lykke.Service.IcoJob.Modules
                 .As<IKycService>()
                 .SingleInstance();
 
-            builder.RegisterType<InvestorService>()
-                .As<IInvestorService>()
+            builder.RegisterType<InvestorJobService>()
+                .As<IInvestorJobService>()
                 .SingleInstance();
 
             builder.RegisterType<TransactionService>()

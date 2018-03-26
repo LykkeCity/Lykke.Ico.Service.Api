@@ -18,7 +18,7 @@ using Lykke.Service.IcoExRate.Client.AutorestClient.Models;
 using Lykke.Service.IcoCommon.Client;
 using Lykke.Service.IcoJob.Helpers;
 
-namespace Lykke.Service.IcoApi.Services
+namespace Lykke.Service.IcoJob.Services
 {
     public class TransactionService : ITransactionService
     {

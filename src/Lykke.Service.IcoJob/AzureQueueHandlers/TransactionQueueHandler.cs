@@ -2,10 +2,10 @@
 using System.Threading.Tasks;
 using Common;
 using Common.Log;
-using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Core.Queues.Messages;
 using Lykke.JobTriggers.Triggers.Attributes;
 using Lykke.Service.IcoApi.Core.Domain;
+using Lykke.Service.IcoJob.Services;
 
 namespace Lykke.Service.IcoJob.AzureQueueHandlers
 {

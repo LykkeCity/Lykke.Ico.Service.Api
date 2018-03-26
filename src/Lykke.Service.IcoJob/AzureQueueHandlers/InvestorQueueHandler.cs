@@ -11,9 +11,9 @@ namespace Lykke.Service.IcoJob.AzureQueueHandlers
     public class InvestorQueueHandler
     {
         private ILog _log;
-        private readonly IInvestorService _investorService;
+        private readonly IInvestorJobService _investorService;
 
-        public InvestorQueueHandler(ILog log, IInvestorService investorService)
+        public InvestorQueueHandler(ILog log, IInvestorJobService investorService)
         {
             _log = log;
             _investorService = investorService;

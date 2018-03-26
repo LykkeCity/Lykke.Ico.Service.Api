@@ -2,7 +2,7 @@
 
 namespace Lykke.Service.IcoJob.Services
 {
-    public interface IInvestorService
+    public interface IInvestorJobService
     {
         Task AssignPayInAddresses(string email);
     }

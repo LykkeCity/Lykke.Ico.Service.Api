@@ -14,7 +14,7 @@ using Lykke.Service.IcoApi.Core.Domain.AddressPool;
 
 namespace Lykke.Service.IcoJob.Services
 {
-    public class InvestorService : IInvestorService
+    public class InvestorJobService : IInvestorJobService
     {
         private readonly ILog _log;
         private readonly IBtcService _btcService;
@@ -25,7 +25,7 @@ namespace Lykke.Service.IcoJob.Services
         private readonly ICampaignInfoRepository _campaignInfoRepository;
         private readonly IIcoCommonServiceClient _icoCommonServiceClient;
 
-        public InvestorService(ILog log,
+        public InvestorJobService(ILog log,
             IBtcService btcService,
             IEthService ethService,
             IInvestorRepository investorRepository,
@@ -52,7 +52,7 @@ namespace Lykke.Service.IcoJob.Services
             var investor = await _investorRepository.GetAsync(email);
             if (investor.PayInAssigned)
             {
-                await _log.WriteInfoAsync(nameof(InvestorService), nameof(AssignPayInAddresses),
+                await _log.WriteInfoAsync(nameof(InvestorJobService), nameof(AssignPayInAddresses),
                     $"email={email}", "Pay-in addresses are already assigned");
 
                 return;
@@ -78,7 +78,7 @@ namespace Lykke.Service.IcoJob.Services
                 PayInSmarc90Logi10BtcAddress = _btcService.GetAddressByPublicKey(poolItemSmarc90Logi10.BtcPublicKey),
             };
 
-            await _log.WriteInfoAsync(nameof(InvestorService), nameof(AssignPayInAddresses),
+            await _log.WriteInfoAsync(nameof(InvestorJobService), nameof(AssignPayInAddresses),
                 $"email={email}, payInAddresses={payInAddresses.ToJson()}",
                 "Save investor pay-in addresses data");
 
