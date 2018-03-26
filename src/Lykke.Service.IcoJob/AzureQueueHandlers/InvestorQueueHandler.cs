@@ -4,6 +4,7 @@ using Common;
 using Common.Log;
 using Lykke.Service.IcoApi.Core.Queues.Messages;
 using Lykke.Service.IcoJob.Services;
+using Lykke.JobTriggers.Triggers.Attributes;
 
 namespace Lykke.Service.IcoJob.AzureQueueHandlers
 {
@@ -18,7 +19,7 @@ namespace Lykke.Service.IcoJob.AzureQueueHandlers
             _investorService = investorService;
         }
 
-        [TransactionQueueTrigger(5000)]
+        [QueueTrigger("investor-payin-address", 5000)]
         public async Task HandleTransactionMessage(InvestorMessage msg)
         {
             try

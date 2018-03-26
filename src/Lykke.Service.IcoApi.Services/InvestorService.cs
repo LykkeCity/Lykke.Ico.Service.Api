@@ -11,6 +11,7 @@ using Lykke.Service.IcoApi.Core.Repositories;
 using Lykke.Service.IcoApi.Core.Emails;
 using Lykke.Service.IcoApi.Core.Domain.Investor;
 using Lykke.Service.IcoApi.Core.Domain.Campaign;
+using Lykke.Service.IcoApi.Core.Queues.Messages;
 
 namespace Lykke.Service.IcoApi.Services
 {
@@ -22,6 +23,7 @@ namespace Lykke.Service.IcoApi.Services
         private readonly IAddressPoolRepository _addressPoolRepository;
         private readonly ICampaignInfoRepository _campaignInfoRepository;
         private readonly IIcoCommonServiceClient _icoCommonServiceClient;
+        private readonly QueuePublisher<InvestorMessage> _investorPublisher;
         private readonly IcoApiSettings _icoApiSettings;
 
         public InvestorService(ILog log,
@@ -33,6 +35,7 @@ namespace Lykke.Service.IcoApi.Services
             IAddressPoolHistoryRepository addressPoolHistoryRepository,
             ICampaignInfoRepository campaignInfoRepository,
             IIcoCommonServiceClient icoCommonServiceClient,
+            QueuePublisher<InvestorMessage> investorPublisher,
             IcoApiSettings icoApiSettings)
         {
             _log = log;
@@ -41,6 +44,7 @@ namespace Lykke.Service.IcoApi.Services
             _addressPoolRepository = addressPoolRepository;
             _campaignInfoRepository = campaignInfoRepository;
             _icoCommonServiceClient = icoCommonServiceClient;
+            _investorPublisher = investorPublisher;
             _icoApiSettings = icoApiSettings;
         }
 
@@ -126,6 +130,7 @@ namespace Lykke.Service.IcoApi.Services
             email = email.ToLowCase();
 
             await _investorRepository.SaveAddressesAsync(email, tokenAddress, refundEthAddress, refundBtcAddress);
+            await _investorPublisher.SendAsync(new InvestorMessage { Email = email });
         }
 
         public async Task SaveKycResultAsync(string email, string kycStatus)

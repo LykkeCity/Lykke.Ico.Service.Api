@@ -1313,12 +1313,12 @@
 					"response": []
 				},
 				{
-					"name": "/api/admin/investors/{email}/emails - wait summary email",
+					"name": "/api/investor - wait pay-in addresses",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "66fa384d-a50d-4e8b-bc18-2f816c18f8e6",
+								"id": "c8320e83-e8c0-469f-8111-1fa672a5b4f9",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -1326,15 +1326,15 @@
 									"});",
 									"",
 									"var jsonData = JSON.parse(responseBody);",
-									"var current = Number(jsonData.emails.count());",
-									"var expected = Number(pm.environment.get(\"investor-emails-size\")) + 1;",
+									"var current = jsonData.payInAddressesAssigned;",
+									"var expected = true;",
 									"",
 									"if(current == expected){",
-									"    console.info(\"Email recieved\");",
+									"    console.info(\"Pay-in addresses assigned\");",
 									"} else {",
-									"    console.info(\"Wait 10 secs\");",
-									"    setTimeout(function(){}, 10000);",
-									"    postman.setNextRequest(\"/api/admin/investors/{email}/emails - wait summary email\");",
+									"    console.info(\"Wait 2 secs\");",
+									"    setTimeout(function(){}, 2000);",
+									"    postman.setNextRequest(\"/api/investor - wait pay-in addresses\");",
 									"}"
 								]
 							}
@@ -1348,8 +1348,8 @@
 								"value": "application/json"
 							},
 							{
-								"key": "adminAuthToken",
-								"value": "{{admin_auth_token}}"
+								"key": "authToken",
+								"value": "{{confirmation_token}}"
 							}
 						],
 						"body": {
@@ -1357,16 +1357,13 @@
 							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
 						},
 						"url": {
-							"raw": "{{domain}}/api/admin/investors/{{email}}/emails",
+							"raw": "{{domain}}/api/investor",
 							"host": [
 								"{{domain}}"
 							],
 							"path": [
 								"api",
-								"admin",
-								"investors",
-								"{{email}}",
-								"emails"
+								"investor"
 							]
 						},
 						"description": null
@@ -1379,6 +1376,7 @@
 						{
 							"listen": "test",
 							"script": {
+								"id": "eef70b77-74a1-481e-8b0b-464fad57e509",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
@@ -1495,6 +1493,67 @@
 								"admin",
 								"campaign",
 								"info"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/admin/investors/{email}/emails - wait summary email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "66fa384d-a50d-4e8b-bc18-2f816c18f8e6",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"var current = Number(jsonData.emails.count());",
+									"var expected = Number(pm.environment.get(\"investor-emails-size\")) + 1;",
+									"",
+									"if(current == expected){",
+									"    console.info(\"Email recieved\");",
+									"} else {",
+									"    console.info(\"Wait 10 secs\");",
+									"    setTimeout(function(){}, 10000);",
+									"    postman.setNextRequest(\"/api/admin/investors/{email}/emails - wait summary email\");",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "adminAuthToken",
+								"value": "{{admin_auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
+						},
+						"url": {
+							"raw": "{{domain}}/api/admin/investors/{{email}}/emails",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"investors",
+								"{{email}}",
+								"emails"
 							]
 						},
 						"description": null

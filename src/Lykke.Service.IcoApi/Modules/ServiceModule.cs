@@ -155,6 +155,12 @@ namespace Lykke.Service.IcoApi.Modules
                 .WithParameter("queueName", $"{Consts.CAMPAIGN_ID.ToLower()}-transaction")
                 .SingleInstance();
 
+            builder.RegisterType<QueuePublisher<InvestorMessage>>()
+                .As<IQueuePublisher<InvestorMessage>>()
+                .WithParameter("connectionStringManager", connectionStringManager)
+                .WithParameter("queueName", $"investor-payin-address")
+                .SingleInstance();
+
             builder.RegisterInstance(_settings.CurrentValue);
         }
     }
