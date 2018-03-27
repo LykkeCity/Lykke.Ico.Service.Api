@@ -31,6 +31,7 @@ export class CampaignInfo {
     amountCrowdSaleInvestedToken: string;
 
     campaignId: string;
+    tokenName: string;
 }
 
 export class ShellController implements ng.IComponentController {

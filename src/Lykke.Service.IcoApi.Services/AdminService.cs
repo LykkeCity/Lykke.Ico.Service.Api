@@ -78,6 +78,7 @@ namespace Lykke.Service.IcoApi.Services
             dictionary.Add("BctNetwork", _settings.BtcNetwork);
             dictionary.Add("EthNetwork", _settings.EthNetwork);
             dictionary.Add("CampaignId", Consts.CampaignId);
+            dictionary.Add("TokenName", Consts.TokenName);
 
             return dictionary;
         }
