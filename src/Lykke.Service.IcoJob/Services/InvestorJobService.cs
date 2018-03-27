@@ -137,7 +137,7 @@ namespace Lykke.Service.IcoJob.Services
         private async Task<IAddressPoolItem> GetNextPoolItem(string email)
         {
             var addressPoolNextIdStr = await _campaignInfoRepository.GetValueAsync(CampaignInfoType.AddressPoolNextId);
-            if (Int32.TryParse(addressPoolNextIdStr, out var addressPoolNextId))
+            if (!Int32.TryParse(addressPoolNextIdStr, out var addressPoolNextId))
             {
                 addressPoolNextId = 1;
             }
