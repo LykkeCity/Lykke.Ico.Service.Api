@@ -1,10 +1,45 @@
 import { app, AppEvent, AppToastType, AppToast, AppCommand, IAppRoute, SysEvent } from "../app.js";
 
+export class CampaignInfo {
+    addressPoolCurrentSize: string;
+    addressPoolTotalSize: string;
+
+    bctNetwork: string;
+    ethNetwork: string;
+
+    investorsConfirmed: string;
+    investorsFilledIn: string;
+    investorsKycPassed: string;
+    investorsRegistered: string;
+
+    phase: string;
+    phaseTokenPriceUsd: string;
+    phaseTokenAmount: string;
+    phaseTokenAmountAvailable: string;
+    phaseTokenAmountTotal: string;
+
+    amountPreSaleInvestedBtc: string;
+    amountPreSaleInvestedEth: string;
+    amountPreSaleInvestedFiat: string;
+    amountPreSaleInvestedUsd: string;
+    amountPreSaleInvestedToken: string;
+
+    amountCrowdSaleInvestedBtc: string;
+    amountCrowdSaleInvestedEth: string;
+    amountCrowdSaleInvestedFiat: string;
+    amountCrowdSaleInvestedUsd: string;
+    amountCrowdSaleInvestedToken: string;
+
+    campaignId: string;
+}
+
 export class ShellController implements ng.IComponentController {
+
+    private campaignInfoUrl = "/api/admin/campaign/info";
 
     constructor(private $element: ng.IRootElementService, private $rootScope: ng.IRootScopeService,
         private $location: ng.ILocationService, private $mdSidenav: ng.material.ISidenavService, private $mdToast: ng.material.IToastService,
-        private $route: ng.route.IRouteService, public appRoutes: IAppRoute[]) {
+        private $route: ng.route.IRouteService, private $http: ng.IHttpService, public appRoutes: IAppRoute[]) {
 
         $rootScope.$on(AppEvent.Toast, (e: ng.IAngularEvent, toast: AppToast) => {
             this.toast(toast);
@@ -19,6 +54,14 @@ export class ShellController implements ng.IComponentController {
         });
     }
 
+    $onInit() {
+        this.$http
+            .get<CampaignInfo>(this.campaignInfoUrl)
+            .then(resp => {
+                this.campaignInfo = resp.data;
+            });
+    }
+
     $postLink() {
         // there is no :host class for angular 1.x.x,
         // so style component root element manually
@@ -27,7 +70,7 @@ export class ShellController implements ng.IComponentController {
             .addClass("layout-column"); // define self layout
     }
 
-    title = "Lykke ICO Platform";
+    campaignInfo: CampaignInfo;
 
     customCommands: AppCommand[] = [];
 

@@ -1,14 +1,17 @@
 import { app, AppEvent, AppToastType, SysEvent } from "../app.js";
+export class CampaignInfo {
+}
 export class ShellController {
-    constructor($element, $rootScope, $location, $mdSidenav, $mdToast, $route, appRoutes) {
+    constructor($element, $rootScope, $location, $mdSidenav, $mdToast, $route, $http, appRoutes) {
         this.$element = $element;
         this.$rootScope = $rootScope;
         this.$location = $location;
         this.$mdSidenav = $mdSidenav;
         this.$mdToast = $mdToast;
         this.$route = $route;
+        this.$http = $http;
         this.appRoutes = appRoutes;
-        this.title = "Lykke ICO Platform";
+        this.campaignInfoUrl = "/api/admin/campaign/info";
         this.customCommands = [];
         $rootScope.$on(AppEvent.Toast, (e, toast) => {
             this.toast(toast);
@@ -18,6 +21,13 @@ export class ShellController {
         });
         $rootScope.$on(SysEvent.RouteChangeSuccess, () => {
             this.customCommands = []; // clean custom toolbar
+        });
+    }
+    $onInit() {
+        this.$http
+            .get(this.campaignInfoUrl)
+            .then(resp => {
+            this.campaignInfo = resp.data;
         });
     }
     $postLink() {

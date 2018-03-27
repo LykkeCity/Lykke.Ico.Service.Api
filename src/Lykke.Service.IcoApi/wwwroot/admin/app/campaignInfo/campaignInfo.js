@@ -1,18 +1,11 @@
 import { app } from "../app.js";
-class CampaignInfo {
-}
 class CampaignInfoController {
-    constructor($element, $http) {
+    constructor($element, $timeout) {
         this.$element = $element;
-        this.$http = $http;
-        this.infoUrl = "/api/admin/campaign/info";
+        this.$timeout = $timeout;
     }
-    $onInit() {
-        this.$http
-            .get(this.infoUrl)
-            .then(response => {
-            this.info = response.data || new CampaignInfo();
-        });
+    get info() {
+        return this.shell && this.shell.campaignInfo;
     }
     $postLink() {
         // there is no :host class for angular 1.x.x,
@@ -26,4 +19,7 @@ class CampaignInfoController {
 app.component("campaignInfo", {
     controller: CampaignInfoController,
     templateUrl: "app/campaignInfo/campaignInfo.html",
+    require: {
+        shell: "^shell",
+    }
 });

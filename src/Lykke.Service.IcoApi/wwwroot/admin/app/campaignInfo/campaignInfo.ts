@@ -1,51 +1,15 @@
 ﻿import { app } from "../app.js";
-
-class CampaignInfo {
-    addressPoolCurrentSize: string;
-    addressPoolTotalSize: string;
-
-    bctNetwork: string;
-    ethNetwork: string;
-
-    investorsConfirmed: string;
-    investorsFilledIn: string;
-    investorsKycPassed: string;
-    investorsRegistered: string;
-
-    phase: string;
-    phaseTokenPriceUsd: string;
-    phaseTokenAmount: string;
-    phaseTokenAmountAvailable: string;
-    phaseTokenAmountTotal: string;
-
-    amountPreSaleInvestedBtc: string;
-    amountPreSaleInvestedEth: string;
-    amountPreSaleInvestedFiat: string;
-    amountPreSaleInvestedUsd: string;
-    amountPreSaleInvestedToken: string;
-
-    amountCrowdSaleInvestedBtc: string;
-    amountCrowdSaleInvestedEth: string;
-    amountCrowdSaleInvestedFiat: string;
-    amountCrowdSaleInvestedUsd: string;
-    amountCrowdSaleInvestedToken: string;
-}
+import { ShellController, CampaignInfo } from "../shell/shell.js";
 
 class CampaignInfoController implements ng.IComponentController {
 
-    private infoUrl = "/api/admin/campaign/info";
+    private shell: ShellController;
 
-    constructor(private $element: ng.IRootElementService, private $http: ng.IHttpService) {
+    constructor(private $element: ng.IRootElementService, private $timeout: ng.ITimeoutService) {
     }
 
-    info: CampaignInfo;
-
-    $onInit() {
-        this.$http
-            .get<CampaignInfo>(this.infoUrl)
-            .then(response => {
-                this.info = response.data || new CampaignInfo();
-            });
+    get info(): CampaignInfo {
+        return this.shell && this.shell.campaignInfo;
     }
 
     $postLink() {
@@ -61,4 +25,7 @@ class CampaignInfoController implements ng.IComponentController {
 app.component("campaignInfo", {
     controller: CampaignInfoController,
     templateUrl: "app/campaignInfo/campaignInfo.html",
+    require: {
+        shell: "^shell",
+    }
 });
