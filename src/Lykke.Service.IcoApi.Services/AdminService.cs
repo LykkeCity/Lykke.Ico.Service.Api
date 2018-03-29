@@ -512,7 +512,8 @@ namespace Lykke.Service.IcoApi.Services
                     {
                         EmailTo = tx.Email,
                         LinkToSummaryPage = _icoApiSettings.SiteSummaryPageUrl.Replace("{token}", investor.ConfirmationToken.Value.ToString()),
-                        OldTokens = investor.AmountToken
+                        OldTokens = investor.AmountToken,
+                        NewTokens = investor.AmountToken
                     });
                 }
             }
@@ -540,15 +541,15 @@ namespace Lykke.Service.IcoApi.Services
             report.AppendLine("");
             report.AppendLine("Emails");
 
-            investors = await _investorRepository.GetAllAsync();
             foreach (var tx in txs)
             {
                 var investor20MFixMessage = investor20MFixMessages.FirstOrDefault(f => f.EmailTo == tx.Email);
                 if (investor20MFixMessage != null)
                 {
-                    var investor = investors.First(f => f.Email == tx.Email);
+                    var txOld = txsAllOld.First(f => f.UniqueId == tx.UniqueId);
+                    var diffTokens = tx.AmountToken - txOld.AmountToken;
 
-                    investor20MFixMessage.NewTokens = investor.AmountToken;
+                    investor20MFixMessage.NewTokens += diffTokens;
                 }
             }
 
