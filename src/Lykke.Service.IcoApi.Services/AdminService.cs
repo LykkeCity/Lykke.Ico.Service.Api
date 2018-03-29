@@ -556,7 +556,7 @@ namespace Lykke.Service.IcoApi.Services
             {
                 if (saveChanges)
                 {
-                    await _investor20MFixPublisher.SendAsync(investor20MFixMessage);
+                    //await _investor20MFixPublisher.SendAsync(investor20MFixMessage);
 
                     report.AppendLine($"- sent: {investor20MFixMessage.ToJson()}");
                 }
