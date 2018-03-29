@@ -184,6 +184,11 @@ namespace Lykke.Service.IcoApi.Modules
                 .WithParameter(TypedParameter.From(connectionStringManager))
                 .SingleInstance();
 
+            builder.RegisterType<QueuePublisher<Investor20MFixMessage>>()
+                .As<IQueuePublisher<Investor20MFixMessage>>()
+                .WithParameter(TypedParameter.From(connectionStringManager))
+                .SingleInstance();
+
             builder.RegisterInstance(_settings.CurrentValue);
         }
     }

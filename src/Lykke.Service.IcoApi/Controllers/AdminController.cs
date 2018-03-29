@@ -591,7 +591,7 @@ namespace Lykke.Service.IcoApi.Controllers
         /// </summary>
         [AdminAuth]
         [HttpGet("transactions/recalculate/20M")]
-        public async Task<IActionResult> GetKycReminders()
+        public async Task<IActionResult> GetReportForRecalculate20MTxs()
         {
             var report = await _adminService.Recalculate20MTxs(false);
 
@@ -599,11 +599,11 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
-        /// Recalcalcate txs and related data for 20m crowdsale phase
+        /// Recalcalcate data for 20m crowdsale phase and send emails
         /// </summary>
         [AdminAuth]
         [HttpPost("transactions/recalculate/20M")]
-        public async Task<IActionResult> PostKycReminderEmails([Required] string confirmation)
+        public async Task<IActionResult> Recalculate20MTxs([Required] string confirmation)
         {
             if (confirmation != "confirm")
             {
@@ -613,6 +613,20 @@ namespace Lykke.Service.IcoApi.Controllers
             var report = await _adminService.Recalculate20MTxs(true);
 
             return File(Encoding.UTF8.GetBytes(report), "text/csv", "report.txt");
+        }
+
+        /// <summary>
+        /// Send test 20M fix email
+        /// </summary>
+        [AdminAuth]
+        [HttpPost("transactions/recalculate/20M/sendTestEmail")]
+        public async Task<IActionResult> Send20MFixTestEmail([Required] string email,
+            [Required] decimal oldToken,
+            [Required] decimal newTokens)
+        {
+            await _adminService.Send20MFixEmail(email, oldToken, newTokens);
+
+            return Ok();
         }
 
         /// <summary>

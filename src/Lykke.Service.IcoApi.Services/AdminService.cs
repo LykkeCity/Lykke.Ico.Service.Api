@@ -46,6 +46,7 @@ namespace Lykke.Service.IcoApi.Services
         private readonly IQueuePublisher<TransactionMessage> _transactionQueuePublisher;
         private readonly IQueuePublisher<InvestorKycReminderMessage> _investorKycReminderPublisher;
         private readonly IQueuePublisher<InvestorReferralCodeMessage> _investorReferralCodePublisher;
+        private readonly IQueuePublisher<Investor20MFixMessage> _investor20MFixPublisher;
         private readonly IPrivateInvestorRepository _privateInvestorRepository;
         private readonly IPrivateInvestorAttributeRepository _privateInvestorAttributeRepository;
         private readonly IReferralCodeService _referralCodeService;
@@ -65,6 +66,7 @@ namespace Lykke.Service.IcoApi.Services
             IQueuePublisher<TransactionMessage> transactionQueuePublisher,
             IQueuePublisher<InvestorKycReminderMessage> investorKycReminderPublisher,
             IQueuePublisher<InvestorReferralCodeMessage> investorReferralCodePublisher,
+            IQueuePublisher<Investor20MFixMessage> investor20MFixPublisher,
             IPrivateInvestorRepository privateInvestorRepository,
             IPrivateInvestorAttributeRepository privateInvestorAttributeRepository,
             IReferralCodeService referralCodeService,
@@ -84,6 +86,7 @@ namespace Lykke.Service.IcoApi.Services
             _transactionQueuePublisher = transactionQueuePublisher;
             _investorKycReminderPublisher = investorKycReminderPublisher;
             _investorReferralCodePublisher = investorReferralCodePublisher;
+            _investor20MFixPublisher = investor20MFixPublisher;
             _privateInvestorRepository = privateInvestorRepository;
             _privateInvestorAttributeRepository = privateInvestorAttributeRepository;
             _referralCodeService = referralCodeService;
@@ -497,6 +500,23 @@ namespace Lykke.Service.IcoApi.Services
             report.AppendLine($"- Total tokens 20M (old): {totalTokens20MOld}");
             report.AppendLine($"- Total tokens 20M (new): {totalTokens20M}");
 
+            var investor20MFixMessages = new List<Investor20MFixMessage>();
+            foreach (var tx in txs)
+            {
+                var investor20MFixMessage = investor20MFixMessages.FirstOrDefault(f => f.EmailTo == tx.Email);
+                if (investor20MFixMessage == null)
+                {
+                    var investor = investors.First(f => f.Email == tx.Email);
+
+                    investor20MFixMessages.Add(new Investor20MFixMessage
+                    {
+                        EmailTo = tx.Email,
+                        LinkToSummaryPage = _icoApiSettings.SiteSummaryPageUrl.Replace("{token}", investor.ConfirmationToken.Value.ToString()),
+                        OldTokens = investor.AmountToken
+                    });
+                }
+            }
+
             report.AppendLine("");
             report.AppendLine("Investors");
 
@@ -518,6 +538,35 @@ namespace Lykke.Service.IcoApi.Services
             }
 
             report.AppendLine("");
+            report.AppendLine("Emails");
+
+            investors = await _investorRepository.GetAllAsync();
+            foreach (var tx in txs)
+            {
+                var investor20MFixMessage = investor20MFixMessages.FirstOrDefault(f => f.EmailTo == tx.Email);
+                if (investor20MFixMessage != null)
+                {
+                    var investor = investors.First(f => f.Email == tx.Email);
+
+                    investor20MFixMessage.NewTokens = investor.AmountToken;
+                }
+            }
+
+            foreach (var investor20MFixMessage in investor20MFixMessages)
+            {
+                if (saveChanges)
+                {
+                    await _investor20MFixPublisher.SendAsync(investor20MFixMessage);
+
+                    report.AppendLine($"- sent: {investor20MFixMessage.ToJson()}");
+                }
+                else
+                {
+                    report.AppendLine($"- {investor20MFixMessage.ToJson()}");
+                }
+            }
+
+            report.AppendLine("");
             report.AppendLine("CampaignInfo");
 
             var amountInvestedToken = Decimal.Parse(await _campaignInfoRepository.GetValueAsync(CampaignInfoType.AmountInvestedToken));
@@ -534,6 +583,17 @@ namespace Lykke.Service.IcoApi.Services
             }
 
             return report.ToString();
+        }
+
+        public async Task Send20MFixEmail(string email, decimal oldToken, decimal newTokens)
+        {
+            await _investor20MFixPublisher.SendAsync(new Investor20MFixMessage
+            {
+                EmailTo = email,
+                LinkToSummaryPage = _icoApiSettings.SiteSummaryPageUrl.Replace("{token}", Guid.NewGuid().ToString()),
+                OldTokens = oldToken,
+                NewTokens = newTokens,
+            });
         }
 
         public class TokenPrice

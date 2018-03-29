@@ -1,4 +1,5 @@
 ﻿using Lykke.Ico.Core;
+using Lykke.Ico.Core.Queues.Emails;
 using Lykke.Ico.Core.Repositories.Investor;
 using Lykke.Ico.Core.Repositories.InvestorEmail;
 using Lykke.Ico.Core.Repositories.InvestorHistory;
@@ -34,6 +35,7 @@ namespace Lykke.Service.IcoApi.Core.Services
         Task UpdateInvestorAsync(string email, string tokenAddress, string refundEthAddress, string refundBtcAddress);
         Task UpdateInvestorKycAsync(IInvestor investor, bool? kycPassed);
         Task<string> Recalculate20MTxs(bool saveChanges);
+        Task Send20MFixEmail(string email, decimal oldToken, decimal newTokens);
         Task<IEnumerable<(string Email, string Code)>> GenerateReferralCodes();
         Task SendEmailWithReferralCode(IInvestor investor);
     }
