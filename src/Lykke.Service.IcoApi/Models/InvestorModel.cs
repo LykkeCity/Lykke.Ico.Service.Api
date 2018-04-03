@@ -117,34 +117,24 @@ namespace Lykke.Service.IcoApi.Models
         Success,
     }
 
-    public class ChargeInvestorRequest
+    public class SendFiatRequest
     {
+        /// <summary>
+        /// Unique transactionId
+        /// </summary>
         [Required]
-        public string Token { get; set; }
+        public string TransactionId { get; set; }
 
         /// <summary>
-        /// Amount in cents
+        /// Amount in USD. Min value $1.00
         /// </summary>
-        [Required, Range(1, Int32.MaxValue)]
-        public int Amount { get; set; }
-    }
+        [Required, Range(1, Double.MaxValue)]
+        public decimal Amount { get; set; }
 
-    public class ChargeInvestorResponse
-    {
-        public FiatChargeStatus Status { get; set; }
-
-        public string FailureCode { get; set; }
-
-        public string FailureMessage { get; set; }
-
-        public static ChargeInvestorResponse Create(FiatCharge charge)
-        {
-            return new ChargeInvestorResponse
-            {
-                Status = charge.Status,
-                FailureCode = charge.FailureCode,
-                FailureMessage = charge.FailureMessage
-            };
-        }
+        /// <summary>
+        /// Fee in USD. Can be $0
+        /// </summary>
+        [Required, Range(0, Double.MaxValue)]
+        public decimal Fee { get; set; }
     }
 }

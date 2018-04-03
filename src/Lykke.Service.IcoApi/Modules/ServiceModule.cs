@@ -130,10 +130,6 @@ namespace Lykke.Service.IcoApi.Modules
                 .WithParameter("testSecretKey", _settings.CurrentValue.EthTestSecretKey)
                 .SingleInstance();
 
-            builder.RegisterType<FiatService>()
-                .As<IFiatService>()
-                .SingleInstance();
-
             builder.RegisterType<CampaignService>()
                 .As<ICampaignService>()
                 .SingleInstance();

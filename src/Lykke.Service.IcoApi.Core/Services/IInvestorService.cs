@@ -18,5 +18,7 @@ namespace Lykke.Service.IcoApi.Core.Services
         Task UpdateAsync(string email, string tokenAddress, string refundEthAddress, string refundBtcAddress);
 
         Task SaveKycResultAsync(string email, string kycStatus);
+
+        Task SendFiatTransaction(string email, string transactionId, decimal amount, decimal fee);
     }
 }

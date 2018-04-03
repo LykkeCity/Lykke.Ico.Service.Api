@@ -1,8 +1,6 @@
 ﻿using System.Net;
 using System;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Models;
@@ -22,19 +20,17 @@ namespace Lykke.Service.IcoApi.Controllers
         private readonly IInvestorService _investorService;
         private readonly IBtcService _btcService;
         private readonly IEthService _ethService;
-        private readonly IFiatService _fiatService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IKycService _kycService;
 
         public InvestorController(ILog log, IInvestorService investorService, IBtcService btcService,
-            IEthService ethService, IFiatService fiatService, IHttpContextAccessor httpContextAccessor,
+            IEthService ethService, IHttpContextAccessor httpContextAccessor,
             IKycService kycService)
         {
             _log = log;
             _investorService = investorService;
             _btcService = btcService;
             _ethService = ethService;
-            _fiatService = fiatService;
             _httpContextAccessor = httpContextAccessor;
             _kycService = kycService;
         }
@@ -54,8 +50,7 @@ namespace Lykke.Service.IcoApi.Controllers
             }            
 
             await _log.WriteInfoAsync(nameof(InvestorController), nameof(RegisterInvestor), 
-                $"email={model.Email}, ip={GetRequestIP()}",
-                "Register investor");
+                $"email={model.Email}", "Register investor");
 
             var result = await _investorService.RegisterAsync(model.Email);
 
@@ -73,8 +68,7 @@ namespace Lykke.Service.IcoApi.Controllers
         public async Task<IActionResult> ConfirmInvestor(Guid token)
         {
             await _log.WriteInfoAsync(nameof(InvestorController), nameof(ConfirmInvestor), 
-                $"token={token}, ip={GetRequestIP()}",
-                "Confirm investor email");
+                $"token={token}", "Confirm investor email");
 
             var success = await _investorService.ConfirmAsync(token);
             if (!success)
@@ -98,8 +92,7 @@ namespace Lykke.Service.IcoApi.Controllers
             var email = GetAuthUserEmail();
 
             await _log.WriteInfoAsync(nameof(InvestorController), nameof(Get),
-                $"email={email}, ip={GetRequestIP()}",
-                "Get investor");
+                $"email={email}", "Get investor");
 
             var investor = await _investorService.GetAsync(email);
             var kycLink = await _kycService.GetKycLink(investor.Email, investor.KycRequestId);
@@ -142,8 +135,7 @@ namespace Lykke.Service.IcoApi.Controllers
             }
 
             await _log.WriteInfoAsync(nameof(InvestorController), nameof(Post), 
-                $"email={email}, ip={GetRequestIP()}, model={model.ToJson()}",
-                "Save investor addresses");
+                $"email={email}, model={model.ToJson()}", "Save investor addresses");
 
             await _investorService.UpdateAsync(email, model.TokenAddress, model.RefundEthAddress, model.RefundBtcAddress);
 
@@ -151,88 +143,36 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
-        /// Charge investor card
+        /// Send fiat transaction details
         /// </summary>
         [HttpPost]
         [InvestorAuth]
-        [Route("charge")]
-        [ProducesResponseType(typeof(ChargeInvestorResponse), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> ChargeInvestor([FromBody] ChargeInvestorRequest model)
+        [Route("fiat")]
+        public async Task<IActionResult> SendFiat([FromBody] SendFiatRequest request)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+            if (string.IsNullOrEmpty(request.TransactionId))
+            {
+                return BadRequest($"transactionId can not be null or empty");
+            }
 
             var email = GetAuthUserEmail();
 
-            await _log.WriteInfoAsync(
-                nameof(InvestorController),
-                nameof(ChargeInvestor),
-                $"email={email}, ip={GetRequestIP()}, model={model.ToJson()}",
-                "Charge investor card");
+            await _log.WriteInfoAsync(nameof(InvestorController), nameof(SendFiat),
+                $"email={email}, request={request.ToJson()}", "Send fiat request");
 
-            var result = await _fiatService.Charge(email, model.Token, model.Amount);
+            await _investorService.SendFiatTransaction(email, request.TransactionId, 
+                request.Amount, request.Fee);
 
-            return Ok(ChargeInvestorResponse.Create(result));
+            return Ok();
         }
 
         private string GetAuthUserEmail()
         {
             return User.FindFirst(ClaimTypes.Email).Value;
-        }
-
-        private string GetRequestIP()
-        {
-            // todo support new "Forwarded" header (2014) https://en.wikipedia.org/wiki/X-Forwarded-For
-
-            // X-Forwarded-For (csv list):  Using the First entry in the list seems to work
-            // for 99% of cases however it has been suggested that a better (although tedious)
-            // approach might be to read each IP from right to left and use the first public IP.
-            // http://stackoverflow.com/a/43554000/538763
-
-            var ip = SplitCsv(GetHeaderValueAs<string>("X-Forwarded-For")).FirstOrDefault();
-            if (!String.IsNullOrWhiteSpace(ip))
-            {
-                return ip;
-            }
-
-            ip = _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString();
-            if (!String.IsNullOrWhiteSpace(ip))
-            {
-                return ip;
-            }
-
-            return GetHeaderValueAs<string>("REMOTE_ADDR");
-        }
-
-        private T GetHeaderValueAs<T>(string headerName)
-        {
-            if (_httpContextAccessor.HttpContext?.Request?.Headers?.TryGetValue(headerName, out var values) ?? false)
-            {
-                var rawValues = values.ToString();   // writes out as Csv when there are multiple.
-                if (!string.IsNullOrEmpty(rawValues))
-                {
-                    return (T)Convert.ChangeType(values.ToString(), typeof(T));
-                }
-            }
-
-            return default(T);
-        }
-
-        private List<string> SplitCsv(string csvList)
-        {
-            if (string.IsNullOrWhiteSpace(csvList))
-            {
-                return new List<string>();
-            }
-
-            return csvList
-                .TrimEnd(',')
-                .Split(',')
-                .AsEnumerable<string>()
-                .Select(s => s.Trim())
-                .ToList();
         }
     }
 }

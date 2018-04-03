@@ -25,6 +25,7 @@ namespace Lykke.Service.IcoApi.Services
         private readonly ICampaignInfoRepository _campaignInfoRepository;
         private readonly IIcoCommonServiceClient _icoCommonServiceClient;
         private readonly IQueuePublisher<InvestorMessage> _investorPublisher;
+        private readonly IQueuePublisher<TransactionMessage> _transactionQueuePublisher;
         private readonly IcoApiSettings _icoApiSettings;
 
         public InvestorService(ILog log,
@@ -37,6 +38,7 @@ namespace Lykke.Service.IcoApi.Services
             ICampaignInfoRepository campaignInfoRepository,
             IIcoCommonServiceClient icoCommonServiceClient,
             IQueuePublisher<InvestorMessage> investorPublisher,
+            IQueuePublisher<TransactionMessage> transactionQueuePublisher,
             IcoApiSettings icoApiSettings)
         {
             _log = log;
@@ -46,6 +48,7 @@ namespace Lykke.Service.IcoApi.Services
             _campaignInfoRepository = campaignInfoRepository;
             _icoCommonServiceClient = icoCommonServiceClient;
             _investorPublisher = investorPublisher;
+            _transactionQueuePublisher = transactionQueuePublisher;
             _icoApiSettings = icoApiSettings;
         }
 
@@ -181,6 +184,35 @@ namespace Lykke.Service.IcoApi.Services
                 CampaignId = Consts.CAMPAIGN_ID,
                 Data = message
             });
+        }
+
+        public async Task SendFiatTransaction(string email, string transactionId, decimal amount, decimal fee)
+        {
+            var message = new TransactionMessage
+            {
+                Email = email,
+                Amount = amount,
+                CreatedUtc = DateTime.UtcNow,
+                Currency = Core.Domain.CurrencyType.Fiat,
+                Fee = fee,
+                TransactionId = transactionId,
+                UniqueId = transactionId
+            };
+
+            await _log.WriteInfoAsync(nameof(InvestorService), nameof(SendFiatTransaction),
+                $"message={message.ToJson()}", "Transaction message to send");
+
+            try
+            {
+                await _transactionQueuePublisher.SendAsync(message);
+            }
+            catch (Exception ex)
+            {
+                await _log.WriteErrorAsync(nameof(InvestorService), nameof(SendFiatTransaction),
+                    $"Failed to send transaction message", ex);
+
+                throw;
+            }
         }
     }
 }
