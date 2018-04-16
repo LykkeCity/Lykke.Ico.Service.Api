@@ -15,6 +15,8 @@ namespace Lykke.Service.IcoApi.Core.Queues.Messages
 
         public CurrencyType Currency { get; set; }
 
+        public TxType? Type { get; set; }
+
         public decimal Amount { get; set; }
 
         /// <summary>

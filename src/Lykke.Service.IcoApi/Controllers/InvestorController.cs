@@ -165,7 +165,7 @@ namespace Lykke.Service.IcoApi.Controllers
                 $"email={email}, request={request.ToJson()}", "Send fiat request");
 
             await _investorService.SendFiatTransaction(email, request.TransactionId, 
-                request.Amount, request.Fee);
+                request.Type, request.Amount, request.Fee);
 
             return Ok();
         }

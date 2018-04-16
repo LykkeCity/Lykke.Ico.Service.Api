@@ -186,7 +186,7 @@ namespace Lykke.Service.IcoApi.Services
             });
         }
 
-        public async Task SendFiatTransaction(string email, string transactionId, decimal amount, decimal fee)
+        public async Task SendFiatTransaction(string email, string transactionId, TxType txType, decimal amount, decimal fee)
         {
             var message = new TransactionMessage
             {
@@ -194,6 +194,7 @@ namespace Lykke.Service.IcoApi.Services
                 Amount = amount,
                 CreatedUtc = DateTime.UtcNow,
                 Currency = Core.Domain.CurrencyType.Fiat,
+                Type = txType,
                 Fee = fee,
                 TransactionId = transactionId,
                 UniqueId = transactionId

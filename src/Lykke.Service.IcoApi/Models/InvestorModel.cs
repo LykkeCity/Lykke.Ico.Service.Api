@@ -126,6 +126,12 @@ namespace Lykke.Service.IcoApi.Models
         public string TransactionId { get; set; }
 
         /// <summary>
+        /// Transaction type
+        /// </summary>
+        [Required]
+        public TxType Type { get; set; }
+
+        /// <summary>
         /// Amount in USD. Min value $1.00
         /// </summary>
         [Required, Range(1, Double.MaxValue)]
