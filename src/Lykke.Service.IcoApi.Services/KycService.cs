@@ -18,6 +18,11 @@ namespace Lykke.Service.IcoApi.Services
         public async Task<string> GetKycLink(string email, string kycId)
         {
             var settings = await _campaignSettingsRepository.GetAsync();
+            if (string.IsNullOrEmpty(settings.KycCampaignId))
+            {
+                return "";
+            }
+
             var kycMessage = new { campaignId = settings.KycCampaignId, email = email, kycId = kycId };
             var kycEncryptedMessage = EncryptionHelper.Encrypt(kycMessage.ToJson(), 
                 settings.KycServiceEncriptionKey, settings.KycServiceEncriptionIv);

@@ -3604,6 +3604,612 @@
 			]
 		},
 		{
+			"name": "Send Fiat Transaction - Presale & Smarc90Logi10",
+			"description": null,
+			"item": [
+				{
+					"name": "/api/admin/campaign/info - remember campaign data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5316ab4b-ec8f-4d34-8af3-9b553e72ddd4",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Remember campaign data\", function() {",
+									"    var jsonData = pm.response.json();",
+									"    ",
+									"    pm.environment.set(\"amountPreSaleInvestedBtc\", (typeof jsonData.amountPreSaleInvestedBtc === 'undefined') ? 0 : jsonData.amountPreSaleInvestedBtc);",
+									"    pm.environment.set(\"amountPreSaleInvestedEth\", (typeof jsonData.amountPreSaleInvestedEth === 'undefined') ? 0 : jsonData.amountPreSaleInvestedEth);",
+									"    pm.environment.set(\"amountPreSaleInvestedSmarcToken\", (typeof jsonData.amountPreSaleInvestedSmarcToken === 'undefined') ? 0 : jsonData.amountPreSaleInvestedSmarcToken);",
+									"    pm.environment.set(\"amountPreSaleInvestedLogiToken\", (typeof jsonData.amountPreSaleInvestedLogiToken === 'undefined') ? 0 : jsonData.amountPreSaleInvestedLogiToken);",
+									"    pm.environment.set(\"amountPreSaleInvestedUsd\", (typeof jsonData.amountPreSaleInvestedUsd === 'undefined') ? 0 : jsonData.amountPreSaleInvestedUsd);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "adminAuthToken",
+								"value": "{{admin_auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
+						},
+						"url": {
+							"raw": "{{domain}}/api/admin/campaign/info",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"campaign",
+								"info"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/admin/investors/{email}/emails - remember emails number",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Emails sent number\", function () {",
+									"    var jsonData = pm.response.json();",
+									"",
+									"    pm.environment.set(\"investor-emails-size\", (typeof jsonData.emails === 'undefined') ? 0 : jsonData.emails.count());",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "adminAuthToken",
+								"value": "{{admin_auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
+						},
+						"url": {
+							"raw": "{{domain}}/api/admin/investors/{{email}}/emails",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"investors",
+								"{{email}}",
+								"emails"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/admin/investors/{email}/transactions - remember transactions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "98c845cd-7d7f-42bc-9042-a90952314ac8",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Remember transactions number\", function () {",
+									"    var jsonData = pm.response.json();",
+									"",
+									"    pm.environment.set(\"investor-transactions-size\", (typeof jsonData.transactions === 'undefined') ? 0 : jsonData.transactions.count());",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "adminAuthToken",
+								"value": "{{admin_auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
+						},
+						"url": {
+							"raw": "{{domain}}/api/admin/investors/{{email}}/transactions",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"investors",
+								"{{email}}",
+								"transactions"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/admin/investors/{email} - get amounts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a457b393-0f7d-4f9e-a522-4c3f1011ee81",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Get data\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    ",
+									"    pm.environment.set(\"amountEth\", jsonData.amountEth);",
+									"    pm.environment.set(\"amountUsd\", jsonData.amountUsd);",
+									"    pm.environment.set(\"amountLogiToken\", jsonData.amountLogiToken);",
+									"    pm.environment.set(\"amountSmarcToken\", jsonData.amountSmarcToken);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "adminAuthToken",
+								"value": "{{admin_auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
+						},
+						"url": {
+							"raw": "{{domain}}/api/admin/investors/{{email}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"investors",
+								"{{email}}"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/admin/investors/{email} - get confirmation token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Recheck and remember confirmation token\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    ",
+									"    pm.expect(jsonData.email).to.eql(pm.environment.get(\"email\"));",
+									"",
+									"    pm.environment.set(\"confirmation_token\", jsonData.confirmationToken);    ",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "adminAuthToken",
+								"value": "{{admin_auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
+						},
+						"url": {
+							"raw": "{{domain}}/api/admin/investors/{{email}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"investors",
+								"{{email}}"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/investor/fiat - send fiat transaction to queue",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "authToken",
+								"value": "{{confirmation_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"transactionId\": \"fiat_smarc90Logi10_1\",\r\n  \"type\": \"smarc90Logi10\",\r\n  \"amount\": 200,\r\n  \"fee\": 2.99\r\n}"
+						},
+						"url": {
+							"raw": "{{domain}}/api/investor/fiat",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"investor",
+								"fiat"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/admin/investors/{email}/emails - wait fiat transaction email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5a2a7c7a-8ce3-4a9c-875b-e09474181ecd",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"var current = Number(jsonData.emails.count());",
+									"var expected = Number(pm.environment.get(\"investor-emails-size\")) + 1;",
+									"",
+									"if(current == expected){",
+									"    console.info(\"1 email recieved (1 transaction)\");",
+									"} else {",
+									"    console.info(\"Wait 10 secs\");",
+									"    setTimeout(function(){}, 10000);",
+									"    postman.setNextRequest(\"/api/admin/investors/{email}/emails - wait fiat transaction email\");",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "adminAuthToken",
+								"value": "{{admin_auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
+						},
+						"url": {
+							"raw": "{{domain}}/api/admin/investors/{{email}}/emails",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"investors",
+								"{{email}}",
+								"emails"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/admin/campaign/info - check campaign amounts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7d9a3c42-c04e-4e0c-8ffb-5598368e49b0",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"amountPreSaleInvestedSmarcToken was increased\", function() {",
+									"    var jsonData = pm.response.json();",
+									"    ",
+									"    var old = pm.environment.get(\"amountPreSaleInvestedSmarcToken\");",
+									"    console.info(\"old: \" + old);",
+									"    ",
+									"    var current = jsonData.amountPreSaleInvestedSmarcToken;",
+									"    console.info(\"current: \" + current);",
+									"    ",
+									"    pm.expect(Number(current) > Number(old)).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"amountPreSaleInvestedLogiToken was increased\", function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(Number(jsonData.amountPreSaleInvestedLogiToken) > Number(pm.environment.get(\"amountPreSaleInvestedLogiToken\"))).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"amountPreSaleInvestedUsd was increased\", function() {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(Number(jsonData.amountPreSaleInvestedUsd) > Number(pm.environment.get(\"amountPreSaleInvestedUsd\"))).to.be.true;",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "adminAuthToken",
+								"value": "{{admin_auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
+						},
+						"url": {
+							"raw": "{{domain}}/api/admin/campaign/info",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"campaign",
+								"info"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/admin/investors/{email} - check investor amounts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "fc6eb5db-959b-45b7-a639-ab68be9c7eba",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"amountUsd was increased\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(Number(jsonData.amountUsd) > Number(pm.environment.get(\"amountUsd\"))).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"amountSmarcToken was increased\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(Number(jsonData.amountSmarcToken) > Number(pm.environment.get(\"amountSmarcToken\"))).to.be.true;",
+									"});",
+									"",
+									"pm.test(\"amountLogiToken was increased\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(Number(jsonData.amountLogiToken) > Number(pm.environment.get(\"amountLogiToken\"))).to.be.true;",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "adminAuthToken",
+								"value": "{{admin_auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
+						},
+						"url": {
+							"raw": "{{domain}}/api/admin/investors/{{email}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"investors",
+								"{{email}}"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				},
+				{
+					"name": "/api/admin/investors/{email}/transactions - check transactions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "bf1c6384-97d8-40ee-86af-18402996a5f2",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Must have 1 new transaction\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    var current = Number(jsonData.transactions.count());",
+									"    var expected = Number(pm.environment.get(\"investor-transactions-size\")) + 1;",
+									"    ",
+									"    pm.expect(current).to.eql(expected);",
+									"});"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "adminAuthToken",
+								"value": "{{admin_auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
+						},
+						"url": {
+							"raw": "{{domain}}/api/admin/investors/{{email}}/transactions",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"investors",
+								"{{email}}",
+								"transactions"
+							]
+						},
+						"description": null
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "10663ccb-4ab7-4e65-a15a-7f9bf7ab8d6a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "af927d6d-b87c-4ffc-8a17-0b7121813a7a",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
 			"name": "Send Out of Date Transaction",
 			"description": "",
 			"item": [

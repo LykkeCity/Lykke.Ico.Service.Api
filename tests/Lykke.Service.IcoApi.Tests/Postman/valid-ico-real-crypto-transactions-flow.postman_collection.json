@@ -383,6 +383,64 @@
 						"description": ""
 					},
 					"response": []
+				},
+				{
+					"name": "/api/investor - wait pay-in addresses",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c8320e83-e8c0-469f-8111-1fa672a5b4f9",
+								"type": "text/javascript",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"var jsonData = JSON.parse(responseBody);",
+									"var current = jsonData.payInAddressesAssigned;",
+									"var expected = true;",
+									"",
+									"if(current == expected){",
+									"    console.info(\"Pay-in addresses assigned\");",
+									"} else {",
+									"    console.info(\"Wait 2 secs\");",
+									"    setTimeout(function(){}, 2000);",
+									"    postman.setNextRequest(\"/api/investor - wait pay-in addresses\");",
+									"}"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "authToken",
+								"value": "{{confirmation_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"andrey.krivoshapov@lykke.com\"\r\n}"
+						},
+						"url": {
+							"raw": "{{domain}}/api/investor",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"api",
+								"investor"
+							]
+						},
+						"description": null
+					},
+					"response": []
 				}
 			],
 			"event": [
