@@ -140,6 +140,8 @@ namespace Lykke.Service.IcoJob.Services
             if (!Int32.TryParse(addressPoolNextIdStr, out var addressPoolNextId))
             {
                 addressPoolNextId = 1;
+
+                await _campaignInfoRepository.SaveValueAsync(CampaignInfoType.AddressPoolNextId, addressPoolNextId.ToString());
             }
 
             var poolItem = await _addressPoolRepository.Get(addressPoolNextId);
