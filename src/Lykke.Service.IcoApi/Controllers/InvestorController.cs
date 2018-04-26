@@ -122,7 +122,7 @@ namespace Lykke.Service.IcoApi.Controllers
             }
             if (!_ethService.ValidateAddress(model.TokenAddress))
             {
-                return BadRequest($"The token address={model.TokenAddress} is invalid IRC20 address");
+                return BadRequest($"The token address={model.TokenAddress} is invalid ERC-20 address");
             }
             if (!string.IsNullOrEmpty(model.RefundEthAddress) && !_ethService.ValidateAddress(model.RefundEthAddress))
             {

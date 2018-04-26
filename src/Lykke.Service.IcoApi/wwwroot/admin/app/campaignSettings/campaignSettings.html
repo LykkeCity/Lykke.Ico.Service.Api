@@ -176,9 +176,6 @@
     </md-list-item>
     <md-divider></md-divider>
     <md-subheader class="md-no-sticky">Transaction Queue SAS URL</md-subheader>
-    <div layout="row" layout-align="center center" layout-padding ng-if="$ctrl.settings.commonSettings.transactionQueueSasUrl">
-        <p class="md-caption">{{$ctrl.settings.commonSettings.transactionQueueSasUrl}}</p>
-    </div>
     <md-list-item>
         <p>Expiry Time:</p>
         <div class="md-secondary">
@@ -191,67 +188,60 @@
     </md-list-item>
     <md-divider></md-divider>
     <md-subheader class="md-no-sticky">SMTP</md-subheader>
-    <div ng-if="$ctrl.settings && !$ctrl.settings.commonSettings.smtp">
-        <div layout="row" layout-align="center center">
-            <md-button class="md-primary" ng-click="$ctrl.overrideSmtp()">Override Default SMTP Settings</md-button>
+    <md-list-item>
+        <p>Host:</p>
+        <div class="md-secondary">
+            <md-input-container>
+                <input ng-model="$ctrl.settings.commonSettings.smtp.host" type="text">
+            </md-input-container>
         </div>
-    </div>
-    <div ng-if="$ctrl.settings && $ctrl.settings.commonSettings.smtp">
-        <md-list-item>
-            <p>Host:</p>
-            <div class="md-secondary">
-                <md-input-container>
-                    <input ng-model="$ctrl.settings.commonSettings.smtp.host" type="text">
-                </md-input-container>
-            </div>
-        </md-list-item>
-        <md-list-item>
-            <p>Port:</p>
-            <div class="md-secondary">
-                <md-input-container>
-                    <input ng-model="$ctrl.settings.commonSettings.smtp.port" type="number">
-                </md-input-container>
-            </div>
-        </md-list-item>
-        <md-list-item>
-            <p>Local Domain:</p>
-            <div class="md-secondary">
-                <md-input-container>
-                    <input ng-model="$ctrl.settings.commonSettings.smtp.localDomain" type="text">
-                </md-input-container>
-            </div>
-        </md-list-item>
-        <md-list-item>
-            <p>Login:</p>
-            <div class="md-secondary">
-                <md-input-container>
-                    <input ng-model="$ctrl.settings.commonSettings.smtp.login" type="text">
-                </md-input-container>
-            </div>
-        </md-list-item>
-        <md-list-item>
-            <p>Password:</p>
-            <div class="md-secondary">
-                <md-input-container>
-                    <input ng-model="$ctrl.settings.commonSettings.smtp.password" type="password">
-                </md-input-container>
-            </div>
-        </md-list-item>
-        <md-list-item>
-            <p>Display Name:</p>
-            <div class="md-secondary">
-                <md-input-container>
-                    <input ng-model="$ctrl.settings.commonSettings.smtp.displayName" type="text">
-                </md-input-container>
-            </div>
-        </md-list-item>
-        <md-list-item>
-            <p>From:</p>
-            <div class="md-secondary">
-                <md-input-container>
-                    <input ng-model="$ctrl.settings.commonSettings.smtp.from" type="text">
-                </md-input-container>
-            </div>
-        </md-list-item>
-    </div>
+    </md-list-item>
+    <md-list-item>
+        <p>Port:</p>
+        <div class="md-secondary">
+            <md-input-container>
+                <input ng-model="$ctrl.settings.commonSettings.smtp.port" type="number">
+            </md-input-container>
+        </div>
+    </md-list-item>
+    <md-list-item>
+        <p>Local Domain:</p>
+        <div class="md-secondary">
+            <md-input-container>
+                <input ng-model="$ctrl.settings.commonSettings.smtp.localDomain" type="text">
+            </md-input-container>
+        </div>
+    </md-list-item>
+    <md-list-item>
+        <p>Login:</p>
+        <div class="md-secondary">
+            <md-input-container>
+                <input ng-model="$ctrl.settings.commonSettings.smtp.login" type="text">
+            </md-input-container>
+        </div>
+    </md-list-item>
+    <md-list-item>
+        <p>Password:</p>
+        <div class="md-secondary">
+            <md-input-container>
+                <input ng-model="$ctrl.settings.commonSettings.smtp.password" type="password">
+            </md-input-container>
+        </div>
+    </md-list-item>
+    <md-list-item>
+        <p>Display Name:</p>
+        <div class="md-secondary">
+            <md-input-container>
+                <input ng-model="$ctrl.settings.commonSettings.smtp.displayName" type="text">
+            </md-input-container>
+        </div>
+    </md-list-item>
+    <md-list-item>
+        <p>From:</p>
+        <div class="md-secondary">
+            <md-input-container>
+                <input ng-model="$ctrl.settings.commonSettings.smtp.from" type="text">
+            </md-input-container>
+        </div>
+    </md-list-item>
 </md-list>
