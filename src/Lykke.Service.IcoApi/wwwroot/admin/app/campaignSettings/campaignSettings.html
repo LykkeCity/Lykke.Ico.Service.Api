@@ -176,6 +176,9 @@
     </md-list-item>
     <md-divider></md-divider>
     <md-subheader class="md-no-sticky">Transaction Queue SAS URL</md-subheader>
+    <div layout="row" layout-align="center center" layout-padding ng-if="$ctrl.settings.commonSettings.transactionQueueSasUrl">
+        <p class="md-body-1">{{$ctrl.truncateTransactionQueueSasUrl()}}</p>
+    </div>
     <md-list-item>
         <p>Expiry Time:</p>
         <div class="md-secondary">

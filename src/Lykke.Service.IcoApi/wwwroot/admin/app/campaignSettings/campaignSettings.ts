@@ -141,12 +141,17 @@ class CampaignSettingsController implements ng.IComponentController {
             .post<string>(this.transactionQueueSasGenerationUrl, { expiryTime: this.transactionQueueSasExpiryTime })
             .then(resp => {
                 this.settings.commonSettings.transactionQueueSasUrl = resp.data;
-                this.extractDateFromSas();
+                this.extractDateFromSas(); 
             });
     }
 
-    overrideSmtp() {
-        this.settings.commonSettings.smtp = new SmtpSettings();
+    truncateTransactionQueueSasUrl() {
+        let url = this.settings.commonSettings.transactionQueueSasUrl;
+        if (url) {
+            return `${url.substr(0, 16)}${String.fromCharCode(0x2022).repeat(48)}${url.substr(-32)}`;
+        } else {
+            return undefined;
+        }
     }
 }
 
