@@ -1,5 +1,5 @@
 import { app, AppEvent, AppToastType, SysEvent } from "../app.js";
-export class CampaignInfo {
+export class Campaign {
 }
 export class ShellController {
     constructor($element, $rootScope, $location, $mdSidenav, $mdToast, $route, $http, appRoutes) {
@@ -11,7 +11,8 @@ export class ShellController {
         this.$route = $route;
         this.$http = $http;
         this.appRoutes = appRoutes;
-        this.campaignInfoUrl = "/api/admin/campaign/info";
+        this.campaignUrl = "/api/campaign";
+        this.campaignId = "qwe";
         this.customCommands = [];
         $rootScope.$on(AppEvent.Toast, (e, toast) => {
             this.toast(toast);
@@ -24,10 +25,13 @@ export class ShellController {
         });
     }
     $onInit() {
+        // user hasn't been authenticated yet,
+        // can use only public endpoints here
         this.$http
-            .get(this.campaignInfoUrl)
+            .get(this.campaignUrl)
             .then(resp => {
-            this.campaignInfo = resp.data;
+            this.campaign = resp.data;
+            this.campaignId = this.campaign.campaignId;
         });
     }
     $postLink() {

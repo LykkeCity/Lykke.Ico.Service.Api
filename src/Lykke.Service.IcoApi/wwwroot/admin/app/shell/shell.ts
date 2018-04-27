@@ -1,42 +1,15 @@
 import { app, AppEvent, AppToastType, AppToast, AppCommand, IAppRoute, SysEvent } from "../app.js";
 
-export class CampaignInfo {
-    addressPoolCurrentSize: string;
-    addressPoolTotalSize: string;
-
-    bctNetwork: string;
-    ethNetwork: string;
-
-    investorsConfirmed: string;
-    investorsFilledIn: string;
-    investorsKycPassed: string;
-    investorsRegistered: string;
-
-    phase: string;
-    phaseTokenPriceUsd: string;
-    phaseTokenAmount: string;
-    phaseTokenAmountAvailable: string;
-    phaseTokenAmountTotal: string;
-
-    amountPreSaleInvestedBtc: string;
-    amountPreSaleInvestedEth: string;
-    amountPreSaleInvestedFiat: string;
-    amountPreSaleInvestedUsd: string;
-    amountPreSaleInvestedToken: string;
-
-    amountCrowdSaleInvestedBtc: string;
-    amountCrowdSaleInvestedEth: string;
-    amountCrowdSaleInvestedFiat: string;
-    amountCrowdSaleInvestedUsd: string;
-    amountCrowdSaleInvestedToken: string;
-
+export class Campaign {
+    captchaEnabled: boolean;
+    campaignActive: boolean;
     campaignId: string;
     tokenName: string;
 }
 
 export class ShellController implements ng.IComponentController {
 
-    private campaignInfoUrl = "/api/admin/campaign/info";
+    private campaignUrl = "/api/campaign";
 
     constructor(private $element: ng.IRootElementService, private $rootScope: ng.IRootScopeService,
         private $location: ng.ILocationService, private $mdSidenav: ng.material.ISidenavService, private $mdToast: ng.material.IToastService,
@@ -56,10 +29,13 @@ export class ShellController implements ng.IComponentController {
     }
 
     $onInit() {
+        // user hasn't been authenticated yet,
+        // can use only public endpoints here
         this.$http
-            .get<CampaignInfo>(this.campaignInfoUrl)
+            .get<Campaign>(this.campaignUrl)
             .then(resp => {
-                this.campaignInfo = resp.data;
+                this.campaign = resp.data;
+                this.campaignId = this.campaign.campaignId;
             });
     }
 
@@ -71,7 +47,8 @@ export class ShellController implements ng.IComponentController {
             .addClass("layout-column"); // define self layout
     }
 
-    campaignInfo: CampaignInfo;
+    campaign: Campaign;
+    campaignId: string = "qwe";
 
     customCommands: AppCommand[] = [];
 

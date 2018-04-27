@@ -7,6 +7,7 @@ using Lykke.Service.IcoApi.Core.Services;
 using Lykke.Service.IcoApi.Models;
 using Lykke.Service.IcoApi.Services.Extensions;
 using Lykke.Service.IcoApi.Core.Domain.Investor;
+using Lykke.Service.IcoApi.Core.Domain;
 
 namespace Lykke.Service.IcoApi.Controllers
 {
@@ -49,7 +50,9 @@ namespace Lykke.Service.IcoApi.Controllers
             return new CampaignResponse
             {
                 CaptchaEnabled = settings.CaptchaEnable,
-                CampaignActive = campaignActive
+                CampaignActive = campaignActive,
+                CampaignId = Consts.CampaignId,
+                TokenName = Consts.TokenName
             };
         }
     }
