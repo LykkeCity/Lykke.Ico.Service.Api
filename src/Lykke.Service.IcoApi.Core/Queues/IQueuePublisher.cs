@@ -5,7 +5,7 @@ namespace Lykke.Service.IcoApi.Core.Queues
 {
     public interface IQueuePublisher<TMessage>
     {
-        string GenerateSasUrl(DateTime? expiryTime = null);
+        string GenerateSasUrl(DateTimeOffset expiryTime);
         Task SendAsync(TMessage message);
     }
 }

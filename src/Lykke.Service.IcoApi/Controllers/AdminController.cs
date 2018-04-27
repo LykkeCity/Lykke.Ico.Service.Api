@@ -530,7 +530,8 @@ namespace Lykke.Service.IcoApi.Controllers
             emailTemplate.CampaignId = Consts.CampaignId;
 
             await _log.WriteInfoAsync(nameof(AdminController), nameof(AddOrUpdateCampaignEmailTemplate),
-                $"emailTemplate={emailTemplate.ToJson()}", "Admin UI - Edit campaign email template");
+                $"CampaignId: {emailTemplate.CampaignId}, TemplateId: {emailTemplate.TemplateId}",
+                "Admin UI - Edit email template");
 
             await _icoCommonServiceClient.AddOrUpdateEmailTemplateAsync(new EmailTemplateAddOrUpdateRequest(emailTemplate, User.Identity.Name));
 
@@ -559,7 +560,8 @@ namespace Lykke.Service.IcoApi.Controllers
             emailData.CampaignId = Consts.CampaignId;
 
             await _log.WriteInfoAsync(nameof(AdminController), nameof(SendEmail),
-                $"emailData={emailData.ToJson()}", "Admin UI - Send test email");
+                $"CampaignId: {emailData.CampaignId}, TemplateId: {emailData.TemplateId}, To: {emailData.To}, Data: {emailData.Data.ToJson()}",
+                "Admin UI - Send test email");
 
             await _icoCommonServiceClient.SendEmailAsync(emailData);
 
@@ -588,7 +590,7 @@ namespace Lykke.Service.IcoApi.Controllers
             else
             {
                 await _log.WriteInfoAsync(nameof(AdminController), nameof(Login),
-                    $"request.Username={request.Username}", "Admin UI - login");
+                    $"Username: {request.Username}", "Admin UI - Login");
 
                 return Ok(authToken);
             }
@@ -600,9 +602,16 @@ namespace Lykke.Service.IcoApi.Controllers
         /// <returns></returns>
         [AdminAuth]
         [HttpPost("transactions/sas")]
-        public string GenerateTransactionQueueSasUrl([FromBody] GenerateTransactionQueueSasUrlRequest request)
+        public async Task<string> GenerateTransactionQueueSasUrl([FromBody] GenerateTransactionQueueSasUrlRequest request)
         {
-            return _adminService.GenerateTransactionQueueSasUrl(request?.ExpiryTime);
+            var expiryTime = request?.ExpiryTime ?? DateTimeOffset.UtcNow.AddYears(1);
+
+            var url = _adminService.GenerateTransactionQueueSasUrl(expiryTime);
+
+            await _log.WriteInfoAsync(nameof(AdminController), nameof(GenerateTransactionQueueSasUrl),
+                $"ExpiryTime: {expiryTime}", "Admin UI - Transaction queue SAS URL generated");
+
+            return url;
         }
 
         /// <summary>
@@ -632,7 +641,7 @@ namespace Lykke.Service.IcoApi.Controllers
             var investorsToSend = await GetKycReminderInvestors(type);
 
             await _log.WriteInfoAsync(nameof(AdminController), nameof(SendKycReminderEmails),
-                $"type={Enum.GetName(typeof(KycReminderType), type)}",
+                $"Type={Enum.GetName(typeof(KycReminderType), type)}",
                 $"Send kyc reminder emails to {investorsToSend.Count()} investors");
 
             await _adminService.SendKycReminderEmails(investorsToSend);

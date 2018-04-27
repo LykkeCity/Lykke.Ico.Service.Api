@@ -30,14 +30,20 @@ namespace Lykke.Service.IcoApi.Services
             await _queue.PutRawMessageAsync(message.ToJson());
         }            
 
-        public string GenerateSasUrl(DateTime? expiryTime = null)
+        public string GenerateSasUrl(DateTimeOffset expiryTime)
         {
+            if (expiryTime == default(DateTimeOffset) ||
+                expiryTime <= DateTimeOffset.Now)
+            {
+                throw new ArgumentOutOfRangeException(nameof(expiryTime), "ExpiriTime must be greater than now");
+            }
+
             var storageAccount = CloudStorageAccount.Parse(_connectionStringManager.CurrentValue);
 
             var policy = new SharedAccessQueuePolicy()
             {
                 Permissions = SharedAccessQueuePermissions.Add,
-                SharedAccessExpiryTime = expiryTime ?? DateTime.UtcNow.AddYears(1)
+                SharedAccessExpiryTime = expiryTime
             };
 
             var cloudQueue = storageAccount.CreateCloudQueueClient()

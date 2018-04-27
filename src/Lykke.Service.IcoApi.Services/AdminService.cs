@@ -320,7 +320,7 @@ namespace Lykke.Service.IcoApi.Services
             public string ethPublic { get; set; }
         }
 
-        public string GenerateTransactionQueueSasUrl(DateTime? expiryTime = null)
+        public string GenerateTransactionQueueSasUrl(DateTimeOffset expiryTime)
         {
             return _transactionQueuePublisher.GenerateSasUrl(expiryTime);
         }
