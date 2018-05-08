@@ -55,7 +55,7 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
-        /// Removes all data for investor from db
+        /// Removes all data related to investor from db. Do not removes investor
         /// </summary>
         /// <remarks>
         /// profile history, address pool history, emails, transactions
