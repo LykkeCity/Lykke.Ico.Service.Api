@@ -350,7 +350,8 @@ namespace Lykke.Service.IcoJob.Services
                     TransactionAsset = tx.Currency.ToAssetName(),
                     LinkTransactionDetails = link,
                     MinAmount = settings.MinInvestAmountUsd,
-                    MoreInvestmentRequired = investor.AmountUsd < settings.MinInvestAmountUsd
+                    MoreInvestmentRequired = investor.AmountUsd < settings.MinInvestAmountUsd,
+                    PayInAddress = tx.PayInAddress
                 };
 
                 if (settings.KycEnableRequestSending &&

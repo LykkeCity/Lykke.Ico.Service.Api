@@ -5,7 +5,7 @@
     {
         public NewTransaction()
         {
-            AuthToken = LinkTransactionDetails = KycLink = TransactionAsset = string.Empty;
+            AuthToken = LinkTransactionDetails = KycLink = TransactionAsset = PayInAddress = string.Empty;
         }
 
         public string AuthToken { get; set; }
@@ -25,5 +25,6 @@
         public decimal TransactionAmountLogiToken { get; set; }
         public decimal TransactionFee { get; set; }
         public string TransactionAsset { get; set; }
+        public string PayInAddress { get; set; }
     }
 }
