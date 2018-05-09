@@ -1,4 +1,4 @@
-﻿namespace Lykke.Service.IcoApi.Core.Settings.ServiceSettings
+﻿namespace Lykke.Service.IcoJob.Settings
 {
     public class AzureQueueSettings
     {
