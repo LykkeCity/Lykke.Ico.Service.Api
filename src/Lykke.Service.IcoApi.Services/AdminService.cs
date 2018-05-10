@@ -256,10 +256,10 @@ namespace Lykke.Service.IcoApi.Services
             var csv = new CsvReader(reader);
             var counter = 0;
 
-            var addressPoolTotalSize = await _campaignInfoRepository.GetValueAsync(CampaignInfoType.AddressPoolTotalSize);
-            if (!string.IsNullOrEmpty(addressPoolTotalSize))
+            var addressPoolTotalSizeStr = await _campaignInfoRepository.GetValueAsync(CampaignInfoType.AddressPoolTotalSize);
+            if (!Int32.TryParse(addressPoolTotalSizeStr, out var addressPoolTotalSize))
             {
-                counter = Int32.Parse(addressPoolTotalSize);
+                addressPoolTotalSize = 0;
             }
 
             csv.Configuration.Delimiter = ";";
@@ -283,7 +283,7 @@ namespace Lykke.Service.IcoApi.Services
 
                 list.Add(new AddressPoolItem
                 {
-                    Id = counter,
+                    Id = addressPoolTotalSize + counter,
                     BtcPublicKey = record.btcPublic,
                     EthPublicKey = record.ethPublic
                 });
