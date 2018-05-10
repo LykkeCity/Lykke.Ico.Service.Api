@@ -263,6 +263,12 @@ namespace Lykke.Service.IcoApi.Services
             var csv = new CsvReader(reader);
             var counter = 0;
 
+            var addressPoolTotalSize = await _campaignInfoRepository.GetValueAsync(CampaignInfoType.AddressPoolTotalSize);
+            if (!string.IsNullOrEmpty(addressPoolTotalSize))
+            {
+                counter = Int32.Parse(addressPoolTotalSize);
+            }
+
             csv.Configuration.Delimiter = ";";
             csv.Configuration.Encoding = Encoding.ASCII;
             csv.Configuration.HasHeaderRecord = true;

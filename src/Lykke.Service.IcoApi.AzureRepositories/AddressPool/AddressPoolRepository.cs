@@ -25,7 +25,7 @@ namespace Lykke.Services.IcoApi.AzureRepositories
 
         public async Task<IAddressPoolItem> Get(int id)
         {
-            return await _table.GetDataAsync(GetPartitionKey() ,GetRowKey(id));
+            return await _table.GetDataAsync(GetPartitionKey(), GetRowKey(id));
         }
 
         public async Task AddBatchAsync(List<IAddressPoolItem> keys)
