@@ -212,14 +212,7 @@ namespace Lykke.Service.IcoApi.Services
                     continue;
                 }
 
-                var itemHistory = await _addressPoolHistoryRepository.Get(id);
-                if (itemHistory != null)
-                {
-                    list.Add((itemHistory.Id, itemHistory.BtcPublicKey, itemHistory.EthPublicKey));
-                    continue;
-                }
-
-                list.Add((itemHistory.Id, "", ""));
+                list.Add((id, "", ""));
             }
 
             return list;
