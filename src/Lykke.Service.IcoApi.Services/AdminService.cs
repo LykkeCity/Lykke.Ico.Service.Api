@@ -127,6 +127,7 @@ namespace Lykke.Service.IcoApi.Services
 
             await _investorHistoryRepository.RemoveAsync(email);
             await _investorTransactionRepository.RemoveAsync(email);
+            await _investorTransactionRefundRepository.RemoveAsync(email);
             await _investorRefundRepository.RemoveAsync(email);
             await _icoCommonServiceClient.DeleteSentEmailsAsync(email);
         }
@@ -412,7 +413,7 @@ namespace Lykke.Service.IcoApi.Services
                 new { type = Enum.GetName(typeof(CampaignInfoType), type), value = value}.ToJson(), 
                 $"Decrease CampaignInfo value");
 
-            await _campaignInfoRepository.IncrementValue(type, value);
+            await _campaignInfoRepository.IncrementValue(type, -value);
         }        
     }
 }

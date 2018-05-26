@@ -50,5 +50,12 @@ namespace Lykke.Services.IcoApi.AzureRepositories
                 MessageJson = messageJson
             });
         }
+
+        public async Task RemoveAsync(string email)
+        {
+            var items = await _table.GetDataAsync(GetPartitionKey(email));
+
+            await _table.DeleteAsync(items);
+        }
     }
 }

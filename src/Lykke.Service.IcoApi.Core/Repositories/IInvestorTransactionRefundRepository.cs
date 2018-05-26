@@ -10,5 +10,6 @@ namespace Lykke.Service.IcoApi.Core.Repositories
         Task<IEnumerable<IInvestorTransactionRefund>> GetAllAsync();
         Task<IEnumerable<IInvestorTransactionRefund>> GetByEmailAsync(string email);
         Task SaveAsync(string email, string uniqueId, string messageJson);
+        Task RemoveAsync(string email);
     }
 }

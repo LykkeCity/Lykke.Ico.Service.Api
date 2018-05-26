@@ -287,7 +287,7 @@ namespace Lykke.Service.IcoApi.Controllers
         [AdminAuth]
         [HttpPost("investors/{email}/transactions/refund")]
         public async Task<IActionResult> RefundInvestorTransactions([Required] string email, 
-            [Required] RefundInvestorTransactionRequest request)
+            [Required, FromBody] RefundInvestorTransactionRequest request)
         {
             if (string.IsNullOrEmpty(request.UniqueId))
             {
