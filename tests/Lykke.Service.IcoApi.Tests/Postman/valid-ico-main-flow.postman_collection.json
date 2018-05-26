@@ -1,8 +1,7 @@
 {
 	"info": {
-		"name": "SmartContainers ICO - Main Flow",
 		"_postman_id": "ff81cae8-334c-426d-aeac-37374408c67d",
-		"description": "",
+		"name": "SmartContainers ICO - Main Flow",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -52,8 +51,7 @@
 								"investors",
 								"{{email}}"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -100,8 +98,7 @@
 								"{{email}}",
 								"all"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				}
@@ -159,8 +156,7 @@
 								"rates",
 								"latest"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				}
@@ -219,8 +215,7 @@
 								"campaign",
 								"info"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -274,8 +269,7 @@
 								"{{email}}",
 								"history"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -328,8 +322,7 @@
 								"{{email}}",
 								"emails"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -376,8 +369,7 @@
 								"investor",
 								"register"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -437,8 +429,7 @@
 								"{{email}}",
 								"emails"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -490,8 +481,7 @@
 								"campaign",
 								"info"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -608,8 +598,7 @@
 								"campaign",
 								"info"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -663,8 +652,7 @@
 								"{{email}}",
 								"history"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -719,8 +707,7 @@
 								"investors",
 								"{{email}}"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -768,8 +755,7 @@
 								"confirmation",
 								"{{confirmation_token}}"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -822,8 +808,7 @@
 								"investors",
 								"{{email}}"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -875,8 +860,7 @@
 								"campaign",
 								"info"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -994,8 +978,7 @@
 								"campaign",
 								"info"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -1049,8 +1032,7 @@
 								"{{email}}",
 								"history"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -1103,8 +1085,7 @@
 								"{{email}}",
 								"emails"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -1156,8 +1137,7 @@
 								"address",
 								"random"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -1209,8 +1189,7 @@
 								"address",
 								"random"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -1262,8 +1241,7 @@
 								"address",
 								"random"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -1307,8 +1285,7 @@
 								"api",
 								"investor"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -1365,8 +1342,7 @@
 								"api",
 								"investor"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -1456,8 +1432,7 @@
 								"api",
 								"investor"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -1467,7 +1442,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "a52fde76-eefb-43e4-b7c1-7c9c0d157cf9",
+								"id": "f5cfd675-0295-44e2-845a-4979a66be9fa",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function() {",
@@ -1481,7 +1456,13 @@
 									"",
 									"pm.test(\"investorsFilledIn is increased to 1\", function() {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(Number(jsonData.investorsFilledIn)).to.eql(Number(pm.environment.get(\"investorsFilledIn\")) + 1);",
+									"    var current = Number(jsonData.investorsFilledIn);",
+									"    var expected = Number(pm.environment.get(\"investorsFilledIn\")) + 1;",
+									"    ",
+									"    console.info(\"current: \" + current);",
+									"    console.info(\"expected: \" + expected);",
+									"    ",
+									"    pm.expect(current).to.eql(expected);",
 									"});"
 								]
 							}
@@ -1514,8 +1495,7 @@
 								"campaign",
 								"info"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -1575,8 +1555,7 @@
 								"{{email}}",
 								"emails"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -1695,8 +1674,7 @@
 								"campaign",
 								"info"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -1750,8 +1728,7 @@
 								"{{email}}",
 								"history"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -1804,8 +1781,7 @@
 								"{{email}}",
 								"emails"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -1859,8 +1835,7 @@
 								"{{email}}",
 								"transactions"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -1917,8 +1892,7 @@
 								"investors",
 								"{{email}}"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -1965,8 +1939,7 @@
 								"send",
 								"tx"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -2026,8 +1999,7 @@
 								"{{email}}",
 								"emails"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -2096,8 +2068,7 @@
 								"campaign",
 								"info"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -2162,8 +2133,7 @@
 								"investors",
 								"{{email}}"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -2219,8 +2189,7 @@
 								"{{email}}",
 								"transactions"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -2360,8 +2329,7 @@
 								"campaign",
 								"info"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -2420,8 +2388,7 @@
 								"campaign",
 								"settings"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -2475,8 +2442,7 @@
 								"{{email}}",
 								"history"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -2529,8 +2495,7 @@
 								"{{email}}",
 								"emails"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -2584,8 +2549,7 @@
 								"{{email}}",
 								"transactions"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -2642,8 +2606,7 @@
 								"investors",
 								"{{email}}"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -2690,8 +2653,7 @@
 								"send",
 								"tx"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -2751,8 +2713,7 @@
 								"{{email}}",
 								"emails"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -2821,8 +2782,7 @@
 								"campaign",
 								"info"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -2887,8 +2847,7 @@
 								"investors",
 								"{{email}}"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -2944,8 +2903,7 @@
 								"{{email}}",
 								"transactions"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -3087,8 +3045,7 @@
 								"campaign",
 								"info"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -3141,8 +3098,7 @@
 								"{{email}}",
 								"emails"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -3196,8 +3152,7 @@
 								"{{email}}",
 								"transactions"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -3255,8 +3210,7 @@
 								"investors",
 								"{{email}}"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -3303,8 +3257,7 @@
 								"send",
 								"tx"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -3364,8 +3317,7 @@
 								"{{email}}",
 								"emails"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -3446,8 +3398,7 @@
 								"campaign",
 								"info"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -3517,8 +3468,7 @@
 								"investors",
 								"{{email}}"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -3574,8 +3524,7 @@
 								"{{email}}",
 								"transactions"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				}
@@ -3660,8 +3609,7 @@
 								"campaign",
 								"info"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -3714,8 +3662,7 @@
 								"{{email}}",
 								"emails"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -3769,8 +3716,7 @@
 								"{{email}}",
 								"transactions"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -3827,8 +3773,7 @@
 								"investors",
 								"{{email}}"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -3883,8 +3828,7 @@
 								"investors",
 								"{{email}}"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -3929,8 +3873,7 @@
 								"investor",
 								"fiat"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -3990,8 +3933,7 @@
 								"{{email}}",
 								"emails"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -4060,8 +4002,7 @@
 								"campaign",
 								"info"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -4123,8 +4064,7 @@
 								"investors",
 								"{{email}}"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -4180,8 +4120,7 @@
 								"{{email}}",
 								"transactions"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				}
@@ -4264,8 +4203,7 @@
 								"transactions",
 								"failed"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -4319,8 +4257,7 @@
 								"investors",
 								"{{email}}"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -4367,8 +4304,7 @@
 								"send",
 								"tx"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				},
@@ -4429,8 +4365,7 @@
 								"transactions",
 								"failed"
 							]
-						},
-						"description": null
+						}
 					},
 					"response": []
 				}
