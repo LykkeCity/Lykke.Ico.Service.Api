@@ -15,5 +15,7 @@ namespace Lykke.Service.IcoApi.Core.Repositories
         Task SaveAsync(IInvestorTransaction tx);
 
         Task RemoveAsync(string email);
+
+        Task RemoveAsync(string email, string uniqueId);
     }
 }

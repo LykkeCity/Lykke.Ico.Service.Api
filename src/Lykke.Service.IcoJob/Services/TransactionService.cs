@@ -28,6 +28,7 @@ namespace Lykke.Service.IcoJob.Services
         private readonly ICampaignInfoRepository _campaignInfoRepository;
         private readonly ICampaignSettingsRepository _campaignSettingsRepository;
         private readonly IInvestorTransactionRepository _investorTransactionRepository;
+        private readonly IInvestorTransactionRefundRepository _investorTransactionRefundRepository;
         private readonly IInvestorRefundRepository _investorRefundRepository;
         private readonly IInvestorRepository _investorRepository;
         private readonly IKycService _kycService;
@@ -40,6 +41,7 @@ namespace Lykke.Service.IcoJob.Services
             ICampaignInfoRepository campaignInfoRepository,
             ICampaignSettingsRepository campaignSettingsRepository,
             IInvestorTransactionRepository investorTransactionRepository,
+            IInvestorTransactionRefundRepository investorTransactionRefundRepository,
             IInvestorRefundRepository investorRefundRepository,
             IInvestorRepository investorRepository,
             IKycService kycService,
@@ -51,6 +53,7 @@ namespace Lykke.Service.IcoJob.Services
             _campaignInfoRepository = campaignInfoRepository;
             _campaignSettingsRepository = campaignSettingsRepository;
             _investorTransactionRepository = investorTransactionRepository;
+            _investorTransactionRefundRepository = investorTransactionRefundRepository;
             _investorRefundRepository = investorRefundRepository;
             _investorRepository = investorRepository;
             _kycService = kycService;
@@ -111,8 +114,18 @@ namespace Lykke.Service.IcoJob.Services
             if (existingTransaction != null)
             {
                 await _log.WriteInfoAsync(nameof(Process),
-                    $"emai: {msg.Email}, uniqueId: {msg.UniqueId}, existingTransaction: {existingTransaction.ToJson()}",
+                    $"email: {msg.Email}, uniqueId: {msg.UniqueId}, existingTransaction: {existingTransaction.ToJson()}",
                     $"The transaction was already processed");
+
+                return true;
+            }
+
+            var refundedTransaction = await _investorTransactionRefundRepository.GetAsync(msg.Email, msg.UniqueId);
+            if (refundedTransaction != null)
+            {
+                await _log.WriteInfoAsync(nameof(Process),
+                    $"email: {msg.Email}, uniqueId: {msg.UniqueId}, refundedTransaction: {refundedTransaction.ToJson()}",
+                    $"The transaction was already refunded");
 
                 return true;
             }

@@ -516,4 +516,10 @@ namespace Lykke.Service.IcoApi.Models
     {
         public DateTime? ExpiryTime { get; set; }
     }
+
+    public class RefundInvestorTransactionRequest
+    {
+        [Required]
+        public string UniqueId { get; set; }
+    }
 }

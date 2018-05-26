@@ -17,6 +17,7 @@ using Lykke.Service.IcoApi.Core.Domain;
 using Lykke.Service.IcoApi.Core.Domain.AddressPool;
 using Lykke.Service.IcoApi.Core.Settings.ServiceSettings;
 using Lykke.Service.IcoCommon.Client;
+using Lykke.Service.IcoApi.Services.Extensions;
 
 namespace Lykke.Service.IcoApi.Services
 {
@@ -26,6 +27,7 @@ namespace Lykke.Service.IcoApi.Services
         private readonly ILog _log;
         private readonly IInvestorRepository _investorRepository;
         private readonly IInvestorTransactionRepository _investorTransactionRepository;
+        private readonly IInvestorTransactionRefundRepository _investorTransactionRefundRepository;
         private readonly IInvestorRefundRepository _investorRefundRepository;
         private readonly IInvestorAttributeRepository _investorAttributeRepository;
         private readonly IInvestorHistoryRepository _investorHistoryRepository;
@@ -40,6 +42,7 @@ namespace Lykke.Service.IcoApi.Services
             ILog log,
             IInvestorRepository investorRepository,
             IInvestorTransactionRepository investorTransactionRepository,
+            IInvestorTransactionRefundRepository investorTransactionRefundRepository,
             IInvestorRefundRepository investorRefundRepository,
             IInvestorAttributeRepository investorAttributeRepository,
             IInvestorHistoryRepository investorHistoryRepository,
@@ -59,6 +62,7 @@ namespace Lykke.Service.IcoApi.Services
             _campaignInfoRepository = campaignInfoRepository;
             _addressPoolRepository = addressPoolRepository;
             _investorTransactionRepository = investorTransactionRepository;
+            _investorTransactionRefundRepository = investorTransactionRefundRepository;
             _investorRefundRepository = investorRefundRepository;
             _campaignSettingsRepository = campaignSettingsRepository;
             _transactionQueuePublisher = transactionQueuePublisher;
@@ -311,15 +315,104 @@ namespace Lykke.Service.IcoApi.Services
             return counter;
         }
 
-        public string GenerateTransactionQueueSasUrl(DateTime? expiryTime = null)
-        {
-            return _transactionQueuePublisher.GenerateSasUrl(expiryTime);
-        }
-
         private class PublicKeysRow
         {
             public string btcPublic { get; set; }
             public string ethPublic { get; set; }
         }
+
+        public string GenerateTransactionQueueSasUrl(DateTime? expiryTime = null)
+        {
+            return _transactionQueuePublisher.GenerateSasUrl(expiryTime);
+        }
+
+        public async Task<string> RefundTransaction(string email, string uniqueId)
+        {
+            await _log.WriteInfoAsync(nameof(AdminService), nameof(RefundTransaction),
+                new { email, uniqueId }.ToJson(), "Start to refund transaction");
+
+            var tx = await _investorTransactionRepository.GetAsync(email, uniqueId);
+            if (tx == null)
+            {
+                throw new ArgumentException($"Transaction with id={uniqueId} was not found for investor with {email}");
+            }
+
+            var settings = await _campaignSettingsRepository.GetAsync();
+            if (settings == null)
+            {
+                throw new InvalidOperationException($"Campaign settings was not found");
+            }
+
+            await _log.WriteInfoAsync(nameof(AdminService), nameof(RefundTransaction),
+                tx.ToJson(), "Remove from InvestorTransactions table");
+            await _investorTransactionRepository.RemoveAsync(email, uniqueId);
+
+            await _log.WriteInfoAsync(nameof(AdminService), nameof(RefundTransaction),
+                tx.ToJson(), "Save to from InvestorTransactionRefunds table");
+            await _investorTransactionRefundRepository.SaveAsync(email, uniqueId, tx.ToJson());
+
+            await _log.WriteInfoAsync(nameof(AdminService), nameof(RefundTransaction),
+                "", "Decrease campaign amounts");
+            await DecreaseCampaignAmounts(tx, settings);
+
+            await _log.WriteInfoAsync(nameof(AdminService), nameof(RefundTransaction),
+                new { tx.Email, tx.Currency, tx.Amount, tx.AmountUsd, tx.SmarcAmountToken, tx.LogiAmountToken }.ToJson(),
+                $"Decrease investor amounts");
+            await _investorRepository.IncrementAmount(tx.Email, tx.Currency, -tx.Amount, -tx.AmountUsd,
+                    -tx.SmarcAmountToken, -tx.LogiAmountToken);
+
+            return "";
+        }
+
+        private async Task DecreaseCampaignAmounts(IInvestorTransaction tx, ICampaignSettings settings)
+        {
+            if (settings.IsPreSale(tx.CreatedUtc))
+            {
+                if (tx.Currency == CurrencyType.Bitcoin)
+                {
+                    await DecreaseCampaignInfoParam(CampaignInfoType.AmountPreSaleInvestedBtc, tx.Amount);
+                }
+                if (tx.Currency == CurrencyType.Ether)
+                {
+                    await DecreaseCampaignInfoParam(CampaignInfoType.AmountPreSaleInvestedEth, tx.Amount);
+                }
+                if (tx.Currency == CurrencyType.Fiat)
+                {
+                    await DecreaseCampaignInfoParam(CampaignInfoType.AmountPreSaleInvestedFiat, tx.Amount);
+                }
+
+                await DecreaseCampaignInfoParam(CampaignInfoType.AmountPreSaleInvestedSmarcToken, tx.SmarcAmountToken);
+                await DecreaseCampaignInfoParam(CampaignInfoType.AmountPreSaleInvestedLogiToken, tx.LogiAmountToken);
+                await DecreaseCampaignInfoParam(CampaignInfoType.AmountPreSaleInvestedUsd, tx.AmountUsd);
+            }
+            if (settings.IsCrowdSale(tx.CreatedUtc))
+            {
+                if (tx.Currency == CurrencyType.Bitcoin)
+                {
+                    await DecreaseCampaignInfoParam(CampaignInfoType.AmountCrowdSaleInvestedBtc, tx.Amount);
+                }
+                if (tx.Currency == CurrencyType.Ether)
+                {
+                    await DecreaseCampaignInfoParam(CampaignInfoType.AmountCrowdSaleInvestedEth, tx.Amount);
+                }
+                if (tx.Currency == CurrencyType.Fiat)
+                {
+                    await DecreaseCampaignInfoParam(CampaignInfoType.AmountCrowdSaleInvestedFiat, tx.Amount);
+                }
+
+                await DecreaseCampaignInfoParam(CampaignInfoType.AmountCrowdSaleInvestedSmarcToken, tx.SmarcAmountToken);
+                await DecreaseCampaignInfoParam(CampaignInfoType.AmountCrowdSaleInvestedLogiToken, tx.LogiAmountToken);
+                await DecreaseCampaignInfoParam(CampaignInfoType.AmountCrowdSaleInvestedUsd, tx.AmountUsd);
+            }
+        }
+
+        private async Task DecreaseCampaignInfoParam(CampaignInfoType type, decimal value)
+        {
+            await _log.WriteInfoAsync(nameof(AdminService), nameof(DecreaseCampaignInfoParam),
+                new { type = Enum.GetName(typeof(CampaignInfoType), type), value = value}.ToJson(), 
+                $"Decrease CampaignInfo value");
+
+            await _campaignInfoRepository.IncrementValue(type, value);
+        }        
     }
 }

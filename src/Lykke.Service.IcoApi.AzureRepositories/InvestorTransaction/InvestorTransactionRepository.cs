@@ -73,5 +73,10 @@ namespace Lykke.Services.IcoApi.AzureRepositories
             
             await _table.DeleteAsync(items);
         }
+
+        public async Task RemoveAsync(string email, string uniqueId)
+        {
+            await _table.DeleteIfExistAsync(GetPartitionKey(email), GetRowKey(uniqueId));
+        }
     }
 }

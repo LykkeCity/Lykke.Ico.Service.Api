@@ -88,6 +88,11 @@ namespace Lykke.Service.IcoJob.Modules
                 .WithParameter(TypedParameter.From(connectionStringManager))
                 .SingleInstance();
 
+            builder.RegisterType<InvestorTransactionRefundRepository>()
+                .As<IInvestorTransactionRefundRepository>()
+                .WithParameter(TypedParameter.From(connectionStringManager))
+                .SingleInstance();
+
             builder.RegisterType<InvestorRefundRepository>()
                 .As<IInvestorRefundRepository>()
                 .WithParameter(TypedParameter.From(connectionStringManager))

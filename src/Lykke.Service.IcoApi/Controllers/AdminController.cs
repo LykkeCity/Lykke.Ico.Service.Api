@@ -282,6 +282,24 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
+        /// Refund investor transaction
+        /// </summary>
+        [AdminAuth]
+        [HttpPost("investors/{email}/transactions/refund")]
+        public async Task<IActionResult> RefundInvestorTransactions([Required] string email, 
+            [Required] RefundInvestorTransactionRequest request)
+        {
+            if (string.IsNullOrEmpty(request.UniqueId))
+            {
+                return BadRequest($"{nameof(request.UniqueId)} can not be null or empty");
+            }
+
+            await _adminService.RefundTransaction(email, request.UniqueId);
+
+            return Ok();
+        }
+
+        /// <summary>
         /// Get private investor
         /// </summary>
         [AdminAuth]
