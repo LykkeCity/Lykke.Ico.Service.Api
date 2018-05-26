@@ -459,7 +459,7 @@ namespace Lykke.Service.IcoApi.Controllers
         [DisableAdminMethods]
         [HttpPost("pool/import")]
         [DisableRequestSizeLimit]
-        public async Task ImportKeys([FromForm] IFormFile file)
+        public async Task ImportKeys(IFormFile file)
         {
             using (var reader = new StreamReader(file.OpenReadStream()))
             {

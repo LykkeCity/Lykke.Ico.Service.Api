@@ -71,7 +71,6 @@ namespace Lykke.Service.IcoApi
                     options.DescribeStringEnumsInCamelCase();
                     options.OperationFilter<AddSwaggerInvestorAuthHeaderParameter>();
                     options.OperationFilter<AddSwaggerAdminAuthHeaderParameter>();
-                    options.OperationFilter<FormFileOperationFilter>();
                 });
 
                 services.AddCors();
