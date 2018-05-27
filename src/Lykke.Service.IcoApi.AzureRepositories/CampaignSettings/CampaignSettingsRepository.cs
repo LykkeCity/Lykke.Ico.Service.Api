@@ -20,7 +20,7 @@ namespace Lykke.Services.IcoApi.AzureRepositories
         private static string GetRowKey() => "Settings";
         private static PropertyInfo[] _properties = typeof(ICampaignSettings).GetProperties();
 
-        private static bool AreDifferent(ICampaignSettings a, ICampaignSettings b)
+        private bool AreDifferent(ICampaignSettings a, ICampaignSettings b)
         {
             return _properties.Any(p =>
             {
@@ -52,7 +52,7 @@ namespace Lykke.Services.IcoApi.AzureRepositories
             
             if (old == null || AreDifferent(old, settings))
             {
-                await _table.InsertOrMergeAsync(new CampaignSettingsEntity
+                await _table.InsertOrReplaceAsync(new CampaignSettingsEntity
                 {
                     PartitionKey = GetPartitionKey(),
                     RowKey = GetRowKey(),
@@ -79,6 +79,8 @@ namespace Lykke.Services.IcoApi.AzureRepositories
                     MinInvestAmountUsd = settings.MinInvestAmountUsd,
                     RowndDownTokenDecimals = settings.RowndDownTokenDecimals,
                     EnableFrontEnd = settings.EnableFrontEnd,
+                    MinEthExchangeRate = settings.MinEthExchangeRate,
+                    MinBtcExchangeRate = settings.MinBtcExchangeRate,
                     CaptchaEnable = settings.CaptchaEnable,
                     CaptchaSecret = settings.CaptchaSecret,
                     KycEnableRequestSending = settings.KycEnableRequestSending,

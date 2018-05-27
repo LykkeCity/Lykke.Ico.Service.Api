@@ -28,6 +28,8 @@ class CampaignSettings {
     rowndDownTokenDecimals: number;
     minInvestAmountUsd: number;
     enableFrontEnd: boolean;
+    minEthExchangeRate: number;
+    minBtcExchangeRate: number;
 
     kycEnableRequestSending: boolean;
     kycCampaignId: string;

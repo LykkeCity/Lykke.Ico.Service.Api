@@ -37,6 +37,8 @@ namespace Lykke.Services.IcoApi.AzureRepositories
         public decimal MinInvestAmountUsd { get; set; }
         public int RowndDownTokenDecimals { get; set; }
         public bool EnableFrontEnd { get; set; }
+        public decimal? MinEthExchangeRate { get; set; }
+        public decimal? MinBtcExchangeRate { get; set; }
 
         public bool CaptchaEnable { get; set; }
         public string CaptchaSecret { get; set; }

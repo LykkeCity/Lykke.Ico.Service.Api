@@ -201,9 +201,8 @@ namespace Lykke.Service.IcoJob.Services
         private async Task<InvestorTransaction> SaveTransaction(TransactionMessage msg, ICampaignSettings settings,
             TokenInfo smarcTokenInfo, TokenInfo logiTokenInfo, TxType txType)
         {
-            var exchangeRate = await GetExchangeRate(msg);
-            var avgExchangeRate = Convert.ToDecimal(exchangeRate.AverageRate);
-            var amountUsd = msg.Amount * avgExchangeRate;
+            var exchangeRate = await GetExchangeRate(msg, settings);
+            var amountUsd = msg.Amount * exchangeRate.ExchangeRate;
 
             var smartTokenContext = GetTokenContext(msg, settings, smarcTokenInfo, txType, amountUsd);
             var logiTokenContext = GetTokenContext(msg, settings, logiTokenInfo, txType, amountUsd);
@@ -228,8 +227,8 @@ namespace Lykke.Service.IcoJob.Services
                 LogiAmountUsd = logiTokenContext.UsdAmount,
                 LogiTokenPriceUsd = logiTokenContext.TokenPriceUsd,
                 LogiTokenPriceContext = logiTokenContext.TxTokens.ToJson(),
-                ExchangeRate = avgExchangeRate,
-                ExchangeRateContext = exchangeRate.Rates.ToJson()
+                ExchangeRate = exchangeRate.ExchangeRate,
+                ExchangeRateContext = exchangeRate.Context
             };
 
             await _log.WriteInfoAsync(nameof(SaveTransaction),
@@ -322,11 +321,11 @@ namespace Lykke.Service.IcoJob.Services
         }
             
 
-        private async Task<AverageRateResponse> GetExchangeRate(TransactionMessage msg)
+        private async Task<(decimal ExchangeRate, string Context)> GetExchangeRate(TransactionMessage msg, ICampaignSettings settings)
         {
             if (msg.Currency == CurrencyType.Fiat)
             {
-                return new AverageRateResponse { AverageRate = 1, Rates = new List<RateResponse>() };
+                return (1, "");
             }
 
             var assetPair = msg.Currency == CurrencyType.Bitcoin ? Pair.BTCUSD : Pair.ETHUSD;
@@ -340,7 +339,21 @@ namespace Lykke.Service.IcoJob.Services
                 throw new InvalidOperationException($"Exchange rate is not valid: {exchangeRate.ToJson()}");
             }
 
-            return exchangeRate;
+            var minExchangeRate = Convert.ToDecimal(exchangeRate.AverageRate);
+            if (msg.Currency == CurrencyType.Ether &&
+                settings.MinEthExchangeRate.HasValue &&
+                minExchangeRate < settings.MinEthExchangeRate)
+            {
+                minExchangeRate = settings.MinEthExchangeRate.Value;
+            }
+            if (msg.Currency == CurrencyType.Bitcoin &&
+                settings.MinBtcExchangeRate.HasValue &&
+                minExchangeRate < settings.MinBtcExchangeRate)
+            {
+                minExchangeRate = settings.MinBtcExchangeRate.Value;
+            }
+
+            return (minExchangeRate, new { settings.MinEthExchangeRate, settings.MinBtcExchangeRate, ExchangeRate = exchangeRate }.ToJson());
         }
 
         private async Task SendConfirmationEmail(InvestorTransaction tx, string link, ICampaignSettings settings)

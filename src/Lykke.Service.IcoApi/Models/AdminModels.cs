@@ -290,6 +290,8 @@ namespace Lykke.Service.IcoApi.Models
         public int RowndDownTokenDecimals { get; set; }
         [Required]
         public bool EnableFrontEnd { get; set; }
+        public decimal? MinEthExchangeRate { get; set; }
+        public decimal? MinBtcExchangeRate { get; set; }
 
         [Required]
         public bool CaptchaEnable { get; set; }
@@ -334,6 +336,8 @@ namespace Lykke.Service.IcoApi.Models
                 MinInvestAmountUsd = settings.MinInvestAmountUsd,
                 RowndDownTokenDecimals = settings.RowndDownTokenDecimals,
                 EnableFrontEnd = settings.EnableFrontEnd,
+                MinEthExchangeRate = settings.MinEthExchangeRate,
+                MinBtcExchangeRate = settings.MinBtcExchangeRate,
                 CaptchaEnable = settings.CaptchaEnable,
                 CaptchaSecret = settings.CaptchaSecret,
                 KycEnableRequestSending = settings.KycEnableRequestSending,
@@ -367,7 +371,7 @@ namespace Lykke.Service.IcoApi.Models
         }
     }
 
-        public class TransactionMessageRequest
+    public class TransactionMessageRequest
     {
         [Required]
         public string Email { get; set; }

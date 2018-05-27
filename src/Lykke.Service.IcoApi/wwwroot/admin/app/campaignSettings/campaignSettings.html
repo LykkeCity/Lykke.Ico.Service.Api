@@ -17,6 +17,22 @@
             </md-input-container>
         </div>
     </md-list-item>
+    <md-list-item>
+        <p>Minimal ETH/USD exchange rate:</p>
+        <div class="md-secondary">
+            <md-input-container>
+                <input ng-model="$ctrl.settings.minEthExchangeRate" type="number" min="0">
+            </md-input-container>
+        </div>
+    </md-list-item>
+    <md-list-item>
+        <p>Minimal BTC/USD exchange rate:</p>
+        <div class="md-secondary">
+            <md-input-container>
+                <input ng-model="$ctrl.settings.minBtcExchangeRate" type="number" min="0">
+            </md-input-container>
+        </div>
+    </md-list-item>
 
     <md-list-item>
         <p>Enable front-end:</p>

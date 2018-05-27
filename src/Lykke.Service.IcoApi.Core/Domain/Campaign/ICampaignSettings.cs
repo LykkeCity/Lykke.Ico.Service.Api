@@ -29,6 +29,8 @@ namespace Lykke.Service.IcoApi.Core.Domain.Campaign
         int RowndDownTokenDecimals { get; set; }
         decimal MinInvestAmountUsd { get; set; }
         bool EnableFrontEnd { get; set; }
+        decimal? MinEthExchangeRate { get; set; }
+        decimal? MinBtcExchangeRate { get; set; }
 
         bool CaptchaEnable { get; set; }
         string CaptchaSecret { get; set; }
