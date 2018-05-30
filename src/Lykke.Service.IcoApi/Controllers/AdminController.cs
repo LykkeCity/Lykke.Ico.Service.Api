@@ -616,5 +616,23 @@ namespace Lykke.Service.IcoApi.Controllers
         {
             return _adminService.GenerateTransactionQueueSasUrl(request?.ExpiryTime);
         }
+
+        /// <summary>
+        /// Fix failed presale Smarc90Logi10 transactions (wrong amount calculcation logic for LOGI)
+        /// </summary>
+        /// <returns></returns>
+        [AdminAuth]
+        [HttpPost("transactions/fix/smarc90logi10")]
+        public async Task<IActionResult> FixTransactionsSmarc90Logi10([Required] string confirmation, [Required] bool saveChanges)
+        {
+            if (confirmation != "confirm")
+            {
+                return BadRequest("The confirmation is wrong");
+            }
+
+            await _adminService.FixTransactionsSmarc90Logi10(saveChanges);
+
+            return Ok();
+        }
     }
 }

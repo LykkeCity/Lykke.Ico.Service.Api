@@ -5,7 +5,6 @@ using AzureStorage;
 using AzureStorage.Tables;
 using Common.Log;
 using Lykke.SettingsReader;
-using System;
 using Lykke.Service.IcoApi.Core.Domain.Investor;
 using Lykke.Service.IcoApi.Core.Repositories;
 

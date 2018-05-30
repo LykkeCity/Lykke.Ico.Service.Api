@@ -91,6 +91,11 @@ namespace Lykke.Service.IcoApi.Modules
                 .WithParameter(TypedParameter.From(connectionStringManager))
                 .SingleInstance();
 
+            builder.RegisterType<InvestorTransactionHistoryRepository>()
+                .As<IInvestorTransactionHistoryRepository>()
+                .WithParameter(TypedParameter.From(connectionStringManager))
+                .SingleInstance();            
+
             builder.RegisterType<InvestorRefundRepository>()
                 .As<IInvestorRefundRepository>()
                 .WithParameter(TypedParameter.From(connectionStringManager))

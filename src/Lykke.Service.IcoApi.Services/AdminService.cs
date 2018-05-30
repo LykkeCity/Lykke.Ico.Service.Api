@@ -28,6 +28,7 @@ namespace Lykke.Service.IcoApi.Services
         private readonly IInvestorRepository _investorRepository;
         private readonly IInvestorTransactionRepository _investorTransactionRepository;
         private readonly IInvestorTransactionRefundRepository _investorTransactionRefundRepository;
+        private readonly IInvestorTransactionHistoryRepository _investorTransactionHistoryRepository;
         private readonly IInvestorRefundRepository _investorRefundRepository;
         private readonly IInvestorAttributeRepository _investorAttributeRepository;
         private readonly IInvestorHistoryRepository _investorHistoryRepository;
@@ -43,6 +44,7 @@ namespace Lykke.Service.IcoApi.Services
             IInvestorRepository investorRepository,
             IInvestorTransactionRepository investorTransactionRepository,
             IInvestorTransactionRefundRepository investorTransactionRefundRepository,
+            IInvestorTransactionHistoryRepository investorTransactionHistoryRepository,
             IInvestorRefundRepository investorRefundRepository,
             IInvestorAttributeRepository investorAttributeRepository,
             IInvestorHistoryRepository investorHistoryRepository,
@@ -63,6 +65,7 @@ namespace Lykke.Service.IcoApi.Services
             _addressPoolRepository = addressPoolRepository;
             _investorTransactionRepository = investorTransactionRepository;
             _investorTransactionRefundRepository = investorTransactionRefundRepository;
+            _investorTransactionHistoryRepository = investorTransactionHistoryRepository;
             _investorRefundRepository = investorRefundRepository;
             _campaignSettingsRepository = campaignSettingsRepository;
             _transactionQueuePublisher = transactionQueuePublisher;
@@ -349,7 +352,7 @@ namespace Lykke.Service.IcoApi.Services
             await _investorTransactionRepository.RemoveAsync(email, uniqueId);
 
             await _log.WriteInfoAsync(nameof(AdminService), nameof(RefundTransaction),
-                tx.ToJson(), "Save to from InvestorTransactionRefunds table");
+                tx.ToJson(), "Save to InvestorTransactionRefunds table");
             await _investorTransactionRefundRepository.SaveAsync(email, uniqueId, tx.ToJson());
 
             await _log.WriteInfoAsync(nameof(AdminService), nameof(RefundTransaction),
@@ -414,6 +417,104 @@ namespace Lykke.Service.IcoApi.Services
                 $"Decrease CampaignInfo value");
 
             await _campaignInfoRepository.IncrementValue(type, -value);
-        }        
+        }
+
+        public async Task FixTransactionsSmarc90Logi10(bool saveChanges)
+        {
+            await _log.WriteInfoAsync(nameof(AdminService), nameof(FixTransactionsSmarc90Logi10),
+                "", "Start to fix Smarc90Logi10 transactions");
+
+            var settings = await _campaignSettingsRepository.GetAsync();
+            if (settings == null)
+            {
+                throw new InvalidOperationException($"Campaign settings was not found");
+            }
+
+            var txs = await _investorTransactionRepository.GetAllAsync();
+
+            var txsSmarc90Logi10 = txs.Where(f => f.SmarcAmountUsd > 0 && f.LogiAmountUsd > 0);
+            await _log.WriteInfoAsync(nameof(AdminService), nameof(FixTransactionsSmarc90Logi10),
+                $"txsSmarc90Logi10.Count={txsSmarc90Logi10.Count()}", "Smarc90Logi10 txs number");
+
+            var txsSmarc90Logi10Failed = txsSmarc90Logi10.Where(f => (f.LogiAmountUsd / f.AmountUsd) > 0.2M);
+            await _log.WriteInfoAsync(nameof(AdminService), nameof(FixTransactionsSmarc90Logi10),
+                $"txsSmarc90Logi10Failed.Count={txsSmarc90Logi10Failed.Count()}", "Failed Smarc90Logi10 txs number");
+
+            foreach (var txSmarc90Logi10Failed in txsSmarc90Logi10Failed)
+            {
+                await FixFailedSmarc90Logi10Transation(txSmarc90Logi10Failed, settings, saveChanges);
+            }
+        }
+
+        private async Task FixFailedSmarc90Logi10Transation(IInvestorTransaction txSmarc90Logi10Failed,
+            ICampaignSettings settings, 
+            bool saveChanges)
+        {
+            await _log.WriteInfoAsync(nameof(AdminService), nameof(FixFailedSmarc90Logi10Transation),
+                txSmarc90Logi10Failed.ToJson(), "Transaction to fix");
+
+            if (saveChanges)
+            {
+                await _investorTransactionHistoryRepository.SaveAsync(txSmarc90Logi10Failed.Email,
+                    "FixFailedSmarc90Logi10Transation",
+                    txSmarc90Logi10Failed.ToJson());
+            }
+
+            var oldTxLogiAmountUsd = txSmarc90Logi10Failed.LogiAmountUsd;
+            var oldTxLogiAmountToken = txSmarc90Logi10Failed.LogiAmountToken;
+
+            var newTxLogiAmountUsd = txSmarc90Logi10Failed.AmountUsd * 0.1M;
+            var newTxLogiAmountToken = (newTxLogiAmountUsd / txSmarc90Logi10Failed.LogiTokenPriceUsd).RoundDown(settings.RowndDownTokenDecimals);
+
+            newTxLogiAmountUsd = newTxLogiAmountToken * txSmarc90Logi10Failed.LogiTokenPriceUsd;
+
+            var diffTxLogiAmountToken = oldTxLogiAmountToken - newTxLogiAmountToken;
+
+            await _log.WriteInfoAsync(nameof(AdminService), nameof(FixFailedSmarc90Logi10Transation),
+                new { oldTxLogiAmountUsd, oldTxLogiAmountToken, newTxLogiAmountUsd, newTxLogiAmountToken, diffTxLogiAmountToken }.ToJson(), 
+                "Data to fix");
+
+            var txSmarc90Logi10 = await _investorTransactionRepository.GetAsync(txSmarc90Logi10Failed.Email, txSmarc90Logi10Failed.UniqueId);
+            txSmarc90Logi10.LogiAmountUsd = newTxLogiAmountUsd;
+            txSmarc90Logi10.LogiAmountToken = newTxLogiAmountToken;
+            txSmarc90Logi10.LogiTokenPriceContext = new object[] {
+                new
+                {
+                    Name = "LOGI",
+                    Amount = newTxLogiAmountToken,
+                    PriceUsd = txSmarc90Logi10.LogiTokenPriceUsd,
+                    AmountUsd = newTxLogiAmountUsd,
+                    Phase = "PreSale"
+                }
+            }.ToJson();
+
+            await _log.WriteInfoAsync(nameof(AdminService), nameof(FixFailedSmarc90Logi10Transation),
+                txSmarc90Logi10.ToJson(), "Update transaction");
+            if (saveChanges)
+            {
+                await _investorTransactionRepository.SaveAsync(txSmarc90Logi10);
+            }
+
+            await _log.WriteInfoAsync(nameof(AdminService), nameof(RefundTransaction),
+                new
+                {
+                    txSmarc90Logi10.Email, txSmarc90Logi10.Currency, Amount = 0M,
+                    AmountUsd = 0M, SmarcAmountToken = 0M, LogiAmountToken = -diffTxLogiAmountToken
+                }.ToJson(),
+                $"Decrease investor amounts");
+            if (saveChanges)
+            {
+                await _investorRepository.IncrementAmount(txSmarc90Logi10.Email, txSmarc90Logi10.Currency, 
+                    0, 0, 0, -diffTxLogiAmountToken);
+            }
+
+            await _log.WriteInfoAsync(nameof(AdminService), nameof(RefundTransaction),
+                new { diffTxLogiAmountToken }.ToJson(),
+                "Decrease campaign amounts");
+            if (saveChanges)
+            {
+                await DecreaseCampaignInfoParam(CampaignInfoType.AmountPreSaleInvestedLogiToken, diffTxLogiAmountToken);
+            }
+        }
     }
 }
