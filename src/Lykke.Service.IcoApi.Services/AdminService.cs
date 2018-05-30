@@ -501,7 +501,7 @@ namespace Lykke.Service.IcoApi.Services
                 await _investorTransactionRepository.SaveAsync(txSmarc90Logi10);
             }
 
-            await _log.WriteInfoAsync(nameof(AdminService), nameof(RefundTransaction),
+            await _log.WriteInfoAsync(nameof(AdminService), nameof(FixFailedSmarc90Logi10Transation),
                 new
                 {
                     txSmarc90Logi10.Email, txSmarc90Logi10.Currency, Amount = 0M,
@@ -514,7 +514,7 @@ namespace Lykke.Service.IcoApi.Services
                     0, 0, 0, -diffTxLogiAmountToken);
             }
 
-            await _log.WriteInfoAsync(nameof(AdminService), nameof(RefundTransaction),
+            await _log.WriteInfoAsync(nameof(AdminService), nameof(FixFailedSmarc90Logi10Transation),
                 new { diffTxLogiAmountToken }.ToJson(),
                 "Decrease campaign amounts");
             if (saveChanges)
