@@ -27,6 +27,6 @@ namespace Lykke.Service.IcoApi.Core.Services
         Task UpdateInvestorAsync(string email, string tokenAddress, string refundEthAddress, string refundBtcAddress);
         string GenerateTransactionQueueSasUrl(DateTime? expiryTime = null);
         Task<string> RefundTransaction(string email, string uniqueId);
-        Task FixTransactionsSmarc90Logi10(bool saveChanges);
+        Task<decimal> FixTransactionsSmarc90Logi10(bool saveChanges);
     }
 }

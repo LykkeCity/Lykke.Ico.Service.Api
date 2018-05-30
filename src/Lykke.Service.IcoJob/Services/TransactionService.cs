@@ -255,17 +255,14 @@ namespace Lykke.Service.IcoJob.Services
 
             if (txType == TxType.Smarc90Logi10)
             {
-                //TODO
-                //if (tokenInfo.Name == Consts.SMARC)
-                //{
-                //    amountUsd = amountUsd * 0.9M;
-                //}
-                //if (tokenInfo.Name == Consts.LOGI)
-                //{
-                //    amountUsd = amountUsd * 0.1M;
-                //}
-
-                amountUsd = amountUsd * 0.9M;
+                if (tokenInfo.Name == Consts.SMARC)
+                {
+                    amountUsd = amountUsd * 0.9M;
+                }
+                if (tokenInfo.Name == Consts.LOGI)
+                {
+                    amountUsd = amountUsd * 0.1M;
+                }
             }
 
             var tokenAmount = (amountUsd / tokenInfo.PriceUsd.Value).RoundDown(settings.RowndDownTokenDecimals);

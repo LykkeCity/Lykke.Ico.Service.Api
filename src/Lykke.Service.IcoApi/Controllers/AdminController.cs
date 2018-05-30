@@ -630,9 +630,9 @@ namespace Lykke.Service.IcoApi.Controllers
                 return BadRequest("The confirmation is wrong");
             }
 
-            await _adminService.FixTransactionsSmarc90Logi10(saveChanges);
+            var diff = await _adminService.FixTransactionsSmarc90Logi10(saveChanges);
 
-            return Ok();
+            return Ok(diff);
         }
     }
 }

@@ -419,7 +419,7 @@ namespace Lykke.Service.IcoApi.Services
             await _campaignInfoRepository.IncrementValue(type, -value);
         }
 
-        public async Task FixTransactionsSmarc90Logi10(bool saveChanges)
+        public async Task<decimal> FixTransactionsSmarc90Logi10(bool saveChanges)
         {
             await _log.WriteInfoAsync(nameof(AdminService), nameof(FixTransactionsSmarc90Logi10),
                 "", "Start to fix Smarc90Logi10 transactions");
@@ -440,13 +440,19 @@ namespace Lykke.Service.IcoApi.Services
             await _log.WriteInfoAsync(nameof(AdminService), nameof(FixTransactionsSmarc90Logi10),
                 $"txsSmarc90Logi10Failed.Count={txsSmarc90Logi10Failed.Count()}", "Failed Smarc90Logi10 txs number");
 
+            var diffTxLogiAmountTokenTotal = 0M;
+
             foreach (var txSmarc90Logi10Failed in txsSmarc90Logi10Failed)
             {
-                await FixFailedSmarc90Logi10Transation(txSmarc90Logi10Failed, settings, saveChanges);
+                var diffTxLogiAmountToken = await FixFailedSmarc90Logi10Transation(txSmarc90Logi10Failed, settings, saveChanges);
+
+                diffTxLogiAmountTokenTotal += diffTxLogiAmountToken;
             }
+
+            return diffTxLogiAmountTokenTotal;
         }
 
-        private async Task FixFailedSmarc90Logi10Transation(IInvestorTransaction txSmarc90Logi10Failed,
+        private async Task<decimal> FixFailedSmarc90Logi10Transation(IInvestorTransaction txSmarc90Logi10Failed,
             ICampaignSettings settings, 
             bool saveChanges)
         {
@@ -515,6 +521,8 @@ namespace Lykke.Service.IcoApi.Services
             {
                 await DecreaseCampaignInfoParam(CampaignInfoType.AmountPreSaleInvestedLogiToken, diffTxLogiAmountToken);
             }
+
+            return diffTxLogiAmountToken;
         }
     }
 }
