@@ -29,6 +29,21 @@ namespace Lykke.Service.IcoApi.Services.Extensions
             return txCreatedUtc >= self.CrowdSaleStartDateTimeUtc && txCreatedUtc <= self.CrowdSaleEndDateTimeUtc;
         }
 
+        public static string GetPhaseString(this ICampaignSettings self, DateTime nowUtc)
+        {
+            if (self.IsPreSale(nowUtc))
+            {
+                return "CrowdSale";
+            }
+
+            if (self.IsPreSale(nowUtc))
+            {
+                return "PreSale";
+            }
+
+            return null;
+        }
+
         public static async Task<TokenInfo> GetSmarcTokenInfo(this ICampaignSettings self, 
             ICampaignInfoRepository campaignInfoRepository, 
             DateTime txDateTimeUtc)
@@ -47,7 +62,7 @@ namespace Lykke.Service.IcoApi.Services.Extensions
                     {
                         Name = Consts.SMARC,
                         PriceUsd = self.PreSaleSmarcPriceUsd,
-                        Phase = CampaignPhase.PreSale,
+                        Tier = CampaignTier.PreSale,
                         PhaseTokenAmount = preSaleTokensAmount,
                         PhaseTokenAmountTotal = self.PreSaleSmarcAmount
                     };
@@ -76,7 +91,7 @@ namespace Lykke.Service.IcoApi.Services.Extensions
                     {
                         Name = Consts.SMARC,
                         PriceUsd = self.CrowdSale1stTierSmarcPriceUsd,
-                        Phase = CampaignPhase.CrowdSale1stTier,
+                        Tier = CampaignTier.CrowdSale1stTier,
                         PhaseTokenAmount = crowdSaleTokensAmount,
                         PhaseTokenAmountTotal = self.CrowdSale1stTierSmarcAmount
                     };
@@ -90,7 +105,7 @@ namespace Lykke.Service.IcoApi.Services.Extensions
                     {
                         Name = Consts.SMARC,
                         PriceUsd = self.CrowdSale2ndTierSmarcPriceUsd,
-                        Phase = CampaignPhase.CrowdSale2ndTier,
+                        Tier = CampaignTier.CrowdSale2ndTier,
                         PhaseTokenAmount = crowdSaleTokensAmount - self.CrowdSale1stTierSmarcAmount,
                         PhaseTokenAmountTotal = self.CrowdSale2ndTierSmarcAmount
                     };
@@ -103,7 +118,7 @@ namespace Lykke.Service.IcoApi.Services.Extensions
                     {
                         Name = Consts.SMARC,
                         PriceUsd = self.CrowdSale3rdTierSmarcPriceUsd,
-                        Phase = CampaignPhase.CrowdSale3ndTier,
+                        Tier = CampaignTier.CrowdSale3ndTier,
                         PhaseTokenAmount = crowdSaleTokensAmount - crowdSale2ndTierAmountTotal,
                         PhaseTokenAmountTotal = self.CrowdSale3rdTierSmarcAmount
                     };
@@ -144,7 +159,7 @@ namespace Lykke.Service.IcoApi.Services.Extensions
                     {
                         Name = Consts.LOGI,
                         PriceUsd = self.PreSaleLogiPriceUsd,
-                        Phase = CampaignPhase.PreSale,
+                        Tier = CampaignTier.PreSale,
                         PhaseTokenAmount = preSaleTokensAmount,
                         PhaseTokenAmountTotal = self.PreSaleLogiAmount
                     };
@@ -173,7 +188,7 @@ namespace Lykke.Service.IcoApi.Services.Extensions
                     {
                         Name = Consts.LOGI,
                         PriceUsd = self.CrowdSale1stTierLogiPriceUsd,
-                        Phase = CampaignPhase.CrowdSale1stTier,
+                        Tier = CampaignTier.CrowdSale1stTier,
                         PhaseTokenAmount = crowdSaleTokensAmount,
                         PhaseTokenAmountTotal = self.CrowdSale1stTierLogiAmount
                     };
@@ -187,7 +202,7 @@ namespace Lykke.Service.IcoApi.Services.Extensions
                     {
                         Name = Consts.LOGI,
                         PriceUsd = self.CrowdSale2ndTierLogiPriceUsd,
-                        Phase = CampaignPhase.CrowdSale2ndTier,
+                        Tier = CampaignTier.CrowdSale2ndTier,
                         PhaseTokenAmount = crowdSaleTokensAmount,
                         PhaseTokenAmountTotal = self.CrowdSale2ndTierLogiAmount
                     };
@@ -200,7 +215,7 @@ namespace Lykke.Service.IcoApi.Services.Extensions
                     {
                         Name = Consts.LOGI,
                         PriceUsd = self.CrowdSale3rdTierLogiPriceUsd,
-                        Phase = CampaignPhase.CrowdSale3ndTier,
+                        Tier = CampaignTier.CrowdSale3ndTier,
                         PhaseTokenAmount = crowdSaleTokensAmount,
                         PhaseTokenAmountTotal = self.CrowdSale3rdTierLogiAmount
                     };

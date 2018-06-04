@@ -268,7 +268,7 @@ namespace Lykke.Service.IcoJob.Services
             var tokenAmount = (amountUsd / tokenInfo.PriceUsd.Value).RoundDown(settings.RowndDownTokenDecimals);
 
             if (tokenAmount > tokenInfo.PhaseTokenAmountAvailable.Value &&
-                (tokenInfo.Phase == CampaignPhase.CrowdSale1stTier || tokenInfo.Phase == CampaignPhase.CrowdSale2ndTier))
+                (tokenInfo.Tier == CampaignTier.CrowdSale1stTier || tokenInfo.Tier == CampaignTier.CrowdSale2ndTier))
             {
                 // below threshold
                 txTokens.Add(new TxToken
@@ -276,7 +276,7 @@ namespace Lykke.Service.IcoJob.Services
                     Name = tokenInfo.Name,
                     Amount = tokenInfo.PhaseTokenAmountAvailable.Value,
                     PriceUsd = tokenInfo.PriceUsd.Value,
-                    Phase = Enum.GetName(typeof(CampaignPhase), tokenInfo.Phase)
+                    Phase = Enum.GetName(typeof(CampaignTier), tokenInfo.Tier)
                 });
 
                 // above threshold
@@ -298,7 +298,7 @@ namespace Lykke.Service.IcoJob.Services
                 Name = tokenInfo.Name,
                 Amount = tokenAmount,
                 PriceUsd = tokenInfo.PriceUsd.Value,
-                Phase = Enum.GetName(typeof(CampaignPhase), tokenInfo.Phase)
+                Phase = Enum.GetName(typeof(CampaignTier), tokenInfo.Tier)
             });
 
             return TxTokenContext.Create(txTokens);
@@ -310,15 +310,15 @@ namespace Lykke.Service.IcoJob.Services
             var phase = "";
             var priceUsd = 0M;
 
-            if (tokenInfo.Phase == CampaignPhase.CrowdSale1stTier)
+            if (tokenInfo.Tier == CampaignTier.CrowdSale1stTier)
             {
-                phase = nameof(CampaignPhase.CrowdSale1stTier);
+                phase = nameof(CampaignTier.CrowdSale1stTier);
                 priceUsd = tokenInfo.Name == Consts.SMARC ? settings.CrowdSale2ndTierSmarcPriceUsd : settings.CrowdSale2ndTierLogiPriceUsd;
             }
 
-            if (tokenInfo.Phase == CampaignPhase.CrowdSale2ndTier)
+            if (tokenInfo.Tier == CampaignTier.CrowdSale2ndTier)
             {
-                phase = nameof(CampaignPhase.CrowdSale2ndTier);
+                phase = nameof(CampaignTier.CrowdSale2ndTier);
                 priceUsd = tokenInfo.Name == Consts.SMARC ? settings.CrowdSale3rdTierSmarcAmount : settings.CrowdSale3rdTierLogiAmount;
             }
 

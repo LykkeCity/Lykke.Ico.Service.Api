@@ -1,6 +1,6 @@
 ﻿namespace Lykke.Service.IcoApi.Core.Domain.Campaign
 {
-    public enum CampaignPhase
+    public enum CampaignTier
     {
         PreSale,
         CrowdSale1stTier,

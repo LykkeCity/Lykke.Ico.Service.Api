@@ -35,14 +35,16 @@ namespace Lykke.Services.IcoApi.AzureRepositories
             return await _table.GetDataAsync(GetPartitionKey(), GetRowKey(email));
         }
 
-        public async Task<IInvestor> AddAsync(string email, Guid confirmationToken)
+        public async Task<IInvestor> AddAsync(string email, Guid confirmationToken, string phase)
         {
             var entity = new InvestorEntity
             {
                 PartitionKey = GetPartitionKey(),
                 RowKey = GetRowKey(email),
                 ConfirmationToken = confirmationToken,
-                ConfirmationTokenCreatedUtc = DateTime.UtcNow
+                ConfirmationTokenCreatedUtc = DateTime.UtcNow,
+                Phase = phase,
+                PhaseUpdatedUtc = DateTime.UtcNow
             };
 
             await _table.InsertAsync(entity);

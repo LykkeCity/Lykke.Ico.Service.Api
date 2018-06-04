@@ -8,7 +8,7 @@ namespace Lykke.Service.IcoApi.Core.Domain.Campaign
 
         public decimal? PriceUsd { get; set; }
 
-        public CampaignPhase? Phase { get; set; }
+        public CampaignTier? Tier { get; set; }
 
         public decimal? PhaseTokenAmount { get; set; }
 

@@ -13,12 +13,14 @@ using Lykke.Service.IcoApi.Core.Domain.Investor;
 using Lykke.Service.IcoApi.Core.Domain.Campaign;
 using Lykke.Service.IcoApi.Core.Queues.Messages;
 using Lykke.Service.IcoApi.Core.Queues;
+using Lykke.Service.IcoApi.Services.Extensions;
 
 namespace Lykke.Service.IcoApi.Services
 {
     public class InvestorService : IInvestorService
     {
         private readonly ILog _log;
+        private readonly ICampaignService _campaignService;
         private readonly IInvestorRepository _investorRepository;
         private readonly IInvestorAttributeRepository _investorAttributeRepository;
         private readonly IAddressPoolRepository _addressPoolRepository;
@@ -29,8 +31,7 @@ namespace Lykke.Service.IcoApi.Services
         private readonly IcoApiSettings _icoApiSettings;
 
         public InvestorService(ILog log,
-            IBtcService btcService,
-            IEthService ethService,
+            ICampaignService campaignService,
             IInvestorRepository investorRepository,
             IInvestorAttributeRepository investorAttributeRepository,
             IAddressPoolRepository addressPoolRepository,
@@ -42,6 +43,7 @@ namespace Lykke.Service.IcoApi.Services
             IcoApiSettings icoApiSettings)
         {
             _log = log;
+            _campaignService = campaignService;
             _investorRepository = investorRepository;
             _investorAttributeRepository = investorAttributeRepository;
             _addressPoolRepository = addressPoolRepository;
@@ -73,12 +75,15 @@ namespace Lykke.Service.IcoApi.Services
             var investor = await _investorRepository.GetAsync(email);
             if (investor == null)
             {
+                var settings = await _campaignService.GetCampaignSettings();
+                var phase = settings.GetPhaseString(DateTime.UtcNow);
+
                 var token = Guid.NewGuid();
 
                 await _log.WriteInfoAsync(nameof(InvestorService), nameof(RegisterAsync), 
-                    $"email={email}, token={token}", "Create investor");
+                   new { email, token, phase }.ToJson(), "Create investor");
 
-                await _investorRepository.AddAsync(email, token);
+                await _investorRepository.AddAsync(email, token, phase);
                 await _investorAttributeRepository.SaveAsync(InvestorAttributeType.ConfirmationToken, 
                     email, token.ToString());
                 await _campaignInfoRepository.IncrementValue(CampaignInfoType.InvestorsRegistered, 1);

@@ -20,6 +20,9 @@ namespace Lykke.Services.IcoApi.AzureRepositories
         public string RefundEthAddress { get; set; }
         public string RefundBtcAddress { get; set; }
 
+        public string Phase { get; set; }
+        public DateTime? PhaseUpdatedUtc { get; set; }
+
         public bool PayInAssigned { get; set; }
 
         public string PayInSmarcEthPublicKey { get; set; }

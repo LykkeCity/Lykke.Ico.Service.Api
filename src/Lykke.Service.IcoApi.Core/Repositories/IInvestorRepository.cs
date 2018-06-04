@@ -12,7 +12,7 @@ namespace Lykke.Service.IcoApi.Core.Repositories
 
         Task<IInvestor> GetAsync(string email);
 
-        Task<IInvestor> AddAsync(string email, Guid confirmationToken);
+        Task<IInvestor> AddAsync(string email, Guid confirmationToken, string phase);
 
         Task ConfirmAsync(string email);
 

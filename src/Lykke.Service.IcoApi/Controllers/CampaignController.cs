@@ -69,11 +69,11 @@ namespace Lykke.Service.IcoApi.Controllers
             {
                 CaptchaEnabled = settings.CaptchaEnable,
                 CampaignActive = campaignActive,
-                SmarcPhase = smarcTokenInfo.Phase,
+                SmarcPhase = smarcTokenInfo.Tier,
                 SmarcPhaseAmount = smarcTokenInfo.PhaseTokenAmount,
                 SmarcPhaseAmountAvailable = smarcTokenInfo.PhaseTokenAmountAvailable,
                 SmarcPhasePriceUsd = smarcTokenInfo.PriceUsd,
-                LogiPhase = logiTokenInfo.Phase,
+                LogiPhase = logiTokenInfo.Tier,
                 LogiPhaseAmount = logiTokenInfo.PhaseTokenAmount,
                 LogiPhaseAmountAvailable = logiTokenInfo.PhaseTokenAmountAvailable,
                 LogiPhasePriceUsd = logiTokenInfo.PriceUsd,

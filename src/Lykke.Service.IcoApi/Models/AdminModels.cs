@@ -18,6 +18,9 @@ namespace Lykke.Service.IcoApi.Models
         public string RefundEthAddress { get; set; }
         public string RefundBtcAddress { get; set; }
 
+        public string Phase { get; set; }
+        public DateTime? PhaseUpdatedUtc { get; set; }
+
         public bool PayInAssigned { get; set; }
 
         public string PayInSmarcEthPublicKey { get; set; }
@@ -60,6 +63,8 @@ namespace Lykke.Service.IcoApi.Models
                 TokenAddress = investor.TokenAddress,
                 RefundEthAddress = investor.RefundEthAddress,
                 RefundBtcAddress = investor.RefundBtcAddress,
+                Phase = investor.Phase,
+                PhaseUpdatedUtc = investor.PhaseUpdatedUtc,
                 PayInAssigned = investor.PayInAssigned,
                 PayInSmarcEthPublicKey = investor.PayInSmarcEthPublicKey,
                 PayInSmarcEthAddress = investor.PayInSmarcEthAddress,
