@@ -3,6 +3,7 @@ import { ShellController } from "../shell/shell.js";
 import { CampaignSettingsHistoryController, CampaignSettingsHistoryItem } from "./campaignSettingsHistory.js";
 
 class CampaignSettings {
+    preSaleMinInvestAmountUsd: number;
     preSaleStartDateTimeUtc: Date;
     preSaleEndDateTimeUtc: Date;
     preSaleSmarcAmount: number;
@@ -10,6 +11,7 @@ class CampaignSettings {
     preSaleSmarcPriceUsd: number;
     preSaleLogiPriceUsd: number;
 
+    crowdSaleMinInvestAmountUsd: number;
     crowdSaleStartDateTimeUtc: Date;
     crowdSaleEndDateTimeUtc: Date;
     crowdSale1stTierSmarcPriceUsd: number;
@@ -26,7 +28,6 @@ class CampaignSettings {
     crowdSale3rdTierLogiAmount: number;
 
     rowndDownTokenDecimals: number;
-    minInvestAmountUsd: number;
     enableFrontEnd: boolean;
     minEthExchangeRate: number;
     minBtcExchangeRate: number;

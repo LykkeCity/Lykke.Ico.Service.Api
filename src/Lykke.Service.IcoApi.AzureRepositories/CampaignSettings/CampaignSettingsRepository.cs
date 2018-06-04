@@ -56,12 +56,16 @@ namespace Lykke.Services.IcoApi.AzureRepositories
                 {
                     PartitionKey = GetPartitionKey(),
                     RowKey = GetRowKey(),
+
+                    PreSaleMinInvestAmountUsd = settings.PreSaleMinInvestAmountUsd,
                     PreSaleStartDateTimeUtc = settings.PreSaleStartDateTimeUtc,
                     PreSaleEndDateTimeUtc = settings.PreSaleEndDateTimeUtc,
                     PreSaleSmarcAmount = settings.PreSaleSmarcAmount,
                     PreSaleLogiAmount = settings.PreSaleLogiAmount,
                     PreSaleSmarcPriceUsd = settings.PreSaleSmarcPriceUsd,
                     PreSaleLogiPriceUsd = settings.PreSaleLogiPriceUsd,
+
+                    CrowdSaleMinInvestAmountUsd = settings.CrowdSaleMinInvestAmountUsd,
                     CrowdSaleStartDateTimeUtc = settings.CrowdSaleStartDateTimeUtc,
                     CrowdSaleEndDateTimeUtc = settings.CrowdSaleEndDateTimeUtc,
                     CrowdSale1stTierSmarcPriceUsd = settings.CrowdSale1stTierSmarcPriceUsd,
@@ -76,13 +80,14 @@ namespace Lykke.Services.IcoApi.AzureRepositories
                     CrowdSale3rdTierSmarcAmount = settings.CrowdSale3rdTierSmarcAmount,
                     CrowdSale3rdTierLogiPriceUsd = settings.CrowdSale3rdTierLogiPriceUsd,
                     CrowdSale3rdTierLogiAmount = settings.CrowdSale3rdTierLogiAmount,
-                    MinInvestAmountUsd = settings.MinInvestAmountUsd,
+
                     RowndDownTokenDecimals = settings.RowndDownTokenDecimals,
                     EnableFrontEnd = settings.EnableFrontEnd,
                     MinEthExchangeRate = settings.MinEthExchangeRate,
                     MinBtcExchangeRate = settings.MinBtcExchangeRate,
                     CaptchaEnable = settings.CaptchaEnable,
                     CaptchaSecret = settings.CaptchaSecret,
+
                     KycEnableRequestSending = settings.KycEnableRequestSending,
                     KycCampaignId = settings.KycCampaignId,
                     KycLinkTemplate = settings.KycLinkTemplate,

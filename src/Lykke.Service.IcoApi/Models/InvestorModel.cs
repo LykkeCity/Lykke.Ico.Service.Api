@@ -1,6 +1,7 @@
 ﻿using Lykke.Service.IcoApi.Core.Domain;
 using Lykke.Service.IcoApi.Core.Domain.Fiat;
 using Lykke.Service.IcoApi.Core.Domain.Investor;
+using Lykke.Service.IcoApi.Services.Extensions;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -46,6 +47,7 @@ namespace Lykke.Service.IcoApi.Models
     public class InvestorResponse
     {
         public string Email { get; set; }
+        public string Phase { get; set; }
 
         public string TokenAddress { get; set; }
         public string RefundEthAddress { get; set; }
@@ -87,6 +89,7 @@ namespace Lykke.Service.IcoApi.Models
             return new InvestorResponse
             {
                 Email = investor.Email,
+                Phase = investor.GetCampaignPhaseString(),
                 TokenAddress = investor.TokenAddress,
                 RefundEthAddress = investor.RefundEthAddress,
                 RefundBtcAddress = investor.RefundBtcAddress,

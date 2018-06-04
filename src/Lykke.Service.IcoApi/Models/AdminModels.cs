@@ -7,6 +7,7 @@ using Lykke.Service.IcoApi.Core.Domain.AddressPool;
 using Lykke.Service.IcoApi.Core.Domain.Campaign;
 using Lykke.Service.IcoApi.Core.Domain.Investor;
 using EmailTemplateModel = Lykke.Service.IcoCommon.Client.Models.EmailTemplateModel;
+using Lykke.Service.IcoApi.Services.Extensions;
 
 namespace Lykke.Service.IcoApi.Models
 {
@@ -63,7 +64,7 @@ namespace Lykke.Service.IcoApi.Models
                 TokenAddress = investor.TokenAddress,
                 RefundEthAddress = investor.RefundEthAddress,
                 RefundBtcAddress = investor.RefundBtcAddress,
-                Phase = investor.Phase,
+                Phase = investor.GetCampaignPhaseString(),
                 PhaseUpdatedUtc = investor.PhaseUpdatedUtc,
                 PayInAssigned = investor.PayInAssigned,
                 PayInSmarcEthPublicKey = investor.PayInSmarcEthPublicKey,
@@ -245,6 +246,8 @@ namespace Lykke.Service.IcoApi.Models
     public class CampaignSettingsModel : ICampaignSettings
     {
         [Required]
+        public decimal PreSaleMinInvestAmountUsd { get; set; }
+        [Required]
         public DateTime PreSaleStartDateTimeUtc { get; set; }
         [Required]
         public DateTime? PreSaleEndDateTimeUtc { get; set; }
@@ -257,6 +260,8 @@ namespace Lykke.Service.IcoApi.Models
         [Required]
         public decimal PreSaleLogiPriceUsd { get; set; }
 
+        [Required]
+        public decimal CrowdSaleMinInvestAmountUsd { get; set; }
         [Required]
         public DateTime CrowdSaleStartDateTimeUtc { get; set; }
         [Required]
@@ -290,8 +295,6 @@ namespace Lykke.Service.IcoApi.Models
         public decimal CrowdSale3rdTierLogiAmount { get; set; }
 
         [Required]
-        public decimal MinInvestAmountUsd { get; set; }
-        [Required]
         public int RowndDownTokenDecimals { get; set; }
         [Required]
         public bool EnableFrontEnd { get; set; }
@@ -318,12 +321,15 @@ namespace Lykke.Service.IcoApi.Models
 
             return new CampaignSettingsModel
             {
+                PreSaleMinInvestAmountUsd = settings.PreSaleMinInvestAmountUsd,
                 PreSaleStartDateTimeUtc = settings.PreSaleStartDateTimeUtc,
                 PreSaleEndDateTimeUtc = settings.PreSaleEndDateTimeUtc,
                 PreSaleSmarcAmount = settings.PreSaleSmarcAmount,
                 PreSaleLogiAmount = settings.PreSaleLogiAmount,
                 PreSaleSmarcPriceUsd = settings.PreSaleSmarcPriceUsd,
                 PreSaleLogiPriceUsd = settings.PreSaleLogiPriceUsd,
+
+                CrowdSaleMinInvestAmountUsd = settings.CrowdSaleMinInvestAmountUsd,
                 CrowdSaleStartDateTimeUtc = settings.CrowdSaleStartDateTimeUtc,
                 CrowdSaleEndDateTimeUtc = settings.CrowdSaleEndDateTimeUtc,
                 CrowdSale1stTierSmarcPriceUsd = settings.CrowdSale1stTierSmarcPriceUsd,
@@ -338,13 +344,14 @@ namespace Lykke.Service.IcoApi.Models
                 CrowdSale3rdTierSmarcAmount = settings.CrowdSale3rdTierSmarcAmount,
                 CrowdSale3rdTierLogiPriceUsd = settings.CrowdSale3rdTierLogiPriceUsd,
                 CrowdSale3rdTierLogiAmount = settings.CrowdSale3rdTierLogiAmount,
-                MinInvestAmountUsd = settings.MinInvestAmountUsd,
+
                 RowndDownTokenDecimals = settings.RowndDownTokenDecimals,
                 EnableFrontEnd = settings.EnableFrontEnd,
                 MinEthExchangeRate = settings.MinEthExchangeRate,
                 MinBtcExchangeRate = settings.MinBtcExchangeRate,
                 CaptchaEnable = settings.CaptchaEnable,
                 CaptchaSecret = settings.CaptchaSecret,
+
                 KycEnableRequestSending = settings.KycEnableRequestSending,
                 KycCampaignId = settings.KycCampaignId,
                 KycLinkTemplate = settings.KycLinkTemplate,

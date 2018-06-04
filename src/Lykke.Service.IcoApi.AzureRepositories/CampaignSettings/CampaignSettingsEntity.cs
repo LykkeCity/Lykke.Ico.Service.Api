@@ -9,6 +9,7 @@ namespace Lykke.Services.IcoApi.AzureRepositories
     [ValueTypeMergingStrategy(ValueTypeMergingStrategy.UpdateAlways)]
     internal class CampaignSettingsEntity : AzureTableEntity, ICampaignSettings
     {
+        public decimal PreSaleMinInvestAmountUsd { get; set; }
         public DateTime PreSaleStartDateTimeUtc { get; set; }
         public DateTime? PreSaleEndDateTimeUtc { get; set; }
         public decimal PreSaleSmarcAmount { get; set; }
@@ -16,6 +17,7 @@ namespace Lykke.Services.IcoApi.AzureRepositories
         public decimal PreSaleSmarcPriceUsd { get; set; }
         public decimal PreSaleLogiPriceUsd { get; set; }
 
+        public decimal CrowdSaleMinInvestAmountUsd { get; set; }
         public DateTime CrowdSaleStartDateTimeUtc { get; set; }
         public DateTime? CrowdSaleEndDateTimeUtc { get; set; }
 
@@ -34,7 +36,6 @@ namespace Lykke.Services.IcoApi.AzureRepositories
         public decimal CrowdSale3rdTierLogiPriceUsd { get; set; }
         public decimal CrowdSale3rdTierLogiAmount { get; set; }
 
-        public decimal MinInvestAmountUsd { get; set; }
         public int RowndDownTokenDecimals { get; set; }
         public bool EnableFrontEnd { get; set; }
         public decimal? MinEthExchangeRate { get; set; }

@@ -93,8 +93,10 @@ namespace Lykke.Service.IcoJob.Services
             }
 
             var txType = msg.GetTxType(investor);
-            var smarcTokenInfo = await settings.GetSmarcTokenInfo(_campaignInfoRepository, msg.CreatedUtc);
-            var logiTokenInfo = await settings.GetLogiTokenInfo(_campaignInfoRepository, msg.CreatedUtc);
+            var smarcTokenInfo = await settings.GetSmarcTokenInfo(_campaignInfoRepository, 
+                msg.CreatedUtc, investor.GetCampaignPhase());
+            var logiTokenInfo = await settings.GetLogiTokenInfo(_campaignInfoRepository, 
+                msg.CreatedUtc, investor.GetCampaignPhase());
 
             var validTx = await IsTxValid(msg, smarcTokenInfo, logiTokenInfo, txType);
             if (validTx)
@@ -369,6 +371,9 @@ namespace Lykke.Service.IcoJob.Services
             {
                 var investor = await _investorRepository.GetAsync(tx.Email);
 
+                var minInvestAmountUsd = investor.GetCampaignPhase() == CampaignPhase.CrowdSale ?
+                    settings.CrowdSaleMinInvestAmountUsd : settings.PreSaleMinInvestAmountUsd;
+
                 var message = new NewTransaction
                 {
                     AuthToken = investor.ConfirmationToken.Value.ToString(),
@@ -382,14 +387,14 @@ namespace Lykke.Service.IcoJob.Services
                     TransactionFee = tx.Fee,
                     TransactionAsset = tx.Currency.ToAssetName(),
                     LinkTransactionDetails = link,
-                    MinAmount = settings.MinInvestAmountUsd,
-                    MoreInvestmentRequired = investor.AmountUsd < settings.MinInvestAmountUsd,
+                    MinAmount = minInvestAmountUsd,
+                    MoreInvestmentRequired = investor.AmountUsd < minInvestAmountUsd,
                     PayInAddress = tx.PayInAddress
                 };
 
                 if (settings.KycEnableRequestSending &&
                     investor.KycRequestedUtc == null &&
-                    investor.AmountUsd >= settings.MinInvestAmountUsd)
+                    investor.AmountUsd >= minInvestAmountUsd)
                 {
                     var kycId = await SaveInvestorKyc(investor.Email);
                     var kycLink = await _kycService.GetKycLink(tx.Email, kycId);

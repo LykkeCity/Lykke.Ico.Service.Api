@@ -2,14 +2,6 @@
    
     <md-subheader class="md-no-sticky">Common</md-subheader>
     <md-list-item>
-        <p>Minimal investment amount (USD):</p>
-        <div class="md-secondary">
-            <md-input-container>
-                <input ng-model="$ctrl.settings.minInvestAmountUsd" type="number" min="0">
-            </md-input-container>
-        </div>
-    </md-list-item>
-    <md-list-item>
         <p>Round down token decimals to:</p>
         <div class="md-secondary">
             <md-input-container>
@@ -56,6 +48,14 @@
     <md-divider></md-divider>
 
     <md-subheader class="md-no-sticky">Pre-sale</md-subheader>
+    <md-list-item>
+        <p>Minimal investment amount (USD):</p>
+        <div class="md-secondary">
+            <md-input-container>
+                <input ng-model="$ctrl.settings.preSaleMinInvestAmountUsd" type="number" min="0">
+            </md-input-container>
+        </div>
+    </md-list-item>
     <md-list-item>
         <p>Starts:</p>
         <div class="md-secondary">
@@ -111,6 +111,14 @@
     <md-divider></md-divider>
 
     <md-subheader class="md-no-sticky">Crowd-sale</md-subheader>
+    <md-list-item>
+        <p>Minimal investment amount (USD):</p>
+        <div class="md-secondary">
+            <md-input-container>
+                <input ng-model="$ctrl.settings.crowdSaleMinInvestAmountUsd" type="number" min="0">
+            </md-input-container>
+        </div>
+    </md-list-item>
     <md-list-item>
         <p>Starts:</p>
         <div class="md-secondary">
