@@ -10,14 +10,14 @@ namespace Lykke.Services.IcoApi.AzureRepositories
     internal class CampaignSettingsEntity : AzureTableEntity, ICampaignSettings
     {
         public DateTime PreSaleStartDateTimeUtc { get; set; }
-        public DateTime PreSaleEndDateTimeUtc { get; set; }
+        public DateTime? PreSaleEndDateTimeUtc { get; set; }
         public decimal PreSaleSmarcAmount { get; set; }
         public decimal PreSaleLogiAmount { get; set; }
         public decimal PreSaleSmarcPriceUsd { get; set; }
         public decimal PreSaleLogiPriceUsd { get; set; }
 
         public DateTime CrowdSaleStartDateTimeUtc { get; set; }
-        public DateTime CrowdSaleEndDateTimeUtc { get; set; }
+        public DateTime? CrowdSaleEndDateTimeUtc { get; set; }
 
         public decimal CrowdSale1stTierSmarcPriceUsd { get; set; }
         public decimal CrowdSale1stTierSmarcAmount { get; set; }

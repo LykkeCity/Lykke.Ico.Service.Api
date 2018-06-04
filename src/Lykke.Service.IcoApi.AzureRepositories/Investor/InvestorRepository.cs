@@ -132,6 +132,19 @@ namespace Lykke.Services.IcoApi.AzureRepositories
             await _investorHistoryRepository.SaveAsync(entity, InvestorHistoryAction.SaveKycResult);
         }
 
+        public async Task SavePhaseAsync(string email, string phase)
+        {
+            var entity = await _table.ReplaceAsync(GetPartitionKey(), GetRowKey(email), x =>
+            {
+                x.Phase = phase;
+                x.PhaseUpdatedUtc = DateTime.UtcNow;
+
+                return x;
+            });
+
+            await _investorHistoryRepository.SaveAsync(entity, InvestorHistoryAction.SavePhase);
+        }
+
         public async Task IncrementAmount(string email, CurrencyType type, decimal amount, decimal amountUsd, 
             decimal amountSmarcToken, decimal amountLogiToken)
         {

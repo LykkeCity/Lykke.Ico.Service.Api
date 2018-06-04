@@ -144,9 +144,16 @@ namespace Lykke.Service.IcoApi.Controllers
         public async Task<IActionResult> SaveCampaignSettings([FromBody] CampaignSettingsModel settings)
         {
             settings.PreSaleStartDateTimeUtc = settings.PreSaleStartDateTimeUtc.ToUniversalTime();
-            settings.PreSaleEndDateTimeUtc = settings.PreSaleEndDateTimeUtc.ToUniversalTime();
+            if (settings.PreSaleEndDateTimeUtc.HasValue)
+            {
+                settings.PreSaleEndDateTimeUtc = settings.PreSaleEndDateTimeUtc.Value.ToUniversalTime();
+            }
+
             settings.CrowdSaleStartDateTimeUtc = settings.CrowdSaleStartDateTimeUtc.ToUniversalTime();
-            settings.CrowdSaleEndDateTimeUtc = settings.CrowdSaleEndDateTimeUtc.ToUniversalTime();
+            if (settings.CrowdSaleEndDateTimeUtc.HasValue)
+            {
+                settings.CrowdSaleEndDateTimeUtc = settings.CrowdSaleEndDateTimeUtc.Value.ToUniversalTime();
+            }
 
             await _log.WriteInfoAsync(nameof(AdminController), nameof(SaveCampaignSettings),
                $"settings={settings.ToJson()}", "Save campaign settings");
@@ -210,6 +217,19 @@ namespace Lykke.Service.IcoApi.Controllers
 
             await _adminService.UpdateInvestorAsync(email, model.TokenAddress,
                 model.RefundEthAddress, model.RefundBtcAddress);
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Refund investor transaction
+        /// </summary>
+        [AdminAuth]
+        [HttpPost("investors/{email}/phase/{phase}")]
+        public async Task<IActionResult> UpdateInvestorPhase([Required] string email,
+            [Required] CampaignPhase phase)
+        {
+            await _investorService.SavePhaseAsync(email, phase);
 
             return Ok();
         }

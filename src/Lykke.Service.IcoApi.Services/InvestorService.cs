@@ -156,6 +156,13 @@ namespace Lykke.Service.IcoApi.Services
             }
         }
 
+        public async Task SavePhaseAsync(string email, CampaignPhase phase)
+        {
+            email = email.ToLowCase();
+
+            await _investorRepository.SavePhaseAsync(email, Enum.GetName(typeof(CampaignPhase), phase));
+        }
+
         private async Task SendConfirmationEmail(string email, Guid token)
         {
             var message = new Confirmation

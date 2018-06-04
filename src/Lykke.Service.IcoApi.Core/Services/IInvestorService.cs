@@ -1,4 +1,5 @@
 ﻿using Lykke.Service.IcoApi.Core.Domain;
+using Lykke.Service.IcoApi.Core.Domain.Campaign;
 using Lykke.Service.IcoApi.Core.Domain.Investor;
 using System;
 using System.Threading.Tasks;
@@ -20,5 +21,7 @@ namespace Lykke.Service.IcoApi.Core.Services
         Task SaveKycResultAsync(string email, string kycStatus);
 
         Task SendFiatTransaction(string email, string transactionId, TxType txType, decimal amount, decimal fee);
+
+        Task SavePhaseAsync(string email, CampaignPhase phase);
     }
 }

@@ -21,27 +21,49 @@ namespace Lykke.Service.IcoApi.Services.Extensions
 
         public static bool IsPreSale(this ICampaignSettings self, DateTime txCreatedUtc)
         {
-            return txCreatedUtc >= self.PreSaleStartDateTimeUtc && txCreatedUtc <= self.PreSaleEndDateTimeUtc;
+            if (txCreatedUtc >= self.CrowdSaleStartDateTimeUtc)
+            {
+                return false;
+            }
+
+            if (!self.PreSaleEndDateTimeUtc.HasValue)
+            {
+                return txCreatedUtc >= self.PreSaleStartDateTimeUtc;
+            }
+
+            return txCreatedUtc >= self.PreSaleStartDateTimeUtc && txCreatedUtc <= self.PreSaleEndDateTimeUtc.Value;
         }
 
         public static bool IsCrowdSale(this ICampaignSettings self, DateTime txCreatedUtc)
         {
-            return txCreatedUtc >= self.CrowdSaleStartDateTimeUtc && txCreatedUtc <= self.CrowdSaleEndDateTimeUtc;
+            if (!self.CrowdSaleEndDateTimeUtc.HasValue)
+            {
+                return txCreatedUtc >= self.CrowdSaleStartDateTimeUtc;
+            }
+
+            return txCreatedUtc >= self.CrowdSaleStartDateTimeUtc && txCreatedUtc <= self.CrowdSaleEndDateTimeUtc.Value;
+        }
+
+        public static CampaignPhase? GetPhase(this ICampaignSettings self, DateTime nowUtc)
+        {
+            if (self.IsCrowdSale(nowUtc))
+            {
+                return CampaignPhase.CrowdSale;
+            }
+
+            if (self.IsPreSale(nowUtc))
+            {
+                return CampaignPhase.PreSale;
+            }
+
+            return null;
         }
 
         public static string GetPhaseString(this ICampaignSettings self, DateTime nowUtc)
         {
-            if (self.IsPreSale(nowUtc))
-            {
-                return "CrowdSale";
-            }
+            var phase = self.GetPhase(nowUtc);
 
-            if (self.IsPreSale(nowUtc))
-            {
-                return "PreSale";
-            }
-
-            return null;
+            return phase.HasValue ? Enum.GetName(typeof(CampaignPhase), phase) : null;
         }
 
         public static async Task<TokenInfo> GetSmarcTokenInfo(this ICampaignSettings self, 

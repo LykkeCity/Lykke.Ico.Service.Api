@@ -26,6 +26,8 @@ namespace Lykke.Service.IcoApi.Core.Repositories
 
         Task SaveKycResultAsync(string email, bool kycPassed);
 
+        Task SavePhaseAsync(string email, string phase);
+
         Task RemoveAsync(string email);
     }
 }

@@ -5,14 +5,14 @@ namespace Lykke.Service.IcoApi.Core.Domain.Campaign
     public interface ICampaignSettings
     {
         DateTime PreSaleStartDateTimeUtc { get; set; }
-        DateTime PreSaleEndDateTimeUtc { get; set; }
+        DateTime? PreSaleEndDateTimeUtc { get; set; }
         decimal PreSaleSmarcAmount { get; set; }
         decimal PreSaleLogiAmount { get; set; }
         decimal PreSaleSmarcPriceUsd { get; set; }
         decimal PreSaleLogiPriceUsd { get; set; }
 
         DateTime CrowdSaleStartDateTimeUtc { get; set; }
-        DateTime CrowdSaleEndDateTimeUtc { get; set; }
+        DateTime? CrowdSaleEndDateTimeUtc { get; set; }
         decimal CrowdSale1stTierSmarcPriceUsd { get; set; }
         decimal CrowdSale1stTierSmarcAmount { get; set; }
         decimal CrowdSale1stTierLogiPriceUsd { get; set; }

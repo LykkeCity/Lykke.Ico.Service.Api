@@ -8,6 +8,7 @@
         SavePayInAddresses,
         IncrementAmount,
         SaveKyc,
-        SaveKycResult
+        SaveKycResult,
+        SavePhase
     }
 }
