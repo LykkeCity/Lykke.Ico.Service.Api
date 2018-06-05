@@ -101,7 +101,7 @@ namespace Lykke.Service.IcoJob.Services
             {
                 var transaction = await SaveTransaction(msg, settings, smarcTokenInfo, logiTokenInfo, txType);
 
-                await UpdateCampaignAmounts(transaction, settings);
+                await UpdateCampaignAmounts(transaction, investor.GetCampaignPhase());
                 await UpdateInvestorAmounts(transaction);
                 await UpdateLatestTransactions(transaction);
                 await SendConfirmationEmail(transaction, msg.Link, settings);
@@ -421,46 +421,60 @@ namespace Lykke.Service.IcoJob.Services
             }
         }
 
-        private async Task UpdateCampaignAmounts(InvestorTransaction tx, ICampaignSettings settings)
+        private async Task UpdateCampaignAmounts(InvestorTransaction tx, CampaignPhase campaignPhase)
         {
-            if (settings.IsPreSale(tx.CreatedUtc))
+            try
             {
-                if (tx.Currency == CurrencyType.Bitcoin)
+                if (campaignPhase == CampaignPhase.PreSale)
                 {
-                    await IncrementCampaignInfoParam(CampaignInfoType.AmountPreSaleInvestedBtc, tx.Amount);
-                }
-                if (tx.Currency == CurrencyType.Ether)
-                {
-                    await IncrementCampaignInfoParam(CampaignInfoType.AmountPreSaleInvestedEth, tx.Amount);
-                }
-                if (tx.Currency == CurrencyType.Fiat)
-                {
-                    await IncrementCampaignInfoParam(CampaignInfoType.AmountPreSaleInvestedFiat, tx.Amount);
+                    if (tx.Currency == CurrencyType.Bitcoin)
+                    {
+                        await IncrementCampaignInfoParam(CampaignInfoType.AmountPreSaleInvestedBtc, tx.Amount);
+                    }
+                    if (tx.Currency == CurrencyType.Ether)
+                    {
+                        await IncrementCampaignInfoParam(CampaignInfoType.AmountPreSaleInvestedEth, tx.Amount);
+                    }
+                    if (tx.Currency == CurrencyType.Fiat)
+                    {
+                        await IncrementCampaignInfoParam(CampaignInfoType.AmountPreSaleInvestedFiat, tx.Amount);
+                    }
+
+                    await IncrementCampaignInfoParam(CampaignInfoType.AmountPreSaleInvestedSmarcToken, tx.SmarcAmountToken);
+                    await IncrementCampaignInfoParam(CampaignInfoType.AmountPreSaleInvestedLogiToken, tx.LogiAmountToken);
+                    await IncrementCampaignInfoParam(CampaignInfoType.AmountPreSaleInvestedUsd, tx.AmountUsd);
+
+                    return;
                 }
 
-                await IncrementCampaignInfoParam(CampaignInfoType.AmountPreSaleInvestedSmarcToken, tx.SmarcAmountToken);
-                await IncrementCampaignInfoParam(CampaignInfoType.AmountPreSaleInvestedLogiToken, tx.LogiAmountToken);
-                await IncrementCampaignInfoParam(CampaignInfoType.AmountPreSaleInvestedUsd, tx.AmountUsd);
+                if (campaignPhase == CampaignPhase.CrowdSale)
+                {
+                    if (tx.Currency == CurrencyType.Bitcoin)
+                    {
+                        await IncrementCampaignInfoParam(CampaignInfoType.AmountCrowdSaleInvestedBtc, tx.Amount);
+                    }
+                    if (tx.Currency == CurrencyType.Ether)
+                    {
+                        await IncrementCampaignInfoParam(CampaignInfoType.AmountCrowdSaleInvestedEth, tx.Amount);
+                    }
+                    if (tx.Currency == CurrencyType.Fiat)
+                    {
+                        await IncrementCampaignInfoParam(CampaignInfoType.AmountCrowdSaleInvestedFiat, tx.Amount);
+                    }
+
+                    await IncrementCampaignInfoParam(CampaignInfoType.AmountCrowdSaleInvestedSmarcToken, tx.SmarcAmountToken);
+                    await IncrementCampaignInfoParam(CampaignInfoType.AmountCrowdSaleInvestedLogiToken, tx.LogiAmountToken);
+                    await IncrementCampaignInfoParam(CampaignInfoType.AmountCrowdSaleInvestedUsd, tx.AmountUsd);
+
+                    return;
+                }
+
+                throw new Exception("Unable to update campaign amounts");
             }
-
-            if (settings.IsCrowdSale(tx.CreatedUtc))
+            catch (Exception ex)
             {
-                if (tx.Currency == CurrencyType.Bitcoin)
-                {
-                    await IncrementCampaignInfoParam(CampaignInfoType.AmountCrowdSaleInvestedBtc, tx.Amount);
-                }
-                if (tx.Currency == CurrencyType.Ether)
-                {
-                    await IncrementCampaignInfoParam(CampaignInfoType.AmountCrowdSaleInvestedEth, tx.Amount);
-                }
-                if (tx.Currency == CurrencyType.Fiat)
-                {
-                    await IncrementCampaignInfoParam(CampaignInfoType.AmountCrowdSaleInvestedFiat, tx.Amount);
-                }
-
-                await IncrementCampaignInfoParam(CampaignInfoType.AmountCrowdSaleInvestedSmarcToken, tx.SmarcAmountToken);
-                await IncrementCampaignInfoParam(CampaignInfoType.AmountCrowdSaleInvestedLogiToken, tx.LogiAmountToken);
-                await IncrementCampaignInfoParam(CampaignInfoType.AmountCrowdSaleInvestedUsd, tx.AmountUsd);
+                await _log.WriteErrorAsync(nameof(UpdateCampaignAmounts),
+                    new { tx, campaignPhase }.ToJson(), ex);
             }
         }
 
