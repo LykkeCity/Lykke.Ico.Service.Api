@@ -1,5 +1,6 @@
 ﻿using Lykke.Service.IcoApi.Core.Domain.Campaign;
 using Lykke.Service.IcoApi.Core.Domain.Investor;
+using Common;
 using System;
 
 namespace Lykke.Service.IcoApi.Services.Extensions
@@ -13,7 +14,7 @@ namespace Lykke.Service.IcoApi.Services.Extensions
 
         public static string GetCampaignPhaseString(this IInvestor self)
         {
-            return Enum.GetName(typeof(CampaignPhase), self.GetCampaignPhase());
+            return Enum.GetName(typeof(CampaignPhase), self.GetCampaignPhase()).FirstLetterLowCase();
         }
     }
 }

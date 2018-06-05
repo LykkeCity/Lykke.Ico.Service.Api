@@ -222,7 +222,7 @@ namespace Lykke.Service.IcoApi.Controllers
         }
 
         /// <summary>
-        /// Refund investor transaction
+        /// Update investor phase
         /// </summary>
         [AdminAuth]
         [HttpPost("investors/{email}/phase/{phase}")]
