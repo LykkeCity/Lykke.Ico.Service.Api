@@ -93,10 +93,8 @@ namespace Lykke.Service.IcoJob.Services
             }
 
             var txType = msg.GetTxType(investor);
-            var smarcTokenInfo = await settings.GetSmarcTokenInfo(_campaignInfoRepository, 
-                msg.CreatedUtc, investor.GetCampaignPhase());
-            var logiTokenInfo = await settings.GetLogiTokenInfo(_campaignInfoRepository, 
-                msg.CreatedUtc, investor.GetCampaignPhase());
+            var smarcTokenInfo = await settings.GetSmarcTokenInfo(_campaignInfoRepository, investor.GetCampaignPhase());
+            var logiTokenInfo = await settings.GetLogiTokenInfo(_campaignInfoRepository, investor.GetCampaignPhase());
 
             var validTx = await IsTxValid(msg, smarcTokenInfo, logiTokenInfo, txType);
             if (validTx)
@@ -341,23 +339,23 @@ namespace Lykke.Service.IcoJob.Services
             var exchangeRate = await _exRateClient.GetAverageRate(assetPair, msg.CreatedUtc);
             if (exchangeRate == null)
             {
-                throw new InvalidOperationException($"Exchange rate was not found");
+                throw new ArgumentNullException($"Exchange rate was not found");
             }
             if (exchangeRate.AverageRate == null || exchangeRate.AverageRate == 0)
             {
-                throw new InvalidOperationException($"Exchange rate is not valid: {exchangeRate.ToJson()}");
+                throw new ArgumentException($"Exchange rate is not valid: {exchangeRate.ToJson()}");
             }
 
             var minExchangeRate = Convert.ToDecimal(exchangeRate.AverageRate);
             if (msg.Currency == CurrencyType.Ether &&
                 settings.MinEthExchangeRate.HasValue &&
-                minExchangeRate < settings.MinEthExchangeRate)
+                minExchangeRate < settings.MinEthExchangeRate.Value)
             {
                 minExchangeRate = settings.MinEthExchangeRate.Value;
             }
             if (msg.Currency == CurrencyType.Bitcoin &&
                 settings.MinBtcExchangeRate.HasValue &&
-                minExchangeRate < settings.MinBtcExchangeRate)
+                minExchangeRate < settings.MinBtcExchangeRate.Value)
             {
                 minExchangeRate = settings.MinBtcExchangeRate.Value;
             }

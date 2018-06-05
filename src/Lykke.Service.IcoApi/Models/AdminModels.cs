@@ -250,7 +250,7 @@ namespace Lykke.Service.IcoApi.Models
         [Required]
         public DateTime PreSaleStartDateTimeUtc { get; set; }
         [Required]
-        public DateTime? PreSaleEndDateTimeUtc { get; set; }
+        public DateTime PreSaleEndDateTimeUtc { get; set; }
         [Required]
         public decimal PreSaleSmarcAmount { get; set; }
         [Required]
@@ -265,7 +265,7 @@ namespace Lykke.Service.IcoApi.Models
         [Required]
         public DateTime CrowdSaleStartDateTimeUtc { get; set; }
         [Required]
-        public DateTime? CrowdSaleEndDateTimeUtc { get; set; }
+        public DateTime CrowdSaleEndDateTimeUtc { get; set; }
 
         [Required]
         public decimal CrowdSale1stTierSmarcPriceUsd { get; set; }

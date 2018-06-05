@@ -21,27 +21,12 @@ namespace Lykke.Service.IcoApi.Services.Extensions
 
         public static bool IsPreSale(this ICampaignSettings self, DateTime nowUtc)
         {
-            if (nowUtc >= self.CrowdSaleStartDateTimeUtc)
-            {
-                return false;
-            }
-
-            if (!self.PreSaleEndDateTimeUtc.HasValue)
-            {
-                return nowUtc >= self.PreSaleStartDateTimeUtc;
-            }
-
-            return nowUtc >= self.PreSaleStartDateTimeUtc && nowUtc <= self.PreSaleEndDateTimeUtc.Value;
+            return nowUtc >= self.PreSaleStartDateTimeUtc && nowUtc <= self.PreSaleEndDateTimeUtc;
         }
 
         public static bool IsCrowdSale(this ICampaignSettings self, DateTime nowUtc)
         {
-            if (!self.CrowdSaleEndDateTimeUtc.HasValue)
-            {
-                return nowUtc >= self.CrowdSaleStartDateTimeUtc;
-            }
-
-            return nowUtc >= self.CrowdSaleStartDateTimeUtc && nowUtc <= self.CrowdSaleEndDateTimeUtc.Value;
+            return nowUtc >= self.CrowdSaleStartDateTimeUtc && nowUtc <= self.CrowdSaleEndDateTimeUtc;
         }
 
         public static CampaignPhase? GetPhase(this ICampaignSettings self, DateTime nowUtc)
@@ -90,25 +75,16 @@ namespace Lykke.Service.IcoApi.Services.Extensions
 
         public static async Task<TokenInfo> GetSmarcTokenInfo(this ICampaignSettings self,
             ICampaignInfoRepository campaignInfoRepository,
-            DateTime txUtc,
             CampaignPhase campaignPhase)
         {
             if (campaignPhase == CampaignPhase.PreSale)
             {
-                if (!self.PreSaleEndDateTimeUtc.HasValue ||
-                    (self.PreSaleEndDateTimeUtc.HasValue && txUtc <= self.PreSaleEndDateTimeUtc.Value))
-                {
-                    return await GetSmarcPreSaleTokenInfo(self, campaignInfoRepository);
-                }
+                return await GetSmarcPreSaleTokenInfo(self, campaignInfoRepository);
             }
 
             if (campaignPhase == CampaignPhase.CrowdSale)
             {
-                if (!self.CrowdSaleEndDateTimeUtc.HasValue ||
-                    (self.CrowdSaleEndDateTimeUtc.HasValue && txUtc <= self.CrowdSaleEndDateTimeUtc.Value))
-                {
-                    return await GetSmarcCrowdSaleTokenInfo(self, campaignInfoRepository);
-                }
+                return await GetSmarcCrowdSaleTokenInfo(self, campaignInfoRepository);
             }
 
             return new TokenInfo
@@ -228,25 +204,16 @@ namespace Lykke.Service.IcoApi.Services.Extensions
 
         public static async Task<TokenInfo> GetLogiTokenInfo(this ICampaignSettings self,
             ICampaignInfoRepository campaignInfoRepository,
-            DateTime txUtc,
             CampaignPhase campaignPhase)
         {
             if (campaignPhase == CampaignPhase.PreSale)
             {
-                if (!self.PreSaleEndDateTimeUtc.HasValue ||
-                    (self.PreSaleEndDateTimeUtc.HasValue && txUtc <= self.PreSaleEndDateTimeUtc.Value))
-                {
-                    return await GetLogiPreSaleTokenInfo(self, campaignInfoRepository);
-                }
+                return await GetLogiPreSaleTokenInfo(self, campaignInfoRepository);
             }
 
             if (campaignPhase == CampaignPhase.CrowdSale)
             {
-                if (!self.CrowdSaleEndDateTimeUtc.HasValue ||
-                    (self.CrowdSaleEndDateTimeUtc.HasValue && txUtc <= self.CrowdSaleEndDateTimeUtc.Value))
-                {
-                    return await GetLogiCrowdSaleTokenInfo(self, campaignInfoRepository);
-                }
+                return await GetLogiCrowdSaleTokenInfo(self, campaignInfoRepository);
             }
 
             return new TokenInfo
