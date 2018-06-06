@@ -282,7 +282,7 @@ namespace Lykke.Service.IcoApi.Services.Extensions
                     Name = Consts.LOGI,
                     PriceUsd = self.CrowdSale2ndTierLogiPriceUsd,
                     Tier = CampaignTier.CrowdSale2ndTier,
-                    PhaseTokenAmount = crowdSaleTokensAmount,
+                    PhaseTokenAmount = crowdSaleTokensAmount - self.CrowdSale1stTierLogiAmount,
                     PhaseTokenAmountTotal = self.CrowdSale2ndTierLogiAmount
                 };
             }
@@ -295,7 +295,7 @@ namespace Lykke.Service.IcoApi.Services.Extensions
                     Name = Consts.LOGI,
                     PriceUsd = self.CrowdSale3rdTierLogiPriceUsd,
                     Tier = CampaignTier.CrowdSale3ndTier,
-                    PhaseTokenAmount = crowdSaleTokensAmount,
+                    PhaseTokenAmount = crowdSaleTokensAmount - crowdSale2ndTierAmountTotal,
                     PhaseTokenAmountTotal = self.CrowdSale3rdTierLogiAmount
                 };
             }

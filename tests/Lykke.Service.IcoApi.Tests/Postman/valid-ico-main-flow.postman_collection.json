@@ -1620,7 +1620,7 @@
 			]
 		},
 		{
-			"name": "Send BTC Transaction - Presale & Smarc",
+			"name": "Send BTC Transaction - Crowdsale & Smarc",
 			"description": null,
 			"item": [
 				{
@@ -1629,7 +1629,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "b78318e9-ccc9-4b9a-aefd-d580e0f4ef16",
+								"id": "37da9096-216a-4170-902d-06bf1aa0d915",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function() {",
@@ -1639,9 +1639,9 @@
 									"pm.test(\"Remember campaign data\", function() {",
 									"    var jsonData = pm.response.json();",
 									"",
-									"    pm.environment.set(\"amountPreSaleInvestedBtc\", (typeof jsonData.amountPreSaleInvestedBtc === 'undefined') ? 0 : jsonData.amountPreSaleInvestedBtc);",
-									"    pm.environment.set(\"amountPreSaleInvestedSmarcToken\", (typeof jsonData.amountPreSaleInvestedSmarcToken === 'undefined') ? 0 : jsonData.amountPreSaleInvestedSmarcToken);",
-									"    pm.environment.set(\"amountPreSaleInvestedUsd\", (typeof jsonData.amountPreSaleInvestedUsd === 'undefined') ? 0 : jsonData.amountPreSaleInvestedUsd);",
+									"    pm.environment.set(\"amountCrowdSaleInvestedBtc\", (typeof jsonData.amountCrowdSaleInvestedBtc === 'undefined') ? 0 : jsonData.amountCrowdSaleInvestedBtc);",
+									"    pm.environment.set(\"amountCrowdSaleInvestedSmarcToken\", (typeof jsonData.amountCrowdSaleInvestedSmarcToken === 'undefined') ? 0 : jsonData.amountCrowdSaleInvestedSmarcToken);",
+									"    pm.environment.set(\"amountCrowdSaleInvestedUsd\", (typeof jsonData.amountCrowdSaleInvestedUsd === 'undefined') ? 0 : jsonData.amountCrowdSaleInvestedUsd);",
 									"});"
 								]
 							}
@@ -2009,33 +2009,33 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "478b1484-aa0d-4265-a415-097a1938d64f",
+								"id": "3bc03283-3685-4b37-a5c6-4013fbbf9968",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function() {",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"amountPreSaleInvestedBtc is valid\", function() {",
+									"pm.test(\"amountCrowdSaleInvestedBtc is valid\", function() {",
 									"    var jsonData = pm.response.json();",
 									"    ",
-									"    console.info(\"jsonData.amountPreSaleInvestedBtc: \" + jsonData.amountPreSaleInvestedBtc);",
-									"    var current = Number.parseFloat(jsonData.amountPreSaleInvestedBtc).toFixed(5);",
+									"    console.info(\"jsonData.amountCrowdSaleInvestedBtc: \" + jsonData.amountCrowdSaleInvestedBtc);",
+									"    var current = Number.parseFloat(jsonData.amountCrowdSaleInvestedBtc).toFixed(5);",
 									"    ",
-									"    console.info(\"environment.amountPreSaleInvestedBtc: \" + pm.environment.get(\"amountPreSaleInvestedBtc\"));",
-									"    var expected = (Number.parseFloat(pm.environment.get(\"amountPreSaleInvestedBtc\")) + 0.012).toFixed(5);",
+									"    console.info(\"environment.amountCrowdSaleInvestedBtc: \" + pm.environment.get(\"amountCrowdSaleInvestedBtc\"));",
+									"    var expected = (Number.parseFloat(pm.environment.get(\"amountCrowdSaleInvestedBtc\")) + 0.012).toFixed(5);",
 									"    ",
 									"    pm.expect(expected).to.eql(current);",
 									"});",
 									"",
-									"pm.test(\"amountPreSaleInvestedSmarcToken was increased\", function() {",
+									"pm.test(\"amountCrowdSaleInvestedSmarcToken was increased\", function() {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(Number(jsonData.amountPreSaleInvestedSmarcToken) > Number(pm.environment.get(\"amountPreSaleInvestedSmarcToken\"))).to.be.true;",
+									"    pm.expect(Number(jsonData.amountCrowdSaleInvestedSmarcToken) > Number(pm.environment.get(\"amountCrowdSaleInvestedSmarcToken\"))).to.be.true;",
 									"});",
 									"",
-									"pm.test(\"amountInvestedUsd was increased\", function() {",
+									"pm.test(\"amountCrowdSaleInvestedUsd was increased\", function() {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(Number(jsonData.amountPreSaleInvestedUsd) > Number(pm.environment.get(\"amountPreSaleInvestedUsd\"))).to.be.true;",
+									"    pm.expect(Number(jsonData.amountCrowdSaleInvestedUsd) > Number(pm.environment.get(\"amountCrowdSaleInvestedUsd\"))).to.be.true;",
 									"});"
 								]
 							}
@@ -2275,7 +2275,7 @@
 			]
 		},
 		{
-			"name": "Send ETH Transaction - Presale & Logi",
+			"name": "Send ETH Transaction - Crowdsale & Logi",
 			"description": null,
 			"item": [
 				{
@@ -2284,7 +2284,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f4ada41e-617c-4be6-89cd-473f5b88ff9f",
+								"id": "7ac796de-a7a2-4b4f-a27f-1d80bbd490a4",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function() {",
@@ -2294,9 +2294,9 @@
 									"pm.test(\"Remember campaign data\", function() {",
 									"    var jsonData = pm.response.json();",
 									"    ",
-									"    pm.environment.set(\"amountPreSaleInvestedEth\", (typeof jsonData.amountPreSaleInvestedEth === 'undefined') ? 0 : jsonData.amountPreSaleInvestedEth);",
-									"    pm.environment.set(\"amountPreSaleInvestedLogiToken\", (typeof jsonData.amountPreSaleInvestedLogiToken === 'undefined') ? 0 : jsonData.amountPreSaleInvestedLogiToken);",
-									"    pm.environment.set(\"amountPreSaleInvestedUsd\", (typeof jsonData.amountPreSaleInvestedUsd === 'undefined') ? 0 : jsonData.amountPreSaleInvestedUsd);",
+									"    pm.environment.set(\"amountCrowdSaleInvestedEth\", (typeof jsonData.amountCrowdSaleInvestedEth === 'undefined') ? 0 : jsonData.amountCrowdSaleInvestedEth);",
+									"    pm.environment.set(\"amountCrowdSaleInvestedLogiToken\", (typeof jsonData.amountCrowdSaleInvestedLogiToken === 'undefined') ? 0 : jsonData.amountCrowdSaleInvestedLogiToken);",
+									"    pm.environment.set(\"amountCrowdSaleInvestedUsd\", (typeof jsonData.amountCrowdSaleInvestedUsd === 'undefined') ? 0 : jsonData.amountCrowdSaleInvestedUsd);",
 									"});"
 								]
 							}
@@ -2723,33 +2723,33 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "9fdc4122-f032-4658-90c1-ff60fa2ab293",
+								"id": "36241aff-60b6-4bff-aacc-8382383e6fb4",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function() {",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"amountPreSaleInvestedEth is valid\", function() {",
+									"pm.test(\"amountCrowdSaleInvestedEth is valid\", function() {",
 									"    var jsonData = pm.response.json();",
 									"    ",
-									"    console.info(\"jsonData.amountPreSaleInvestedEth: \" + jsonData.amountPreSaleInvestedEth);",
-									"    var current = Number.parseFloat(jsonData.amountPreSaleInvestedEth).toFixed(5);",
+									"    console.info(\"jsonData.amountCrowdSaleInvestedEth: \" + jsonData.amountCrowdSaleInvestedEth);",
+									"    var current = Number.parseFloat(jsonData.amountCrowdSaleInvestedEth).toFixed(5);",
 									"    ",
-									"    console.info(\"environment.amountPreSaleInvestedEth: \" + pm.environment.get(\"amountPreSaleInvestedEth\"));",
-									"    var expected = (Number.parseFloat(pm.environment.get(\"amountPreSaleInvestedEth\")) + 0.8).toFixed(5);",
+									"    console.info(\"environment.amountCrowdSaleInvestedEth: \" + pm.environment.get(\"amountCrowdSaleInvestedEth\"));",
+									"    var expected = (Number.parseFloat(pm.environment.get(\"amountCrowdSaleInvestedEth\")) + 0.8).toFixed(5);",
 									"    ",
 									"    pm.expect(expected).to.eql(current);",
 									"});",
 									"",
-									"pm.test(\"amountPreSaleInvestedLogiToken was increased\", function() {",
+									"pm.test(\"amountCrowdSaleInvestedLogiToken was increased\", function() {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(Number(jsonData.amountPreSaleInvestedLogiToken) > Number(pm.environment.get(\"amountPreSaleInvestedLogiToken\"))).to.be.true;",
+									"    pm.expect(Number(jsonData.amountCrowdSaleInvestedLogiToken) > Number(pm.environment.get(\"amountCrowdSaleInvestedLogiToken\"))).to.be.true;",
 									"});",
 									"",
-									"pm.test(\"amountPreSaleInvestedUsd was increased\", function() {",
+									"pm.test(\"amountCrowdSaleInvestedUsd was increased\", function() {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(Number(jsonData.amountPreSaleInvestedUsd) > Number(pm.environment.get(\"amountPreSaleInvestedUsd\"))).to.be.true;",
+									"    pm.expect(Number(jsonData.amountCrowdSaleInvestedUsd) > Number(pm.environment.get(\"amountCrowdSaleInvestedUsd\"))).to.be.true;",
 									"});"
 								]
 							}
@@ -2989,7 +2989,7 @@
 			]
 		},
 		{
-			"name": "Send ETH Transaction - Presale & Smarc90Logi10",
+			"name": "Send ETH Transaction - Crowdsale & Smarc90Logi10",
 			"description": null,
 			"item": [
 				{
@@ -2998,7 +2998,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "5316ab4b-ec8f-4d34-8af3-9b553e72ddd4",
+								"id": "8d433a66-5182-4447-b884-d1f2be8affc6",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function() {",
@@ -3008,11 +3008,11 @@
 									"pm.test(\"Remember campaign data\", function() {",
 									"    var jsonData = pm.response.json();",
 									"    ",
-									"    pm.environment.set(\"amountPreSaleInvestedBtc\", (typeof jsonData.amountPreSaleInvestedBtc === 'undefined') ? 0 : jsonData.amountPreSaleInvestedBtc);",
-									"    pm.environment.set(\"amountPreSaleInvestedEth\", (typeof jsonData.amountPreSaleInvestedEth === 'undefined') ? 0 : jsonData.amountPreSaleInvestedEth);",
-									"    pm.environment.set(\"amountPreSaleInvestedSmarcToken\", (typeof jsonData.amountPreSaleInvestedSmarcToken === 'undefined') ? 0 : jsonData.amountPreSaleInvestedSmarcToken);",
-									"    pm.environment.set(\"amountPreSaleInvestedLogiToken\", (typeof jsonData.amountPreSaleInvestedLogiToken === 'undefined') ? 0 : jsonData.amountPreSaleInvestedLogiToken);",
-									"    pm.environment.set(\"amountPreSaleInvestedUsd\", (typeof jsonData.amountPreSaleInvestedUsd === 'undefined') ? 0 : jsonData.amountPreSaleInvestedUsd);",
+									"    pm.environment.set(\"amountCrowdSaleInvestedBtc\", (typeof jsonData.amountCrowdSaleInvestedBtc === 'undefined') ? 0 : jsonData.amountCrowdSaleInvestedBtc);",
+									"    pm.environment.set(\"amountCrowdSaleInvestedEth\", (typeof jsonData.amountCrowdSaleInvestedEth === 'undefined') ? 0 : jsonData.amountCrowdSaleInvestedEth);",
+									"    pm.environment.set(\"amountCrowdSaleInvestedSmarcToken\", (typeof jsonData.amountCrowdSaleInvestedSmarcToken === 'undefined') ? 0 : jsonData.amountCrowdSaleInvestedSmarcToken);",
+									"    pm.environment.set(\"amountCrowdSaleInvestedLogiToken\", (typeof jsonData.amountCrowdSaleInvestedLogiToken === 'undefined') ? 0 : jsonData.amountCrowdSaleInvestedLogiToken);",
+									"    pm.environment.set(\"amountCrowdSaleInvestedUsd\", (typeof jsonData.amountCrowdSaleInvestedUsd === 'undefined') ? 0 : jsonData.amountCrowdSaleInvestedUsd);",
 									"});"
 								]
 							}
@@ -3327,45 +3327,45 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "f335aedd-63df-4cf8-a17b-a747ced65462",
+								"id": "5af2a53a-70de-4d08-aa16-9f9d193e021b",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function() {",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"amountPreSaleInvestedEth is valid\", function() {",
+									"pm.test(\"amountCrowdSaleInvestedEth is valid\", function() {",
 									"    var jsonData = pm.response.json();",
 									"    ",
-									"    console.info(\"jsonData.amountPreSaleInvestedEth: \" + jsonData.amountPreSaleInvestedEth);",
-									"    var current = Number.parseFloat(jsonData.amountPreSaleInvestedEth).toFixed(5);",
+									"    console.info(\"jsonData.amountCrowdSaleInvestedEth: \" + jsonData.amountCrowdSaleInvestedEth);",
+									"    var current = Number.parseFloat(jsonData.amountCrowdSaleInvestedEth).toFixed(5);",
 									"    ",
-									"    console.info(\"environment.amountPreSaleInvestedEth: \" + pm.environment.get(\"amountPreSaleInvestedEth\"));",
-									"    var expected = (Number.parseFloat(pm.environment.get(\"amountPreSaleInvestedEth\")) + 1).toFixed(5);",
+									"    console.info(\"environment.amountCrowdSaleInvestedEth: \" + pm.environment.get(\"amountCrowdSaleInvestedEth\"));",
+									"    var expected = (Number.parseFloat(pm.environment.get(\"amountCrowdSaleInvestedEth\")) + 1).toFixed(5);",
 									"    ",
 									"    pm.expect(expected).to.eql(current);",
 									"});",
 									"",
-									"pm.test(\"amountPreSaleInvestedSmarcToken was increased\", function() {",
+									"pm.test(\"amountCrowdSaleInvestedSmarcToken was increased\", function() {",
 									"    var jsonData = pm.response.json();",
 									"    ",
-									"    var old = pm.environment.get(\"amountPreSaleInvestedSmarcToken\");",
+									"    var old = pm.environment.get(\"amountCrowdSaleInvestedSmarcToken\");",
 									"    console.info(\"old: \" + old);",
 									"    ",
-									"    var current = jsonData.amountPreSaleInvestedSmarcToken;",
+									"    var current = jsonData.amountCrowdSaleInvestedSmarcToken;",
 									"    console.info(\"current: \" + current);",
 									"    ",
 									"    pm.expect(Number(current) > Number(old)).to.be.true;",
 									"});",
 									"",
-									"pm.test(\"amountPreSaleInvestedLogiToken was increased\", function() {",
+									"pm.test(\"amountCrowdSaleInvestedLogiToken was increased\", function() {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(Number(jsonData.amountPreSaleInvestedLogiToken) > Number(pm.environment.get(\"amountPreSaleInvestedLogiToken\"))).to.be.true;",
+									"    pm.expect(Number(jsonData.amountCrowdSaleInvestedLogiToken) > Number(pm.environment.get(\"amountCrowdSaleInvestedLogiToken\"))).to.be.true;",
 									"});",
 									"",
-									"pm.test(\"amountPreSaleInvestedUsd was increased\", function() {",
+									"pm.test(\"amountCrowdSaleInvestedUsd was increased\", function() {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(Number(jsonData.amountPreSaleInvestedUsd) > Number(pm.environment.get(\"amountPreSaleInvestedUsd\"))).to.be.true;",
+									"    pm.expect(Number(jsonData.amountCrowdSaleInvestedUsd) > Number(pm.environment.get(\"amountCrowdSaleInvestedUsd\"))).to.be.true;",
 									"});"
 								]
 							}
@@ -3553,7 +3553,7 @@
 			]
 		},
 		{
-			"name": "Send Fiat Transaction - Presale & Smarc90Logi10",
+			"name": "Send Fiat Transaction - Crowdsale & Smarc90Logi10",
 			"description": null,
 			"item": [
 				{
@@ -3562,7 +3562,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "5316ab4b-ec8f-4d34-8af3-9b553e72ddd4",
+								"id": "053b48a9-220e-4d5d-a939-488e7485f550",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function() {",
@@ -3572,11 +3572,11 @@
 									"pm.test(\"Remember campaign data\", function() {",
 									"    var jsonData = pm.response.json();",
 									"    ",
-									"    pm.environment.set(\"amountPreSaleInvestedBtc\", (typeof jsonData.amountPreSaleInvestedBtc === 'undefined') ? 0 : jsonData.amountPreSaleInvestedBtc);",
-									"    pm.environment.set(\"amountPreSaleInvestedEth\", (typeof jsonData.amountPreSaleInvestedEth === 'undefined') ? 0 : jsonData.amountPreSaleInvestedEth);",
-									"    pm.environment.set(\"amountPreSaleInvestedSmarcToken\", (typeof jsonData.amountPreSaleInvestedSmarcToken === 'undefined') ? 0 : jsonData.amountPreSaleInvestedSmarcToken);",
-									"    pm.environment.set(\"amountPreSaleInvestedLogiToken\", (typeof jsonData.amountPreSaleInvestedLogiToken === 'undefined') ? 0 : jsonData.amountPreSaleInvestedLogiToken);",
-									"    pm.environment.set(\"amountPreSaleInvestedUsd\", (typeof jsonData.amountPreSaleInvestedUsd === 'undefined') ? 0 : jsonData.amountPreSaleInvestedUsd);",
+									"    pm.environment.set(\"amountCrowdSaleInvestedBtc\", (typeof jsonData.amountCrowdSaleInvestedBtc === 'undefined') ? 0 : jsonData.amountCrowdSaleInvestedBtc);",
+									"    pm.environment.set(\"amountCrowdSaleInvestedEth\", (typeof jsonData.amountCrowdSaleInvestedEth === 'undefined') ? 0 : jsonData.amountCrowdSaleInvestedEth);",
+									"    pm.environment.set(\"amountCrowdSaleInvestedSmarcToken\", (typeof jsonData.amountCrowdSaleInvestedSmarcToken === 'undefined') ? 0 : jsonData.amountCrowdSaleInvestedSmarcToken);",
+									"    pm.environment.set(\"amountCrowdSaleInvestedLogiToken\", (typeof jsonData.amountCrowdSaleInvestedLogiToken === 'undefined') ? 0 : jsonData.amountCrowdSaleInvestedLogiToken);",
+									"    pm.environment.set(\"amountCrowdSaleInvestedUsd\", (typeof jsonData.amountCrowdSaleInvestedUsd === 'undefined') ? 0 : jsonData.amountCrowdSaleInvestedUsd);",
 									"});"
 								]
 							}
@@ -3943,33 +3943,33 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "7d9a3c42-c04e-4e0c-8ffb-5598368e49b0",
+								"id": "6ba2a47f-0da3-454e-92d7-e2ecb59a0c6a",
 								"type": "text/javascript",
 								"exec": [
 									"pm.test(\"Status code is 200\", function() {",
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"amountPreSaleInvestedSmarcToken was increased\", function() {",
+									"pm.test(\"amountCrowdSaleInvestedSmarcToken was increased\", function() {",
 									"    var jsonData = pm.response.json();",
 									"    ",
-									"    var old = pm.environment.get(\"amountPreSaleInvestedSmarcToken\");",
+									"    var old = pm.environment.get(\"amountCrowdSaleInvestedSmarcToken\");",
 									"    console.info(\"old: \" + old);",
 									"    ",
-									"    var current = jsonData.amountPreSaleInvestedSmarcToken;",
+									"    var current = jsonData.amountCrowdSaleInvestedSmarcToken;",
 									"    console.info(\"current: \" + current);",
 									"    ",
 									"    pm.expect(Number(current) > Number(old)).to.be.true;",
 									"});",
 									"",
-									"pm.test(\"amountPreSaleInvestedLogiToken was increased\", function() {",
+									"pm.test(\"amountCrowdSaleInvestedLogiToken was increased\", function() {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(Number(jsonData.amountPreSaleInvestedLogiToken) > Number(pm.environment.get(\"amountPreSaleInvestedLogiToken\"))).to.be.true;",
+									"    pm.expect(Number(jsonData.amountCrowdSaleInvestedLogiToken) > Number(pm.environment.get(\"amountCrowdSaleInvestedLogiToken\"))).to.be.true;",
 									"});",
 									"",
-									"pm.test(\"amountPreSaleInvestedUsd was increased\", function() {",
+									"pm.test(\"amountCrowdSaleInvestedUsd was increased\", function() {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(Number(jsonData.amountPreSaleInvestedUsd) > Number(pm.environment.get(\"amountPreSaleInvestedUsd\"))).to.be.true;",
+									"    pm.expect(Number(jsonData.amountCrowdSaleInvestedUsd) > Number(pm.environment.get(\"amountCrowdSaleInvestedUsd\"))).to.be.true;",
 									"});"
 								]
 							}
