@@ -90,8 +90,8 @@ namespace Lykke.Service.IcoApi.Services.Extensions
             return new TokenInfo
             {
                 Name = Consts.SMARC,
-                ErrorReason = InvestorRefundReason.OutOfDates,
-                Error = "Out of campaign dates"
+                ErrorReason = InvestorRefundReason.UndefinedPhase,
+                Error = "Phase is undefined"
             };
         }
 
@@ -219,8 +219,8 @@ namespace Lykke.Service.IcoApi.Services.Extensions
             return new TokenInfo
             {
                 Name = Consts.LOGI,
-                ErrorReason = InvestorRefundReason.OutOfDates,
-                Error = "Out of campaign dates"
+                ErrorReason = InvestorRefundReason.UndefinedPhase,
+                Error = "Phase is undefined"
             };
         }
 
