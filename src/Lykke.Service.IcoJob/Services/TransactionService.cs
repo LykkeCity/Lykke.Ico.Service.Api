@@ -312,14 +312,14 @@ namespace Lykke.Service.IcoJob.Services
 
             if (tokenInfo.Tier == CampaignTier.CrowdSale1stTier)
             {
-                phase = nameof(CampaignTier.CrowdSale1stTier);
+                phase = nameof(CampaignTier.CrowdSale2ndTier);
                 priceUsd = tokenInfo.Name == Consts.SMARC ? settings.CrowdSale2ndTierSmarcPriceUsd : settings.CrowdSale2ndTierLogiPriceUsd;
             }
 
             if (tokenInfo.Tier == CampaignTier.CrowdSale2ndTier)
             {
-                phase = nameof(CampaignTier.CrowdSale2ndTier);
-                priceUsd = tokenInfo.Name == Consts.SMARC ? settings.CrowdSale3rdTierSmarcAmount : settings.CrowdSale3rdTierLogiAmount;
+                phase = nameof(CampaignTier.CrowdSale3ndTier);
+                priceUsd = tokenInfo.Name == Consts.SMARC ? settings.CrowdSale3rdTierSmarcPriceUsd : settings.CrowdSale3rdTierLogiPriceUsd;
             }
 
             var amount = ((amountUsd - tokenInfo.PhaseAmountUsdAvailable.Value) / priceUsd).RoundDown(settings.RowndDownTokenDecimals);
