@@ -40,7 +40,6 @@ namespace Lykke.Service.IcoApi.Controllers
         /// </summary>
         [HttpPost]
         [Route("register")]
-        [ValidateReCaptcha]
         [ProducesResponseType(typeof(RegisterInvestorResponse), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> RegisterInvestor([FromBody] RegisterInvestorRequest model)
         {

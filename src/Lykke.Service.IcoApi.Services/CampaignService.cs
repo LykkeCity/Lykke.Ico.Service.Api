@@ -15,7 +15,6 @@ namespace Lykke.Service.IcoApi.Services
         private readonly ICampaignInfoRepository _campaignInfoRepository;
         private readonly ICampaignSettingsRepository _campaignSettingsRepository;
         private readonly IInvestorRefundRepository _investorRefundRepository;
-        private readonly IMemoryCache _cache;
         private const string _cachKey = "CampaignSettings";
 
         public CampaignService(ILog log,
@@ -28,7 +27,6 @@ namespace Lykke.Service.IcoApi.Services
             _campaignInfoRepository = campaignInfoRepository;
             _campaignSettingsRepository = campaignSettingsRepository;
             _investorRefundRepository = investorRefundRepository;
-            _cache = cache;
         }
 
         public async Task<string> GetCampaignInfoValue(CampaignInfoType type)
@@ -38,21 +36,12 @@ namespace Lykke.Service.IcoApi.Services
 
         public async Task<ICampaignSettings> GetCampaignSettings()
         {
-            if (!_cache.TryGetValue(_cachKey, out ICampaignSettings campaignSettings))
-            {
-                campaignSettings = await _campaignSettingsRepository.GetAsync();
-
-                _cache.Set(_cachKey, campaignSettings);
-            }
-
-            return campaignSettings;
+            return await _campaignSettingsRepository.GetAsync();
         }
 
         public async Task SaveCampaignSettings(ICampaignSettings settings, string username)
         {
             await _campaignSettingsRepository.SaveAsync(settings, username);
-
-            _cache.Remove(_cachKey);
         }
 
         public async Task<IEnumerable<IInvestorRefund>> GetRefunds()
