@@ -9,6 +9,7 @@ using Lykke.Service.IcoApi.Services.Extensions;
 using Lykke.Service.IcoApi.Core.Domain.Investor;
 using Lykke.Service.IcoApi.Core.Repositories;
 using Microsoft.Extensions.Caching.Memory;
+using Lykke.Service.IcoApi.Core.Domain.Campaign;
 
 namespace Lykke.Service.IcoApi.Controllers
 {
@@ -46,21 +47,21 @@ namespace Lykke.Service.IcoApi.Controllers
             }
 
             var settings = await _campaignService.GetCampaignSettings();
-            var failedTxs = await _campaignService.GetRefunds();
 
             var now = DateTime.UtcNow;
             var campaignActive = false;
 
             var logiTokenInfo = await settings.GetLogiTokenInfo(_campaignInfoRepository, DateTime.Now);
             var smarcTokenInfo = await settings.GetSmarcTokenInfo(_campaignInfoRepository, DateTime.Now);
+            var logiPresaleTokenInfo = await settings.GetLogiTokenInfo(_campaignInfoRepository, CampaignPhase.PreSale);
+            var smarcPresaleTokenInfo = await settings.GetSmarcTokenInfo(_campaignInfoRepository, CampaignPhase.PreSale);
+            var logiCrowdsaleTokenInfo = await settings.GetLogiTokenInfo(_campaignInfoRepository, CampaignPhase.CrowdSale);
+            var smarcCrowdsaleTokenInfo = await settings.GetSmarcTokenInfo(_campaignInfoRepository, CampaignPhase.CrowdSale);
 
-            if (settings.IsPreSale(now) &&
-                !failedTxs.Any(f => f.Reason == InvestorRefundReason.PreSaleTokensSoldOut))
-            {
-                campaignActive = true;
-            }
-            if (settings.IsCrowdSale(now) &&
-                !failedTxs.Any(f => f.Reason == InvestorRefundReason.CrowdSaleTokensSoldOut))
+            if (logiPresaleTokenInfo != null || 
+                smarcPresaleTokenInfo != null ||
+                logiCrowdsaleTokenInfo != null || 
+                smarcCrowdsaleTokenInfo != null)
             {
                 campaignActive = true;
             }
@@ -69,14 +70,34 @@ namespace Lykke.Service.IcoApi.Controllers
             {
                 CaptchaEnabled = settings.CaptchaEnable,
                 CampaignActive = campaignActive,
+
                 SmarcPhase = smarcTokenInfo.Tier,
                 SmarcPhaseAmount = smarcTokenInfo.PhaseTokenAmount,
                 SmarcPhaseAmountAvailable = smarcTokenInfo.PhaseTokenAmountAvailable,
                 SmarcPhasePriceUsd = smarcTokenInfo.PriceUsd,
+
+                SmarcPresaleAmount = smarcPresaleTokenInfo.PhaseTokenAmount,
+                SmarcPresaleAmountAvailable = smarcPresaleTokenInfo.PhaseTokenAmountAvailable,
+                SmarcPresalePriceUsd = smarcPresaleTokenInfo.PriceUsd,
+
+                SmarcCrowdsaleTier = smarcCrowdsaleTokenInfo.Tier,
+                SmarcCrowdsaleAmount = smarcCrowdsaleTokenInfo.PhaseTokenAmount,
+                SmarcCrowdsaleAmountAvailable = smarcCrowdsaleTokenInfo.PhaseTokenAmountAvailable,
+                SmarcCrowdsalePriceUsd = smarcCrowdsaleTokenInfo.PriceUsd,
+
                 LogiPhase = logiTokenInfo.Tier,
                 LogiPhaseAmount = logiTokenInfo.PhaseTokenAmount,
                 LogiPhaseAmountAvailable = logiTokenInfo.PhaseTokenAmountAvailable,
                 LogiPhasePriceUsd = logiTokenInfo.PriceUsd,
+
+                LogiPresaleAmount = logiPresaleTokenInfo.PhaseTokenAmount,
+                LogiPresaleAmountAvailable = logiPresaleTokenInfo.PhaseTokenAmountAvailable,
+                LogiPresalePriceUsd = logiPresaleTokenInfo.PriceUsd,
+
+                LogiCrowdsaleTier = logiCrowdsaleTokenInfo.Tier,
+                LogiCrowdsaleAmount = logiCrowdsaleTokenInfo.PhaseTokenAmount,
+                LogiCrowdsaleAmountAvailable = logiCrowdsaleTokenInfo.PhaseTokenAmountAvailable,
+                LogiCrowdsalePriceUsd = logiCrowdsaleTokenInfo.PriceUsd,
             };
 
             _cache.Set(_key, response, DateTimeOffset.Now.AddSeconds(1));
