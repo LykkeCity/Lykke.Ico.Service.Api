@@ -85,10 +85,6 @@ namespace Lykke.Service.IcoApi.Controllers
         public async Task<Dictionary<string, string>> GetCampaignInfo()
         {
             var info = await _adminService.GetCampaignInfo();
-            var settings = await _campaignService.GetCampaignSettings();
-
-            info.Add("CrowdSaleSmarcTotalAmount", settings.GetCrowdSaleSmarcAmount().ToString(CultureInfo.InvariantCulture));
-            info.Add("CrowdSaleLogiTotalAmount", settings.GetCrowdSaleLogiAmount().ToString(CultureInfo.InvariantCulture));
 
             return info;
         }

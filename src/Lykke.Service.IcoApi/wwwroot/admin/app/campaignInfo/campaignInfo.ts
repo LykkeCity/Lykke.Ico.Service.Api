@@ -12,18 +12,6 @@ class CampaignInfo {
     investorsKycPassed: string;
     investorsRegistered: string;
 
-    smarcPhase: string;
-    smarcPhaseTokenPriceUsd: string;
-    smarcPhaseTokenAmount: string;
-    smarcPhaseTokenAmountAvailable: string;
-    smarcPhaseTokenAmountTotal: string;
-
-    logiPhase: string;
-    logiPhaseTokenPriceUsd: string;
-    logiPhaseTokenAmount: string;
-    logiPhaseTokenAmountAvailable: string;
-    logiPhaseTokenAmountTotal: string;
-
     amountPreSaleInvestedBtc: string;
     amountPreSaleInvestedEth: string;
     amountPreSaleInvestedFiat: string;
