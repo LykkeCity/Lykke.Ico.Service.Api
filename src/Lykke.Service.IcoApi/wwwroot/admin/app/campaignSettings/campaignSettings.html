@@ -57,20 +57,20 @@
         </div>
     </md-list-item>
     <md-list-item>
-        <p>Starts:</p>
+        <p>Register starts (UTC):</p>
         <div class="md-secondary">
             <md-datepicker ng-model="$ctrl.settings.preSaleStartDateTimeUtc" md-hide-icons="triangle"></md-datepicker>
             <md-input-container>
-                <input ng-model="$ctrl.settings.preSaleStartDateTimeUtc" type="time">
+                <input ng-model="$ctrl.settings.preSaleStartDateTimeUtc" type="time" ng-model-options="{ timezone: 'utc' }">
             </md-input-container>
         </div>
     </md-list-item>
     <md-list-item>
-        <p>Ends:</p>
+        <p>Register ends (UTC):</p>
         <div class="md-secondary">
             <md-datepicker ng-model="$ctrl.settings.preSaleEndDateTimeUtc" md-hide-icons="triangle"></md-datepicker>
             <md-input-container>
-                <input ng-model="$ctrl.settings.preSaleEndDateTimeUtc" type="time">
+                <input ng-model="$ctrl.settings.preSaleEndDateTimeUtc" type="time" ng-model-options="{ timezone: 'utc' }">
             </md-input-container>
         </div>
     </md-list-item>
@@ -120,20 +120,20 @@
         </div>
     </md-list-item>
     <md-list-item>
-        <p>Starts:</p>
+        <p>Register starts (UTC):</p>
         <div class="md-secondary">
             <md-datepicker ng-model="$ctrl.settings.crowdSaleStartDateTimeUtc" md-hide-icons="triangle"></md-datepicker>
             <md-input-container>
-                <input ng-model="$ctrl.settings.crowdSaleStartDateTimeUtc" type="time">
+                <input ng-model="$ctrl.settings.crowdSaleStartDateTimeUtc" type="time" ng-model-options="{ timezone: 'utc' }">
             </md-input-container>
         </div>
     </md-list-item>
     <md-list-item>
-        <p>Ends:</p>
+        <p>Register ends (UTC):</p>
         <div class="md-secondary">
             <md-datepicker ng-model="$ctrl.settings.crowdSaleEndDateTimeUtc" md-hide-icons="triangle"></md-datepicker>
             <md-input-container>
-                <input ng-model="$ctrl.settings.crowdSaleEndDateTimeUtc" type="time">
+                <input ng-model="$ctrl.settings.crowdSaleEndDateTimeUtc" type="time" ng-model-options="{ timezone: 'utc' }">
             </md-input-container>
         </div>
     </md-list-item>
