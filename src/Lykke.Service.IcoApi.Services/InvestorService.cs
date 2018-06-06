@@ -76,13 +76,7 @@ namespace Lykke.Service.IcoApi.Services
             if (investor == null)
             {
                 var settings = await _campaignService.GetCampaignSettings();
-                if (!settings.IsPreSale(DateTime.UtcNow) && !settings.IsCrowdSale(DateTime.UtcNow))
-                {
-                    throw new Exception("There is no active phase now. Please recheck phases start/end dates");
-                }
-
                 var phase = settings.GetPhaseString(DateTime.UtcNow);
-
                 var token = Guid.NewGuid();
 
                 await _log.WriteInfoAsync(nameof(InvestorService), nameof(RegisterAsync), 

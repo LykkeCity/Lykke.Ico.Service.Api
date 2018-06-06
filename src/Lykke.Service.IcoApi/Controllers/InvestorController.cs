@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Common.Log;
 using Common;
+using Lykke.Service.IcoApi.Services.Extensions;
 
 namespace Lykke.Service.IcoApi.Controllers
 {
@@ -18,17 +19,19 @@ namespace Lykke.Service.IcoApi.Controllers
     {
         private readonly ILog _log;
         private readonly IInvestorService _investorService;
+        private readonly ICampaignService _campaignService;
         private readonly IBtcService _btcService;
         private readonly IEthService _ethService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IKycService _kycService;
 
-        public InvestorController(ILog log, IInvestorService investorService, IBtcService btcService,
-            IEthService ethService, IHttpContextAccessor httpContextAccessor,
+        public InvestorController(ILog log, IInvestorService investorService, ICampaignService campaignService,
+            IBtcService btcService, IEthService ethService, IHttpContextAccessor httpContextAccessor,
             IKycService kycService)
         {
             _log = log;
             _investorService = investorService;
+            _campaignService = campaignService;
             _btcService = btcService;
             _ethService = ethService;
             _httpContextAccessor = httpContextAccessor;
@@ -46,7 +49,16 @@ namespace Lykke.Service.IcoApi.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
-            }            
+            }
+
+            var settings = await _campaignService.GetCampaignSettings();
+            if (!settings.IsPreSale(DateTime.UtcNow) && !settings.IsCrowdSale(DateTime.UtcNow))
+            {
+                await _log.WriteInfoAsync(nameof(InvestorController), nameof(RegisterInvestor),
+                   $"email={model.Email}", "No active phase");
+
+                return BadRequest("There is no active phase now. Please recheck phases start/end dates");
+            }
 
             await _log.WriteInfoAsync(nameof(InvestorController), nameof(RegisterInvestor), 
                 $"email={model.Email}", "Register investor");
